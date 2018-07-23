@@ -1,0 +1,10 @@
+default: &default
+  adapter: postgresql
+
+development:
+  <<: *default
+  database: metridoc_development
+
+test:
+  <<: *default
+  database: metridoc_test
