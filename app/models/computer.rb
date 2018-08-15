@@ -1,0 +1,2 @@
+class Computer < ApplicationRecord
+end

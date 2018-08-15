@@ -1,0 +1,2 @@
+class UserFolder < ApplicationRecord
+end

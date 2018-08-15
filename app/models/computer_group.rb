@@ -1,0 +1,2 @@
+class ComputerGroup < ApplicationRecord
+end

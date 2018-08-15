@@ -1,0 +1,2 @@
+class Hotfix < ApplicationRecord
+end

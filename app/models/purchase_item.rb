@@ -1,0 +1,2 @@
+class PurchaseItem < ApplicationRecord
+end

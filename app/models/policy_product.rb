@@ -1,0 +1,2 @@
+class PolicyProduct < ApplicationRecord
+end

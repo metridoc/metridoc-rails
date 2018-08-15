@@ -1,0 +1,2 @@
+class PurchaseFolder < ApplicationRecord
+end

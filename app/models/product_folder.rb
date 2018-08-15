@@ -1,0 +1,2 @@
+class ProductFolder < ApplicationRecord
+end

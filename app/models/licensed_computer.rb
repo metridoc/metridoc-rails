@@ -1,0 +1,2 @@
+class LicensedComputer < ApplicationRecord
+end

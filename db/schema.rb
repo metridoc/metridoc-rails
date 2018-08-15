@@ -16,10 +16,10 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   enable_extension "plpgsql"
 
   create_table "audits", force: :cascade do |t|
-    t.integer "audit_id"
+    t.string "audit_id"
     t.integer "audit_server_id"
-    t.integer "audit_computer_id"
-    t.integer "audit_program_id"
+    t.string "audit_computer_id"
+    t.string "audit_program_id"
     t.integer "audit_size"
     t.integer "audit_count"
     t.datetime "audit_first_seen"
@@ -57,7 +57,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "computers", force: :cascade do |t|
-    t.integer "computer_id"
+    t.string "computer_id"
     t.integer "computer_server_id"
     t.string "computer_name"
     t.string "computer_user_name"
@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "hotfixes", force: :cascade do |t|
-    t.integer "hotfix_id"
+    t.string "hotfix_id"
     t.integer "hotfix_server_id"
     t.string "hotfix_stamp"
     t.string "hotfix_name"
@@ -157,20 +157,20 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "hotfix_publisher"
     t.date "hotfix_create_date"
     t.string "hotfix_user_name"
-    t.integer "hotfix_computer_id"
+    t.string "hotfix_computer_id"
     t.string "hotfix_notes"
     t.string "hotfix_flags"
   end
 
   create_table "licensed_computers", force: :cascade do |t|
-    t.integer "licensee_id"
+    t.string "licensee_id"
     t.integer "licensee_server_id"
-    t.integer "licensee_computer_id"
-    t.integer "licensee_policy_id"
-    t.string "licensee_acknowledged"
-    t.string "licensee_last_used"
-    t.date "licensee_lease_date"
-    t.string "licensee_lease_expiration"
+    t.string "licensee_computer_id"
+    t.string "licensee_policy_id"
+    t.boolean "licensee_acknowledged"
+    t.datetime "licensee_last_used"
+    t.datetime "licensee_lease_date"
+    t.datetime "licensee_lease_expiration"
   end
 
   create_table "licensed_users", force: :cascade do |t|
@@ -185,7 +185,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "locations", force: :cascade do |t|
-    t.integer "location_id"
+    t.bigint "location_id"
     t.integer "location_server_id"
     t.string "location_protocol"
     t.string "location_name"
@@ -197,16 +197,16 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "policies", force: :cascade do |t|
-    t.integer "policy_id"
+    t.string "policy_id"
     t.integer "policy_server_id"
-    t.string "policy_ref_num"
+    t.integer "policy_ref_num"
     t.string "policy_name"
     t.string "policy_action"
     t.string "policy_metric"
-    t.string "policy_maximum"
+    t.integer "policy_maximum"
     t.string "policy_lease_time"
     t.string "policy_status"
-    t.string "policy_expiration"
+    t.datetime "policy_expiration"
     t.string "policy_options"
     t.integer "policy_folder_id"
     t.integer "policy_contract_id"
@@ -225,18 +225,18 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "policy_products", force: :cascade do |t|
-    t.integer "polprod_id"
+    t.string "polprod_id"
     t.integer "polprod_server_id"
-    t.integer "polprod_policy_id"
-    t.integer "polprod_product_id"
-    t.string "polprod_position"
+    t.string "polprod_policy_id"
+    t.string "polprod_product_id"
+    t.integer "polprod_position"
     t.string "polprod_flags"
   end
 
   create_table "product_components", force: :cascade do |t|
-    t.integer "component_id"
+    t.string "component_id"
     t.integer "component_server_id"
-    t.integer "component_product_id"
+    t.string "component_product_id"
     t.string "component_program_variant"
     t.string "component_utility"
     t.string "component_position"
@@ -253,14 +253,14 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "products", force: :cascade do |t|
-    t.integer "product_id"
+    t.string "product_id"
     t.integer "product_server_id"
     t.string "product_name"
     t.string "product_version"
     t.string "product_platform"
     t.date "product_release_date"
     t.integer "product_folder_id"
-    t.integer "product_upgrade_id"
+    t.string "product_upgrade_id"
     t.string "product_status"
     t.string "product_tracked"
     t.string "product_publisher"
@@ -282,7 +282,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "programs", force: :cascade do |t|
-    t.integer "program_id"
+    t.string "program_id"
     t.integer "program_server_id"
     t.string "program_variant"
     t.string "program_char_stamp"
@@ -303,10 +303,10 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.integer "program_folder_id"
     t.string "program_launch_seen"
     t.string "program_disc_method"
-    t.string "program_discovered"
-    t.date "program_create_date"
+    t.datetime "program_discovered"
+    t.datetime "program_create_date"
     t.string "program_user_name"
-    t.integer "program_computer_id"
+    t.string "program_computer_id"
     t.string "program_notes"
     t.string "program_flags"
   end
@@ -346,9 +346,9 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "purchase_items", force: :cascade do |t|
-    t.integer "purchase_id"
+    t.string "purchase_id"
     t.integer "purchase_server_id"
-    t.integer "purchase_order_id"
+    t.string "purchase_order_id"
     t.string "purchase_name"
     t.string "purchase_status"
     t.string "purchase_type"
@@ -364,8 +364,8 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "purchase_converted_cost"
     t.string "purchase_unit_msrp"
     t.string "purchase_unit_price"
-    t.integer "purchase_product_id"
-    t.integer "purchase_effective_product_id"
+    t.string "purchase_product_id"
+    t.string "purchase_effective_product_id"
     t.string "purchase_invoice"
     t.integer "purchase_division_id"
     t.integer "purchase_contract_id"
@@ -384,7 +384,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "purchase_orders", force: :cascade do |t|
-    t.integer "order_id"
+    t.string "order_id"
     t.integer "order_server_id"
     t.date "order_date"
     t.integer "order_folder_id"
@@ -430,10 +430,10 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.integer "user_id"
+    t.string "user_id"
     t.integer "user_server_id"
-    t.string "user_last_login"
-    t.integer "user_computer_id"
+    t.datetime "user_last_login"
+    t.string "user_computer_id"
     t.integer "user_folder_id"
     t.integer "user_external_id"
     t.string "user_notes"
