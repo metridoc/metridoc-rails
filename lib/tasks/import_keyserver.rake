@@ -4,7 +4,7 @@ namespace :import do
     desc "Import Keyserver Data"
     task :keyserver, %i[source_dir] => :environment do |_t, args|
       source_dir = args.source_dir
-      puts "Importing Keyserver data from #{source_dir}"
+      log "Importing Keyserver data from #{source_dir}"
       raise "Directory not passed!" if source_dir.blank?
       raise "Directory not found!" unless File.exists?(source_dir)
 
@@ -12,14 +12,14 @@ namespace :import do
 
       filenames = Dir.new(source_dir).reject{|f| /^\.\.?$/.match(f)}
       filenames.each do |filename|
-        puts "Processing #{filename}"
+        log "Processing #{filename}"
 
         base_name = File.basename(filename, ".*")
 
         begin
           class_name = base_name.singularize.constantize
         rescue
-          puts "Class not found for #{filename}, bypassing." && next
+          log "Class not found for #{filename}, bypassing." && next
         end
 
         csv = CSV.read("#{source_dir}#{filename}")
@@ -30,7 +30,7 @@ namespace :import do
         n_errors = 0
         csv.drop(1).each_with_index do |row, n|
           if n_errors >= 100
-            puts "Too may errors #{n_errors}, exiting!"
+            log "Too may errors #{n_errors}, exiting!"
             records = []
             break
           end
@@ -39,18 +39,18 @@ namespace :import do
             v = row[i]
             #validations
             if class_name.columns_hash[k.underscore].type == :integer && !valid_integer?(v)
-              puts "Invalid integer #{v} in #{row.join(",")}"
+              log "Invalid integer #{v} in #{row.join(",")}"
               n_errors = n_errors + 1
               next
             end
             if class_name.columns_hash[k.underscore].type == :datetime && !valid_datetime?(v)
-              puts "Invalid datetime #{v} in #{row.join(",")}"
+              log "Invalid datetime #{v} in #{row.join(",")}"
               n_errors = n_errors + 1
               next
               v = DateTime.strptime(v,"%Y%m%d%H%M%SZ")
             end
             if class_name.columns_hash[k.underscore].type == :date && !valid_datetime?(v)
-              puts "Invalid date #{v} in #{row.join(",")}"
+              log "Invalid date #{v} in #{row.join(",")}"
               n_errors = n_errors + 1
               next
               v = DateTime.strptime(v,"%Y%m%d%H%M%SZ")
@@ -60,18 +60,18 @@ namespace :import do
           end
           records << class_name.new(z)
           
-          if records.size >= 1000
+          if records.size >= 10000
             class_name.import records
-            puts "Imported #{records.size} records from #{filename}"
+            log "Imported #{records.size} records from #{filename}"
             records = []
           end
         end
         if records.size > 0
           class_name.import records
-          puts "Imported #{records.size} records from #{filename}"
+          log "Imported #{records.size} records from #{filename}"
         end
-        puts "#{n_errors} errors with #{filename}" if n_errors > 0
-        puts "Finished importing #{filename}"
+        log "#{n_errors} errors with #{filename}" if n_errors > 0
+        log "Finished importing #{filename}"
 
       end
 
@@ -99,6 +99,10 @@ namespace :import do
       puts "end"
     end
   end
+end
+
+def log(m)
+  puts "#{Time.now} - #{m}"
 end
 
 def format_migration_data(table_name, column_names, sample_row=[])
