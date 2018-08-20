@@ -20,6 +20,10 @@ but I couldn't find the Rails code to reuse, and didn't want to reinvent it)
     rake import:csv:generate_migration_params[/path/to/csv/files] > db/migrate/TIMESTAMP_create_keyserver_tables.rb
     rake db:migrate
 
-After schema is loaded, invoke the importer task:
+After schema is loaded, do the necessary data massages:
+
+    Run the following command to fix the encoding issue of programs.csv: iconv -f ISO-8859-1 -t UTF-8 Programs.csv > Programs.csv.new && rm -f Programs.csv && mv Programs.csv.new Programs.csv
+
+After data massaging, invoke the importer task:
 
     rake import:csv:keyserver[/path/to/csv/files]
