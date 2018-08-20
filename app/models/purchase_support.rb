@@ -1,2 +1,0 @@
-class PurchaseSupport < ApplicationRecord
-end

@@ -1,2 +1,0 @@
-class ComputerDivision < ApplicationRecord
-end

@@ -1,2 +1,0 @@
-class PurchaseDocument < ApplicationRecord
-end

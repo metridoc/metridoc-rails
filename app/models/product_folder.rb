@@ -1,2 +1,0 @@
-class ProductFolder < ApplicationRecord
-end

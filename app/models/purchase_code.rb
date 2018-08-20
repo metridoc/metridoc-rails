@@ -1,2 +1,0 @@
-class PurchaseCode < ApplicationRecord
-end

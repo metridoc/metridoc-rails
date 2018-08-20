@@ -1,2 +1,0 @@
-class ComputerGroupMember < ApplicationRecord
-end

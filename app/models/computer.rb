@@ -1,2 +1,0 @@
-class Computer < ApplicationRecord
-end

@@ -1,2 +1,0 @@
-class PurchaseFolder < ApplicationRecord
-end

@@ -1,2 +1,0 @@
-class PolicyFolder < ApplicationRecord
-end

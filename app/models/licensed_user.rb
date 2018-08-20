@@ -1,2 +1,0 @@
-class LicensedUser < ApplicationRecord
-end

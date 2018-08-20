@@ -17,7 +17,7 @@ namespace :import do
         base_name = File.basename(filename, ".*")
 
         begin
-          class_name = base_name.singularize.constantize
+          class_name = ("Keyserver::" + base_name.singularize).constantize
         rescue
           log "Class not found for #{filename}, bypassing." && next
         end

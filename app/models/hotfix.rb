@@ -1,2 +1,0 @@
-class Hotfix < ApplicationRecord
-end

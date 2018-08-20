@@ -1,2 +1,0 @@
-class ProgramFolder < ApplicationRecord
-end

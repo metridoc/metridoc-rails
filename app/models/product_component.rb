@@ -1,2 +1,0 @@
-class ProductComponent < ApplicationRecord
-end
