@@ -1,6 +1,21 @@
 namespace :import do
   namespace :csv do
 
+    desc "Convert Keyserver Data"
+    task :convert, %i[source_dir] => :environment do |_t, args|
+      source_dir = args.source_dir
+
+      file_path = source_dir + "Programs.csv"
+      puts "Fixing encoding for #{file_path}"
+      sh "iconv -f ISO-8859-1 -t UTF-8 #{file_path} > #{file_path}.new && rm -f #{file_path} && mv #{file_path}.new #{file_path}"
+
+      #Remove No Asset Information to nil in Computers.csv
+      file_path = source_dir + "Computers.csv"
+      puts "Removing No Asset Information to nil in #{file_path}"
+      sh "sed -i '' -e 's/No Asset Information//g' #{file_path}"
+
+    end
+
     desc "Import Keyserver Data"
     task :keyserver, %i[source_dir] => :environment do |_t, args|
       source_dir = args.source_dir
