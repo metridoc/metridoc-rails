@@ -421,7 +421,7 @@ ActiveRecord::Schema.define(version: 2018_08_22_192404) do
     t.string "order_flags"
   end
 
-  create_table "purchase_support", force: :cascade do |t|
+  create_table "purchase_supports", force: :cascade do |t|
     t.integer "support_id"
     t.integer "support_server_id"
     t.integer "support_purchase_id"

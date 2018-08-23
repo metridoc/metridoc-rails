@@ -288,7 +288,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.date :licensee_lease_date
       t.string :licensee_lease_expiration
     end
-    create_table :purchase_support do |t|
+    create_table :purchase_supports do |t|
       t.integer :support_id
       t.integer :support_server_id
       t.integer :support_purchase_id
