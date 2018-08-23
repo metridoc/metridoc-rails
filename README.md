@@ -27,3 +27,17 @@ After schema is loaded, do the necessary data converting to fix encoding of Prog
 After data conversions, invoke the importer task:
 
     rake import:csv:keyserver[/path/to/csv/files]
+
+### ActiveAdmin
+
+Activeadmin should already be setup with the `db:migrate`, after db:migrate to set ActiveAdmin sample user:
+
+    rake db:seed
+
+Then login using:
+
+    http://localhost:3000/admin/
+    Username: admin@example.com
+    Password: password
+
+
