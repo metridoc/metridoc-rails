@@ -1,2 +1,2 @@
-class Keyserver::ProgramFolder < ApplicationRecord
+class Keyserver::ProgramFolder < Keyserver::Base
 end

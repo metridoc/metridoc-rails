@@ -1,2 +1,2 @@
-class Keyserver::Computer < ApplicationRecord
+class Keyserver::Computer < Keyserver::Base
 end

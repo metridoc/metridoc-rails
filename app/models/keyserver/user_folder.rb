@@ -1,2 +1,2 @@
-class Keyserver::UserFolder < ApplicationRecord
+class Keyserver::UserFolder < Keyserver::Base
 end

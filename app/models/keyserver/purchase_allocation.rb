@@ -1,2 +1,2 @@
-class Keyserver::PurchaseAllocation < ApplicationRecord
+class Keyserver::PurchaseAllocation < Keyserver::Base
 end

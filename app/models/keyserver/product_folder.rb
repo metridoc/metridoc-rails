@@ -1,2 +1,2 @@
-class Keyserver::ProductFolder < ApplicationRecord
+class Keyserver::ProductFolder < Keyserver::Base
 end

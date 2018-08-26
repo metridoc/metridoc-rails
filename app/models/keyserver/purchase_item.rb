@@ -1,2 +1,2 @@
-class Keyserver::PurchaseItem < ApplicationRecord
+class Keyserver::PurchaseItem < Keyserver::Base
 end

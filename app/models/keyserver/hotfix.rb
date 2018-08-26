@@ -1,2 +1,2 @@
-class Keyserver::Hotfix < ApplicationRecord
+class Keyserver::Hotfix < Keyserver::Base
 end

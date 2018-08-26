@@ -1,2 +1,2 @@
-class Keyserver::Policy < ApplicationRecord
+class Keyserver::Policy < Keyserver::Base
 end
