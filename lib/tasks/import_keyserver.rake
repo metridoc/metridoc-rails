@@ -96,19 +96,22 @@ namespace :import do
     task :generate_migration_params, %i[source_dir] => :environment do |_t, args|
       source_dir = args.source_dir
 
+      require 'csv'
+
       filenames = Dir.new(source_dir).reject{|f| /^\.\.?$/.match(f)}
       puts "class CreateKeyserverTables < ActiveRecord::Migration[#{Rails.version.gsub(/\.\d$/, '')}]"
       puts "  def change"
       filenames.each do |filename|
+        csv = CSV.read("#{source_dir}/#{filename}")
+
         table_name = filename.gsub(/\.csv$/, '').underscore
-        column_names, sample_row = File.open("#{source_dir}/#{filename}"){|f| [f.readline, f.readline]}
-        [column_names, sample_row].map!{|row| row.split(',').map(&:chomp) }
-        # [column_names, sample_row].map!{|row| row.split(',').map(&:chomp) }
+        column_names = csv.first
+        sample_row = csv.size > 1 ? csv.second : []
 
-        puts column_names.inspect
-        puts sample_row.inspect
+        # puts column_names.inspect
+        # puts sample_row.inspect
 
-        format_migration_data(table_name, column_names, sample_row)
+        format_migration_data("keyserver", table_name, column_names, sample_row)
       end
       puts "  end"
       puts "end"
@@ -120,16 +123,15 @@ def log(m)
   puts "#{Time.now} - #{m}"
 end
 
-def format_migration_data(table_name, column_names, sample_row=[])
+def format_migration_data(prefix, table_name, column_names, sample_row=[])
   transformed_column_names = column_names.map{|cn| transform_column_name(cn)}
   inferred_column_types = Hash[transformed_column_names.each.map do |column_name|
     [column_name, infer_column_type(column_name)]
   end]
 
-  puts "    create_table :#{table_name} do |t|"
-  inferred_column_types.each_with_index do |name,type,index|
+  puts "    create_table :#{prefix}_#{table_name} do |t|"
+  inferred_column_types.each do |name,type|
     puts "      t.#{type} :#{name}"
-    puts "      # sample: #{sample_row.join(',')}"
   end
   # TODO add a json column for any new columns that appear in future CSVs
   # TODO have the importer put any columns missing from the schema into the json
