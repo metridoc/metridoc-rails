@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "audits", force: :cascade do |t|
+  create_table "keyserver_audits", force: :cascade do |t|
     t.string "audit_id"
     t.integer "audit_server_id"
     t.string "audit_computer_id"
@@ -29,7 +29,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "audit_path"
   end
 
-  create_table "computer_divisions", force: :cascade do |t|
+  create_table "keyserver_computer_divisions", force: :cascade do |t|
     t.integer "division_id"
     t.integer "division_server_id"
     t.string "division_name"
@@ -38,7 +38,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "division_flags"
   end
 
-  create_table "computer_group_members", force: :cascade do |t|
+  create_table "keyserver_computer_group_members", force: :cascade do |t|
     t.integer "member_id"
     t.integer "member_server_id"
     t.integer "member_computer_id"
@@ -47,7 +47,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "member_last_used"
   end
 
-  create_table "computer_groups", force: :cascade do |t|
+  create_table "keyserver_computer_groups", force: :cascade do |t|
     t.integer "group_id"
     t.integer "group_server_id"
     t.string "group_num_members"
@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "group_flags"
   end
 
-  create_table "computers", force: :cascade do |t|
+  create_table "keyserver_computers", force: :cascade do |t|
     t.string "computer_id"
     t.integer "computer_server_id"
     t.string "computer_name"
@@ -141,13 +141,13 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "computer_flags"
   end
 
-  create_table "contracts", force: :cascade do |t|
+  create_table "keyserver_contracts", force: :cascade do |t|
     t.integer "contract_id"
     t.integer "contract_server_id"
     t.string "contract_name"
   end
 
-  create_table "hotfixes", force: :cascade do |t|
+  create_table "keyserver_hotfixes", force: :cascade do |t|
     t.string "hotfix_id"
     t.integer "hotfix_server_id"
     t.string "hotfix_stamp"
@@ -162,7 +162,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "hotfix_flags"
   end
 
-  create_table "licensed_computers", force: :cascade do |t|
+  create_table "keyserver_licensed_computers", force: :cascade do |t|
     t.string "licensee_id"
     t.integer "licensee_server_id"
     t.string "licensee_computer_id"
@@ -173,7 +173,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.datetime "licensee_lease_expiration"
   end
 
-  create_table "licensed_users", force: :cascade do |t|
+  create_table "keyserver_licensed_users", force: :cascade do |t|
     t.integer "licensee_id"
     t.integer "licensee_server_id"
     t.integer "licensee_user_id"
@@ -184,7 +184,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "licensee_lease_expiration"
   end
 
-  create_table "locations", force: :cascade do |t|
+  create_table "keyserver_locations", force: :cascade do |t|
     t.bigint "location_id"
     t.integer "location_server_id"
     t.string "location_protocol"
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "location_flags"
   end
 
-  create_table "policies", force: :cascade do |t|
+  create_table "keyserver_policies", force: :cascade do |t|
     t.string "policy_id"
     t.integer "policy_server_id"
     t.integer "policy_ref_num"
@@ -215,7 +215,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "policy_notes"
   end
 
-  create_table "policy_folders", force: :cascade do |t|
+  create_table "keyserver_policy_folders", force: :cascade do |t|
     t.integer "polfolder_id"
     t.integer "polfolder_server_id"
     t.string "polfolder_name"
@@ -224,7 +224,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "polfolder_flags"
   end
 
-  create_table "policy_products", force: :cascade do |t|
+  create_table "keyserver_policy_products", force: :cascade do |t|
     t.string "polprod_id"
     t.integer "polprod_server_id"
     t.string "polprod_policy_id"
@@ -233,7 +233,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "polprod_flags"
   end
 
-  create_table "product_components", force: :cascade do |t|
+  create_table "keyserver_product_components", force: :cascade do |t|
     t.string "component_id"
     t.integer "component_server_id"
     t.string "component_product_id"
@@ -243,7 +243,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "component_flags"
   end
 
-  create_table "product_folders", force: :cascade do |t|
+  create_table "keyserver_product_folders", force: :cascade do |t|
     t.integer "prodfolder_id"
     t.integer "prodfolder_server_id"
     t.string "prodfolder_name"
@@ -252,7 +252,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "prodfolder_flags"
   end
 
-  create_table "products", force: :cascade do |t|
+  create_table "keyserver_products", force: :cascade do |t|
     t.string "product_id"
     t.integer "product_server_id"
     t.string "product_name"
@@ -272,7 +272,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "product_flags"
   end
 
-  create_table "program_folders", force: :cascade do |t|
+  create_table "keyserver_program_folders", force: :cascade do |t|
     t.integer "folder_id"
     t.integer "folder_server_id"
     t.string "folder_name"
@@ -281,7 +281,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "folder_flags"
   end
 
-  create_table "programs", force: :cascade do |t|
+  create_table "keyserver_programs", force: :cascade do |t|
     t.string "program_id"
     t.integer "program_server_id"
     t.string "program_variant"
@@ -311,7 +311,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "program_flags"
   end
 
-  create_table "purchase_allocations", force: :cascade do |t|
+  create_table "keyserver_purchase_allocations", force: :cascade do |t|
     t.integer "allocation_id"
     t.integer "allocation_server_id"
     t.integer "allocation_purchase_id"
@@ -320,14 +320,14 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "allocation_flags"
   end
 
-  create_table "purchase_codes", force: :cascade do |t|
+  create_table "keyserver_purchase_codes", force: :cascade do |t|
     t.integer "code_id"
     t.integer "code_server_id"
     t.integer "code_purchase_id"
     t.string "code_value"
   end
 
-  create_table "purchase_documents", force: :cascade do |t|
+  create_table "keyserver_purchase_documents", force: :cascade do |t|
     t.integer "document_id"
     t.integer "document_server_id"
     t.integer "document_purchase_id"
@@ -336,7 +336,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.date "document_date_added"
   end
 
-  create_table "purchase_folders", force: :cascade do |t|
+  create_table "keyserver_purchase_folders", force: :cascade do |t|
     t.integer "purchfolder_id"
     t.integer "purchfolder_server_id"
     t.string "purchfolder_name"
@@ -345,7 +345,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "purchfolder_flags"
   end
 
-  create_table "purchase_items", force: :cascade do |t|
+  create_table "keyserver_purchase_items", force: :cascade do |t|
     t.string "purchase_id"
     t.integer "purchase_server_id"
     t.string "purchase_order_id"
@@ -383,7 +383,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "purchase_flags"
   end
 
-  create_table "purchase_orders", force: :cascade do |t|
+  create_table "keyserver_purchase_orders", force: :cascade do |t|
     t.string "order_id"
     t.integer "order_server_id"
     t.date "order_date"
@@ -395,14 +395,14 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "order_flags"
   end
 
-  create_table "purchase_support", force: :cascade do |t|
+  create_table "keyserver_purchase_support", force: :cascade do |t|
     t.integer "support_id"
     t.integer "support_server_id"
     t.integer "support_purchase_id"
     t.integer "support_product_id"
   end
 
-  create_table "servers", force: :cascade do |t|
+  create_table "keyserver_servers", force: :cascade do |t|
     t.integer "server_id"
     t.string "server_type"
     t.string "server_name"
@@ -420,7 +420,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "server_licenses_in_queue"
   end
 
-  create_table "user_folders", force: :cascade do |t|
+  create_table "keyserver_user_folders", force: :cascade do |t|
     t.integer "usrfolder_id"
     t.integer "usrfolder_server_id"
     t.string "usrfolder_name"
@@ -429,7 +429,7 @@ ActiveRecord::Schema.define(version: 2018_07_26_110222) do
     t.string "usrfolder_flags"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "keyserver_users", force: :cascade do |t|
     t.string "user_id"
     t.integer "user_server_id"
     t.datetime "user_last_login"

@@ -1,2 +1,2 @@
-class Keyserver::PurchaseOrder < ApplicationRecord
+class Keyserver::PurchaseOrder < Keyserver::Base
 end

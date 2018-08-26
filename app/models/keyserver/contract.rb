@@ -1,2 +1,2 @@
-class Keyserver::Contract < ApplicationRecord
+class Keyserver::Contract < Keyserver::Base
 end

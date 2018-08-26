@@ -1,2 +1,2 @@
-class Keyserver::Audit < ApplicationRecord
+class Keyserver::Audit < Keyserver::Base
 end

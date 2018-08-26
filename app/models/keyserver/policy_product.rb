@@ -1,2 +1,2 @@
-class Keyserver::PolicyProduct < ApplicationRecord
+class Keyserver::PolicyProduct < Keyserver::Base
 end

@@ -1,6 +1,6 @@
 class CreateKeyserverTables < ActiveRecord::Migration[5.2]
   def change
-    create_table :product_folders do |t|
+    create_table :keyserver_product_folders do |t|
       t.integer :prodfolder_id
       t.integer :prodfolder_server_id
       t.string :prodfolder_name
@@ -8,7 +8,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :prodfolder_notes
       t.string :prodfolder_flags
     end
-    create_table :licensed_computers do |t|
+    create_table :keyserver_licensed_computers do |t|
       t.string :licensee_id
       t.integer :licensee_server_id
       t.string :licensee_computer_id
@@ -18,7 +18,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.datetime :licensee_lease_date
       t.datetime :licensee_lease_expiration
     end
-    create_table :products do |t|
+    create_table :keyserver_products do |t|
       t.string :product_id
       t.integer :product_server_id
       t.string :product_name
@@ -37,7 +37,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :product_notes
       t.string :product_flags
     end
-    create_table :purchase_orders do |t|
+    create_table :keyserver_purchase_orders do |t|
       t.string :order_id
       t.integer :order_server_id
       t.date :order_date
@@ -48,12 +48,12 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :order_notes
       t.string :order_flags
     end
-    create_table :contracts do |t|
+    create_table :keyserver_contracts do |t|
       t.integer :contract_id
       t.integer :contract_server_id
       t.string :contract_name
     end
-    create_table :hotfixes do |t|
+    create_table :keyserver_hotfixes do |t|
       t.string :hotfix_id
       t.integer :hotfix_server_id
       t.string :hotfix_stamp
@@ -67,7 +67,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :hotfix_notes
       t.string :hotfix_flags
     end
-    create_table :purchase_allocations do |t|
+    create_table :keyserver_purchase_allocations do |t|
       t.integer :allocation_id
       t.integer :allocation_server_id
       t.integer :allocation_purchase_id
@@ -75,7 +75,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :allocation_quantity
       t.string :allocation_flags
     end
-    create_table :users do |t|
+    create_table :keyserver_users do |t|
       t.string :user_id
       t.integer :user_server_id
       t.datetime :user_last_login
@@ -85,7 +85,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :user_notes
       t.string :user_flags
     end
-    create_table :computers do |t|
+    create_table :keyserver_computers do |t|
       t.string :computer_id
       t.integer :computer_server_id
       t.string :computer_name
@@ -169,7 +169,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :computer_notes
       t.string :computer_flags
     end
-    create_table :computer_group_members do |t|
+    create_table :keyserver_computer_group_members do |t|
       t.integer :member_id
       t.integer :member_server_id
       t.integer :member_computer_id
@@ -177,7 +177,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :member_acknowledged
       t.string :member_last_used
     end
-    create_table :policy_folders do |t|
+    create_table :keyserver_policy_folders do |t|
       t.integer :polfolder_id
       t.integer :polfolder_server_id
       t.string :polfolder_name
@@ -185,7 +185,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :polfolder_notes
       t.string :polfolder_flags
     end
-    create_table :user_folders do |t|
+    create_table :keyserver_user_folders do |t|
       t.integer :usrfolder_id
       t.integer :usrfolder_server_id
       t.string :usrfolder_name
@@ -193,7 +193,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :usrfolder_notes
       t.string :usrfolder_flags
     end
-    create_table :purchase_items do |t|
+    create_table :keyserver_purchase_items do |t|
       t.string :purchase_id
       t.integer :purchase_server_id
       t.string :purchase_order_id
@@ -230,7 +230,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :purchase_notes
       t.string :purchase_flags
     end
-    create_table :programs do |t|
+    create_table :keyserver_programs do |t|
       t.string :program_id
       t.integer :program_server_id
       t.string :program_variant
@@ -259,7 +259,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :program_notes
       t.string :program_flags
     end
-    create_table :locations do |t|
+    create_table :keyserver_locations do |t|
       t.bigint :location_id
       t.integer :location_server_id
       t.string :location_protocol
@@ -270,7 +270,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :location_notes
       t.string :location_flags
     end
-    create_table :program_folders do |t|
+    create_table :keyserver_program_folders do |t|
       t.integer :folder_id
       t.integer :folder_server_id
       t.string :folder_name
@@ -278,7 +278,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :folder_notes
       t.string :folder_flags
     end
-    create_table :licensed_users do |t|
+    create_table :keyserver_licensed_users do |t|
       t.integer :licensee_id
       t.integer :licensee_server_id
       t.integer :licensee_user_id
@@ -288,13 +288,13 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.date :licensee_lease_date
       t.string :licensee_lease_expiration
     end
-    create_table :purchase_support do |t|
+    create_table :keyserver_purchase_support do |t|
       t.integer :support_id
       t.integer :support_server_id
       t.integer :support_purchase_id
       t.integer :support_product_id
     end
-    create_table :computer_divisions do |t|
+    create_table :keyserver_computer_divisions do |t|
       t.integer :division_id
       t.integer :division_server_id
       t.string :division_name
@@ -302,13 +302,13 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :division_notes
       t.string :division_flags
     end
-    create_table :purchase_codes do |t|
+    create_table :keyserver_purchase_codes do |t|
       t.integer :code_id
       t.integer :code_server_id
       t.integer :code_purchase_id
       t.string :code_value
     end
-    create_table :purchase_documents do |t|
+    create_table :keyserver_purchase_documents do |t|
       t.integer :document_id
       t.integer :document_server_id
       t.integer :document_purchase_id
@@ -316,7 +316,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :document_url
       t.date :document_date_added
     end
-    create_table :computer_groups do |t|
+    create_table :keyserver_computer_groups do |t|
       t.integer :group_id
       t.integer :group_server_id
       t.string :group_num_members
@@ -324,7 +324,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :group_notes
       t.string :group_flags
     end
-    create_table :purchase_folders do |t|
+    create_table :keyserver_purchase_folders do |t|
       t.integer :purchfolder_id
       t.integer :purchfolder_server_id
       t.string :purchfolder_name
@@ -332,7 +332,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :purchfolder_notes
       t.string :purchfolder_flags
     end
-    create_table :audits do |t|
+    create_table :keyserver_audits do |t|
       t.string :audit_id
       t.integer :audit_server_id
       t.string :audit_computer_id
@@ -345,7 +345,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :audit_serial_number
       t.string :audit_path
     end
-    create_table :policy_products do |t|
+    create_table :keyserver_policy_products do |t|
       t.string :polprod_id
       t.integer :polprod_server_id
       t.string :polprod_policy_id
@@ -353,7 +353,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.integer :polprod_position
       t.string :polprod_flags
     end
-    create_table :product_components do |t|
+    create_table :keyserver_product_components do |t|
       t.string :component_id
       t.integer :component_server_id
       t.string :component_product_id
@@ -362,7 +362,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :component_position
       t.string :component_flags
     end
-    create_table :servers do |t|
+    create_table :keyserver_servers do |t|
       t.integer :server_id
       t.string :server_type
       t.string :server_name
@@ -379,7 +379,7 @@ class CreateKeyserverTables < ActiveRecord::Migration[5.2]
       t.string :server_licenses_in_use
       t.string :server_licenses_in_queue
     end
-    create_table :policies do |t|
+    create_table :keyserver_policies do |t|
       t.string :policy_id
       t.integer :policy_server_id
       t.integer :policy_ref_num

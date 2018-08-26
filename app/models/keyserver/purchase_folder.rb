@@ -1,2 +1,2 @@
-class Keyserver::PurchaseFolder < ApplicationRecord
+class Keyserver::PurchaseFolder < Keyserver::Base
 end

@@ -1,2 +1,2 @@
-class Keyserver::PolicyFolder < ApplicationRecord
+class Keyserver::PolicyFolder < Keyserver::Base
 end

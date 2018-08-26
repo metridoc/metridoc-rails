@@ -1,2 +1,2 @@
-class Keyserver::Location < ApplicationRecord
+class Keyserver::Location < Keyserver::Base
 end

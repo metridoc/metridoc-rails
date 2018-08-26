@@ -1,2 +1,2 @@
-class Keyserver::ComputerGroupMember < ApplicationRecord
+class Keyserver::ComputerGroupMember < Keyserver::Base
 end

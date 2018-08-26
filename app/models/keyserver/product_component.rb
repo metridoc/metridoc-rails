@@ -1,2 +1,2 @@
-class Keyserver::ProductComponent < ApplicationRecord
+class Keyserver::ProductComponent < Keyserver::Base
 end

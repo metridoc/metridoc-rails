@@ -27,6 +27,7 @@ namespace :import do
 
       filenames = Dir.new(source_dir).reject{|f| /^\.\.?$/.match(f)}
       filenames.each do |filename|
+        next if filename != "Audits.csv"
         log "Processing #{filename}"
 
         base_name = File.basename(filename, ".*")
@@ -37,7 +38,7 @@ namespace :import do
           log "Class not found for #{filename}, bypassing." && next
         end
 
-        csv = CSV.read("#{source_dir}#{filename}")
+        csv = CSV.read("#{source_dir}/#{filename}")
 
         headers = csv.first
 
