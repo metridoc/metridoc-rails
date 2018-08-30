@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_22_192404) do
+ActiveRecord::Schema.define(version: 2018_08_30_014315) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,321 @@ ActiveRecord::Schema.define(version: 2018_08_22_192404) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "bd_bibliographies", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.string "patron_id", limit: 20
+    t.string "patron_type", limit: 1
+    t.string "author", limit: 300
+    t.string "title", limit: 400
+    t.string "publisher", limit: 256
+    t.string "publication_place", limit: 256
+    t.string "publication_year", limit: 4
+    t.string "edition", limit: 24
+    t.string "lccn", limit: 32
+    t.string "isbn", limit: 24
+    t.string "isbn_2", limit: 24
+    t.datetime "request_date"
+    t.datetime "process_date"
+    t.string "pickup_location", limit: 64
+    t.integer "borrower"
+    t.integer "lender"
+    t.string "supplier_code", limit: 20
+    t.string "call_number", limit: 256
+    t.datetime "load_time", null: false
+    t.integer "oclc"
+    t.string "oclc_text", limit: 25
+    t.bigint "version", null: false
+    t.string "publication_date", limit: 255
+    t.string "local_item_found", limit: 1
+  end
+
+  create_table "bd_call_numbers", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.integer "holdings_seq"
+    t.string "supplier_code", limit: 20
+    t.string "call_number", limit: 256
+    t.datetime "process_date"
+    t.datetime "load_time", null: false
+    t.bigint "version", null: false
+  end
+
+  create_table "bd_exception_codes", force: :cascade do |t|
+    t.string "exception_code", limit: 3, null: false
+    t.string "exception_code_desc", limit: 64
+    t.bigint "version", null: false
+  end
+
+  create_table "bd_institutions", force: :cascade do |t|
+    t.string "catalog_code", limit: 1, null: false
+    t.string "institution", limit: 64, null: false
+    t.integer "library_id", null: false
+    t.bigint "version", null: false
+  end
+
+  create_table "bd_min_ship_dates", force: :cascade do |t|
+    t.string "request_number", limit: 12, null: false
+    t.datetime "min_ship_date", null: false
+  end
+
+  create_table "bd_patron_types", force: :cascade do |t|
+    t.string "patron_type", limit: 1, null: false
+    t.string "patron_type_desc", limit: 50
+  end
+
+  create_table "bd_print_dates", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.datetime "print_date"
+    t.string "note", limit: 256
+    t.datetime "process_date"
+    t.datetime "load_time", null: false
+    t.integer "library_id"
+    t.bigint "version", null: false
+  end
+
+  create_table "bd_report_distribution_tmps", force: :cascade do |t|
+    t.string "email_addr", limit: 32, null: false
+    t.integer "institution_id", null: false
+    t.bigint "version", null: false
+    t.string "library_id", limit: 255, null: false
+  end
+
+  create_table "bd_report_distributions", force: :cascade do |t|
+    t.string "email_addr", limit: 32, null: false
+    t.integer "institution_id", null: false
+    t.bigint "version", null: false
+    t.string "library_id", limit: 255, null: false
+  end
+
+  create_table "bd_ship_dates", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.string "ship_date", limit: 24, null: false
+    t.string "exception_code", limit: 3
+    t.datetime "process_date"
+    t.datetime "load_time", null: false
+    t.bigint "version", null: false
+  end
+
+  create_table "ezb_bibliographies", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.string "patron_id", limit: 20
+    t.string "patron_type", limit: 1
+    t.string "author", limit: 300
+    t.string "title", limit: 400
+    t.string "publisher", limit: 256
+    t.string "publication_place", limit: 256
+    t.string "publication_year", limit: 4
+    t.string "edition", limit: 24
+    t.string "lccn", limit: 32
+    t.string "isbn", limit: 24
+    t.string "isbn_2", limit: 24
+    t.integer "oclc"
+    t.datetime "request_date"
+    t.datetime "process_date"
+    t.string "pickup_location", limit: 64
+    t.integer "borrower"
+    t.integer "lender"
+    t.string "supplier_code", limit: 20
+    t.string "call_number", limit: 256
+    t.datetime "load_time", null: false
+    t.bigint "version", null: false
+    t.string "local_item_found", limit: 1
+    t.string "publication_date", limit: 255
+  end
+
+  create_table "ezb_call_numbers", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.integer "holdings_seq"
+    t.string "supplier_code", limit: 20
+    t.string "call_number", limit: 256
+    t.datetime "process_date"
+    t.datetime "load_time", null: false
+    t.bigint "version", null: false
+  end
+
+  create_table "ezb_exception_codes", force: :cascade do |t|
+    t.string "exception_code", limit: 3, null: false
+    t.string "exception_code_desc", limit: 64
+    t.bigint "version", null: false
+  end
+
+  create_table "ezb_institutions", force: :cascade do |t|
+    t.string "catalog_code", limit: 1, null: false
+    t.string "institution", limit: 64, null: false
+    t.bigint "version", null: false
+  end
+
+  create_table "ezb_min_ship_dates", force: :cascade do |t|
+    t.string "request_number", limit: 12, null: false
+    t.datetime "min_ship_date", null: false
+  end
+
+  create_table "ezb_patron_types", force: :cascade do |t|
+    t.string "patron_type", limit: 1, null: false
+    t.string "patron_type_desc", limit: 32
+  end
+
+  create_table "ezb_print_dates", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.datetime "print_date"
+    t.string "note", limit: 256
+    t.datetime "process_date"
+    t.datetime "load_time", null: false
+    t.integer "library_id"
+    t.bigint "version", null: false
+  end
+
+  create_table "ezb_report_distributions", force: :cascade do |t|
+    t.string "email_addr", limit: 32, null: false
+    t.integer "institution_id", null: false
+    t.bigint "version", null: false
+    t.string "library_id", limit: 255, null: false
+  end
+
+  create_table "ezb_ship_dates", force: :cascade do |t|
+    t.string "request_number", limit: 12
+    t.string "ship_date", limit: 24
+    t.string "exception_code", limit: 3
+    t.datetime "process_date"
+    t.datetime "load_time", null: false
+    t.bigint "version", null: false
+  end
+
+  create_table "ill_borrowings", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "request_type", limit: 255, null: false
+    t.datetime "transaction_date", null: false
+    t.bigint "transaction_number", null: false
+    t.string "transaction_status", limit: 255, null: false
+  end
+
+  create_table "ill_caches", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.datetime "date_created", null: false
+    t.text "json_data", null: false
+    t.datetime "last_updated", null: false
+  end
+
+  create_table "ill_fiscal_start_months", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.integer "month", null: false
+  end
+
+  create_table "ill_groups", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "group_name", limit: 255, null: false
+    t.integer "group_no", null: false
+  end
+
+  create_table "ill_lender_groups", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.integer "demographic"
+    t.integer "group_no", null: false
+    t.string "lender_code", limit: 255, null: false
+  end
+
+  create_table "ill_lender_infos", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "address", limit: 328
+    t.string "billing_category", limit: 255
+    t.string "lender_code", limit: 255, null: false
+    t.string "library_name", limit: 255
+  end
+
+  create_table "ill_lending_trackings", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.datetime "arrival_date"
+    t.datetime "completion_date"
+    t.string "completion_status", limit: 255
+    t.string "request_type", limit: 255, null: false
+    t.bigint "transaction_number", null: false
+    t.float "turnaround"
+  end
+
+  create_table "ill_lendings", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "request_type", limit: 255, null: false
+    t.string "status", limit: 255, null: false
+    t.datetime "transaction_date", null: false
+    t.bigint "transaction_number", null: false
+  end
+
+  create_table "ill_locations", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "abbrev", limit: 255, null: false
+    t.string "location", limit: 255, null: false
+  end
+
+  create_table "ill_reference_numbers", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "oclc", limit: 255
+    t.string "ref_number", limit: 255
+    t.string "ref_type", limit: 255
+    t.bigint "transaction_number", null: false
+  end
+
+  create_table "ill_trackings", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.datetime "order_date"
+    t.string "process_type", limit: 255, null: false
+    t.datetime "receive_date"
+    t.datetime "request_date"
+    t.string "request_type", limit: 255, null: false
+    t.datetime "ship_date"
+    t.bigint "transaction_number", null: false
+    t.float "turnaround_req_rec"
+    t.float "turnaround_req_shp"
+    t.float "turnaround_shp_rec"
+    t.boolean "turnarounds_processed", null: false
+  end
+
+  create_table "ill_transactions", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "billing_amount", limit: 255
+    t.string "call_number", limit: 255
+    t.string "cited_in", limit: 255
+    t.string "esp_number", limit: 255
+    t.string "ifm_cost", limit: 255
+    t.string "in_process_date", limit: 255
+    t.string "issn", limit: 255
+    t.string "lender_codes", limit: 255
+    t.string "lending_library", limit: 255
+    t.string "loan_author", limit: 255
+    t.string "loan_date", limit: 255
+    t.string "loan_edition", limit: 255
+    t.string "loan_location", limit: 255
+    t.string "loan_publisher", limit: 255
+    t.string "loan_title", limit: 255
+    t.string "location", limit: 255
+    t.string "photo_article_author", limit: 255
+    t.string "photo_article_title", limit: 255
+    t.string "photo_journal_inclusive_pages", limit: 255
+    t.string "photo_journal_issue", limit: 255
+    t.string "photo_journal_month", limit: 255
+    t.string "photo_journal_title", limit: 255
+    t.string "photo_journal_volume", limit: 255
+    t.string "photo_journal_year", limit: 255
+    t.string "process_type", limit: 255
+    t.string "reason_for_cancellation", limit: 255
+    t.string "request_type", limit: 255
+    t.string "system_id", limit: 255
+    t.datetime "transaction_date"
+    t.bigint "transaction_number", null: false
+    t.string "transaction_status", limit: 255
+    t.string "user_id", limit: 255
+    t.bigint "user_name"
+    t.string "borrower_nvtgc", limit: 255
+    t.string "original_nvtgc", limit: 255
+  end
+
+  create_table "ill_user_infos", force: :cascade do |t|
+    t.bigint "version", null: false
+    t.string "department", limit: 255
+    t.string "nvtgc", limit: 255
+    t.string "org", limit: 255
+    t.string "rank", limit: 255
+    t.string "user_id", limit: 255, null: false
   end
 
   create_table "keyserver_audits", force: :cascade do |t|
@@ -421,7 +736,7 @@ ActiveRecord::Schema.define(version: 2018_08_22_192404) do
     t.string "order_flags"
   end
 
-  create_table "keyserver_purchase_supports", force: :cascade do |t|
+  create_table "keyserver_purchase_support", force: :cascade do |t|
     t.integer "support_id"
     t.integer "support_server_id"
     t.integer "support_purchase_id"
@@ -464,6 +779,11 @@ ActiveRecord::Schema.define(version: 2018_08_22_192404) do
     t.integer "user_external_id"
     t.string "user_notes"
     t.string "user_flags"
+  end
+
+  create_table "test", force: :cascade do |t|
+    t.bigint "test_int"
+    t.string "test_8c", limit: 8
   end
 
 end
