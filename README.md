@@ -28,6 +28,54 @@ After data conversions, invoke the importer task:
 
     rake import:csv:keyserver[/path/to/csv/files]
 
+### MySql:borrowdirect
+
+To generate schema for borrowdirect mysql database, first `config/database_borrrowdirect.yml` needs to be created with connection properties.
+
+Then need to generate an empty migration file to store borrowdirect migration script:
+
+    rails g migration import-borrowdirect
+
+Run the following to populate the newly generated migration file:
+
+    rake import:mysql:generate_borrrowdirect_migration[/path/to/migration-file/]
+
+Finally run the migration:
+
+    rake db:migrate
+
+### MySql:ezborrow
+
+To generate schema for ezborrow mysql database, first `config/database_ezborrow.yml` needs to be created with connection properties.
+
+Then need to generate an empty migration file to store ezborrow migration script:
+
+    rails g migration import-ezborrow
+
+Run the following to populate the newly generated migration file:
+
+    rake import:mysql:generate_ezborrow_migration[/path/to/migration-file/]
+
+Finally run the migration:
+
+    rake db:migrate
+
+### MySql:illiad
+
+To generate schema for ezborrow mysql database, first `config/database_illiad.yml` needs to be created with connection properties.
+
+Then need to generate an empty migration file to store illiad migration script:
+
+    rails g migration import-illiad
+
+Run the following to populate the newly generated migration file:
+
+    rake import:mysql:generate_illiad_migration[/path/to/migration-file/]
+
+Finally run the migration:
+
+    rake db:migrate
+
 ### ActiveAdmin
 
 Activeadmin should already be setup with the `db:migrate`, after db:migrate to set ActiveAdmin sample user:
