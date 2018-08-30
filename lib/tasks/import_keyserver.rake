@@ -27,7 +27,6 @@ namespace :import do
 
       filenames = Dir.new(source_dir).reject{|f| /^\.\.?$/.match(f)}
       filenames.each do |filename|
-        next if filename != "Audits.csv"
         log "Processing #{filename}"
 
         base_name = File.basename(filename, ".*")
