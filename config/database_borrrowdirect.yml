@@ -12,9 +12,9 @@ default: &default
 
 development:
   <<: *default
-  database: metridoc_mysql_dev
-  username: metridoc_mysql_dev
-  password: metridoc_mysql_dev
+  database: metridoc_3_22_17
+  username: metridoc_3_22_17
+  password: metridoc_3_22_17
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

@@ -3,12 +3,12 @@ namespace :import do
 
     desc "Generate migration code for borrrowdirect and save into a target file"
     task :generate_borrrowdirect_migration, [:output_file_name] => [:environment]  do |_t, args|
-      generate_migration("database_borrrowdirect.yml", args[:output_file_name], 'bd_')
+      generate_migration("database_borrrowdirect.yml", args[:output_file_name], 'bd_', 'borrowdirect')
     end
 
     desc "Generate migration code for ezborrow and save into a target file"
     task :generate_ezborrow_migration, [:output_file_name] => [:environment]  do |_t, args|
-      generate_migration("database_ezborrow.yml", args[:output_file_name], 'ezb_')
+      generate_migration("database_ezborrow.yml", args[:output_file_name], 'ezb_', 'ezborrow')
     end
 
     desc "Copy data from mysql into app database"
@@ -39,6 +39,8 @@ def import_mysql_data(db_yml_name, prefix, namespace)
   end
 
   connection.close
+
+  table_names = ["ezb_call_number"]
 
   table_names.each do |table_name|
     log "Importing mysql table #{table_name}"
@@ -134,7 +136,7 @@ def convert_column_type(t)
 end
 
 
-def generate_migration(db_yml_name, output_file_name, prefix)
+def generate_migration(db_yml_name, output_file_name, prefix, namespace)
   output_file_path = Rails.root.join("db/migrate/#{output_file_name}").to_s
 
   first_line = File.open(output_file_path) {|f| f.readline}
@@ -154,7 +156,7 @@ def generate_migration(db_yml_name, output_file_name, prefix)
 
     column_results = connection.select_all("SHOW COLUMNS FROM #{table_name};")
 
-    output_file.puts "    create_table :#{table_name.pluralize} do |t|"
+    output_file.puts "    create_table :#{namespace}_#{table_name[prefix.length..-1].pluralize} do |t|"
     column_results.each do |cr|
       field = cr["Field"]
       type = cr["Type"]

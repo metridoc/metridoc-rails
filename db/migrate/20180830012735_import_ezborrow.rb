@@ -1,6 +1,6 @@
 class ImportEzborrow < ActiveRecord::Migration[5.2]
   def change
-    create_table :ezb_bibliographies do |t|
+    create_table :ezborrow_bibliographies do |t|
       t.integer :bibliography_id , limit: 8, null: false
       t.string :request_number , limit: 12
       t.string :patron_id , limit: 20
@@ -28,7 +28,7 @@ class ImportEzborrow < ActiveRecord::Migration[5.2]
       t.string :publication_date , limit: 255
     end
 
-    create_table :ezb_call_numbers do |t|
+    create_table :ezborrow_call_numbers do |t|
       t.integer :call_number_id , limit: 8, null: false
       t.string :request_number , limit: 12
       t.integer :holdings_seq 
@@ -39,14 +39,14 @@ class ImportEzborrow < ActiveRecord::Migration[5.2]
       t.integer :version , limit: 8, null: false
     end
 
-    create_table :ezb_exception_codes do |t|
+    create_table :ezborrow_exception_codes do |t|
       t.string :exception_code , limit: 3, null: false
       t.string :exception_code_desc , limit: 64
       t.integer :ezb_exception_code_id , null: false
       t.integer :version , limit: 8, null: false
     end
 
-    create_table :ezb_institutions do |t|
+    create_table :ezborrow_institutions do |t|
       t.string :catalog_code , limit: 1, null: false
       t.string :institution , limit: 64, null: false
       t.integer :library_id , null: false
@@ -54,18 +54,18 @@ class ImportEzborrow < ActiveRecord::Migration[5.2]
       t.integer :version , limit: 8, null: false
     end
 
-    create_table :ezb_min_ship_dates do |t|
+    create_table :ezborrow_min_ship_dates do |t|
       t.string :request_number , limit: 12, null: false
       t.timestamp :min_ship_date , null: false
     end
 
-    create_table :ezb_patron_types do |t|
+    create_table :ezborrow_patron_types do |t|
       t.string :patron_type , limit: 1, null: false
       t.string :patron_type_desc , limit: 32
       t.integer :ezb_patron_type_id , null: false
     end
 
-    create_table :ezb_print_dates do |t|
+    create_table :ezborrow_print_dates do |t|
       t.integer :print_date_id , limit: 8, null: false
       t.string :request_number , limit: 12
       t.datetime :print_date 
@@ -76,7 +76,7 @@ class ImportEzborrow < ActiveRecord::Migration[5.2]
       t.integer :version , limit: 8, null: false
     end
 
-    create_table :ezb_report_distributions do |t|
+    create_table :ezborrow_report_distributions do |t|
       t.string :email_addr , limit: 32, null: false
       t.integer :institution_id , null: false
       t.integer :ezb_report_distribution_id , limit: 8, null: false
@@ -84,7 +84,7 @@ class ImportEzborrow < ActiveRecord::Migration[5.2]
       t.string :library_id , limit: 255, null: false
     end
 
-    create_table :ezb_ship_dates do |t|
+    create_table :ezborrow_ship_dates do |t|
       t.integer :ship_date_id , limit: 8, null: false
       t.string :request_number , limit: 12
       t.string :ship_date , limit: 24
