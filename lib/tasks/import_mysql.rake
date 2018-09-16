@@ -2,18 +2,13 @@ namespace :import do
   namespace :mysql do
 
     desc "Generate migration code for borrrowdirect and save into a target file"
-    task :generate_borrrowdirect_migration, [:output_file_path] => [:environment]  do |_t, args|
-      generate_migration("database_borrrowdirect.yml", args[:output_file_path], 'bd_')
+    task :generate_borrrowdirect_migration, [:output_file_name] => [:environment]  do |_t, args|
+      generate_migration("database_borrrowdirect.yml", args[:output_file_name], 'bd_')
     end
 
     desc "Generate migration code for ezborrow and save into a target file"
-    task :generate_ezborrow_migration, [:output_file_path] => [:environment]  do |_t, args|
-      generate_migration("database_ezborrow.yml", args[:output_file_path], 'ezb_')
-    end
-
-    desc "Generate migration code for ILLiad and save into a target file"
-    task :generate_illiad_migration, [:output_file_path] => [:environment]  do |_t, args|
-      generate_migration("database_illiad.yml", args[:output_file_path], 'ill_')
+    task :generate_ezborrow_migration, [:output_file_name] => [:environment]  do |_t, args|
+      generate_migration("database_ezborrow.yml", args[:output_file_name], 'ezb_')
     end
 
     desc "Copy data from mysql into app database"
@@ -135,7 +130,9 @@ def convert_column_type(t)
 end
 
 
-def generate_migration(db_yml_name, output_file_path, prefix)
+def generate_migration(db_yml_name, output_file_name, prefix)
+  output_file_path = Rails.root.join("db/migrate/#{output_file_name}").to_s
+
   first_line = File.open(output_file_path) {|f| f.readline}
 
   output_file = File.open(output_file_path, "w")
@@ -166,7 +163,9 @@ def generate_migration(db_yml_name, output_file_path, prefix)
 
       column_type, limit = convert_column_type(type)
 
-      next if (key == "PRI" || (field == 'id' && extra == 'auto_increment') ) && column_type == :integer
+      if field == 'id'
+        field = generate_id_field_name(table_name)
+      end
 
       column_definition = "      t.#{column_type.to_s} :#{field} "
       column_definition += ", limit: #{limit}" if limit
@@ -183,4 +182,8 @@ def generate_migration(db_yml_name, output_file_path, prefix)
 
   output_file.close
   log "Successfully finished generating schema into #{output_file_path}"
+end
+
+def generate_id_field_name(table_name)
+  "#{table_name.tableize.singularize}_id"
 end
