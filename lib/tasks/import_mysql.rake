@@ -18,7 +18,7 @@ namespace :import do
 
     desc "Copy borrowdirect data from mysql into app database"
     task :import_borrowdirect_data => [:environment]  do |_t, args|
-      import_mysql_data("database_ezborrow.yml", 'bd_', 'Borrowdirect')
+      import_mysql_data("database_borrowdirect.yml", 'bd_', 'Borrowdirect')
     end
 
   end
