@@ -20,7 +20,7 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.2]
       t.integer :lender 
       t.string :supplier_code , limit: 20
       t.string :call_number , limit: 256
-      t.timestamp :load_time , null: false
+      t.timestamp :load_time
       t.integer :oclc 
       t.string :oclc_text , limit: 25
       t.integer :bibliography_id , limit: 8, null: false

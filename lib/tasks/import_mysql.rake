@@ -11,9 +11,14 @@ namespace :import do
       generate_migration("database_ezborrow.yml", args[:output_file_name], 'ezb_', 'ezborrow')
     end
 
-    desc "Copy data from mysql into app database"
+    desc "Copy ezborrow data from mysql into app database"
     task :import_ezborrow_data => [:environment]  do |_t, args|
       import_mysql_data("database_ezborrow.yml", 'ezb_', 'Ezborrow')
+    end
+
+    desc "Copy borrowdirect data from mysql into app database"
+    task :import_borrowdirect_data => [:environment]  do |_t, args|
+      import_mysql_data("database_ezborrow.yml", 'bd_', 'Borrowdirect')
     end
 
   end
@@ -39,8 +44,6 @@ def import_mysql_data(db_yml_name, prefix, namespace)
   end
 
   connection.close
-
-  table_names = ["ezb_call_number"]
 
   table_names.each do |table_name|
     log "Importing mysql table #{table_name}"

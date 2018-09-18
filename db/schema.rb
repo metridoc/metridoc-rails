@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 2018_08_30_012735) do
     t.integer "lender"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
-    t.datetime "load_time", null: false
+    t.datetime "load_time"
     t.integer "oclc"
     t.string "oclc_text", limit: 25
     t.bigint "bibliography_id", null: false
