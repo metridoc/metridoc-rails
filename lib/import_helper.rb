@@ -187,8 +187,144 @@ module ImportHelper
       puts "#{Time.now} - #{m}"
     end
 
+    def convert_mssql_column_type(type_name, precision, scale)
+      r_column_type = nil
+      r_limit = nil
+      r_precision = nil
+      r_scale = nil
 
+      if /int/.match(type_name)
+        r_column_type = :integer
+      elsif /nvarchar/.match(type_name) || /varchar/.match(type_name)
+        r_column_type = :string
+        r_limit = precision
+      elsif /nchar/.match(type_name) || /char/.match(type_name)
+        r_column_type = :string
+        r_limit = precision
+      elsif /datetime/.match(type_name)
+        r_column_type = :datetime
+      elsif /varbinary/.match(type_name)
+        r_column_type = :binary
+        r_limit = precision
+      elsif /decimal/.match(type_name)
+        r_column_type = :decimal
+        r_precision = precision
+        r_scale = scale
+      else
+        raise "unable to find type for #{type_name}"
+      end
 
+      return [r_column_type, r_limit, r_precision, r_scale]
+    end
+
+    def generate_mssql_migration(output_file_name, prefix, namespace)
+      db_conn_hash = {    host:     ENV["#{namespace.upcase}_MSSQL_HOST"],
+                          port:     ENV["#{namespace.upcase}_MSSQL_PORT"],
+                          database: ENV["#{namespace.upcase}_MSSQL_DB"],
+                          username: ENV["#{namespace.upcase}_MSSQL_UID"],
+                          password: ENV["#{namespace.upcase}_MSSQL_PWD"],
+                          adapter:  'sqlserver',
+                          pool:     5,
+                          timeout:  5000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      output_file_path = Rails.root.join('tmp', output_file_name).to_s
+
+      output_file = File.open(output_file_path, "w")
+
+      table_results = connection.select_all("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME LIKE '#{prefix}%';")
+      table_results.each do |tr|
+        table_name = tr.values.first.downcase
+
+        column_results = connection.select_all("exec sp_columns #{table_name};")
+
+        output_file.puts "    create_table :#{namespace}_#{table_name[prefix.length..-1].pluralize} do |t|"
+        column_results.each do |cr|
+          column_name = cr["COLUMN_NAME"].downcase rescue ""
+          precision = cr["PRECISION"]
+          scale = cr["SCALE"]
+          length = cr["LENGTH"]
+          type_name = cr["TYPE_NAME"].downcase rescue ""
+          is_nullable = cr["IS_NULLABLE"]
+          column_def = cr["COLUMN_DEF"].downcase rescue ""
+
+          # puts "#{table_name} - #{column_name} - #{type_name} - length:#{length} - precision:#{precision} - scale: #{scale}"
+
+          column_type, limit, precision, scale = convert_mssql_column_type(type_name, precision, scale)
+
+          if column_name == 'id'
+            column_name = generate_id_field_name(table_name)
+          end
+
+          column_definition = "      t.#{column_type.to_s} :#{column_name} "
+          column_definition += ", limit: #{limit}" if limit
+          column_definition += ", precision: #{precision}" if precision
+          column_definition += ", scale: #{scale}" if scale
+          column_definition += ", null: false" if is_nullable == "NO"
+
+          output_file.puts column_definition
+        end
+        output_file.puts ""
+
+      end
+
+      output_file.puts ""
+      output_file.close
+      log "Successfully finished generating schema into #{output_file_path}"
+    end
+
+    def generate_mssql_definition(output_file_name, namespace)
+      db_conn_hash = {    host:     ENV["#{namespace.upcase}_MSSQL_HOST"],
+                          port:     ENV["#{namespace.upcase}_MSSQL_PORT"],
+                          database: ENV["#{namespace.upcase}_MSSQL_DB"],
+                          username: ENV["#{namespace.upcase}_MSSQL_UID"],
+                          password: ENV["#{namespace.upcase}_MSSQL_PWD"],
+                          adapter:  'sqlserver',
+                          pool:     5,
+                          timeout:  5000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      output_file_path = Rails.root.join('tmp', output_file_name).to_s
+
+      output_file = File.open(output_file_path, "w")
+
+      output_file.puts "#{db_conn_hash[:database]}"
+
+      table_results = connection.select_all("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE';")
+      table_results.each do |tr|
+        table_name = tr.values.first
+
+        output_file.puts "  #{table_name}"
+
+        column_results = connection.select_all("exec sp_columns #{table_name};")
+        column_results.each do |cr|
+          column_name = cr["COLUMN_NAME"].downcase rescue ""
+          precision = cr["PRECISION"]
+          scale = cr["SCALE"]
+          length = cr["LENGTH"]
+          type_name = cr["TYPE_NAME"].downcase rescue ""
+          is_nullable = cr["IS_NULLABLE"]
+          column_def = cr["COLUMN_DEF"].downcase rescue ""
+
+          column_definition = "    #{column_name}"
+          column_definition += ", #{type_name}" if type_name
+          column_definition += ", precision: #{precision}" if precision
+          column_definition += ", scale: #{scale}" if scale
+          column_definition += ", length: #{length}" if length && !precision
+          column_definition += ", null: false" if is_nullable == "NO"
+
+          output_file.puts column_definition
+        end
+        output_file.puts ""
+        output_file.puts ""
+
+      end
+
+      output_file.close
+      log "Successfully finished generating schema into #{output_file_path}"
+    end
 
   end
 end
