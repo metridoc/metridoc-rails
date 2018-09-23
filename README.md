@@ -2,6 +2,7 @@
 
 ## Setup development environment
 
+    brew install freetds # this may resolve some dependencies needed by tiny_tds, but not all of us had that problem.
     cp config/database.yml.example config/database.yml # modify as necessary
     rake db:create
 
