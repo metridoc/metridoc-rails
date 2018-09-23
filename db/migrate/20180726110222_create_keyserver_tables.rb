@@ -1,4 +1,4 @@
-class CreateKeyserverTables < ActiveRecord::Migration[5.2]
+class CreateKeyserverTables < ActiveRecord::Migration[5.1]
   def change
     create_table :keyserver_product_folders do |t|
       t.integer :prodfolder_id

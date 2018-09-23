@@ -20,5 +20,6 @@ module MetridocsRails510
       ENV[key.to_s] = value
     end if !Rails.env.production? && File.exists?(env_file)
 
+    config.autoload_paths += %W(#{Rails.root}/lib)
   end
 end

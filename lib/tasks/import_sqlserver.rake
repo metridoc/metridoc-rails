@@ -3,33 +3,33 @@ namespace :import do
 
     desc "Generate migration code for ezborrow and save into a target file"
     task :generate_ezborrow_migration, [:output_file_name] => [:environment]  do |_t, args|
-      conn_params_hash = {   host:     ENV['EZBORROW_MSQSQL_HOST'],
-                             port:     ENV['EZBORROW_MSQSQL_PORT'],
-                             database: ENV['EZBORROW_MSQSQL_DB'],
-                             username: ENV['EZBORROW_MSQSQL_UID'],
-                             password: ENV['EZBORROW_MSQSQL_PWD']
+      conn_params_hash = {   host:     ENV['EZBORROW_MSSQL_HOST'],
+                             port:     ENV['EZBORROW_MSSQL_PORT'],
+                             database: ENV['EZBORROW_MSSQL_DB'],
+                             username: ENV['EZBORROW_MSSQL_UID'],
+                             password: ENV['EZBORROW_MSSQL_PWD']
       } 
       generate_migration(conn_params_hash, args[:output_file_name], '', 'ezborrow')
     end
 
     desc "Generate sql defintion for ezborrow and save into a target file"
     task :generate_ezborrow_sql_definition, [:output_file_name] => [:environment]  do |_t, args|
-      conn_params_hash = {   host:     ENV['EZBORROW_MSQSQL_HOST'],
-                             port:     ENV['EZBORROW_MSQSQL_PORT'],
-                             database: ENV['EZBORROW_MSQSQL_DB'],
-                             username: ENV['EZBORROW_MSQSQL_UID'],
-                             password: ENV['EZBORROW_MSQSQL_PWD']
+      conn_params_hash = {   host:     ENV['EZBORROW_MSSQL_HOST'],
+                             port:     ENV['EZBORROW_MSSQL_PORT'],
+                             database: ENV['EZBORROW_MSSQL_DB'],
+                             username: ENV['EZBORROW_MSSQL_UID'],
+                             password: ENV['EZBORROW_MSSQL_PWD']
       } 
       generate_sql_definition(conn_params_hash, args[:output_file_name], '', 'ezborrow')
     end
 
     desc "Generate sql defintion for borrowdirect and save into a target file"
     task :generate_borrowdirect_sql_definition, [:output_file_name] => [:environment]  do |_t, args|
-      conn_params_hash = {   host:     ENV['BORROWDIRECT_MSQSQL_HOST'],
-                             port:     ENV['BORROWDIRECT_MSQSQL_PORT'],
-                             database: ENV['BORROWDIRECT_MSQSQL_DB'],
-                             username: ENV['BORROWDIRECT_MSQSQL_UID'],
-                             password: ENV['BORROWDIRECT_MSQSQL_PWD']
+      conn_params_hash = {   host:     ENV['BORROWDIRECT_MSSQL_HOST'],
+                             port:     ENV['BORROWDIRECT_MSSQL_PORT'],
+                             database: ENV['BORROWDIRECT_MSSQL_DB'],
+                             username: ENV['BORROWDIRECT_MSSQL_UID'],
+                             password: ENV['BORROWDIRECT_MSSQL_PWD']
       } 
       generate_sql_definition(conn_params_hash, args[:output_file_name], '', 'ezborrow')
     end
