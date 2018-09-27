@@ -1,4 +1,4 @@
-class ImportEzborrow < ActiveRecord::Migration[5.2]
+class ImportEzborrow < ActiveRecord::Migration[5.1]
   def change
     create_table :ezborrow_bibliographies do |t|
       t.integer :bibliography_id , limit: 8, null: false

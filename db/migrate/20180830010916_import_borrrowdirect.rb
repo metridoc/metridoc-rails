@@ -1,4 +1,4 @@
-class ImportBorrrowdirect < ActiveRecord::Migration[5.2]
+class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
   def change
     create_table :borrowdirect_bibliographies do |t|
       t.string :request_number , limit: 12
