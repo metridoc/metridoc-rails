@@ -34,3 +34,5 @@
 # Ignore local test env. file
 /config/local_env.yml
 
+# Ignore yml config files
+/config/data_sources/*
