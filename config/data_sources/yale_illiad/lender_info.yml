@@ -1,0 +1,12 @@
+load_sequence:         3
+target_model:          "Illiad::LenderInfo"
+truncate_before_load:  "yes"
+filter:                ""
+select_sql:            "DISTINCT LenderString, LibraryName, loanbillingcategory, address1+'; '+address2+'; '+address3+'; '+address4 AS address"
+source_tables:         "LenderAddressesALL"
+unique_columns:
+column_mappings:
+  LenderString:         lender_code
+  LibraryName:          library_name
+  loanbillingcategory:  billing_category
+  address:              address

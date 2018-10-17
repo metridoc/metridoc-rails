@@ -1,0 +1,53 @@
+load_sequence:         9
+adapter:               'native_sql'
+target_model:          "Illiad::LendingTracking"
+truncate_before_load:  "yes"
+sqls:
+  - |
+                        INSERT INTO illiad_trackings (
+                                  institution_id,
+                                  transaction_number,
+                                  request_type,
+                                  process_type,
+                                  request_date,
+                                  turnarounds_processed,
+                                  created_at,
+                                  updated_at
+                        )
+                        SELECT    {{institution_id}},
+                                  transaction_number,
+                                  request_type,
+                                  'Borrowing',
+                                  transaction_date,
+                                  false,
+                                  NOW(),
+                                  NOW()
+                        FROM  illiad_borrowings
+                        WHERE transaction_status = 'Awaiting Copyright Clearance';
+
+  - |
+                        UPDATE illiad_trackings
+                        SET order_date = B.transaction_date
+                        FROM illiad_borrowings B
+                        WHERE B.transaction_number = illiad_trackings.transaction_number
+                          AND B.transaction_status = 'Request Sent'
+                          AND illiad_trackings.order_date IS NULL;
+
+
+def arrivalDateSqlStmt = "insert into ill_lending_tracking (transaction_number, request_type, arrival_date) " +
+        " select transaction_number, request_type, transaction_date " +
+        " from ill_lending where status = 'Awaiting Lending Request Processing'"
+
+def completionSqlStmt = "update ill_lending_tracking t, ill_lending l " +
+        " set completion_date = transaction_date, completion_status = status " +
+        " where l.transaction_number = t.transaction_number and status " +
+        " not in ('Awaiting Lending Request Processing','Cancelled by ILL Staff')"
+
+//makes sure that any shipped Loan takes precedence over any other completion time, should be run after [completionSqlStmt]
+def shipSqlStmt = "update ill_lending_tracking t, ill_lending l " +
+        " set completion_date = transaction_date, completion_status = status " +
+        " where l.transaction_number = t.transaction_number and status = 'Item Shipped'"
+
+def cancelledSqlStmt = "update ill_lending_tracking t, ill_lending l " +
+        " set completion_date = transaction_date, completion_status = status " +
+        " where l.transaction_number = t.transaction_number and status = 'Cancelled by ILL Staff'"

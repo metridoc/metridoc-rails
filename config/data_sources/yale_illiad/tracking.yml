@@ -1,0 +1,58 @@
+load_sequence:         8
+adapter:               'native_sql'
+target_model:          "Illiad::Tracking"
+truncate_before_load:  "yes"
+sqls:
+  - |
+                        INSERT INTO illiad_trackings (
+                                  institution_id,
+                                  transaction_number,
+                                  request_type,
+                                  process_type,
+                                  request_date,
+                                  turnarounds_processed,
+                                  created_at,
+                                  updated_at
+                        )
+                        SELECT    {{institution_id}},
+                                  transaction_number,
+                                  request_type,
+                                  'Borrowing',
+                                  transaction_date,
+                                  false,
+                                  NOW(),
+                                  NOW()
+                        FROM  illiad_borrowings
+                        WHERE transaction_status = 'Awaiting Copyright Clearance';
+
+  - |
+                        UPDATE illiad_trackings
+                        SET order_date = B.transaction_date
+                        FROM illiad_borrowings B
+                        WHERE B.transaction_number = illiad_trackings.transaction_number
+                          AND B.transaction_status = 'Request Sent'
+                          AND illiad_trackings.order_date IS NULL;
+
+  - |
+                        UPDATE illiad_trackings
+                        SET ship_date = B.transaction_date
+                        FROM illiad_borrowings B
+                        WHERE B.transaction_number = illiad_trackings.transaction_number
+                          AND B.transaction_status = 'Shipped'
+                          AND illiad_trackings.ship_date IS NULL;
+
+  - |
+                        UPDATE illiad_trackings
+                        SET receive_date = B.transaction_date
+                        FROM illiad_borrowings B
+                        WHERE B.transaction_number = illiad_trackings.transaction_number
+                          AND B.transaction_status = 'Awaiting Post Receipt Processing'
+                          AND illiad_trackings.receive_date IS NULL;
+
+  - |
+                        UPDATE illiad_trackings
+                        SET receive_date = B.transaction_date
+                        FROM illiad_borrowings B
+                        WHERE B.transaction_number = illiad_trackings.transaction_number
+                          AND B.transaction_status = 'Delivered to Web'
+                          AND illiad_trackings.receive_date IS NULL;

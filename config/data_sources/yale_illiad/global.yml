@@ -1,0 +1,10 @@
+---
+institution_code: 'YALE'
+adapter:          'sqlserver'
+host:             ENV["ILLIAD_MSSQL_HOST"]
+port:             ENV["ILLIAD_MSSQL_PORT"]
+database:         ENV["ILLIAD_MSSQL_DB"]
+username:         ENV["ILLIAD_MSSQL_UID"]
+password:         ENV["ILLIAD_MSSQL_PWD"]
+pool:             5
+timeout:          5000
