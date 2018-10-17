@@ -354,6 +354,7 @@ module ImportHelper
 
         next if sequences_only.present? && !seq.in?(sequences_only)
 
+        #TODO Add other types of load here as well, such as mysql, csv, etc.
         table_params = global_params.merge(table_params)
         if table_params["adapter"] == "sqlserver"
           import_mssql_table(table_params)
