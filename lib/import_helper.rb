@@ -327,6 +327,28 @@ module ImportHelper
     end
 
     def load_insitutition(folder_name, sequences_only = [])
+      get_tasks_yamls(folder_name, sequences_only).each do |task|
+        puts "Running job: #{task["load_sequence"]}"
+        #TODO Add other types of load here as well, such as mysql, csv, etc.
+        if task["adapter"] == "sqlserver"
+          import_mssql_table(task)
+        elsif task["adapter"] == "native_sql"
+          execute_native_query(task)
+        end
+      end
+    end
+
+    def export_insitutition(folder_name, output_path, sequences_only = [])
+      get_tasks_yamls(folder_name, sequences_only).each do |task|
+        puts "Running job: #{task["load_sequence"]}"
+        #TODO Add other types of load here as well, such as mysql
+        if task["adapter"] == "sqlserver"
+          export_to_mssql_table_to_csv(task, File.join(output_path, "#{task["target_model"]}.csv"))
+        end
+      end
+    end
+
+    def get_tasks_yamls(folder_name, sequences_only = [])
       sequences_only = [sequences_only] unless sequences_only.is_a?(Array)
 
       r = Rails.root.join('config','data_sources', folder_name)
@@ -345,6 +367,7 @@ module ImportHelper
       end
 
       full_paths = Dir.glob(r.join("**", "*"))
+      tasks = []
       full_paths.each do |full_path|
         next if File.basename(full_path) == "global.yml"
 
@@ -354,17 +377,10 @@ module ImportHelper
 
         next if sequences_only.present? && !seq.in?(sequences_only)
 
-        #TODO Add other types of load here as well, such as mysql, csv, etc.
-        table_params = global_params.merge(table_params)
-        if table_params["adapter"] == "sqlserver"
-          import_mssql_table(table_params)
-        elsif table_params["adapter"] == "native_sql"
-          execute_native_query(table_params)
-        end
-
+        tasks << global_params.merge(table_params)
       end
-      
-      
+
+      tasks.sort_by!{|t| t["load_sequence"]}
     end
 
     def execute_native_query(params)
@@ -384,95 +400,23 @@ module ImportHelper
     def import_mssql_table(params)
       institution_id = Institution.get_id_from_code(params["institution_code"])
 
-      db_conn_hash = {    host:     params["host"],
-                          port:     params["port"],
-                          database: params["database"],
-                          username: params["username"],
-                          password: params["password"],
-                          adapter:  'sqlserver',
-                          pool:     5,
-                          timeout:  60000 }
-
-      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
-
       target_model = params["target_model"]
       truncate_before_load = params["truncate_before_load"] == "yes"
-      filter = params["filter"]
-      select_sql = params["select_sql"]
-      source_tables = params["source_tables"]
-      unique_column = params["unique_column"]
-      group_by_sql = params["group_by_sql"]
-      column_mappings = params["column_mappings"] || {}
-      fetch_rows_size = params["fetch_rows_size"] || 0
-
-      column_mappings = {} unless column_mappings.is_a?(Hash)
-      fetch_rows_size = fetch_rows_size.to_i
-
-      do_paging = fetch_rows_size > 0 && unique_column.present?
-
-      if do_paging
-        sql =  " SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
-               " FROM " + source_tables +
-               " WHERE 1=1 "
-        sql += "   AND (#{filter}) " if filter.present?
-        if group_by_sql.present?
-          sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
-        end
-        sql += " ORDER BY #{ unique_column } ASC "
-      else
-        sql =  " SELECT " + select_sql +
-               " FROM " + source_tables +
-               " WHERE 1=1 "
-        sql += " AND (#{filter}) " if filter.present?
-        sql += " GROUP BY " + group_by_sql if group_by_sql.present?
-      end
-      sql.gsub!("\n", " ")
 
       require "csv"
 
+      # Write to a csv file to avoid having to have two open connections to two different databases
       csv_file_path =  Tempfile.new([target_model,'.csv'], 'tmp').path
-
-      CSV.open(csv_file_path, "wb") do |csv|
-        row_results = connection.select_all( sql )
-        if row_results.count > 0
-          csv << row_results.first.except("unique_column_val").keys.map { |x| column_mappings[x].present? ? column_mappings[x] : x }
-        end
-        last_unique_column_val = ""
-
-        done = false
-        while !done
-          row_results.each do |row|
-            csv << row.except("unique_column_val").values
-            last_unique_column_val = row["unique_column_val"]
-          end
-
-          if do_paging && last_unique_column_val.present?
-            sql = "  SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
-                  "  FROM " + source_tables +
-                  "  WHERE 1=1 "
-            sql += "   AND (#{filter}) " if filter.present?
-            sql += "   AND (#{unique_column}) > '#{last_unique_column_val}' "
-            if group_by_sql.present?
-              sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
-            end
-            sql += " ORDER BY #{ unique_column } ASC "
-            sql.gsub!("\n", " ")
-            row_results = connection.select_all( sql )
-            last_unique_column_val = ""
-          else
-            done = true
-          end
-
-        end # while !done
-
-      end # CSV.open
-
-      connection.close
+      export_to_mssql_table_to_csv(params, csv_file_path)
 
       app_db = YAML.load_file(File.join(Rails.root, "config", "database.yml"))[Rails.env.to_s] 
       connection = ActiveRecord::Base.establish_connection(app_db).connection
 
       class_name = target_model.constantize
+
+      if truncate_before_load
+        class_name.where(institution_id: institution_id).delete_all
+      end
 
       csv = CSV.read(csv_file_path)
 
@@ -539,13 +483,102 @@ module ImportHelper
         end
 
       end
+
       log "#{n_errors} errors with #{table_name}" if n_errors > 0
       log "Finished importing #{target_model}"
-
-      connection.close
     end
 
 
+    def export_to_mssql_table_to_csv(params, csv_file_path)
+      institution_id = Institution.get_id_from_code(params["institution_code"])
+
+      db_conn_hash = {    host:     params["host"],
+                          port:     params["port"],
+                          database: params["database"],
+                          username: params["username"],
+                          password: params["password"],
+                          adapter:  'sqlserver',
+                          pool:     5,
+                          timeout:  60000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      target_model = params["target_model"]
+      filter = params["filter"]
+      select_sql = params["select_sql"]
+      source_tables = params["source_tables"]
+      unique_column = params["unique_column"]
+      group_by_sql = params["group_by_sql"]
+      column_mappings = params["column_mappings"] || {}
+      fetch_rows_size = params["fetch_rows_size"] || 0
+
+      column_mappings = {} unless column_mappings.is_a?(Hash)
+      fetch_rows_size = fetch_rows_size.to_i
+
+      do_paging = fetch_rows_size > 0 && unique_column.present?
+
+      log "Started exporting #{target_model} into #{csv_file_path}"
+
+      if do_paging
+        sql =  " SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
+               " FROM " + source_tables +
+               " WHERE 1=1 "
+        sql += "   AND (#{filter}) " if filter.present?
+        if group_by_sql.present?
+          sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
+        end
+        sql += " ORDER BY #{ unique_column } ASC "
+      else
+        sql =  " SELECT " + select_sql +
+               " FROM " + source_tables +
+               " WHERE 1=1 "
+        sql += " AND (#{filter}) " if filter.present?
+        sql += " GROUP BY " + group_by_sql if group_by_sql.present?
+      end
+      sql.gsub!("\n", " ")
+
+      require "csv"
+
+      CSV.open(csv_file_path, "wb") do |csv|
+        row_results = connection.select_all( sql )
+        if row_results.count > 0
+          csv << row_results.first.except("unique_column_val").keys.map { |x| column_mappings[x].present? ? column_mappings[x] : x }
+        end
+        last_unique_column_val = ""
+
+        done = false
+        while !done
+          row_results.each do |row|
+            csv << row.except("unique_column_val").values
+            last_unique_column_val = row["unique_column_val"]
+          end
+
+          if do_paging && last_unique_column_val.present?
+            sql = "  SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
+                  "  FROM " + source_tables +
+                  "  WHERE 1=1 "
+            sql += "   AND (#{filter}) " if filter.present?
+            sql += "   AND (#{unique_column}) > '#{last_unique_column_val.to_s.gsub("'", "''")}' "
+            if group_by_sql.present?
+              sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
+            end
+            sql += " ORDER BY #{ unique_column } ASC "
+            sql.gsub!("\n", " ")
+            row_results = connection.select_all( sql )
+            last_unique_column_val = ""
+          else
+            done = true
+          end
+
+        end # while !done
+
+      end # CSV.open
+      connection.close
+      log "Finished exporting #{target_model} into #{csv_file_path}"
+
+      app_db = YAML.load_file(File.join(Rails.root, "config", "database.yml"))[Rails.env.to_s] 
+      connection = ActiveRecord::Base.establish_connection(app_db).connection
+    end
 
   end
 end

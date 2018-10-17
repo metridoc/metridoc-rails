@@ -2,10 +2,9 @@ load_sequence:         1
 target_model:          "Illiad::Group"
 truncate_before_load:  "yes"
 filter:                ""
-select_sql:            "DISTINCT GroupNumber, GroupName"
+select_sql:            "DISTINCT GroupNumber AS group_no, GroupName"
 source_tables:         "Groups"
 unique_columns:
   - group_no
 column_mappings:
-  GroupNumber: group_no
   GroupName:   group_name
