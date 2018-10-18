@@ -16,14 +16,6 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.timestamps null: false
     end
 
-    create_table :illiad_caches do |t|
-      t.belongs_to :institution, null: false
-      t.datetime :date_created , null: false
-      t.text :json_data , null: false
-      t.datetime :last_updated , null: false
-      t.timestamps null: false
-    end
-
     create_table :illiad_groups do |t|
       t.belongs_to :institution, null: false
       t.string :group_name , limit: 255, null: false
@@ -65,13 +57,6 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.string :request_type , limit: 255, null: false
       t.integer :transaction_number , limit: 8, null: false
       t.float :turnaround 
-      t.timestamps null: false
-    end
-
-    create_table :illiad_locations do |t|
-      t.belongs_to :institution, null: false
-      t.string :abbrev , limit: 255, null: false
-      t.string :location , limit: 255, null: false
       t.timestamps null: false
     end
 

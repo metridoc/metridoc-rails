@@ -1,4 +1,4 @@
-load_sequence:         10
+load_sequence:         11
 adapter:               'native_sql'
 target_model:          "Illiad::Group"
 truncate_before_load:  "no"

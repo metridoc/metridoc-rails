@@ -1,0 +1,16 @@
+load_sequence:         8
+target_model:          "Illiad::UserInfo"
+truncate_before_load:  "yes"
+filter: |
+                        EXISTS (
+                          SELECT *
+                          FROM  Transactions T
+                          WHERE T.username = U.username
+                        )
+select_sql: |
+                        SUBSTRING(sys.fn_sqlvarbasetostr(hashbytes('MD5', U.username)),3,32) AS user_id,
+                        U.department,
+                        U.nvtgc
+source_tables:          "UsersALL AS U"
+unique_column:          U.username
+fetch_rows_size:        1000
