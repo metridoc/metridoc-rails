@@ -1,16 +1,4 @@
 ActiveAdmin.register Keyserver::Audit do
   menu false
-# See permitted parameters documentation:
-# https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-#
-# permit_params :list, :of, :attributes, :on, :model
-#
-# or
-#
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
-
+  permit_params :audit_id, :audit_server_id, :audit_computer_id, :audit_program_id, :audit_size, :audit_count, :audit_first_seen, :audit_last_seen, :audit_last_used, :audit_serial_number, :audit_path
 end

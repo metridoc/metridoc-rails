@@ -1,16 +1,4 @@
 ActiveAdmin.register Keyserver::Server do
   menu false
-# See permitted parameters documentation:
-# https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-#
-# permit_params :list, :of, :attributes, :on, :model
-#
-# or
-#
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
-
+  permit_params :server_id, :server_type, :server_name, :server_computer, :server_serial_number, :server_version, :server_start_time, :server_gmt_offset, :server_time_zone, :server_seats, :server_full_clients, :server_floating_sessions, :server_floating_ratio, :server_licenses_in_use, :server_licenses_in_queue
 end
