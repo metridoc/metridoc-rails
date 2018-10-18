@@ -328,7 +328,7 @@ module ImportHelper
 
     def load_insitutition(folder_name, sequences_only = [])
       get_tasks_yamls(folder_name, sequences_only).each do |task|
-        puts "Running job: #{task["load_sequence"]}"
+        puts "Running task: #{task["load_sequence"]}"
         #TODO Add other types of load here as well, such as mysql, csv, etc.
         if task["adapter"] == "sqlserver"
           import_mssql_table(task)
@@ -340,7 +340,7 @@ module ImportHelper
 
     def export_insitutition(folder_name, output_path, sequences_only = [])
       get_tasks_yamls(folder_name, sequences_only).each do |task|
-        puts "Running job: #{task["load_sequence"]}"
+        puts "Running task: #{task["load_sequence"]}"
         #TODO Add other types of load here as well, such as mysql
         if task["adapter"] == "sqlserver"
           export_to_mssql_table_to_csv(task, File.join(output_path, "#{task["target_model"]}.csv"))
