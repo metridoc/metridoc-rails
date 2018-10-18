@@ -9,3 +9,4 @@ AdminUser.create!(email: 'admin@example.com', password: 'password', password_con
 
 Institution.create!(name: 'YALE', code: 'YALE') if Institution.of_code('YALE').blank?
 Institution.create!(name: 'UPENN', code: 'UPENN') if Institution.of_code('UPENN').blank?
+Institution.create!(name: 'PRINCETON', code: 'PRINCETON') if Institution.of_code('PRINCETON').blank?

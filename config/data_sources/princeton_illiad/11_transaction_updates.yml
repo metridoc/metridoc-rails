@@ -1,0 +1,17 @@
+load_sequence:         11
+adapter:               'native_sql'
+target_model:          "Illiad::Transaction"
+truncate_before_load:  "no"
+sqls:
+  - |
+                        UPDATE illiad_transactions
+                        SET lending_library = 'Other'
+                        WHERE lending_library is null
+                          AND institution_id = {{institution_id}}
+                        ;
+  - |
+                        UPDATE illiad_transactions
+                        SET lending_library = 'Other'
+                        WHERE lending_library NOT IN (SELECT DISTINCT lender_code FROM illiad_lender_groups)
+                          AND institution_id = {{institution_id}}
+                        ;

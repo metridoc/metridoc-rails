@@ -1,0 +1,28 @@
+load_sequence:         6
+target_model:          "Illiad::Lending"
+truncate_before_load:  "yes"
+filter: |
+                        (
+                            T1.RequestType = 'Article' 
+                            AND
+                            T2.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                            OR
+                            T1.RequestType = 'Loan'
+                            AND
+                            T2.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
+                        )
+select_sql: |
+                        T2.TransactionNumber AS transaction_number,
+                        T1.RequestType AS request_type,
+                        T2.ChangedTo AS status,
+                        MIN(T2.DateTime) AS transaction_date
+source_tables: |
+                        Transactions T1
+                        INNER JOIN Tracking T2 ON T2.TransactionNumber = T1.TransactionNumber AND T1.ProcessType = 'Lending'
+group_by_sql: |
+                        T2.TransactionNumber,
+                        T1.RequestType,
+                        T2.ChangedTo
+unique_column:          CONCAT(T1.TransactionNumber, '___', T1.RequestType, '___', T2.ChangedTo)
+# column_mappings:
+fetch_rows_size:        10000

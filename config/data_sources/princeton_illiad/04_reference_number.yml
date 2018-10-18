@@ -1,0 +1,15 @@
+load_sequence:         4
+target_model:          "Illiad::ReferenceNumber"
+truncate_before_load:  "yes"
+filter:                "T.TransactionStatus in ('Request Finished','Cancelled by ILL Staff')"
+select_sql: |
+                        I.TransactionNumber AS transaction_number, 
+                        I.OCLCNumber AS oclc, 
+                        I.Type AS ref_type,
+                        I.Data AS ref_number
+source_tables: |
+                        Transactions T
+                        INNER JOIN WorldCatInformation I ON I.TransactionNumber = T.TransactionNumber
+unique_column:          T.TransactionNumber
+column_mappings:
+fetch_rows_size:        10000
