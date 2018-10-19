@@ -28,7 +28,8 @@ sqls:
                         FROM illiad_lendings L
                         WHERE L.transaction_number = illiad_lending_trackings.transaction_number
                           AND L.status NOT IN ('Awaiting Lending Request Processing','Cancelled by ILL Staff')
-                          AND institution_id = {{institution_id}}
+                          AND L.institution_id = {{institution_id}}
+                          AND L.institution_id = illiad_lending_trackings.institution_id
 
   - |
                         UPDATE illiad_lending_trackings
@@ -37,7 +38,8 @@ sqls:
                         FROM illiad_lendings L
                         WHERE L.transaction_number = illiad_lending_trackings.transaction_number
                           AND L.status = 'Item Shipped'
-                          AND institution_id = {{institution_id}}
+                          AND L.institution_id = {{institution_id}}
+                          AND L.institution_id = illiad_lending_trackings.institution_id
 
   - |
                         UPDATE illiad_lending_trackings
@@ -46,4 +48,5 @@ sqls:
                         FROM illiad_lendings L
                         WHERE L.transaction_number = illiad_lending_trackings.transaction_number
                           AND L.status ='Cancelled by ILL Staff'
-                          AND institution_id = {{institution_id}}
+                          AND L.institution_id = {{institution_id}}
+                          AND L.institution_id = illiad_lending_trackings.institution_id

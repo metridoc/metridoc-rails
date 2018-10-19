@@ -32,7 +32,8 @@ sqls:
                         WHERE B.transaction_number = illiad_trackings.transaction_number
                           AND B.transaction_status = 'Request Sent'
                           AND illiad_trackings.order_date IS NULL
-                          AND institution_id = {{institution_id}}
+                          AND B.institution_id = {{institution_id}}
+                          AND B.institution_id = illiad_trackings.institution_id
 
   - |
                         UPDATE illiad_trackings
@@ -41,7 +42,8 @@ sqls:
                         WHERE B.transaction_number = illiad_trackings.transaction_number
                           AND B.transaction_status = 'Shipped'
                           AND illiad_trackings.ship_date IS NULL
-                          AND institution_id = {{institution_id}}
+                          AND B.institution_id = {{institution_id}}
+                          AND B.institution_id = illiad_trackings.institution_id
 
   - |
                         UPDATE illiad_trackings
@@ -50,7 +52,8 @@ sqls:
                         WHERE B.transaction_number = illiad_trackings.transaction_number
                           AND B.transaction_status = 'Awaiting Post Receipt Processing'
                           AND illiad_trackings.receive_date IS NULL
-                          AND institution_id = {{institution_id}}
+                          AND B.institution_id = {{institution_id}}
+                          AND B.institution_id = illiad_trackings.institution_id
 
   - |
                         UPDATE illiad_trackings
@@ -59,4 +62,5 @@ sqls:
                         WHERE B.transaction_number = illiad_trackings.transaction_number
                           AND B.transaction_status = 'Delivered to Web'
                           AND illiad_trackings.receive_date IS NULL
-                          AND institution_id = {{institution_id}}
+                          AND B.institution_id = {{institution_id}}
+                          AND B.institution_id = illiad_trackings.institution_id
