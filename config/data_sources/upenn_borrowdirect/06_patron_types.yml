@@ -1,0 +1,13 @@
+load_sequence:         6
+target_model:          "Borrowdirect::PatronType"
+truncate_before_load:  "yes"
+filter:                ""
+select_sql: |
+                       patron_type,
+                       patron_type_desc
+
+source_tables: |
+                       id_patron_type
+
+unique_column:         "patron_type"
+fetch_rows_size:       100

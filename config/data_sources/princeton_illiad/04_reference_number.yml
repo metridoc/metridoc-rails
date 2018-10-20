@@ -11,5 +11,5 @@ source_tables: |
                         Transactions T
                         INNER JOIN WorldCatInformation I ON I.TransactionNumber = T.TransactionNumber
 unique_column:          T.TransactionNumber
-column_mappings:
+# column_mappings:
 fetch_rows_size:        10000

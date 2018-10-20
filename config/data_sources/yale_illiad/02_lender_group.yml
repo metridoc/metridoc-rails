@@ -4,8 +4,7 @@ truncate_before_load:  "yes"
 filter:                ""
 select_sql:            "DISTINCT GroupNumber, LenderString"
 source_tables:         "GroupsLink"
-unique_columns:
-  - group_no
+unique_column:         "GroupNumber"
 column_mappings:
   GroupNumber:  group_no
   LenderString: lender_code

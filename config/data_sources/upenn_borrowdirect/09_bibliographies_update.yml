@@ -1,0 +1,9 @@
+load_sequence:         9
+adapter:               'native_sql'
+target_model:          "Borrowdirect::Bibliography"
+# truncate_before_load:  "no"
+sqls:
+  - |
+                        UPDATE borrowdirect_bibliographies
+                        SET oclc = CAST(oclc_text AS BIGINT)
+                        WHERE oclc_text IS NOT null AND oclc IS NULL;

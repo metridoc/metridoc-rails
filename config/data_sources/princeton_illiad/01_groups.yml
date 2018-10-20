@@ -4,7 +4,6 @@ truncate_before_load:  "yes"
 filter:                ""
 select_sql:            "DISTINCT GroupNumber AS group_no, GroupName"
 source_tables:         "Groups"
-unique_columns:
-  - group_no
+unique_column:         "GroupNumber"
 column_mappings:
   GroupName:   group_name

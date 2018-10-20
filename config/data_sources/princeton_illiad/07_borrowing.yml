@@ -30,5 +30,5 @@ source_tables: |
                             AND h.UserName = 'System'
                             AND CHARINDEX('shipped', entry) > 0
                           GROUP BY h.TransactionNumber, t.RequestType ) AS S
-column_mappings:
+# column_mappings:
 fetch_rows_size:        0

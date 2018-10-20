@@ -390,6 +390,20 @@ module ImportHelper
 
       sqls = [params["sql"]] if sqls.blank?
 
+      target_model = params["target_model"]
+      truncate_before_load = params["truncate_before_load"] == "yes"
+
+      class_name = target_model.constantize
+      has_institution_id = class_name.has_attribute?('institution_id')
+
+      if truncate_before_load
+        if has_institution_id
+          class_name.where(institution_id: institution_id).delete_all
+        else
+          class_name.delete_all
+        end
+      end
+
       sqls.each do |sql|
         sql.gsub!('{{institution_id}}', institution_id.to_s)
         log "Executing Query #{sql}"
@@ -414,8 +428,14 @@ module ImportHelper
 
       class_name = target_model.constantize
 
+      has_institution_id = class_name.has_attribute?('institution_id')
+
       if truncate_before_load
-        class_name.where(institution_id: institution_id).delete_all
+        if has_institution_id
+          class_name.where(institution_id: institution_id).delete_all
+        else
+          class_name.delete_all
+        end
       end
 
       csv = CSV.read(csv_file_path)
@@ -430,7 +450,8 @@ module ImportHelper
           records = []
           break
         end
-        z = {institution_id: institution_id}
+        z = {}
+        z.merge(institution_id: institution_id) if has_institution_id
         headers.each_with_index do |k,i| 
           v = row[i]
           z[k.underscore.to_sym] = v
@@ -570,6 +591,7 @@ module ImportHelper
             done = true
           end
 
+          done = true #TODO Testing
         end # while !done
 
       end # CSV.open
