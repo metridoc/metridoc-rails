@@ -591,7 +591,6 @@ module ImportHelper
             done = true
           end
 
-          done = true #TODO Testing
         end # while !done
 
       end # CSV.open

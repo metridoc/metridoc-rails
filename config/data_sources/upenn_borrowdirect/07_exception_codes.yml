@@ -10,4 +10,4 @@ source_tables: |
                        id_exception_code
 
 unique_column:         "exception_code"
-fetch_rows_size:       100
+fetch_rows_size:       10000

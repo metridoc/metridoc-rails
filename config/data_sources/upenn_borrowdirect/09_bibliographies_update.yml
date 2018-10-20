@@ -5,5 +5,5 @@ target_model:          "Borrowdirect::Bibliography"
 sqls:
   - |
                         UPDATE borrowdirect_bibliographies
-                        SET oclc = CAST(oclc_text AS BIGINT)
+                        SET oclc = CAST(REGEXP_REPLACE(oclc_text, '[^0-9]+', '', 'g') AS BIGINT)
                         WHERE oclc_text IS NOT null AND oclc IS NULL;

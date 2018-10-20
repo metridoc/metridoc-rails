@@ -10,4 +10,4 @@ source_tables: |
                        id_patron_type
 
 unique_column:         "patron_type"
-fetch_rows_size:       100
+fetch_rows_size:       10000

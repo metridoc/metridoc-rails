@@ -11,4 +11,4 @@ source_tables: |
                        id_catalog_code
 
 unique_column:         "catalog_library_id"
-fetch_rows_size:       100
+fetch_rows_size:       10000

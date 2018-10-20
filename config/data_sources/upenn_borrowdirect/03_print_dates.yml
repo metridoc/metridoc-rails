@@ -15,4 +15,4 @@ source_tables: |
                        LEFT JOIN id_catalog_code c ON catalog_code_desc = replace(a.note,'Printed At: ','')
 
 unique_column:         "CONCAT(a.request_number, '___',  CONVERT(varchar, a.time_stamp, 120))"
-fetch_rows_size:       100
+fetch_rows_size:       10000

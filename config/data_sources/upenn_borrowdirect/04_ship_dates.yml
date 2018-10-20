@@ -13,4 +13,4 @@ source_tables: |
                        LEFT JOIN id_delivery d ON a.request_number = d.request_number
 
 unique_column:         "CONCAT(a.request_number, '___',  CONVERT(varchar, a.time_stamp, 120))"
-fetch_rows_size:       100
+fetch_rows_size:       10000
