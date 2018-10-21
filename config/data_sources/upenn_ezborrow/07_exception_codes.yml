@@ -1,0 +1,13 @@
+load_sequence:         7
+target_model:          "Ezborrow::ExceptionCode"
+truncate_before_load:  "yes"
+filter:                ""
+select_sql: |
+                       exception_code,
+                       exception_code_desc
+
+source_tables: |
+                       id_exception_code
+
+unique_column:         "exception_code"
+fetch_rows_size:       10000

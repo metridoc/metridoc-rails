@@ -326,14 +326,16 @@ module ImportHelper
       log "Successfully finished generating schema into #{output_file_path}"
     end
 
-    def load_insitutition(folder_name, sequences_only = [])
+    def import_insitutition(folder_name, test_mode = false, sequences_only = [])
       get_tasks_yamls(folder_name, sequences_only).each do |task|
         puts "Running task: #{task["load_sequence"]}"
         #TODO Add other types of load here as well, such as mysql, csv, etc.
         if task["adapter"] == "sqlserver"
-          import_mssql_table(task)
+          import_mssql_table(task, test_mode)
         elsif task["adapter"] == "native_sql"
           execute_native_query(task)
+        elsif task["adapter"] == "csv"
+          execute_csv_import(task, test_mode)
         end
       end
     end
@@ -411,23 +413,26 @@ module ImportHelper
       end
     end
 
-    def import_mssql_table(params)
+    def import_mssql_table(params, test_mode = false)
+      csv_file_path =  Tempfile.new([params["target_model"],'.csv'], 'tmp').path
+      export_to_mssql_table_to_csv(params, csv_file_path, test_mode)
+      params["csv_file_path"] = csv_file_path
+
+      return import_csv(params, test_mode)
+    end
+
+    def execute_csv_import(params, test_mode = false)
+      params["csv_file_path"] = csv_file_path
+
+      return import_csv(params, test_mode)
+    end
+
+    def import_csv(params, test_mode = false)
       institution_id = Institution.get_id_from_code(params["institution_code"])
-
       target_model = params["target_model"]
-      truncate_before_load = params["truncate_before_load"] == "yes"
-
-      require "csv"
-
-      # Write to a csv file to avoid having to have two open connections to two different databases
-      csv_file_path =  Tempfile.new([target_model,'.csv'], 'tmp').path
-      export_to_mssql_table_to_csv(params, csv_file_path)
-
-      app_db = YAML.load_file(File.join(Rails.root, "config", "database.yml"))[Rails.env.to_s] 
-      connection = ActiveRecord::Base.establish_connection(app_db).connection
-
       class_name = target_model.constantize
-
+      csv_file_path = params["csv_file_path"]
+      truncate_before_load = params["truncate_before_load"] == "yes"
       has_institution_id = class_name.has_attribute?('institution_id')
 
       if truncate_before_load
@@ -438,9 +443,12 @@ module ImportHelper
         end
       end
 
+      require "csv"
       csv = CSV.read(csv_file_path)
 
       headers = csv.first
+
+      batch_size = test_mode ? 100 : 10000
 
       records = []
       n_errors = 0
@@ -451,14 +459,14 @@ module ImportHelper
           break
         end
         z = {}
-        z.merge(institution_id: institution_id) if has_institution_id
+        z.merge!(institution_id: institution_id) if has_institution_id
         headers.each_with_index do |k,i| 
           v = row[i]
           z[k.underscore.to_sym] = v
         end
         records << class_name.new(z)
 
-        if records.size >= 10000
+        if records.size >= batch_size
           success = false
           begin
             class_name.import records
@@ -479,6 +487,7 @@ module ImportHelper
             records = []
           end
 
+          break if test_mode
         end
 
       end
@@ -507,22 +516,24 @@ module ImportHelper
 
       log "#{n_errors} errors with #{table_name}" if n_errors > 0
       log "Finished importing #{target_model}"
+
+      return true
     end
 
 
-    def export_to_mssql_table_to_csv(params, csv_file_path)
+    def export_to_mssql_table_to_csv(params, csv_file_path, test_mode = false)
       institution_id = Institution.get_id_from_code(params["institution_code"])
 
-      db_conn_hash = {    host:     params["host"],
-                          port:     params["port"],
-                          database: params["database"],
-                          username: params["username"],
-                          password: params["password"],
-                          adapter:  'sqlserver',
-                          pool:     5,
-                          timeout:  60000 }
+      opts = {    host:     params["host"],
+                  port:     params["port"],
+                  database: params["database"],
+                  username: params["username"],
+                  password: params["password"],
+                  adapter:  'sqlserver',
+                  pool:     5,
+                  timeout:  120000 }
 
-      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+      db = TinyTds::Client.new opts
 
       target_model = params["target_model"]
       filter = params["filter"]
@@ -539,6 +550,11 @@ module ImportHelper
       do_paging = fetch_rows_size > 0 && unique_column.present?
 
       log "Started exporting #{target_model} into #{csv_file_path}"
+
+      if test_mode
+        fetch_rows_size = 100
+        do_paging = true
+      end
 
       if do_paging
         sql =  " SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
@@ -561,7 +577,7 @@ module ImportHelper
       require "csv"
 
       CSV.open(csv_file_path, "wb") do |csv|
-        row_results = connection.select_all( sql )
+        row_results = db.execute( sql )
         if row_results.count > 0
           csv << row_results.first.except("unique_column_val").keys.map { |x| column_mappings[x].present? ? column_mappings[x] : x }
         end
@@ -585,20 +601,18 @@ module ImportHelper
             end
             sql += " ORDER BY #{ unique_column } ASC "
             sql.gsub!("\n", " ")
-            row_results = connection.select_all( sql )
+            row_results = db.execute( sql )
             last_unique_column_val = ""
           else
             done = true
           end
 
+          done = true if test_mode
         end # while !done
 
       end # CSV.open
-      connection.close
+      db.close
       log "Finished exporting #{target_model} into #{csv_file_path}"
-
-      app_db = YAML.load_file(File.join(Rails.root, "config", "database.yml"))[Rails.env.to_s] 
-      connection = ActiveRecord::Base.establish_connection(app_db).connection
     end
 
   end

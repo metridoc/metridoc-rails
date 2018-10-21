@@ -111,7 +111,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|
-    t.bigint "bibliography_id", null: false
     t.string "request_number", limit: 12
     t.string "patron_id", limit: 20
     t.string "patron_type", limit: 1
@@ -132,36 +131,27 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "lender"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
     t.string "local_item_found", limit: 1
     t.string "publication_date", limit: 255
   end
 
   create_table "ezborrow_call_numbers", force: :cascade do |t|
-    t.bigint "call_number_id", null: false
     t.string "request_number", limit: 12
     t.integer "holdings_seq"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
     t.datetime "process_date"
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
   end
 
   create_table "ezborrow_exception_codes", force: :cascade do |t|
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
-    t.integer "ezb_exception_code_id", null: false
-    t.bigint "version", null: false
   end
 
   create_table "ezborrow_institutions", force: :cascade do |t|
     t.string "catalog_code", limit: 1, null: false
     t.string "institution", limit: 64, null: false
-    t.integer "library_id", null: false
-    t.bigint "ezb_institution_id", null: false
-    t.bigint "version", null: false
+    t.integer "library_id"
   end
 
   create_table "ezborrow_min_ship_dates", force: :cascade do |t|
@@ -172,36 +162,21 @@ ActiveRecord::Schema.define(version: 20180923204607) do
   create_table "ezborrow_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 32
-    t.integer "ezb_patron_type_id", null: false
   end
 
   create_table "ezborrow_print_dates", force: :cascade do |t|
-    t.bigint "print_date_id", null: false
     t.string "request_number", limit: 12
     t.datetime "print_date"
     t.string "note", limit: 256
     t.datetime "process_date"
-    t.datetime "load_time", null: false
     t.integer "library_id"
-    t.bigint "version", null: false
-  end
-
-  create_table "ezborrow_report_distributions", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "ezb_report_distribution_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
   end
 
   create_table "ezborrow_ship_dates", force: :cascade do |t|
-    t.bigint "ship_date_id", null: false
     t.string "request_number", limit: 12
-    t.string "ship_date", limit: 24
+    t.datetime "ship_date"
     t.string "exception_code", limit: 3
     t.datetime "process_date"
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
   end
 
   create_table "illiad_borrowings", force: :cascade do |t|
