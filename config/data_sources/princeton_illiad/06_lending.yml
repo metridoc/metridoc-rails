@@ -3,13 +3,17 @@ target_model:          "Illiad::Lending"
 truncate_before_load:  "yes"
 filter: |
                         (
-                            T1.RequestType = 'Article' 
-                            AND
-                            T2.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                            (
+                              T1.RequestType = 'Article' 
+                              AND
+                              T2.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                            )
                             OR
-                            T1.RequestType = 'Loan'
-                            AND
-                            T2.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
+                            (
+                              T1.RequestType = 'Loan'
+                              AND
+                              T2.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
+                            )
                         )
 select_sql: |
                         T2.TransactionNumber AS transaction_number,
