@@ -1,0 +1,4 @@
+load_sequence:         22
+target_model:          "Keyserver::PurchaseFolder"
+truncate_before_load:  "yes"
+file_name:             "PurchaseFolders.csv"

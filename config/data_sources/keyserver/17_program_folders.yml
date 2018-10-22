@@ -1,0 +1,4 @@
+load_sequence:         17
+target_model:          "Keyserver::ProgramFolder"
+truncate_before_load:  "yes"
+file_name:             "ProgramFolders.csv"

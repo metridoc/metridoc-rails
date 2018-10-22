@@ -331,11 +331,13 @@ module ImportHelper
         puts "Running task: #{task["load_sequence"]}"
         #TODO Add other types of load here as well, such as mysql, csv, etc.
         if task["adapter"] == "sqlserver"
-          import_mssql_table(task, test_mode)
+          break if !import_mssql_table(task, test_mode)
         elsif task["adapter"] == "native_sql"
-          execute_native_query(task)
+          break if !execute_native_query(task)
         elsif task["adapter"] == "csv"
-          execute_csv_import(task, test_mode)
+          break if !execute_csv_import(task, test_mode)
+        elsif task["adapter"] == "console_command"
+          break if !execute_console_command(task, test_mode)
         end
       end
     end
@@ -411,20 +413,39 @@ module ImportHelper
         log "Executing Query #{sql}"
         ActiveRecord::Base.connection.execute(sql)
       end
+
+      return true
     end
 
     def import_mssql_table(params, test_mode = false)
       csv_file_path =  Tempfile.new([params["target_model"],'.csv'], 'tmp').path
       export_to_mssql_table_to_csv(params, csv_file_path, test_mode)
       params["csv_file_path"] = csv_file_path
+      params["bypass_validations"] = true
 
       return import_csv(params, test_mode)
     end
 
     def execute_csv_import(params, test_mode = false)
-      params["csv_file_path"] = csv_file_path
+      params["csv_file_path"] = File.join(params["root_path"], params["file_name"])
 
       return import_csv(params, test_mode)
+    end
+
+    def execute_console_command(params, test_mode)
+      cmds = params["commands"]
+
+      cmds = [params["command"]] if cmds.blank?
+
+      cmds.each do |cmd|
+        puts "Executing: #{cmd}"
+        if ! system(cmd)
+          puts "Command Failed."
+          return false
+        end
+      end
+
+      return true
     end
 
     def import_csv(params, test_mode = false)
@@ -462,6 +483,25 @@ module ImportHelper
         z.merge!(institution_id: institution_id) if has_institution_id
         headers.each_with_index do |k,i| 
           v = row[i]
+          #validations
+          unless params["bypass_validations"]
+            if class_name.columns_hash[k.underscore].type == :integer && !valid_integer?(v)
+              log "Invalid integer #{v} in #{row.join(",")}"
+              n_errors = n_errors + 1
+              next
+            end
+            if class_name.columns_hash[k.underscore].type == :datetime && !valid_datetime?(v)
+              log "Invalid datetime #{v} in #{row.join(",")}"
+              n_errors = n_errors + 1
+              next
+            end
+            if class_name.columns_hash[k.underscore].type == :date && !valid_datetime?(v)
+              log "Invalid date #{v} in #{row.join(",")}"
+              n_errors = n_errors + 1
+              next
+            end
+          end
+
           z[k.underscore.to_sym] = v
         end
         records << class_name.new(z)
@@ -514,7 +554,7 @@ module ImportHelper
 
       end
 
-      log "#{n_errors} errors with #{table_name}" if n_errors > 0
+      log "#{n_errors} errors with #{target_model}" if n_errors > 0
       log "Finished importing #{target_model}"
 
       return true
@@ -617,3 +657,18 @@ module ImportHelper
 
   end
 end
+
+def valid_integer?(v)
+  return v.blank? || v.match(/\A[+-]?\d+\z/).present?
+end
+
+def valid_datetime?(v)
+  return true if v.blank?
+  begin
+     DateTime.parse(v)
+  rescue ArgumentError
+     return false
+  end
+  return true
+end
+

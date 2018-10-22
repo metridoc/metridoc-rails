@@ -1,0 +1,4 @@
+load_sequence:         7
+target_model:          "Keyserver::Hotfix"
+truncate_before_load:  "yes"
+file_name:             "Hotfixes.csv"

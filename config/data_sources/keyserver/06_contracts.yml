@@ -1,0 +1,4 @@
+load_sequence:         6
+target_model:          "Keyserver::Contract"
+truncate_before_load:  "yes"
+file_name:             "Contracts.csv"
