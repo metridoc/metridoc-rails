@@ -61,7 +61,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "lender"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
-    t.integer "oclc"
+    t.bigint "oclc"
     t.string "oclc_text", limit: 25
     t.string "local_item_found", limit: 1
   end
