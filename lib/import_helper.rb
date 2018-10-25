@@ -456,6 +456,8 @@ module ImportHelper
       truncate_before_load = params["truncate_before_load"] == "yes"
       has_institution_id = class_name.has_attribute?('institution_id')
 
+      log "Has Institution [#{params["institution_code"]}] [#{institution_id}]." if has_institution_id
+
       if truncate_before_load
         if has_institution_id
           class_name.where(institution_id: institution_id).delete_all
@@ -577,6 +579,7 @@ module ImportHelper
 
       target_model = params["target_model"]
       filter = params["filter"]
+      distinct = params["select_distinct"]
       select_sql = params["select_sql"]
       source_tables = params["source_tables"]
       unique_column = params["unique_column"]
@@ -596,8 +599,8 @@ module ImportHelper
         do_paging = true
       end
 
-      if do_paging
-        sql =  " SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
+      if do_paging && unique_column.present?
+        sql =  " SELECT #{distinct ? "DISTINCT" : ""} TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
                " FROM " + source_tables +
                " WHERE 1=1 "
         sql += "   AND (#{filter}) " if filter.present?
@@ -606,7 +609,7 @@ module ImportHelper
         end
         sql += " ORDER BY #{ unique_column } ASC "
       else
-        sql =  " SELECT " + select_sql +
+        sql =  " SELECT #{distinct ? "DISTINCT" : ""} #{test_mode ? "TOP #{fetch_rows_size}" : ""} " + select_sql +
                " FROM " + source_tables +
                " WHERE 1=1 "
         sql += " AND (#{filter}) " if filter.present?
@@ -617,6 +620,7 @@ module ImportHelper
       require "csv"
 
       CSV.open(csv_file_path, "wb") do |csv|
+        log "Executing query: #{sql}"
         row_results = db.execute( sql )
         if row_results.count > 0
           csv << row_results.first.except("unique_column_val").keys.map { |x| column_mappings[x].present? ? column_mappings[x] : x }

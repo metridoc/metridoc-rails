@@ -2,7 +2,8 @@ load_sequence:         3
 target_model:          "Illiad::LenderInfo"
 truncate_before_load:  "yes"
 filter:                ""
-select_sql:            "DISTINCT LenderString, LibraryName, loanbillingcategory, address1+'; '+address2+'; '+address3+'; '+address4 AS address"
+select_distinct:       true
+select_sql:            "LenderString, LibraryName, loanbillingcategory, address1+'; '+address2+'; '+address3+'; '+address4 AS address"
 source_tables:         "LenderAddressesALL"
 # unique_column:
 column_mappings:
