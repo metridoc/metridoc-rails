@@ -7,7 +7,7 @@ select_sql: |
                        patron_type_desc
 
 source_tables: |
-                       id_patron_type
+                       id_patron_type WITH (NOLOCK)
 
 unique_column:         "patron_type"
 fetch_rows_size:       10000

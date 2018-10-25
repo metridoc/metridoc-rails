@@ -9,8 +9,8 @@ sqls:
                                 min_ship_date
                         )
                         SELECT S.request_number, S.min_ship_date_shd FROM (
-                          SELECT request_number, to_timestamp(min(ship_date), 'YYYY-MM-DD hh24:mi:ss') as min_ship_date_shd
-                          FROM borrowdirect_ship_dates shd 
+                          SELECT request_number, MIN(ship_date) as min_ship_date_shd
+                          FROM borrowdirect_ship_dates shd
                           where shd.ship_date is not null 
                           group by shd.request_number
                         ) S

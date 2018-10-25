@@ -7,7 +7,7 @@ select_sql: |
                        exception_code_desc
 
 source_tables: |
-                       id_exception_code
+                       id_exception_code WITH (NOLOCK)
 
 unique_column:         "exception_code"
 fetch_rows_size:       10000
