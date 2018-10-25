@@ -25,13 +25,13 @@ select_sql: |
                        d.supplier_code_1 as supplier_code,
                        h.call_number
 source_tables: |
-                       id_request r
-                       LEFT JOIN id_delivery d ON r.request_number = d.request_number
-                       LEFT JOIN id_supplier s ON d.supplier_code_1 = s.supplier_code
-                       LEFT JOIN id_patron p ON r.patron_id=p.patron_id AND r.library_id = p.library_id
-                       LEFT JOIN id_patron_type pt ON p.patron_type = pt.patron_type
-                       LEFT JOIN id_pickup_location pl ON d.deliv_address=pl.pickup_location AND r.library_id = PL.library_id
-                       LEFT JOIN id_holdings h ON r.request_number=h.request_number AND d.supplier_code_1 = h.supplier_code
+                       id_request r WITH (NOLOCK)
+                       LEFT JOIN id_delivery d WITH (NOLOCK) ON r.request_number = d.request_number
+                       LEFT JOIN id_supplier s WITH (NOLOCK) ON d.supplier_code_1 = s.supplier_code
+                       LEFT JOIN id_patron p WITH (NOLOCK) ON r.patron_id=p.patron_id AND r.library_id = p.library_id
+                       LEFT JOIN id_patron_type pt WITH (NOLOCK) ON p.patron_type = pt.patron_type
+                       LEFT JOIN id_pickup_location pl WITH (NOLOCK) ON d.deliv_address=pl.pickup_location AND r.library_id = PL.library_id
+                       LEFT JOIN id_holdings h WITH (NOLOCK) ON r.request_number=h.request_number AND d.supplier_code_1 = h.supplier_code
 unique_column:         "r.request_number"
 fetch_rows_size:       10000
 

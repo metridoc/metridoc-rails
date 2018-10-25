@@ -8,7 +8,7 @@ select_sql: |
                        catalog_library_id AS library_id
 
 source_tables: |
-                       id_catalog_code
+                       id_catalog_code WITH (NOLOCK)
 
 unique_column:         "catalog_library_id"
 fetch_rows_size:       10000

@@ -64,7 +64,7 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
 
     create_table :borrowdirect_ship_dates do |t|
       t.string :request_number , limit: 12
-      t.string :ship_date , limit: 24, null: false
+      t.datetime :ship_date, null: false
       t.string :exception_code , limit: 3
       t.datetime :process_date 
     end
