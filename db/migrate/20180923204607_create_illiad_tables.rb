@@ -89,7 +89,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.belongs_to :institution, null: false
       t.string :billing_amount , limit: 255
       t.string :call_number , limit: 255
-      t.string :cited_in , limit: 5000
+      t.string :cited_in , limit: 10000
       t.string :esp_number , limit: 255
       t.string :ifm_cost , limit: 255
       t.string :in_process_date , limit: 255
