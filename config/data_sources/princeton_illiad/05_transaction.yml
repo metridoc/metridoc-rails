@@ -20,7 +20,7 @@ select_sql: |
                         PhotoJournalInclusivePages as photo_journal_inclusive_pages,
                         PhotoArticleAuthor as photo_article_author,
                         PhotoArticleTitle as photo_article_title,
-                        CitedIn as cited_in,
+                        SUBSTRING(CitedIn, 1, 10000) as cited_in,
                         TransactionStatus as transaction_status,
                         TransactionDate as transaction_date,
                         issn,
