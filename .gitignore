@@ -37,3 +37,4 @@
 # Ignore local test env. file
 /config/local_env.yml
 
+.idea
