@@ -1,0 +1,34 @@
+load_sequence:         7
+target_model:          "Illiad::Borrowing"
+truncate_before_load:  "yes"
+filter:
+select_sql: |
+                        S.transaction_number,
+                        S.request_type,
+                        S.transaction_status,
+                        S.transaction_date
+source_tables: |
+                        ( SELECT  t2.TransactionNumber AS transaction_number,
+                                  t1.RequestType AS request_type,
+                                  t2.ChangedTo AS transaction_status,
+                                  MIN(t2.DateTime) AS transaction_date
+                          FROM Transactions t1
+                          INNER JOIN Tracking t2 ON t2.TransactionNumber = t1.TransactionNumber
+                          WHERE t1.ProcessType = 'Borrowing' 
+                            AND t1.TransactionStatus in ('Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                            AND t2.ChangedTo in ('Awaiting Copyright Clearance','Awaiting Request Processing','Request Sent','Awaiting Post Receipt Processing','Delivered to Web')
+                          GROUP BY t2.TransactionNumber, t1.RequestType, t2.ChangedTo
+                          UNION
+                          SELECT    h.TransactionNumber AS transaction_number,
+                                    t.RequestType AS request_type,
+                                    'Shipped' AS transaction_status,
+                                    MIN(h.DateTime) AS transaction_date
+                          FROM Transactions t
+                          INNER JOIN History h ON h.TransactionNumber = t.TransactionNumber
+                          where t.ProcessType = 'Borrowing' 
+                            AND t.TransactionStatus in ('Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                            AND h.UserName = 'System'
+                            AND CHARINDEX('shipped', entry) > 0
+                          GROUP BY h.TransactionNumber, t.RequestType ) AS S
+# column_mappings:
+fetch_rows_size:        0

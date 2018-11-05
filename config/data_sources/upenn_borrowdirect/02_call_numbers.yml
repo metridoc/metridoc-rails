@@ -1,0 +1,15 @@
+load_sequence:         2
+target_model:          "Borrowdirect::CallNumber"
+truncate_before_load:  "yes"
+filter:                "h.call_number IS NOT NULL"
+select_sql: |
+                       h.request_number,
+                       h.holdings_seq,
+                       h.supplier_code,
+                       h.call_number,
+                       d.date_processed as process_date
+source_tables: |
+                       id_holdings h WITH (NOLOCK)
+                       LEFT JOIN id_delivery d WITH (NOLOCK) ON h.request_number = d.request_number
+unique_column:         "CONCAT( h.request_number, '___', h.HOLDINGS_SEQ, '___', h.HOLDINGS_SEQ_2)"
+fetch_rows_size:       10000

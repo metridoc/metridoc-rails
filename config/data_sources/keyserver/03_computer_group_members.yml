@@ -1,0 +1,4 @@
+load_sequence:         3
+target_model:          "Keyserver::ComputerGroupMember"
+truncate_before_load:  "yes"
+file_name:             "ComputerGroupMembers.csv"

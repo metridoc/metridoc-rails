@@ -1,0 +1,18 @@
+load_sequence:         3
+target_model:          "Ezborrow::PrintDate"
+truncate_before_load:  "yes"
+filter:                "a.stat_location='8'"
+select_sql: |
+                       a.request_number,
+                       a.time_stamp AS print_date,
+                       a.note,
+                       d.date_processed AS process_date,
+                       c.catalog_library_id AS library_id
+
+source_tables: |
+                       id_audit a WITH (NOLOCK)
+                       LEFT JOIN id_delivery d WITH (NOLOCK) ON a.request_number = d.request_number
+                       LEFT JOIN id_catalog_code c WITH (NOLOCK) ON catalog_code_desc = replace(a.note,'Printed At: ','')
+
+unique_column:         "CONCAT(a.request_number, '___',  CONVERT(varchar, a.time_stamp, 120))"
+fetch_rows_size:       10000

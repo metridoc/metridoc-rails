@@ -1,15 +1,4 @@
 ActiveAdmin.register Keyserver::Hotfix do
-# See permitted parameters documentation:
-# https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-#
-# permit_params :list, :of, :attributes, :on, :model
-#
-# or
-#
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
-
+  menu false
+  permit_params :hotfix_id, :hotfix_server_id, :hotfix_stamp, :hotfix_name, :hotfix_version, :hotfix_platform, :hotfix_publisher, :hotfix_create_date, :hotfix_user_name, :hotfix_computer_id, :hotfix_notes, :hotfix_flags
 end

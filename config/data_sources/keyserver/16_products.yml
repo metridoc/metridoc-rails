@@ -1,0 +1,4 @@
+load_sequence:         16
+target_model:          "Keyserver::Product"
+truncate_before_load:  "yes"
+file_name:             "Products.csv"

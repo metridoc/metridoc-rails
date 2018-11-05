@@ -20,12 +20,8 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
       t.integer :lender 
       t.string :supplier_code , limit: 20
       t.string :call_number , limit: 256
-      t.timestamp :load_time
-      t.integer :oclc 
+      t.bigint :oclc 
       t.string :oclc_text , limit: 25
-      t.integer :bibliography_id , limit: 8, null: false
-      t.integer :version , limit: 8, null: false
-      t.string :publication_date , limit: 255
       t.string :local_item_found , limit: 1
     end
 
@@ -35,24 +31,17 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
       t.string :supplier_code , limit: 20
       t.string :call_number , limit: 256
       t.datetime :process_date 
-      t.timestamp :load_time , null: false
-      t.integer :call_number_id , limit: 8, null: false
-      t.integer :version , limit: 8, null: false
     end
 
     create_table :borrowdirect_exception_codes do |t|
       t.string :exception_code , limit: 3, null: false
       t.string :exception_code_desc , limit: 64
-      t.integer :bd_exception_code_id , null: false
-      t.integer :version , limit: 8, null: false
     end
 
     create_table :borrowdirect_institutions do |t|
       t.string :catalog_code , limit: 1, null: false
       t.string :institution , limit: 64, null: false
-      t.integer :library_id , null: false
-      t.integer :version , limit: 8, null: false
-      t.integer :bd_institution_id , limit: 8, null: false
+      t.integer :library_id
     end
 
     create_table :borrowdirect_min_ship_dates do |t|
@@ -63,7 +52,6 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
     create_table :borrowdirect_patron_types do |t|
       t.string :patron_type , limit: 1, null: false
       t.string :patron_type_desc , limit: 50
-      t.integer :bd_patron_type_id , null: false
     end
 
     create_table :borrowdirect_print_dates do |t|
@@ -71,36 +59,14 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
       t.datetime :print_date 
       t.string :note , limit: 256
       t.datetime :process_date 
-      t.integer :print_date_id , limit: 8, null: false
-      t.timestamp :load_time , null: false
       t.integer :library_id 
-      t.integer :version , limit: 8, null: false
-    end
-
-    create_table :borrowdirect_report_distributions do |t|
-      t.string :email_addr , limit: 32, null: false
-      t.integer :institution_id , null: false
-      t.integer :bd_report_distribution_id , limit: 8, null: false
-      t.integer :version , limit: 8, null: false
-      t.string :library_id , limit: 255, null: false
-    end
-
-    create_table :borrowdirect_report_distribution_tmps do |t|
-      t.string :email_addr , limit: 32, null: false
-      t.integer :institution_id , null: false
-      t.integer :bd_report_distribution_tmp_id , limit: 8, null: false
-      t.integer :version , limit: 8, null: false
-      t.string :library_id , limit: 255, null: false
     end
 
     create_table :borrowdirect_ship_dates do |t|
       t.string :request_number , limit: 12
-      t.string :ship_date , limit: 24, null: false
+      t.datetime :ship_date, null: false
       t.string :exception_code , limit: 3
       t.datetime :process_date 
-      t.integer :ship_date_id , limit: 8, null: false
-      t.timestamp :load_time , null: false
-      t.integer :version , limit: 8, null: false
     end
 
   end

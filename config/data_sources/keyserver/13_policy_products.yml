@@ -1,0 +1,4 @@
+load_sequence:         13
+target_model:          "Keyserver::PolicyProduct"
+truncate_before_load:  "yes"
+file_name:             "PolicyProducts.csv"

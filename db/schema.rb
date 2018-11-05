@@ -61,12 +61,8 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "lender"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
-    t.datetime "load_time"
-    t.integer "oclc"
+    t.bigint "oclc"
     t.string "oclc_text", limit: 25
-    t.bigint "bibliography_id", null: false
-    t.bigint "version", null: false
-    t.string "publication_date", limit: 255
     t.string "local_item_found", limit: 1
   end
 
@@ -76,24 +72,17 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
     t.datetime "process_date"
-    t.datetime "load_time", null: false
-    t.bigint "call_number_id", null: false
-    t.bigint "version", null: false
   end
 
   create_table "borrowdirect_exception_codes", force: :cascade do |t|
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
-    t.integer "bd_exception_code_id", null: false
-    t.bigint "version", null: false
   end
 
   create_table "borrowdirect_institutions", force: :cascade do |t|
     t.string "catalog_code", limit: 1, null: false
     t.string "institution", limit: 64, null: false
-    t.integer "library_id", null: false
-    t.bigint "version", null: false
-    t.bigint "bd_institution_id", null: false
+    t.integer "library_id"
   end
 
   create_table "borrowdirect_min_ship_dates", force: :cascade do |t|
@@ -104,7 +93,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
   create_table "borrowdirect_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 50
-    t.integer "bd_patron_type_id", null: false
   end
 
   create_table "borrowdirect_print_dates", force: :cascade do |t|
@@ -112,10 +100,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.datetime "print_date"
     t.string "note", limit: 256
     t.datetime "process_date"
-    t.bigint "print_date_id", null: false
-    t.datetime "load_time", null: false
     t.integer "library_id"
-    t.bigint "version", null: false
   end
 
   create_table "borrowdirect_report_distribution_tmps", force: :cascade do |t|
@@ -136,16 +121,12 @@ ActiveRecord::Schema.define(version: 20180923204607) do
 
   create_table "borrowdirect_ship_dates", force: :cascade do |t|
     t.string "request_number", limit: 12
-    t.string "ship_date", limit: 24, null: false
+    t.datetime "ship_date", null: false
     t.string "exception_code", limit: 3
     t.datetime "process_date"
-    t.bigint "ship_date_id", null: false
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|
-    t.bigint "bibliography_id", null: false
     t.string "request_number", limit: 12
     t.string "patron_id", limit: 20
     t.string "patron_type", limit: 1
@@ -166,36 +147,27 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "lender"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
     t.string "local_item_found", limit: 1
     t.string "publication_date", limit: 255
   end
 
   create_table "ezborrow_call_numbers", force: :cascade do |t|
-    t.bigint "call_number_id", null: false
     t.string "request_number", limit: 12
     t.integer "holdings_seq"
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
     t.datetime "process_date"
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
   end
 
   create_table "ezborrow_exception_codes", force: :cascade do |t|
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
-    t.integer "ezb_exception_code_id", null: false
-    t.bigint "version", null: false
   end
 
   create_table "ezborrow_institutions", force: :cascade do |t|
     t.string "catalog_code", limit: 1, null: false
     t.string "institution", limit: 64, null: false
-    t.integer "library_id", null: false
-    t.bigint "ezb_institution_id", null: false
-    t.bigint "version", null: false
+    t.integer "library_id"
   end
 
   create_table "ezborrow_min_ship_dates", force: :cascade do |t|
@@ -206,18 +178,14 @@ ActiveRecord::Schema.define(version: 20180923204607) do
   create_table "ezborrow_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 32
-    t.integer "ezb_patron_type_id", null: false
   end
 
   create_table "ezborrow_print_dates", force: :cascade do |t|
-    t.bigint "print_date_id", null: false
     t.string "request_number", limit: 12
     t.datetime "print_date"
     t.string "note", limit: 256
     t.datetime "process_date"
-    t.datetime "load_time", null: false
     t.integer "library_id"
-    t.bigint "version", null: false
   end
 
   create_table "ezborrow_report_distributions", force: :cascade do |t|
@@ -229,101 +197,90 @@ ActiveRecord::Schema.define(version: 20180923204607) do
   end
 
   create_table "ezborrow_ship_dates", force: :cascade do |t|
-    t.bigint "ship_date_id", null: false
     t.string "request_number", limit: 12
-    t.string "ship_date", limit: 24
+    t.datetime "ship_date"
     t.string "exception_code", limit: 3
     t.datetime "process_date"
-    t.datetime "load_time", null: false
-    t.bigint "version", null: false
   end
 
   create_table "illiad_borrowings", force: :cascade do |t|
-    t.bigint "ill_borrowing_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "request_type", limit: 255, null: false
     t.datetime "transaction_date", null: false
     t.bigint "transaction_number", null: false
     t.string "transaction_status", limit: 255, null: false
-  end
-
-  create_table "illiad_caches", force: :cascade do |t|
-    t.bigint "ill_cach_id", null: false
-    t.bigint "version", null: false
-    t.datetime "date_created", null: false
-    t.text "json_data", null: false
-    t.datetime "last_updated", null: false
-  end
-
-  create_table "illiad_fiscal_start_months", force: :cascade do |t|
-    t.bigint "ill_fiscal_start_month_id", null: false
-    t.bigint "version", null: false
-    t.integer "month", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_borrowings_on_institution_id"
   end
 
   create_table "illiad_groups", force: :cascade do |t|
-    t.bigint "ill_group_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "group_name", limit: 255, null: false
     t.integer "group_no", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_groups_on_institution_id"
   end
 
   create_table "illiad_lender_groups", force: :cascade do |t|
-    t.bigint "ill_lender_group_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.integer "demographic"
     t.integer "group_no", null: false
     t.string "lender_code", limit: 255, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_lender_groups_on_institution_id"
   end
 
   create_table "illiad_lender_infos", force: :cascade do |t|
-    t.bigint "ill_lender_info_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "address", limit: 328
     t.string "billing_category", limit: 255
     t.string "lender_code", limit: 255, null: false
     t.string "library_name", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_lender_infos_on_institution_id"
   end
 
   create_table "illiad_lending_trackings", force: :cascade do |t|
-    t.bigint "ill_lending_tracking_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.datetime "arrival_date"
     t.datetime "completion_date"
     t.string "completion_status", limit: 255
     t.string "request_type", limit: 255, null: false
     t.bigint "transaction_number", null: false
     t.float "turnaround"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_lending_trackings_on_institution_id"
   end
 
   create_table "illiad_lendings", force: :cascade do |t|
-    t.bigint "ill_lending_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "request_type", limit: 255, null: false
     t.string "status", limit: 255, null: false
     t.datetime "transaction_date", null: false
     t.bigint "transaction_number", null: false
-  end
-
-  create_table "illiad_locations", force: :cascade do |t|
-    t.bigint "ill_location_id", null: false
-    t.bigint "version", null: false
-    t.string "abbrev", limit: 255, null: false
-    t.string "location", limit: 255, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_lendings_on_institution_id"
   end
 
   create_table "illiad_reference_numbers", force: :cascade do |t|
-    t.bigint "ill_reference_number_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "oclc", limit: 255
     t.string "ref_number", limit: 255
     t.string "ref_type", limit: 255
     t.bigint "transaction_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_reference_numbers_on_institution_id"
   end
 
   create_table "illiad_trackings", force: :cascade do |t|
-    t.bigint "ill_tracking_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.datetime "order_date"
     t.string "process_type", limit: 255, null: false
     t.datetime "receive_date"
@@ -335,14 +292,16 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.float "turnaround_req_shp"
     t.float "turnaround_shp_rec"
     t.boolean "turnarounds_processed", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_trackings_on_institution_id"
   end
 
   create_table "illiad_transactions", force: :cascade do |t|
-    t.bigint "ill_transaction_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "billing_amount", limit: 255
     t.string "call_number", limit: 255
-    t.string "cited_in", limit: 255
+    t.string "cited_in", limit: 5000
     t.string "esp_number", limit: 255
     t.string "ifm_cost", limit: 255
     t.string "in_process_date", limit: 255
@@ -375,16 +334,28 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "user_name"
     t.string "borrower_nvtgc", limit: 255
     t.string "original_nvtgc", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_transactions_on_institution_id"
   end
 
   create_table "illiad_user_infos", force: :cascade do |t|
-    t.bigint "ill_user_info_id", null: false
-    t.bigint "version", null: false
+    t.bigint "institution_id", null: false
     t.string "department", limit: 255
     t.string "nvtgc", limit: 255
     t.string "org", limit: 255
     t.string "rank", limit: 255
     t.string "user_id", limit: 255, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_user_infos_on_institution_id"
+  end
+
+  create_table "institutions", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "keyserver_audits", force: :cascade do |t|

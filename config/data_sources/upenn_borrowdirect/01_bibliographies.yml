@@ -1,0 +1,37 @@
+load_sequence:         1
+target_model:          "Borrowdirect::Bibliography"
+truncate_before_load:  "yes"
+filter:                "h.holdings_seq_2 = 1"
+select_sql: |
+                       s.library_id as lender,
+                       r.library_id as borrower,
+                       r.request_number,
+                       abs(cast(HASHBYTES('md5',p.patron_id) as int)) as patron_id,
+                       p.patron_type,
+                       r.author,
+                       r.title,
+                       r.local_item_found,
+                       r.publisher,
+                       r.publication_place,
+                       r.publication_year,
+                       r.edition,
+                       r.isbn,
+                       r.isbn_2,
+                       r.bibliography_num as LCCN,
+                       system_number as oclc_text,
+                       r.date_entered as request_date,
+                       d.date_processed as process_date,
+                       pl.pickup_location_desc as pickup_location,
+                       d.supplier_code_1 as supplier_code,
+                       h.call_number
+source_tables: |
+                       id_request r WITH (NOLOCK)
+                       LEFT JOIN id_delivery d WITH (NOLOCK) ON r.request_number = d.request_number
+                       LEFT JOIN id_supplier s WITH (NOLOCK) ON d.supplier_code_1 = s.supplier_code
+                       LEFT JOIN id_patron p WITH (NOLOCK) ON r.patron_id=p.patron_id AND r.library_id = p.library_id
+                       LEFT JOIN id_patron_type pt WITH (NOLOCK) ON p.patron_type = pt.patron_type
+                       LEFT JOIN id_pickup_location pl WITH (NOLOCK) ON d.deliv_address=pl.pickup_location AND r.library_id = PL.library_id
+                       LEFT JOIN id_holdings h WITH (NOLOCK) ON r.request_number=h.request_number AND d.supplier_code_1 = h.supplier_code
+unique_column:         "r.request_number"
+fetch_rows_size:       10000
+

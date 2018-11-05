@@ -1,0 +1,16 @@
+load_sequence:         4
+target_model:          "Ezborrow::ShipDate"
+truncate_before_load:  "yes"
+filter:                "a.exception_code <> 'NULL'"
+select_sql: |
+                       a.request_number,
+                       a.time_stamp as ship_date,
+                       a.exception_code,
+                       d.date_processed as process_date 
+
+source_tables: |
+                       id_audit a WITH (NOLOCK)
+                       LEFT JOIN id_delivery d WITH (NOLOCK) ON a.request_number = d.request_number
+
+unique_column:         "CONCAT(a.request_number, '___',  CONVERT(varchar, a.time_stamp, 120))"
+fetch_rows_size:       10000

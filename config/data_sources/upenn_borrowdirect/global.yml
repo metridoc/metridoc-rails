@@ -1,0 +1,10 @@
+---
+institution_code: 'UPENN'
+adapter:          'sqlserver'
+host:             ENV["UPENN_BORROWDIRECT_MSSQL_HOST"]
+port:             ENV["UPENN_BORROWDIRECT_MSSQL_PORT"]
+database:         ENV["UPENN_BORROWDIRECT_MSSQL_DB"]
+username:         ENV["UPENN_BORROWDIRECT_MSSQL_UID"]
+password:         ENV["UPENN_BORROWDIRECT_MSSQL_PWD"]
+pool:             5
+timeout:          5000

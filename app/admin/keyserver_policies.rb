@@ -1,15 +1,4 @@
 ActiveAdmin.register Keyserver::Policy do
-# See permitted parameters documentation:
-# https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-#
-# permit_params :list, :of, :attributes, :on, :model
-#
-# or
-#
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
-
+  menu false
+  permit_params :policy_id, :policy_server_id, :policy_ref_num, :policy_name, :policy_action, :policy_metric, :policy_maximum, :policy_lease_time, :policy_status, :policy_expiration, :policy_options, :policy_folder_id, :policy_contract_id, :policy_cost_center, :policy_message, :policy_notes
 end

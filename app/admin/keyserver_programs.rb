@@ -1,15 +1,4 @@
 ActiveAdmin.register Keyserver::Program do
-# See permitted parameters documentation:
-# https://github.com/activeadmin/activeadmin/blob/master/docs/2-resource-customization.md#setting-up-strong-parameters
-#
-# permit_params :list, :of, :attributes, :on, :model
-#
-# or
-#
-# permit_params do
-#   permitted = [:permitted, :attributes]
-#   permitted << :other if params[:action] == 'create' && current_user.admin?
-#   permitted
-# end
-
+  menu false
+  permit_params :program_id, :program_server_id, :program_variant, :program_char_stamp, :program_name, :program_variant_name, :program_variant_version, :program_ai_version, :program_version_mask, :program_version, :program_platform, :program_publisher, :program_path, :program_file_name, :program_keyed, :program_status, :program_acknowledged, :program_audit, :program_folder_id, :program_launch_seen, :program_disc_method, :program_discovered, :program_create_date, :program_user_name, :program_computer_id, :program_notes, :program_flags
 end

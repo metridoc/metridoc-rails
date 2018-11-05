@@ -1,0 +1,11 @@
+load_sequence:         13
+adapter:               'native_sql'
+target_model:          "Illiad::Tracking"
+truncate_before_load:  "no"
+sql: |
+                        UPDATE illiad_trackings
+                        SET turnaround_req_rec = DATE_PART('day', receive_date - request_date) ,
+                            turnaround_req_shp = DATE_PART('day', ship_date - request_date) ,
+                            turnaround_shp_rec = DATE_PART('day', receive_date - ship_date) 
+                        WHERE institution_id = {{institution_id}}
+                        ;

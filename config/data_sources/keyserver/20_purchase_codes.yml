@@ -1,0 +1,4 @@
+load_sequence:         20
+target_model:          "Keyserver::PurchaseCode"
+truncate_before_load:  "yes"
+file_name:             "PurchaseCodes.csv"

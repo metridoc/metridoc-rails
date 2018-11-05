@@ -326,5 +326,353 @@ module ImportHelper
       log "Successfully finished generating schema into #{output_file_path}"
     end
 
+    def import_insitutition(folder_name, test_mode = false, sequences_only = [])
+      get_tasks_yamls(folder_name, sequences_only).each do |task|
+        puts "Running task: #{task["load_sequence"]}"
+        #TODO Add other types of load here as well, such as mysql, csv, etc.
+        if task["adapter"] == "sqlserver"
+          break if !import_mssql_table(task, test_mode)
+        elsif task["adapter"] == "native_sql"
+          break if !execute_native_query(task)
+        elsif task["adapter"] == "csv"
+          break if !execute_csv_import(task, test_mode)
+        elsif task["adapter"] == "console_command"
+          break if !execute_console_command(task, test_mode)
+        end
+      end
+    end
+
+    def export_insitutition(folder_name, output_path, sequences_only = [])
+      get_tasks_yamls(folder_name, sequences_only).each do |task|
+        puts "Running task: #{task["load_sequence"]}"
+        #TODO Add other types of load here as well, such as mysql
+        if task["adapter"] == "sqlserver"
+          export_to_mssql_table_to_csv(task, File.join(output_path, "#{task["target_model"]}.csv"))
+        end
+      end
+    end
+
+    def get_tasks_yamls(folder_name, sequences_only = [])
+      sequences_only = [sequences_only] unless sequences_only.is_a?(Array)
+
+      r = Rails.root.join('config','data_sources', folder_name)
+      global_params = {}
+
+      if File.exist?(r.join("global.yml"))
+        global_params = YAML.load_file(r.join("global.yml"))
+      end
+
+      global_params.each do |k, v|
+        next unless v.is_a?(String)
+        m = v.match(/ENV\["([^\[\]"]*)"\]/)
+        if m.present?
+          global_params[k] = ENV[m[1]]
+        end
+      end
+
+      full_paths = Dir.glob(r.join("**", "*"))
+      tasks = []
+      full_paths.each do |full_path|
+        next if File.basename(full_path) == "global.yml"
+
+        table_params = YAML.load_file(full_path)
+
+        seq = table_params["load_sequence"] || 0
+
+        next if sequences_only.present? && !seq.in?(sequences_only)
+
+        tasks << global_params.merge(table_params)
+      end
+
+      tasks.sort_by!{|t| t["load_sequence"]}
+    end
+
+    def execute_native_query(params)
+      institution_id = Institution.get_id_from_code(params["institution_code"])
+
+      sqls = params["sqls"]
+
+      sqls = [params["sql"]] if sqls.blank?
+
+      target_model = params["target_model"]
+      truncate_before_load = params["truncate_before_load"] == "yes"
+
+      class_name = target_model.constantize
+      has_institution_id = class_name.has_attribute?('institution_id')
+
+      if truncate_before_load
+        if has_institution_id
+          class_name.where(institution_id: institution_id).delete_all
+        else
+          class_name.delete_all
+        end
+      end
+
+      sqls.each do |sql|
+        sql.gsub!('{{institution_id}}', institution_id.to_s)
+        log "Executing Query #{sql}"
+        ActiveRecord::Base.connection.execute(sql)
+      end
+
+      return true
+    end
+
+    def import_mssql_table(params, test_mode = false)
+      csv_file_path =  Tempfile.new([params["target_model"],'.csv'], 'tmp').path
+      export_to_mssql_table_to_csv(params, csv_file_path, test_mode)
+      params["csv_file_path"] = csv_file_path
+      params["bypass_validations"] = true
+
+      return import_csv(params, test_mode)
+    end
+
+    def execute_csv_import(params, test_mode = false)
+      params["csv_file_path"] = File.join(params["root_path"], params["file_name"])
+
+      return import_csv(params, test_mode)
+    end
+
+    def execute_console_command(params, test_mode)
+      cmds = params["commands"]
+
+      cmds = [params["command"]] if cmds.blank?
+
+      cmds.each do |cmd|
+        puts "Executing: #{cmd}"
+        if ! system(cmd)
+          puts "Command Failed."
+          return false
+        end
+      end
+
+      return true
+    end
+
+    def import_csv(params, test_mode = false)
+      institution_id = Institution.get_id_from_code(params["institution_code"])
+      target_model = params["target_model"]
+      class_name = target_model.constantize
+      csv_file_path = params["csv_file_path"]
+      truncate_before_load = params["truncate_before_load"] == "yes"
+      has_institution_id = class_name.has_attribute?('institution_id')
+
+      log "Has Institution [#{params["institution_code"]}] [#{institution_id}]." if has_institution_id
+
+      if truncate_before_load
+        if has_institution_id
+          class_name.where(institution_id: institution_id).delete_all
+        else
+          class_name.delete_all
+        end
+      end
+
+      require "csv"
+      csv = CSV.read(csv_file_path)
+
+      headers = csv.first
+
+      batch_size = test_mode ? 100 : 10000
+
+      records = []
+      n_errors = 0
+      csv.drop(1).each_with_index do |row, n|
+        if n_errors >= 100
+          log "Too may errors #{n_errors}, exiting!"
+          records = []
+          break
+        end
+        z = {}
+        z.merge!(institution_id: institution_id) if has_institution_id
+        headers.each_with_index do |k,i| 
+          v = row[i]
+          #validations
+          unless params["bypass_validations"]
+            if class_name.columns_hash[k.underscore].type == :integer && !valid_integer?(v)
+              log "Invalid integer #{v} in #{row.join(",")}"
+              n_errors = n_errors + 1
+              next
+            end
+            if class_name.columns_hash[k.underscore].type == :datetime && !valid_datetime?(v)
+              log "Invalid datetime #{v} in #{row.join(",")}"
+              n_errors = n_errors + 1
+              next
+            end
+            if class_name.columns_hash[k.underscore].type == :date && !valid_datetime?(v)
+              log "Invalid date #{v} in #{row.join(",")}"
+              n_errors = n_errors + 1
+              next
+            end
+          end
+
+          z[k.underscore.to_sym] = v
+        end
+        records << class_name.new(z)
+
+        if records.size >= batch_size
+          success = false
+          begin
+            class_name.import records
+            log "Imported #{records.size} records into #{target_model}"
+            records = []
+            success = true
+          rescue => ex
+            log "Error => #{ex.message}"
+          end
+
+          if !success
+            log "Switching to individual mode"
+            records.each do |record|
+              unless record.save
+                log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+              end
+            end
+            records = []
+          end
+
+          break if test_mode
+        end
+
+      end
+      if records.size > 0
+        success = false
+        begin
+          class_name.import records
+          log "Imported #{records.size} records into #{target_model}"
+          records = []
+          success = true
+        rescue => ex
+          log "Error => #{ex.message}"
+        end
+
+        if !success
+          log "Switching to individual mode"
+          records.each do |record|
+            unless record.save
+              log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+            end
+          end
+          records = []
+        end
+
+      end
+
+      log "#{n_errors} errors with #{target_model}" if n_errors > 0
+      log "Finished importing #{target_model}"
+
+      return true
+    end
+
+
+    def export_to_mssql_table_to_csv(params, csv_file_path, test_mode = false)
+      institution_id = Institution.get_id_from_code(params["institution_code"])
+
+      opts = {    host:     params["host"],
+                  port:     params["port"],
+                  database: params["database"],
+                  username: params["username"],
+                  password: params["password"],
+                  adapter:  'sqlserver',
+                  pool:     5,
+                  timeout:  120000 }
+
+      db = TinyTds::Client.new opts
+
+      target_model = params["target_model"]
+      filter = params["filter"]
+      distinct = params["select_distinct"]
+      select_sql = params["select_sql"]
+      source_tables = params["source_tables"]
+      unique_column = params["unique_column"]
+      group_by_sql = params["group_by_sql"]
+      column_mappings = params["column_mappings"] || {}
+      fetch_rows_size = params["fetch_rows_size"] || 0
+
+      column_mappings = {} unless column_mappings.is_a?(Hash)
+      fetch_rows_size = fetch_rows_size.to_i
+
+      do_paging = fetch_rows_size > 0 && unique_column.present?
+
+      log "Started exporting #{target_model} into #{csv_file_path}"
+
+      if test_mode
+        fetch_rows_size = 100
+        do_paging = true
+      end
+
+      if do_paging && unique_column.present?
+        sql =  " SELECT #{distinct ? "DISTINCT" : ""} TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
+               " FROM " + source_tables +
+               " WHERE 1=1 "
+        sql += "   AND (#{filter}) " if filter.present?
+        if group_by_sql.present?
+          sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
+        end
+        sql += " ORDER BY #{ unique_column } ASC "
+      else
+        sql =  " SELECT #{distinct ? "DISTINCT" : ""} #{test_mode ? "TOP #{fetch_rows_size}" : ""} " + select_sql +
+               " FROM " + source_tables +
+               " WHERE 1=1 "
+        sql += " AND (#{filter}) " if filter.present?
+        sql += " GROUP BY " + group_by_sql if group_by_sql.present?
+      end
+      sql.gsub!("\n", " ")
+
+      require "csv"
+
+      CSV.open(csv_file_path, "wb") do |csv|
+        log "Executing query: #{sql}"
+        row_results = db.execute( sql )
+        if row_results.count > 0
+          csv << row_results.first.except("unique_column_val").keys.map { |x| column_mappings[x].present? ? column_mappings[x] : x }
+        end
+        last_unique_column_val = ""
+
+        done = false
+        while !done
+          row_results.each do |row|
+            csv << row.except("unique_column_val").values
+            last_unique_column_val = row["unique_column_val"]
+          end
+
+          if do_paging && last_unique_column_val.present?
+            sql = "  SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
+                  "  FROM " + source_tables +
+                  "  WHERE 1=1 "
+            sql += "   AND (#{filter}) " if filter.present?
+            sql += "   AND (#{unique_column}) > '#{last_unique_column_val.to_s.gsub("'", "''")}' "
+            if group_by_sql.present?
+              sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
+            end
+            sql += " ORDER BY #{ unique_column } ASC "
+            sql.gsub!("\n", " ")
+            row_results = db.execute( sql )
+            last_unique_column_val = ""
+          else
+            done = true
+          end
+
+          done = true if test_mode
+        end # while !done
+
+      end # CSV.open
+      db.close
+      log "Finished exporting #{target_model} into #{csv_file_path}"
+    end
+
   end
 end
+
+def valid_integer?(v)
+  return v.blank? || v.match(/\A[+-]?\d+\z/).present?
+end
+
+def valid_datetime?(v)
+  return true if v.blank?
+  begin
+     DateTime.parse(v)
+  rescue ArgumentError
+     return false
+  end
+  return true
+end
+

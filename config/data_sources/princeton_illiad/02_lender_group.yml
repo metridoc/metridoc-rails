@@ -1,0 +1,11 @@
+load_sequence:         2
+target_model:          "Illiad::LenderGroup"
+truncate_before_load:  "yes"
+filter:                ""
+select_distinct:       true
+select_sql:            "GroupNumber, LenderString"
+source_tables:         "GroupsLink"
+unique_column:         "GroupNumber"
+column_mappings:
+  GroupNumber:  group_no
+  LenderString: lender_code
