@@ -13,6 +13,11 @@ services:
         uid: '9999'
         gid: '9999'
         mode: 0440
+      - source: metridoc_rails_secrets_config
+        target: /home/app/webapp/config/secrets.yml
+        uid: '9999'
+        gid: '9999'
+        mode: 0440
   db:
     image: postgres:10.5-alpine
     environment:
@@ -26,6 +31,8 @@ secrets:
   metridoc_db_password:
     external: true
   metridoc_rails_db_config:
+    external: true
+  metridoc_rails_secrets_config:
     external: true
 
 volumes:
