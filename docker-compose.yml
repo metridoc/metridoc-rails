@@ -7,3 +7,18 @@ services:
       RAILS_ENV: production
     ports:
       - '80:80'
+  db:
+    image: postgres:10.5-alpine
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/metridoc_db_password
+    secrets:
+      - metridoc_db_password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+secrets:
+  metridoc_db_password:
+    external: true
+
+volumes:
+  db_data:
