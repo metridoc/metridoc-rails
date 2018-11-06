@@ -6,5 +6,6 @@ WORKDIR /home/app/webapp
 RUN bundle install
 
 RUN rm -f /etc/service/nginx/down /etc/nginx/sites-enabled/default
+COPY webapp.conf /etc/nginx/sites-enabled/webapp
 
 USER app
