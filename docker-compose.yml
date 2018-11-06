@@ -3,5 +3,7 @@ version: '3.7'
 services:
   app:
     image: metridoc
+    environment:
+      RAILS_ENV: production
     ports:
       - '80:80'
