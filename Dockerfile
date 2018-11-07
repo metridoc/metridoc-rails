@@ -5,7 +5,7 @@ COPY webapp.conf /etc/nginx/sites-enabled/webapp
 
 USER app
 
-COPY --chown=app:app Gemfile* /home/app/webapp/
+COPY Gemfile* /home/app/webapp/
 WORKDIR /home/app/webapp
 RUN bundle install
 
