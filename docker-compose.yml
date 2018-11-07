@@ -4,6 +4,7 @@ services:
   app:
     image: metridoc
     environment:
+      PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
     ports:
       - '80:80'
