@@ -4,7 +4,7 @@ services:
   app:
     image: metridoc
     environment:
-      RAILS_ENV: production
+      RAILS_ENV:
     ports:
       - '80:80'
     secrets:
