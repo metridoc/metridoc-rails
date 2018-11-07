@@ -326,6 +326,26 @@ module ImportHelper
       log "Successfully finished generating schema into #{output_file_path}"
     end
 
+
+    def audit_query_insitutition(folder_name, sequences_only = [])
+      output_file_path = Rails.root.join('tmp', "#{folder_name}.sql").to_s
+
+      output_file = File.open(output_file_path, "w")
+      output_file.puts "#{folder_name}:"
+      output_file.puts "-----------------------------------------------------------------"
+      output_file.close
+
+      get_tasks_yamls(folder_name, sequences_only).each do |task|
+        puts "Running task: #{task["load_sequence"]}"
+        task["output_file_path"] = output_file_path
+        if task["adapter"] == "sqlserver"
+          break if !audit_query_mssql_table(task)
+        elsif task["adapter"] == "native_sql"
+          break if !audit_native_query(task)
+        end
+      end
+    end
+
     def import_insitutition(folder_name, test_mode = false, sequences_only = [])
       get_tasks_yamls(folder_name, sequences_only).each do |task|
         puts "Running task: #{task["load_sequence"]}"
@@ -657,6 +677,60 @@ module ImportHelper
       end # CSV.open
       db.close
       log "Finished exporting #{target_model} into #{csv_file_path}"
+    end
+
+    def audit_query_mssql_table(params)
+
+      output_file_path = params["output_file_path"]
+      target_model = params["target_model"]
+      filter = params["filter"]
+      distinct = params["select_distinct"]
+      select_sql = params["select_sql"]
+      source_tables = params["source_tables"]
+      group_by_sql = params["group_by_sql"]
+
+      log "Started exporting #{target_model}"
+
+      sql =  " SELECT #{distinct ? "DISTINCT" : ""} " + select_sql + "\n" +
+             " FROM " + source_tables + "\n" +
+             " WHERE 1=1 " + "\n"
+      sql += " AND (#{filter}) " + "\n" if filter.present?
+      sql += " GROUP BY " + group_by_sql + "\n" if group_by_sql.present?
+
+      output_file = File.open(output_file_path, "a")
+      output_file.puts "#{target_model}:"
+      output_file.puts ""
+      output_file.puts sql
+      output_file.puts ""
+      output_file.puts "-----------------------------------------------------------------"
+      output_file.close
+
+      return true
+    end
+
+    def audit_native_query(params)
+      institution_id = Institution.get_id_from_code(params["institution_code"])
+      output_file_path = params["output_file_path"]
+      sqls = params["sqls"]
+      sqls = [params["sql"]] if sqls.blank?
+      target_model = params["target_model"]
+
+      output_file = File.open(output_file_path, "a")
+      output_file.puts "#{target_model}:"
+      output_file.puts ""
+
+      sqls.each do |sql|
+        sql.gsub!('{{institution_id}}', institution_id.to_s)
+        output_file.puts sql
+        output_file.puts ""
+      end
+
+      output_file.puts ""
+      output_file.puts "-----------------------------------------------------------------"
+
+      output_file.close
+
+      return true
     end
 
   end
