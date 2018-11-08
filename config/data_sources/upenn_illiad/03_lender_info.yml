@@ -10,4 +10,4 @@ column_mappings:
   LenderString:         lender_code
   LibraryName:          library_name
   loanbillingcategory:  billing_category
-  address:              address
+  "address1+'; '+address2+'; '+address3+'; '+address4 ": address
