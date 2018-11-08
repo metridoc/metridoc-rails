@@ -33,6 +33,8 @@
 
 # Ignore local test env. file
 /config/local_env.yml
+.env
+
 
 # Ignore local secrets.yml file
 /config/secrets.yml
