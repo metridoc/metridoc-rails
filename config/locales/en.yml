@@ -33,3 +33,4 @@ en:
   attributes:
     #common names
     created_at: "Ingested on"
+    call_number: "Local Library Call Number"
