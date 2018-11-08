@@ -43,8 +43,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
     t.string "request_number", limit: 12
-    t.string "patron_id", limit: 20
-    t.string "patron_type", limit: 1
     t.string "author", limit: 300
     t.string "title", limit: 400
     t.string "publisher", limit: 256
@@ -345,7 +343,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "nvtgc", limit: 255
     t.string "org", limit: 255
     t.string "rank", limit: 255
-    t.string "user_id", limit: 255, null: false
+    t.string "status", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["institution_id"], name: "index_illiad_user_infos_on_institution_id"

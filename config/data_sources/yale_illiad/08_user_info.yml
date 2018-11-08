@@ -8,7 +8,7 @@ filter: |
                           WHERE T.username = U.username
                         )
 select_sql: |
-                        SUBSTRING(sys.fn_sqlvarbasetostr(hashbytes('MD5', U.username)),3,32) AS user_id,
+                        U.status,
                         U.department,
                         U.nvtgc
 source_tables:          "UsersALL AS U"
