@@ -127,6 +127,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
 
     create_table :illiad_user_infos do |t|
       t.belongs_to :institution, null: false
+      t.string :status , limit: 255
       t.string :department , limit: 255
       t.string :nvtgc , limit: 255
       t.string :org , limit: 255
