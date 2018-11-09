@@ -10,6 +10,6 @@ WORKDIR /home/app/webapp
 RUN bundle install
 
 COPY --chown=app:app . /home/app/webapp
-RUN RAILS_ENV=production bundle exec rake assets:precompile
+RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
