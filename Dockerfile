@@ -10,6 +10,7 @@ WORKDIR /home/app/webapp
 RUN bundle install
 
 COPY --chown=app:app . /home/app/webapp
+RUN cp config/secrets.examples.yml config/secrets.yml
 RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root

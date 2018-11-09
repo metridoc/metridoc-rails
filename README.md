@@ -31,7 +31,7 @@ Create Docker secrets
 # `metridoc_db_password` secret must match `password` in `config/database.yml`
 echo 'password' | docker secret create metridoc_db_password -
 cat config/database.yml | docker secret create metridoc_rails_db_config -
-cat config/secrets.yml | docker secret create metridoc_rails_secrets_config -
+cat config/secrets.examples.yml | docker secret create metridoc_rails_secrets_config -
 ```
 
 Deploy Docker stack
