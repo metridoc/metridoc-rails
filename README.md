@@ -6,6 +6,54 @@
     cp config/database.yml.example config/database.yml # modify as necessary
     rake db:create
 
+### Using Docker
+
+#### Requirements
+
+- Docker 18.06+
+- Docker Compose 1.22+
+
+#### Setup
+
+Start Docker in Swarm Mode
+```
+docker swarm init
+```
+
+Build image
+```
+docker build -t metridoc .
+```
+
+Create Docker secrets
+```
+# Modify `config/database.yml` and `config/secrets.yml` as necessary
+# `metridoc_db_password` secret must match `password` in `config/database.yml`
+echo 'password' | docker secret create metridoc_db_password -
+cat config/database.yml | docker secret create metridoc_rails_db_config -
+cat config/secrets.yml | docker secret create metridoc_rails_secrets_config -
+```
+
+Deploy Docker stack
+```
+RAILS_ENV=development docker stack deploy -c docker-compose.yml metridoc
+```
+
+Create, migrate, and seed local database
+```
+# Get container ID by service name and execute command on container
+docker exec $(docker ps -q -f name=metridoc_app) bundle exec rake db:setup
+```
+
+Access interactive shell in container
+```
+docker exec -it $(docker ps -q -f name=metridoc_app) /bin/bash
+```
+
+#### Applying Changes
+
+To apply changes to your local Docker containers, rebuild the `metridoc` image and then redeploy the Docker stack.
+
 ## Importing data
 
 There are two data source types planned at the moment, import:csv and import:mysql.
@@ -88,5 +136,3 @@ Then login using:
     http://localhost:3000/admin/
     Username: admin@example.com
     Password: password
-
-
