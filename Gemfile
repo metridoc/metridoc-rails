@@ -42,6 +42,13 @@ gem 'devise'
 gem 'activeadmin'
 gem 'haml'
 
+gem 'active_material', github: 'vigetlabs/active_material'
+gem 'active_admin_sidebar'
+
+gem 'chartkick'
+gem 'active_median'
+gem 'groupdate'
+
 group :development, :test do
   gem 'pry'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

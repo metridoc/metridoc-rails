@@ -1,3 +1,14 @@
+= javascript_include_tag 'application'
+
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+
+#data-viz
+  %h2= t 'active_admin.illiad.columns_heading'
+  #left-col
+    %h3= t 'active_admin.illiad.left_column_heading'
+    = bar_chart Illiad::Borrowing.group(:institution_id).count
+  #right-col
+    %h3= t 'active_admin.illiad.right_column_heading'
+    = area_chart Illiad::Borrowing.group_by_day(:transaction_date, last: 100).count

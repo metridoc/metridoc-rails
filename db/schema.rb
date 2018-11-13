@@ -103,22 +103,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "library_id"
   end
 
-  create_table "borrowdirect_report_distribution_tmps", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "bd_report_distribution_tmp_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
-  end
-
-  create_table "borrowdirect_report_distributions", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "bd_report_distribution_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
-  end
-
   create_table "borrowdirect_ship_dates", force: :cascade do |t|
     t.string "request_number", limit: 12
     t.datetime "ship_date", null: false
@@ -186,14 +170,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "note", limit: 256
     t.datetime "process_date"
     t.integer "library_id"
-  end
-
-  create_table "ezborrow_report_distributions", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "ezb_report_distribution_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
   end
 
   create_table "ezborrow_ship_dates", force: :cascade do |t|
@@ -301,7 +277,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "institution_id", null: false
     t.string "billing_amount", limit: 255
     t.string "call_number", limit: 255
-    t.string "cited_in", limit: 5000
+    t.string "cited_in", limit: 10000
     t.string "esp_number", limit: 255
     t.string "ifm_cost", limit: 255
     t.string "in_process_date", limit: 255
@@ -781,11 +757,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "user_external_id"
     t.string "user_notes"
     t.string "user_flags"
-  end
-
-  create_table "test", force: :cascade do |t|
-    t.bigint "test_int"
-    t.string "test_8c", limit: 8
   end
 
 end

@@ -7,11 +7,18 @@
 // For example, to change the sidebar width:
 // $sidebar-width: 242px;
 
-// Active Admin's got SASS!
-@import "active_admin/mixins";
-@import "active_admin/base";
 
-// Overriding any non-variable SASS must be done after the fact.
-// For example, to change the default status-tag color:
-//
-//   .status_tag { background: #6090DB; }
+// Active Admin's got SASS!
+/* Overriding active_materials default color scheme */
+
+$am-theme-primary: #2E4052;
+$am-theme-accent: #FFC857;
+$am-theme-backdrop: #FBF9F6;
+$am-theme-divider: #412234;
+
+@import "active_admin/mixins";
+@import "active_material";
+@import "active_admin_sidebar";
+
+
+@import "metridoc";

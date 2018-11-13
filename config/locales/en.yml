@@ -30,4 +30,34 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  attributes:
+    #common names
+    created_at: "Ingested on"
+    call_number: "Local Library Call Number"
+  active_admin:
+    dashboard_heading: "Welcome to MetriDoc"
+    dashboard_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
+    about: "About MetriDoc"
+    about_text: "Placeholder for about page content"
+    policies: "Policies"
+    policies_text: "Placeholder for policies content"
+    tutorials: "Tutorials"
+    borrowdirect:
+      columns_heading: "Example data visualizations"
+      left_column_heading: "Top 10 borrowing institutions"
+      right_column_heading: "Top 10 lending institutions"
+    ezborrow:
+      columns_heading: "Example data visualizations"
+      left_column_heading: "Top 10 borrowing institutions"
+      right_column_heading: "Top 10 lending institutions"
+    illiad:
+      columns_heading: "Example data visualizations"
+      left_column_heading: "Borrowing institutions"
+      right_column_heading: "Borrowing transaction dates, last 100 days"
+    keyserver:
+      columns_heading: "Example data visualizations"
+      left_column_heading: "Top 10 computer display models"
+      right_column_heading: "Top 10 program publishers"
+  pages:
+    homepage_heading: "Welcome to MetriDoc"
+    homepage_text: "Placeholder homepage text"
