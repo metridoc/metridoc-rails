@@ -34,7 +34,9 @@ select_sql: |
                         SystemID as system_id,
                         IFMCost as ifm_cost,
                         InProcessDate as in_process_date,
-                        BillingAmount as billing_amount
+                        BillingAmount as billing_amount,
+                        CreationDate AS creation_date,
+                        LenderAddressNumber AS lender_address_number
 source_tables: |
                         Transactions
 unique_column:          TransactionNumber

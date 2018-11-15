@@ -213,6 +213,8 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "billing_category", limit: 255
     t.string "lender_code", limit: 255, null: false
     t.string "library_name", limit: 255
+    t.integer "address_number"
+    t.string "nvtgc", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["institution_id"], name: "index_illiad_lender_infos_on_institution_id"
@@ -308,6 +310,8 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "user_name"
     t.string "borrower_nvtgc", limit: 255
     t.string "original_nvtgc", limit: 255
+    t.datetime "creation_date"
+    t.integer "lender_address_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["institution_id"], name: "index_illiad_transactions_on_institution_id"
