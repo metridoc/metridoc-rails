@@ -4,6 +4,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     create_table :institutions do |t|
       t.string :name, null: false
       t.string :code, null: false
+      t.string :zip_code
       t.timestamps null: false
     end
 
