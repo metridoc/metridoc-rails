@@ -35,6 +35,5 @@
 /config/local_env.yml
 .env
 
-
 # Ignore local secrets.yml file
 /config/secrets.yml

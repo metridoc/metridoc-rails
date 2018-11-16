@@ -4,9 +4,9 @@ require 'bundler/setup'
 Bundler.require(:default)
 
 # require 'active_record'
-require '../lib/import_helper/mssql.rb'
-require '../lib/import_helper/mssql/task.rb'
+require './main.rb'
+require './task.rb'
 
 
-m = Mssql::Mssql.new("upenn_illiad", "/tmp/")
+m = Export::Mssql::Main.new("upenn_illiad", "/tmp/")
 puts m.execute(1)

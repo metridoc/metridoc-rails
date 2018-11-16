@@ -42,6 +42,8 @@ gem 'devise'
 gem 'activeadmin'
 gem 'haml'
 
+gem 'dotenv-rails'
+
 group :development, :test do
   gem 'pry'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
