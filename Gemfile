@@ -42,7 +42,7 @@ gem 'devise'
 gem 'activeadmin'
 gem 'haml'
 
-gem 'dotenv-rails'
+gem 'dotenv'
 
 group :development, :test do
   gem 'pry'

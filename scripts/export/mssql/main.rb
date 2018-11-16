@@ -5,6 +5,13 @@ module Export
       attr_accessor :folder, :csv_file_path, :test_mode
       def initialize(folder, csv_file_path, test_mode = false)
         @folder, @csv_file_path, @test_mode = folder, csv_file_path, test_mode
+        puts "root_path=#{root_path}"
+        require 'dotenv'
+        Dotenv.load("#{root_path}/.env")
+      end
+
+      def root_path
+        File.expand_path('../../..', File.dirname(__FILE__))
       end
 
       def execute(sequences_only = [], test_mode = false)
@@ -20,7 +27,7 @@ module Export
 
         # r = Rails.root.join('config','data_sources', folder)
         # TODO 
-        full_paths = Dir["/Users/erhanberber/development/NM/metridoc-rails/config/data_sources/#{folder}/**/*"]
+        full_paths = Dir["#{root_path}/config/data_sources/#{folder}/**/*"]
         tasks = []
         full_paths.each do |full_path|
           next if File.basename(full_path) == "global.yml"
@@ -39,16 +46,12 @@ module Export
       def global_config
         global_params = {}
 
-        if File.exist?("/Users/erhanberber/development/NM/metridoc-rails/config/data_sources/#{folder}/global.yml")
-          global_params = YAML.load_file("/Users/erhanberber/development/NM/metridoc-rails/config/data_sources/#{folder}/global.yml")
-        end
+        yml_path = "#{root_path}/config/data_sources/#{folder}"
 
-        global_params.each do |k, v|
-          next unless v.is_a?(String)
-          m = v.match(/ENV\["([^\[\]"]*)"\]/)
-          if m.present?
-            global_params[k] = ENV[m[1]]
-          end
+        puts "UPENN_ILLIAD_MSSQL_HOST=#{ENV["UPENN_ILLIAD_MSSQL_HOST"]}"
+
+        if File.exist?("#{yml_path}/global.yml")
+          global_params = YAML.load(ERB.new(File.read("#{yml_path}/global.yml")).result)
         end
       end
 
