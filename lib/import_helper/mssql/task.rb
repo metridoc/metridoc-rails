@@ -1,40 +1,29 @@
-class ImportHelper::Mssql::Task
+  module Mssql
+
+class Task
 
   attr_accessor :mssql_helper, :task_file, :sequence
   def initialize(mssql_helper, task_file)
     @mssql_helper, @task_file = mssql_helper, task_file
   end
 
-  def folder
-    mssql_helper.folder
-  end
-
-  def full_task_file_path
-    "#{folder}/#{task_file}"
-  end
-
   def global_config
     mssql_helper.global_config
   end
 
-  def task_data
-    return @task_data unless @task_data.nil?
-    table_params = YAML.load_file(full_task_file_path)
-
-    # TODO use the filename for this instead
-    sequence = table_params["load_sequence"] || 0
-
-    @task_data = global_config.merge(table_params)
+  def task_config
+    return @task_config unless @task_config.nil?
+    @task_config = global_config.merge(YAML.load_file(task_file))
   end
 
   def import_model_name
-    "Import::#{task_data['target_model']}".gsub(/::/, '')
+    "Import::#{task_config['target_model']}".gsub(/::/, '')
   end   
 
   def import_model
     return import_model_name.constantize if (import_model_name.constantize rescue nil)
-    klass = Object.const_set(import_model_name, Class.new(ActiveRecord::V4::Base))
-    klass.table_name = task_data['source_tables']
+    klass = Object.const_set(import_model_name, Class.new(ActiveRecord::Base))
+    klass.table_name = task_config['source_tables']
     klass.establish_connection mssql_helper.db_opts
     # TODO handle multiple source_tables / break them into joins
     klass
@@ -42,8 +31,7 @@ class ImportHelper::Mssql::Task
 
   def scope
     scope = import_model.select(select_clause)
-    scope = scope.distinct if task_data['select_distinct']
-
+    scope = scope.distinct if task_config['select_distinct']
     scope
   end
 
@@ -53,19 +41,19 @@ class ImportHelper::Mssql::Task
 
 
   def column_mappings   
-    task_data['column_mappings']
+    task_config['column_mappings']
   end
 
   def select_clause
     select_clause = column_mappings.map{|k,v| "#{quoted_column_name(k)} AS #{v}"}.join(", ")
     # TODO SQLServer uses DISTINCT TOP 10. Can we use activerecord's .distinct intelligently?
-    # select_clause = "DISTINCT #{select_clause}" if task_data['select_distinct']
+    # select_clause = "DISTINCT #{select_clause}" if task_config['select_distinct']
 
     select_clause
   end
 
   def institution_id
-    institution_id = Institution.get_id_from_code(task_data["institution_code"])
+    institution_id = Institution.get_id_from_code(task_config["institution_code"])
   end
 
   # protected
@@ -74,15 +62,15 @@ class ImportHelper::Mssql::Task
   end
 
   def export_table_to_csv
-    target_model = task_data["target_model"]
-    filter = task_data["filter"]
-    distinct = task_data["select_distinct"]
-    select_sql = task_data["select_sql"]
-    source_tables = task_data["source_tables"]
-    unique_column = task_data["unique_column"]
-    group_by_sql = task_data["group_by_sql"]
-    column_mappings = task_data["column_mappings"] || {}
-    fetch_rows_size = task_data["fetch_rows_size"] || 0
+    target_model = task_config["target_model"]
+    filter = task_config["filter"]
+    distinct = task_config["select_distinct"]
+    select_sql = task_config["select_sql"]
+    source_tables = task_config["source_tables"]
+    unique_column = task_config["unique_column"]
+    group_by_sql = task_config["group_by_sql"]
+    column_mappings = task_config["column_mappings"] || {}
+    fetch_rows_size = task_config["fetch_rows_size"] || 0
 
     column_mappings = {} unless column_mappings.is_a?(Hash)
     fetch_rows_size = fetch_rows_size.to_i
@@ -155,5 +143,7 @@ class ImportHelper::Mssql::Task
     db.close
     log "Finished exporting #{target_model} into #{csv_file_path}"
   end
+
+end
 
 end

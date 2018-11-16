@@ -4,24 +4,48 @@ class ModelSurrogate < ActiveRecord::Base
     end
 end
 
-module Import
-  module Illiad
-  end
-end
+  module Mssql
 
-class ImportHelper::Mssql
+class Mssql
   attr_accessor :folder, :csv_file_path, :test_mode
   def initialize(folder, csv_file_path, test_mode = false)
     @folder, @csv_file_path, @test_mode = folder, csv_file_path, test_mode
   end
 
+  def execute(sequences_only = [], test_mode = false)
+    task_files(sequences_only).each do |task_file|
+      t = Task.new(self, task_file)
+      # TODO testing
+      return t.scope
+    end
+  end
+
+  def task_files(sequences_only = [])
+    sequences_only = [sequences_only] if sequences_only.present? && !sequences_only.is_a?(Array)
+
+    # r = Rails.root.join('config','data_sources', folder)
+    # TODO 
+    full_paths = Dir["/Users/erhanberber/development/NM/metridoc-rails/config/data_sources/#{folder}/**/*"]
+    tasks = []
+    full_paths.each do |full_path|
+      next if File.basename(full_path) == "global.yml"
+
+      table_params = YAML.load_file(full_path)
+      seq = table_params["load_sequence"] || 0
+
+      next if sequences_only.present? && !sequences_only.include?(seq)
+
+      tasks << {load_sequence: seq, full_path: full_path}
+    end
+
+    tasks.sort_by{|t| t[:load_sequence]}.map{|t| t[:full_path]}
+  end
 
   def global_config
-    r = Rails.root.join('config','data_sources', folder)
     global_params = {}
 
-    if File.exist?(r.join("global.yml"))
-      global_params = YAML.load_file(r.join("global.yml"))
+    if File.exist?("/Users/erhanberber/development/NM/metridoc-rails/config/data_sources/#{folder}/global.yml")
+      global_params = YAML.load_file("/Users/erhanberber/development/NM/metridoc-rails/config/data_sources/#{folder}/global.yml")
     end
 
     global_params.each do |k, v|
@@ -49,3 +73,5 @@ class ImportHelper::Mssql
   end
 
 end
+
+  end
