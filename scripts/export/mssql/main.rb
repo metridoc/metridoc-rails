@@ -44,6 +44,8 @@ module Export
       end
 
       def global_config
+        return @global_params unless @global_params.blank?
+
         global_params = {}
 
         yml_path = "#{root_path}/config/data_sources/#{folder}"
@@ -53,6 +55,8 @@ module Export
         if File.exist?("#{yml_path}/global.yml")
           global_params = YAML.load(ERB.new(File.read("#{yml_path}/global.yml")).result)
         end
+
+        @global_params = global_params
       end
 
       def db_opts
