@@ -1,16 +1,14 @@
 load_sequence:         8
 target_model:          "Illiad::UserInfo"
 truncate_before_load:  "yes"
-filter: |
+source_table:           "UsersALL"
+column_mappings:
+  "UsersALL.status": status
+  "UsersALL.department": department
+  "UsersALL.nvtgc": nvtgc
+filter_raw: |
                         EXISTS (
                           SELECT *
                           FROM  Transactions T
-                          WHERE T.username = U.username
+                          WHERE T.username = UsersALL.username
                         )
-select_sql: |
-                        U.status,
-                        U.department,
-                        U.nvtgc
-source_tables:          "UsersALL AS U"
-unique_column:          U.username
-fetch_rows_size:        1000

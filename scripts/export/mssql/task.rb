@@ -36,6 +36,7 @@ module Export
       def data
         scope = import_model.select(select_clause)
         scope = scope.distinct if task_config['select_distinct']
+        scope = scope.from(from_raw) if from_raw.present?
         join_tables.each do |join_table|
           scope = scope.joins(join_table)
         end
@@ -46,6 +47,10 @@ module Export
           scope = scope.group(group_by_columns)
         end
         scope
+      end
+
+      def from_raw
+        task_config["from_raw"]
       end
 
       def join_tables
