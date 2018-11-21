@@ -34,9 +34,13 @@ module Export
       end
 
       def data
-        scope = import_model
+        scope = import_model.select(select_clause)
         scope = scope.distinct if task_config['select_distinct']
         scope
+      end
+
+      def select_clause
+        column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
       end
 
       def export
@@ -46,8 +50,9 @@ module Export
           csv << column_mappings.map{|k,v| v}
 
           data.each do |obj|
-            csv << column_mappings.map{|k, v| obj.send(k) }
+            csv << column_mappings.each_with_index.map { |(k, v), i| obj.send(v) }
           end
+
         end # CSV.open
       end
 
