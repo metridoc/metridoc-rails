@@ -7,27 +7,24 @@ module Export
         @folder, @csv_file_path, @test_mode = folder, csv_file_path, test_mode
         puts "root_path=#{root_path}"
         require 'dotenv'
-        Dotenv.load("#{root_path}/.env")
+        Dotenv.load(File.join(root_path, ".env"))
       end
 
       def root_path
         File.expand_path('../../..', File.dirname(__FILE__))
       end
 
-      def execute(sequences_only = [], test_mode = false)
+      def export(sequences_only = [], test_mode = false)
         task_files(sequences_only).each do |task_file|
           t = Task.new(self, task_file)
-          # TODO testing
-          return t.scope
+          t.export
         end
       end
 
       def task_files(sequences_only = [])
         sequences_only = [sequences_only] if sequences_only.present? && !sequences_only.is_a?(Array)
 
-        # r = Rails.root.join('config','data_sources', folder)
-        # TODO 
-        full_paths = Dir["#{root_path}/config/data_sources/#{folder}/**/*"]
+        full_paths = Dir[ File.join(root_path, "config", "data_sources", folder, "**", "*")]
         tasks = []
         full_paths.each do |full_path|
           next if File.basename(full_path) == "global.yml"
@@ -48,12 +45,10 @@ module Export
 
         global_params = {}
 
-        yml_path = "#{root_path}/config/data_sources/#{folder}"
+        yml_path = File.join(root_path, "config", "data_sources", folder, "global.yml")
 
-        puts "UPENN_ILLIAD_MSSQL_HOST=#{ENV["UPENN_ILLIAD_MSSQL_HOST"]}"
-
-        if File.exist?("#{yml_path}/global.yml")
-          global_params = YAML.load(ERB.new(File.read("#{yml_path}/global.yml")).result)
+        if File.exist?(yml_path)
+          global_params = YAML.load(ERB.new(File.read(yml_path)).result)
         end
 
         @global_params = global_params
@@ -68,10 +63,6 @@ module Export
                     adapter:  'sqlserver',
                     pool:     5,
                     timeout:  120000 }
-      end
-
-      def db
-        db = TinyTds::Client.new db_opts
       end
 
     end

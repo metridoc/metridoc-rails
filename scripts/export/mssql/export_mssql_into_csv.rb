@@ -9,4 +9,4 @@ require './task.rb'
 
 
 m = Export::Mssql::Main.new("upenn_illiad", "/tmp/")
-puts m.execute(1)
+puts m.export(1)
