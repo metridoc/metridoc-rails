@@ -42,6 +42,9 @@ module Export
         filters.each do |filter|
           scope = scope.where(filter)
         end
+        if group_by_columns.present?
+          scope = scope.group(group_by_columns)
+        end
         scope
       end
 
@@ -49,8 +52,17 @@ module Export
         task_config["join_tables"] || []
       end
 
+      def group_by_columns
+        task_config["group_by_columns"] || []
+      end
+
       def filters
-        task_config["filters"] || []
+        if task_config["filters"].present?
+          return task_config["filters"]
+        elsif task_config["filter_raw"].present?
+          return [task_config["filter_raw"]]
+        end
+        []
       end
 
       def select_clause
