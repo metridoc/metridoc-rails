@@ -36,7 +36,21 @@ module Export
       def data
         scope = import_model.select(select_clause)
         scope = scope.distinct if task_config['select_distinct']
+        join_tables.each do |join_table|
+          scope = scope.joins(join_table)
+        end
+        filters.each do |filter|
+          scope = scope.where(filter)
+        end
         scope
+      end
+
+      def join_tables
+        task_config["join_tables"]
+      end
+
+      def filters
+        task_config["filters"]
       end
 
       def select_clause
