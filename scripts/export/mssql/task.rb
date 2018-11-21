@@ -63,8 +63,9 @@ module Export
         CSV.open(csv_file_path, "wb") do |csv|
           csv << column_mappings.map{|k,v| v}
 
-          data.each do |obj|
+          data.each_with_index do |obj, i|
             csv << column_mappings.each_with_index.map { |(k, v), i| obj.send(v) }
+            puts "Processed #{i} records" if i > 0 && i % 10000 == 0
           end
 
         end # CSV.open

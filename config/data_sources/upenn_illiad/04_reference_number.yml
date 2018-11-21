@@ -2,7 +2,7 @@ load_sequence:         4
 target_model:          "Illiad::ReferenceNumber"
 truncate_before_load:  "yes"
 filters:
-  - "Transactions.TransactionStatus in ('Request Finished','Cancelled by ILL Staff')"
+  - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
 source_table:           Transactions
 join_tables:
   - "INNER JOIN WorldCatInformation I ON I.TransactionNumber = Transactions.TransactionNumber"
