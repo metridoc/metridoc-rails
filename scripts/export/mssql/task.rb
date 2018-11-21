@@ -46,11 +46,11 @@ module Export
       end
 
       def join_tables
-        task_config["join_tables"]
+        task_config["join_tables"] || []
       end
 
       def filters
-        task_config["filters"]
+        task_config["filters"] || []
       end
 
       def select_clause
