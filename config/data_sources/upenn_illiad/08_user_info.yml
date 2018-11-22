@@ -1,14 +1,21 @@
 load_sequence:         8
-target_model:          "Illiad::UserInfo"
-truncate_before_load:  "yes"
-source_table:           "UsersALL"
+
+# Source Config
+source_adapter:        mssql
+source_table:          "UsersALL"
 column_mappings:
   "UsersALL.status": status
   "UsersALL.department": department
   "UsersALL.nvtgc": nvtgc
 filter_raw: |
-                        EXISTS (
-                          SELECT *
-                          FROM  Transactions T
-                          WHERE T.username = UsersALL.username
-                        )
+                      EXISTS (
+                        SELECT *
+                        FROM  Transactions T
+                        WHERE T.username = UsersALL.username
+                      )
+export_file_name:      "user_infos.csv"
+
+# Target Config
+target_adapter:        csv
+truncate_before_load:  "yes"
+target_model:          "Illiad::UserInfo"

@@ -1,6 +1,7 @@
 load_sequence:         5
-target_model:          "Illiad::Transaction"
-truncate_before_load:  "yes"
+
+# Source Config
+source_adapter:        mssql
 filter:
   - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
 source_table: Transactions
@@ -36,4 +37,9 @@ column_mappings:
   "IFMCost": ifm_cost
   "InProcessDate": in_process_date
   "BillingAmount": billing_amount
+export_file_name:      "transactions.csv"
 
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::Transaction"
+truncate_before_load:  "yes"

@@ -1,6 +1,7 @@
 load_sequence:         4
-target_model:          "Illiad::ReferenceNumber"
-truncate_before_load:  "yes"
+
+# Source Config
+source_adapter:        mssql
 filters:
   - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
 source_table:           Transactions
@@ -11,3 +12,9 @@ column_mappings:
   "I.OCLCNumber": oclc
   "I.Type": ref_type
   "I.Data": ref_number
+export_file_name:      "reference_numbers.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::ReferenceNumber"
+truncate_before_load:  "yes"

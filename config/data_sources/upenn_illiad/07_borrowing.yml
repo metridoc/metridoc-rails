@@ -1,7 +1,13 @@
 load_sequence:         7
-target_model:          "Illiad::Borrowing"
-truncate_before_load:  "yes"
+
+# Source Config
+source_adapter:        mssql
 source_table:          "Transactions"
+column_mappings:
+  "S.transaction_number": transaction_number
+  "S.request_type": request_type
+  "S.transaction_status": transaction_status
+  "S.transaction_date": transaction_date
 from_raw: |
                         ( SELECT  t2.TransactionNumber AS transaction_number,
                                   t1.RequestType AS request_type,
@@ -25,8 +31,9 @@ from_raw: |
                             AND h.UserName = 'System'
                             AND CHARINDEX('shipped', entry) > 0
                           GROUP BY h.TransactionNumber, t.RequestType ) AS S
-column_mappings:
-  "S.transaction_number": transaction_number
-  "S.request_type": request_type
-  "S.transaction_status": transaction_status
-  "S.transaction_date": transaction_date
+export_file_name:      "borrowing.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::Borrowing"
+truncate_before_load:  "yes"

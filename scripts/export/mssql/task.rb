@@ -16,7 +16,7 @@ module Export
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = global_config.merge(YAML.load_file(task_file))
+        @task_config = global_config.merge( YAML.load(ERB.new(File.read(task_file)).result) )
       end
 
       def import_model_name
@@ -49,6 +49,10 @@ module Export
         scope
       end
 
+      def source_adapter
+        task_config["source_adapter"]
+      end
+
       def from_raw
         task_config["from_raw"]
       end
@@ -74,22 +78,31 @@ module Export
         column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
       end
 
-      def export
-        csv_file_path = File.join(global_config["export_folder"], "#{task_config["source_table"].downcase}.csv")
+      def execute(test_mode = false)
+        log "Started exporting #{import_model_name}"
+
+        csv_file_path = File.join(global_config["export_folder"], task_config["export_file_name"].downcase)
 
         CSV.open(csv_file_path, "wb") do |csv|
           csv << column_mappings.map{|k,v| v}
 
           data.each_with_index do |obj, i|
             csv << column_mappings.each_with_index.map { |(k, v), i| obj.send(v) }
+            break if test_mode && i >= 100
             puts "Processed #{i} records" if i > 0 && i % 10000 == 0
           end
 
         end # CSV.open
+
+        log "Ended exporting #{import_model_name}"
       end
 
       def column_mappings
         task_config['column_mappings']
+      end
+
+      def log(m)
+        puts "#{Time.now} - #{m}"
       end
 
     end # class Task

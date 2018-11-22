@@ -1,6 +1,7 @@
 load_sequence:         3
-adapter:               csv
+
 # Source Config
+source_adapter:        mssql
 select_distinct:       true
 source_table:          "LenderAddressesALL"
 column_mappings:
@@ -11,7 +12,10 @@ column_mappings:
   Address2:             address2
   Address3:             address3
   Address4:             address4
+export_file_name:      "lender_infos.csv"
+
 # Target Config
+target_adapter:        csv
 target_model:          "Illiad::LenderInfo"
 truncate_before_load:  "yes"
 target_mappings:
