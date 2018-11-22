@@ -1,9 +1,9 @@
 module Import
 
     class Main
-      attr_accessor :folder, :test_mode
-      def initialize(folder, test_mode = false)
-        @folder, @test_mode = folder, test_mode
+      attr_accessor :folder
+      def initialize(folder)
+        @folder = folder
         require 'dotenv'
         Dotenv.load(File.join(root_path, ".env"))
       end
@@ -14,7 +14,7 @@ module Import
 
       def execute(sequences_only = [], test_mode = false)
         task_files(sequences_only).each do |task_file|
-          t = Task.new(self, task_file)
+          t = Task.new(self, task_file, test_mode)
           t.execute
         end
       end

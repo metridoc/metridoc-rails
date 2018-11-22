@@ -50,7 +50,7 @@ module Import
       end
 
       def batch_size
-        task_config["batch_size"] || 10000
+        test_mode ? 100 : task_config["batch_size"] || 10000
       end
 
       def class_name
