@@ -5,5 +5,5 @@ truncate_before_load:  "no"
 sql: |
                         UPDATE illiad_lending_trackings
                         SET turnaround = DATE_PART('day', completion_date - arrival_date)
-                        WHERE institution_id = {{institution_id}}
+                        WHERE institution_id = %{institution_id}
                         ;
