@@ -41,9 +41,8 @@ module Import
       def execute
         if task_config["adapter"] == "csv"
           import
-        # TODO
-        # elsif task_config["adapter"] == "native_sql"
-        #   execute_native_query(task)
+        elsif task_config["adapter"] == "native_sql"
+          execute_native_query
         # elsif task_config["adapter"] == "console_command"
         #   execute_console_command(task, test_mode)
         end
@@ -62,10 +61,31 @@ module Import
         class_name.has_attribute?('institution_id')
       end
 
+      def truncate
+        class_name.where(has_institution_id? ? {institution_id: institution_id} : nil).delete_all
+      end
+
+      def sqls
+        return @sqls if @sqls.present?
+        @sqls = task_config["sqls"].present? ? task_config["sqls"] : [task_config["sql"]]
+      end
+
+      def execute_native_query
+        truncate if truncate_before_load?
+
+        sqls.each do |sql|
+          sql = sql % {institution_id: institution_id}
+          log "Executing Query #{sql}"
+          ActiveRecord::Base.connection.execute(sql)
+        end
+
+        return true
+      end
+
       def import
         csv_file_path = File.join(global_config["export_folder"], "#{task_config["source_table"].downcase}.csv")
 
-        class_name.where(has_institution_id? ? {institution_id: institution_id} : nil).delete_all if truncate_before_load?
+        truncate if truncate_before_load?
 
         csv = CSV.read(csv_file_path)
 
