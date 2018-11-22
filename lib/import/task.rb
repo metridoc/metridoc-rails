@@ -43,8 +43,8 @@ module Import
           import
         elsif task_config["adapter"] == "native_sql"
           execute_native_query
-        # elsif task_config["adapter"] == "console_command"
-        #   execute_console_command(task, test_mode)
+        elsif task_config["adapter"] == "console_command"
+          execute_console_command
         end
       end
 
@@ -68,6 +68,23 @@ module Import
       def sqls
         return @sqls if @sqls.present?
         @sqls = task_config["sqls"].present? ? task_config["sqls"] : [task_config["sql"]]
+      end
+
+      def commands
+        return @commands if @commands.present?
+        @commands = task_config["commands"].present? ? task_config["commands"] : [task_config["command"]]
+      end
+
+      def execute_console_command(params, test_mode)
+        cmds.each do |cmd|
+          log "Executing: #{cmd}"
+          if ! system(cmd)
+            log "Command Failed."
+            return false
+          end
+        end
+
+        return true
       end
 
       def execute_native_query
