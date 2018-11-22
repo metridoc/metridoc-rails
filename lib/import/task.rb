@@ -21,8 +21,16 @@ module Import
         @test_mode
       end
 
+      def do_validations?
+        task_config["do_validations"] == "yes"
+      end
+
       def truncate_before_load?
         task_config["truncate_before_load"] == "yes"
+      end
+
+      def target_mappings
+        task_config['target_mappings']
       end
 
       def task_config
@@ -85,6 +93,23 @@ module Import
             else
               atts[k.to_sym] = v % cols
             end
+            if do_validations?
+              if class_name.columns_hash[k.to_sym].type == :integer && !valid_integer?(atts[k.to_sym])
+                log "Invalid integer #{atts[k.to_sym]} in #{row.join(",")}"
+                n_errors = n_errors + 1
+                next
+              end
+              if class_name.columns_hash[k.to_sym].type == :datetime && !valid_datetime?(atts[k.to_sym])
+                log "Invalid datetime #{atts[k.to_sym]} in #{row.join(",")}"
+                n_errors = n_errors + 1
+                next
+              end
+              if class_name.columns_hash[k.to_sym].type == :date && !valid_datetime?(atts[k.to_sym])
+                log "Invalid date #{atts[k.to_sym]} in #{row.join(",")}"
+                n_errors = n_errors + 1
+                next
+              end
+            end
           end
 
           records << class_name.new(atts)
@@ -140,10 +165,6 @@ module Import
         log "#{n_errors} errors" if n_errors > 0
         log "Finished importing."
 
-      end
-
-      def target_mappings
-        task_config['target_mappings']
       end
 
       def valid_integer?(v)
