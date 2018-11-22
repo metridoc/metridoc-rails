@@ -1,9 +1,16 @@
 load_sequence:         1
-target_model:          "Illiad::Group"
-truncate_before_load:  "yes"
+adapter:               csv
+
+# Source Config
 select_distinct:       true
 source_table:          "Groups"
 column_mappings:
   GroupNumber: group_no
   GroupName:   group_name
 
+# Target Config
+target_model:          "Illiad::Group"
+truncate_before_load:  "yes"
+target_mappings:
+  group_no: group_no
+  group_name: group_name
