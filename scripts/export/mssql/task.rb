@@ -5,9 +5,9 @@ module Export
 
     class Task
 
-      attr_accessor :mssql_main, :task_file, :sequence
-      def initialize(mssql_main, task_file)
-        @mssql_main, @task_file = mssql_main, task_file
+      attr_accessor :mssql_main, :task_file, :test_mode
+      def initialize(mssql_main, task_file, test_mode = false)
+        @mssql_main, @task_file, @test_mode = mssql_main, task_file, test_mode
       end
 
       def global_config
@@ -78,7 +78,7 @@ module Export
         column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
       end
 
-      def execute(test_mode = false)
+      def execute
         log "Started exporting #{import_model_name}"
 
         csv_file_path = File.join(global_config["export_folder"], task_config["export_file_name"].downcase)

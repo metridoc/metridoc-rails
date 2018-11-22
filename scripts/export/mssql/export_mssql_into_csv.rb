@@ -7,5 +7,5 @@ Bundler.require(:default)
 require './main.rb'
 require './task.rb'
 
-m = Export::Mssql::Main.new("upenn_illiad")
-puts m.execute([], true)
+m = Export::Mssql::Main.new("upenn_illiad", true)
+puts m.execute
