@@ -37,6 +37,8 @@ column_mappings:
   "IFMCost": ifm_cost
   "InProcessDate": in_process_date
   "BillingAmount": billing_amount
+  "CreationDate": creation_date
+  "LenderAddressNumber": lender_address_number
 export_file_name:      "transactions.csv"
 
 # Target Config

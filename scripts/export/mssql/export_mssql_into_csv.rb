@@ -10,7 +10,7 @@ require './task.rb'
 folder = ARGV[0]
 test_mode = ARGV.size > 1 && ARGV[1] == "test"
 
-puts "Started running Export::Mssql for #{folder} #{test_mode ? "= Test Mode" : ""}"
-m = Export::Mssql::Main.new(folder)
-m.execute
+puts "Started running Export::Mssql for #{folder} #{test_mode ? " - Test Mode" : ""}"
+m = Export::Mssql::Main.new(folder, test_mode)
+m.execute(9)
 puts "Ended running Export::Mssql for #{folder} #{test_mode ? "= Test Mode" : ""}"

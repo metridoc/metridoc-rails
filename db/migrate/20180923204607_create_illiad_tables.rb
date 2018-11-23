@@ -140,5 +140,13 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.timestamps null: false
     end
 
+    create_table :illiad_history_records do |t|
+      t.belongs_to :institution, null: false
+      t.integer    :transaction_number , limit: 8, null: false
+      t.datetime   :record_datetime, null: false
+      t.string     :entry, null: false
+      t.timestamps null: false
+    end
+
   end
 end

@@ -197,6 +197,16 @@ ActiveRecord::Schema.define(version: 20181115043509) do
     t.index ["institution_id"], name: "index_illiad_groups_on_institution_id"
   end
 
+  create_table "illiad_history_records", force: :cascade do |t|
+    t.bigint "institution_id", null: false
+    t.bigint "transaction_number", null: false
+    t.datetime "record_datetime", null: false
+    t.string "entry", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["institution_id"], name: "index_illiad_history_records_on_institution_id"
+  end
+
   create_table "illiad_lender_groups", force: :cascade do |t|
     t.bigint "institution_id", null: false
     t.integer "demographic"

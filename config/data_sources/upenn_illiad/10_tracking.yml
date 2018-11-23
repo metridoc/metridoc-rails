@@ -1,4 +1,4 @@
-load_sequence:         9
+load_sequence:         10
 target_adapter:        'native_sql'
 target_model:          "Illiad::Tracking"
 truncate_before_load:  "yes"
