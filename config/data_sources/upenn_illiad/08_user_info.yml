@@ -19,3 +19,9 @@ export_file_name:      "user_infos.csv"
 target_adapter:        csv
 truncate_before_load:  "yes"
 target_model:          "Illiad::UserInfo"
+transformations:
+  department:
+    "UNDC.*": "Conversion Test 1"
+    "URBS.*": "Conversion Test 2"
+    "SSE": "Conversion Test 3"
+    ".*": "Conversion Test Others"

@@ -111,8 +111,21 @@ module Import
         task_config["import_file_name"] || task_config["export_file_name"]
       end
 
+      def transformations
+        task_config["transformations"] || {}
+      end
+
       def import
         csv_file_path = File.join(import_folder, import_file_name)
+
+        transformations.each do |column, rules|
+          transformations[column]["engine"] = lambda do |v|
+            rules.each do |rule, val|
+              return val if /#{rule}/i.match(v)
+            end
+            return v
+          end
+        end
 
         truncate if truncate_before_load?
 
@@ -134,32 +147,42 @@ module Import
             cols[k.to_sym] = row[i]
           end
 
+          row_error = false
           atts = {}
           atts.merge!(institution_id: institution_id) if has_institution_id?
           target_mappings.each do |k, v|
             if cols[v.to_sym].present?
-              atts[k.to_sym] = cols[v.to_sym]
+              val = cols[v.to_sym]
             else
-              atts[k.to_sym] = v % cols
+              val = v % cols
             end
+
+            val = transformations[k]["engine"].call(val) if transformations[k].present?
+
             if do_validations?
-              if class_name.columns_hash[k.to_sym].type == :integer && !valid_integer?(atts[k.to_sym])
-                log "Invalid integer #{atts[k.to_sym]} in #{row.join(",")}"
+              if class_name.columns_hash[k.to_sym].type == :integer && !valid_integer?(val)
+                log "Invalid integer #{val} in #{row.join(",")}"
                 n_errors = n_errors + 1
+                row_error = true
                 next
               end
-              if class_name.columns_hash[k.to_sym].type == :datetime && !valid_datetime?(atts[k.to_sym])
-                log "Invalid datetime #{atts[k.to_sym]} in #{row.join(",")}"
+              if class_name.columns_hash[k.to_sym].type == :datetime && !valid_datetime?(val)
+                log "Invalid datetime #{val} in #{row.join(",")}"
                 n_errors = n_errors + 1
+                row_error = true
                 next
               end
-              if class_name.columns_hash[k.to_sym].type == :date && !valid_datetime?(atts[k.to_sym])
-                log "Invalid date #{atts[k.to_sym]} in #{row.join(",")}"
+              if class_name.columns_hash[k.to_sym].type == :date && !valid_datetime?(val)
+                log "Invalid date #{val} in #{row.join(",")}"
                 n_errors = n_errors + 1
+                row_error = true
                 next
               end
             end
+            atts[k.to_sym] = val
           end
+
+          next if row_error
 
           records << class_name.new(atts)
 
