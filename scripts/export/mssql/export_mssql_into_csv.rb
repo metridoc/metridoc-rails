@@ -7,5 +7,10 @@ Bundler.require(:default)
 require './main.rb'
 require './task.rb'
 
-m = Export::Mssql::Main.new("upenn_illiad", true)
-puts m.execute
+folder = ARGV[0]
+test_mode = ARGV.size > 1 && ARGV[1] == "test"
+
+puts "Started running Export::Mssql for #{folder} #{test_mode ? "= Test Mode" : ""}"
+m = Export::Mssql::Main.new(folder)
+m.execute
+puts "Ended running Export::Mssql for #{folder} #{test_mode ? "= Test Mode" : ""}"
