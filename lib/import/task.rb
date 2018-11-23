@@ -30,9 +30,8 @@ module Import
 
         return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
 
-        @target_mappings = task_config["column_mappings"].map{|k,v| {v => v} }.inject(:merge)
-        puts "@target_mappings= #{@target_mappings.inspect}"
-        
+        @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column => target_column} }.inject(:merge)
+
         return @target_mappings
       end
 
