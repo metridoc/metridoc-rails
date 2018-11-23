@@ -135,8 +135,6 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.string :status , limit: 255
       t.string :department , limit: 255
       t.string :nvtgc , limit: 255
-      t.string :org , limit: 255
-      t.string :rank , limit: 255
       t.timestamps null: false
     end
 

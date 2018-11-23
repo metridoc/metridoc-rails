@@ -332,8 +332,6 @@ ActiveRecord::Schema.define(version: 20181115043509) do
     t.string "status", limit: 255
     t.string "department", limit: 255
     t.string "nvtgc", limit: 255
-    t.string "org", limit: 255
-    t.string "rank", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["institution_id"], name: "index_illiad_user_infos_on_institution_id"
