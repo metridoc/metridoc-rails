@@ -17,10 +17,6 @@ module Import
         @mssql_main.institution_id
       end
 
-      def test_mode
-        @test_mode
-      end
-
       def do_validations?
         task_config["do_validations"] == "yes"
       end
@@ -30,7 +26,14 @@ module Import
       end
 
       def target_mappings
-        task_config['target_mappings']
+        return @target_mappings if @target_mappings.present?
+
+        return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
+
+        @target_mappings = task_config["column_mappings"].map{|k,v| {v => v} }.inject(:merge)
+        puts "@target_mappings= #{@target_mappings.inspect}"
+        
+        return @target_mappings
       end
 
       def task_config
@@ -39,13 +42,14 @@ module Import
       end
 
       def execute
-        if task_config["adapter"] == "csv"
-          import
-        elsif task_config["adapter"] == "native_sql"
-          execute_native_query
-        elsif task_config["adapter"] == "console_command"
-          execute_console_command
+        if task_config["target_adapter"] == "csv"
+          return import
+        elsif task_config["target_adapter"] == "native_sql"
+          return execute_native_query
+        elsif task_config["target_adapter"] == "console_command"
+          return execute_console_command
         end
+        return false
       end
 
       def batch_size
@@ -75,7 +79,7 @@ module Import
         @commands = task_config["commands"].present? ? task_config["commands"] : [task_config["command"]]
       end
 
-      def execute_console_command(params, test_mode)
+      def execute_console_command
         cmds.each do |cmd|
           log "Executing: #{cmd}"
           if ! system(cmd)
@@ -99,8 +103,16 @@ module Import
         return true
       end
 
+      def import_folder
+        task_config["import_folder"] || task_config["export_folder"]
+      end
+
+      def import_file_name
+        task_config["import_file_name"] || task_config["export_file_name"]
+      end
+
       def import
-        csv_file_path = File.join(global_config["export_folder"], "#{task_config["source_table"].downcase}.csv")
+        csv_file_path = File.join(import_folder, import_file_name)
 
         truncate if truncate_before_load?
 
@@ -119,14 +131,14 @@ module Import
 
           cols = {}
           headers.each_with_index do |k,i| 
-            cols[k.underscore.to_sym] = row[i]
+            cols[k.to_sym] = row[i]
           end
 
           atts = {}
           atts.merge!(institution_id: institution_id) if has_institution_id?
           target_mappings.each do |k, v|
-            if cols[v].present?
-              atts[k.to_sym] = cols[v]
+            if cols[v.to_sym].present?
+              atts[k.to_sym] = cols[v.to_sym]
             else
               atts[k.to_sym] = v % cols
             end

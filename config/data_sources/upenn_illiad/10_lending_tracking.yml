@@ -1,5 +1,5 @@
 load_sequence:         10
-source_adapter:        'native_sql'
+target_adapter:        'native_sql'
 target_model:          "Illiad::LendingTracking"
 truncate_before_load:  "yes"
 sqls:
