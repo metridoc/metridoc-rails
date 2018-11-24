@@ -28,7 +28,6 @@ join_tables:
   - "LEFT JOIN id_delivery d ON id_request.request_number = d.request_number"
   - "LEFT JOIN id_supplier s ON d.supplier_code_1 = s.supplier_code"
   - "LEFT JOIN id_patron p ON id_request.patron_id = p.patron_id AND id_request.library_id = p.library_id"
-  - "LEFT JOIN id_patron_type pt ON p.patron_type = pt.patron_type"
   - "LEFT JOIN id_pickup_location pl ON d.deliv_address = pl.pickup_location AND id_request.library_id = PL.library_id"
   - "LEFT JOIN id_holdings h ON id_request.request_number = h.request_number AND d.supplier_code_1 = h.supplier_code"
 filters:
