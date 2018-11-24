@@ -12,6 +12,8 @@ column_mappings:
   Address2:             address2
   Address3:             address3
   Address4:             address4
+  addressnumber:        address_number
+  nvtgc:                nvtgc
 export_file_name:      "lender_infos.csv"
 
 # Target Config
@@ -19,7 +21,9 @@ target_adapter:        csv
 target_model:          "Illiad::LenderInfo"
 truncate_before_load:  "yes"
 target_mappings:
-  lender_code: lender_code
-  library_name: library_name
+  lender_code:      lender_code
+  library_name:     library_name
   billing_category: billing_category
-  address: "%{address1}; %{address2}; %{address3}; %{address4};"
+  address:          "%{address1}; %{address2}; %{address3}; %{address4};"
+  address_number:   address_number
+  nvtgc:            nvtgc
