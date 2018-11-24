@@ -209,7 +209,6 @@ ActiveRecord::Schema.define(version: 20181115043509) do
 
   create_table "illiad_lender_groups", force: :cascade do |t|
     t.bigint "institution_id", null: false
-    t.integer "demographic"
     t.integer "group_no", null: false
     t.string "lender_code", limit: 255, null: false
     t.datetime "created_at", null: false
@@ -316,8 +315,7 @@ ActiveRecord::Schema.define(version: 20181115043509) do
     t.datetime "transaction_date"
     t.bigint "transaction_number", null: false
     t.string "transaction_status", limit: 255
-    t.string "user_id", limit: 255
-    t.bigint "user_name"
+    t.string "user_name", limit: 255
     t.string "borrower_nvtgc", limit: 255
     t.string "original_nvtgc", limit: 255
     t.datetime "creation_date"

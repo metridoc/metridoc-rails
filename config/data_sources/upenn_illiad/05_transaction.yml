@@ -39,6 +39,9 @@ column_mappings:
   "BillingAmount": billing_amount
   "CreationDate": creation_date
   "LenderAddressNumber": lender_address_number
+  "username": user_name
+  "BorrowerNVTGC" : borrower_nvtgc
+  "OriginalNVTGC" : original_nvtgc
 export_file_name:      "transactions.csv"
 
 # Target Config

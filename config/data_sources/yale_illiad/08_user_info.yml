@@ -1,16 +1,27 @@
 load_sequence:         8
-target_model:          "Illiad::UserInfo"
+
+# Source Config
+source_adapter:        mssql
+source_table:          "UsersALL"
+column_mappings:
+  "UsersALL.status": status
+  "UsersALL.department": department
+  "UsersALL.nvtgc": nvtgc
+filter_raw: |
+                      EXISTS (
+                        SELECT *
+                        FROM  Transactions T
+                        WHERE T.username = UsersALL.username
+                      )
+export_file_name:      "user_infos.csv"
+
+# Target Config
+target_adapter:        csv
 truncate_before_load:  "yes"
-filter: |
-                        EXISTS (
-                          SELECT *
-                          FROM  Transactions T
-                          WHERE T.username = U.username
-                        )
-select_sql: |
-                        U.status,
-                        U.department,
-                        U.nvtgc
-source_tables:          "UsersALL AS U"
-unique_column:          U.username
-fetch_rows_size:        1000
+target_model:          "Illiad::UserInfo"
+transformations:
+  department:
+    "UNDC.*": "Conversion Test 1"
+    "URBS.*": "Conversion Test 2"
+    "SSE": "Conversion Test 3"
+    ".*": "Conversion Test Others"
