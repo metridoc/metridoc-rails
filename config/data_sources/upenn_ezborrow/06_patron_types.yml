@@ -1,13 +1,14 @@
 load_sequence:         6
+
+# Source Config
+source_adapter:        mssql
+source_table:          "id_patron_type"
+column_mappings:
+  patron_type: patron_type
+  patron_type_desc: patron_type_desc
+export_file_name:      "patron_types.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Ezborrow::PatronType"
 truncate_before_load:  "yes"
-filter:                ""
-select_sql: |
-                       patron_type,
-                       patron_type_desc
-
-source_tables: |
-                       id_patron_type WITH (NOLOCK)
-
-unique_column:         "patron_type"
-fetch_rows_size:       10000
