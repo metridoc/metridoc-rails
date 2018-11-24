@@ -44,13 +44,19 @@ module Import
         @task_config = global_config.merge(YAML.load_file(task_file))
       end
 
+      def target_adapter
+        task_config["target_adapter"] || task_config["adapter"]
+      end
+
       def execute
-        if task_config["target_adapter"] == "csv"
+        if target_adapter == "csv"
           return import
-        elsif task_config["target_adapter"] == "native_sql"
+        elsif target_adapter == "native_sql"
           return execute_native_query
-        elsif task_config["target_adapter"] == "console_command"
+        elsif target_adapter == "console_command"
           return execute_console_command
+        else
+          raise "Unsupported target_adapter type >> #{target_adapter}"
         end
         return false
       end
@@ -83,10 +89,10 @@ module Import
       end
 
       def execute_console_command
-        cmds.each do |cmd|
+        commands.each do |cmd|
           log "Executing: #{cmd}"
           if ! system(cmd)
-            log "Command Failed."
+            log "Command #{cmd} Failed."
             return false
           end
         end

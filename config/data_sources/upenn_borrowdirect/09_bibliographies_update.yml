@@ -1,5 +1,5 @@
 load_sequence:         9
-adapter:               'native_sql'
+target_adapter:        "native_sql"
 target_model:          "Borrowdirect::Bibliography"
 sqls:
   - |

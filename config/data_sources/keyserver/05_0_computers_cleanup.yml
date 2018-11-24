@@ -1,6 +1,6 @@
 load_sequence:         5.0
 target_model:          "Keyserver::Computer"
-adapter:               'console_command'
+target_adapter:        'console_command'
 commands:
   - "rm -rf /tmp/Computers.csv.tmp"
   - "rm -rf /tmp/Computers.cleaned.csv.tmp"
