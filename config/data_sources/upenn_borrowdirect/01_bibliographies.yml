@@ -38,4 +38,3 @@ export_file_name:      "bibliographies.csv"
 target_adapter:        csv
 target_model:          "Borrowdirect::Bibliography"
 truncate_before_load:  "yes"
-do_validations:        "yes"
