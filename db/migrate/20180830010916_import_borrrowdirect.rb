@@ -21,6 +21,7 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
       t.bigint :oclc 
       t.string :oclc_text , limit: 25
       t.string :local_item_found , limit: 1
+      t.string :lccn, limit: 50
     end
 
     create_table :borrowdirect_call_numbers do |t|

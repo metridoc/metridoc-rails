@@ -1,6 +1,5 @@
 ---
 institution_code: 'UPENN'
-adapter:          'sqlserver'
 host:             '<%= ENV["UPENN_ILLIAD_MSSQL_HOST"] %>'
 port:             '<%= ENV["UPENN_ILLIAD_MSSQL_PORT"] %>'
 database:         '<%= ENV["UPENN_ILLIAD_MSSQL_DB"]   %>'

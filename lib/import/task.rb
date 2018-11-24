@@ -143,15 +143,15 @@ module Import
 
           cols = {}
           headers.each_with_index do |k,i| 
-            cols[k.to_sym] = row[i]
+            cols[k] = row[i]
           end
 
           row_error = false
           atts = {}
           atts.merge!(institution_id: institution_id) if has_institution_id?
           target_mappings.each do |column_name, target_column|
-            if cols[target_column.to_sym].present?
-              val = cols[target_column.to_sym]
+            if cols.key?(target_column)
+              val = cols[target_column]
             else
               val = target_column % cols
             end
@@ -159,19 +159,19 @@ module Import
             val = transformations[column_name]["engine"].call(val) if transformations[column_name].present?
 
             if do_validations?
-              if class_name.columns_hash[column_name.to_sym].type == :integer && !valid_integer?(val)
+              if class_name.columns_hash[column_name].type == :integer && !valid_integer?(val)
                 log "Invalid integer #{val} in #{row.join(",")}"
                 n_errors = n_errors + 1
                 row_error = true
                 next
               end
-              if class_name.columns_hash[column_name.to_sym].type == :datetime && !valid_datetime?(val)
+              if class_name.columns_hash[column_name].type == :datetime && !valid_datetime?(val)
                 log "Invalid datetime #{val} in #{row.join(",")}"
                 n_errors = n_errors + 1
                 row_error = true
                 next
               end
-              if class_name.columns_hash[column_name.to_sym].type == :date && !valid_datetime?(val)
+              if class_name.columns_hash[column_name].type == :date && !valid_datetime?(val)
                 log "Invalid date #{val} in #{row.join(",")}"
                 n_errors = n_errors + 1
                 row_error = true
@@ -179,7 +179,7 @@ module Import
               end
             end
 
-            atts[column_name.to_sym] = val
+            atts[column_name] = val
           end
 
           next if row_error

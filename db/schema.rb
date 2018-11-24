@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 20181115043509) do
     t.string "publication_place", limit: 256
     t.string "publication_year", limit: 4
     t.string "edition", limit: 24
-    t.string "lccn", limit: 32
+    t.string "lccn", limit: 50
     t.string "isbn", limit: 24
     t.string "isbn_2", limit: 24
     t.datetime "request_date"

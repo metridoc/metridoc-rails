@@ -1,7 +1,6 @@
 load_sequence:         9
 adapter:               'native_sql'
 target_model:          "Borrowdirect::Bibliography"
-# truncate_before_load:  "no"
 sqls:
   - |
                         UPDATE borrowdirect_bibliographies
