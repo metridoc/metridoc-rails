@@ -5,6 +5,7 @@ source_adapter:        mssql
 source_table:          "id_request"
 column_mappings:
   "s.library_id": lender
+  "p.patron_type": patron_type
   "id_request.library_id": borrower
   "id_request.request_number": request_number
   "id_request.author": author

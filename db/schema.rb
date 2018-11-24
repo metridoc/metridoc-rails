@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 20181115043509) do
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
     t.string "request_number", limit: 12
+    t.string "patron_type", limit: 1
     t.string "author", limit: 300
     t.string "title", limit: 400
     t.string "publisher", limit: 256
