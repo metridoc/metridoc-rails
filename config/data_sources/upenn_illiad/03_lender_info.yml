@@ -23,5 +23,3 @@ target_mappings:
   library_name: library_name
   billing_category: billing_category
   address: "%{address1}; %{address2}; %{address3}; %{address4};"
-batch_size:            10000
-do_validations: yes

@@ -9,3 +9,4 @@ pool:             5
 timeout:          5000
 tds_version:      7.3
 export_folder:    '/tmp/upenn_illiad/'
+batch_size:       10000
