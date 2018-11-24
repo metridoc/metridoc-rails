@@ -25,12 +25,16 @@ module Import
         task_config["truncate_before_load"] == "yes"
       end
 
-      def target_mappings
+      def target_mappings(headers)
         return @target_mappings if @target_mappings.present?
 
         return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
 
-        @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column => target_column} }.inject(:merge)
+        if task_config["column_mappings"].present?
+          @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column => target_column} }.inject(:merge)
+        else
+          @target_mappings = headers.map{|column| class_name.has_attribute?(column.underscore) ? {column.underscore => column.underscore} : nil }.compact.inject(:merge)
+        end
 
         return @target_mappings
       end
@@ -107,7 +111,7 @@ module Import
       end
 
       def import_file_name
-        task_config["import_file_name"] || task_config["export_file_name"]
+        task_config["import_file_name"] || task_config["export_file_name"] || task_config["file_name"]
       end
 
       def transformations
@@ -143,13 +147,13 @@ module Import
 
           cols = {}
           headers.each_with_index do |k,i| 
-            cols[k] = row[i]
+            cols[k.underscore] = row[i]
           end
 
           row_error = false
           atts = {}
           atts.merge!(institution_id: institution_id) if has_institution_id?
-          target_mappings.each do |column_name, target_column|
+          target_mappings(headers).each do |column_name, target_column|
             if cols.key?(target_column)
               val = cols[target_column]
             else

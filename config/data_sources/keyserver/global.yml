@@ -1,4 +1,4 @@
 ---
 institution_code: 'UPENN'
-adapter:          'csv'
-root_path:        '/Users/erhanberber/development/NM/docs/metridoc/keyserverexport11082016/'
+target_adapter:   'csv'
+import_folder:    '/Users/erhanberber/development/NM/docs/metridoc/keyserverexport11082016/'
