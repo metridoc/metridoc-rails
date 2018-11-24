@@ -153,15 +153,15 @@ module Import
 
           cols = {}
           headers.each_with_index do |k,i| 
-            cols[k.underscore] = row[i]
+            cols[k.underscore.to_sym] = row[i]
           end
 
           row_error = false
           atts = {}
           atts.merge!(institution_id: institution_id) if has_institution_id?
           target_mappings(headers).each do |column_name, target_column|
-            if cols.key?(target_column)
-              val = cols[target_column]
+            if cols.key?(target_column.to_sym)
+              val = cols[target_column.to_sym]
             else
               val = target_column % cols
             end
