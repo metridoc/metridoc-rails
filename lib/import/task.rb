@@ -125,6 +125,8 @@ module Import
       end
 
       def import
+        log "Starting to import #{import_file_name}"
+
         csv_file_path = File.join(import_folder, import_file_name)
 
         transformations.each do |column, rules|
@@ -245,8 +247,9 @@ module Import
         end
 
         log "#{n_errors} errors" if n_errors > 0
-        log "Finished importing."
+        log "Finished importing #{import_file_name}."
 
+        return true
       end
 
       def valid_integer?(v)

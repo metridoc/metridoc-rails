@@ -22,6 +22,8 @@ module Import
       def task_files(sequences_only = [])
         sequences_only = [sequences_only] if sequences_only.present? && !sequences_only.is_a?(Array)
 
+        raise "#{folder} config directory doesn't exist." unless Dir.exist?(File.join(root_path, "config", "data_sources", folder))
+
         full_paths = Dir[ File.join(root_path, "config", "data_sources", folder, "**", "*")]
         tasks = []
         full_paths.each do |full_path|
