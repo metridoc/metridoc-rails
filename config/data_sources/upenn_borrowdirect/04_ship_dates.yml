@@ -1,16 +1,20 @@
 load_sequence:         4
+
+# Source Config
+source_adapter:        mssql
+source_table:          "id_audit"
+column_mappings:
+  "id_audit.request_number": request_number
+  "id_audit.time_stamp": ship_date
+  "id_audit.exception_code": exception_code
+  "d.date_processed": process_date 
+join_tables:
+  - "LEFT JOIN id_delivery d ON id_audit.request_number = d.request_number"
+filters:
+  - "id_audit.exception_code <> 'NULL'"
+export_file_name:      "ship_dates.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Borrowdirect::ShipDate"
 truncate_before_load:  "yes"
-filter:                "a.exception_code <> 'NULL'"
-select_sql: |
-                       a.request_number,
-                       a.time_stamp as ship_date,
-                       a.exception_code,
-                       d.date_processed as process_date 
-
-source_tables: |
-                       id_audit a WITH (NOLOCK)
-                       LEFT JOIN id_delivery d WITH (NOLOCK) ON a.request_number = d.request_number
-
-unique_column:         "CONCAT(a.request_number, '___',  CONVERT(varchar, a.time_stamp, 120))"
-fetch_rows_size:       10000

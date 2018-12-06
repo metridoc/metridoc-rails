@@ -1,10 +1,11 @@
 ---
 institution_code: 'YALE'
-adapter:          'sqlserver'
-host:             ENV["YALE_ILLIAD_MSSQL_HOST"]
-port:             ENV["YALE_ILLIAD_MSSQL_PORT"]
-database:         ENV["YALE_ILLIAD_MSSQL_DB"]
-username:         ENV["YALE_ILLIAD_MSSQL_UID"]
-password:         ENV["YALE_ILLIAD_MSSQL_PWD"]
+host:             '<%= ENV["YALE_ILLIAD_MSSQL_HOST"] %>'
+port:             '<%= ENV["YALE_ILLIAD_MSSQL_PORT"] %>'
+database:         '<%= ENV["YALE_ILLIAD_MSSQL_DB"] %>'
+username:         '<%= ENV["YALE_ILLIAD_MSSQL_UID"] %>'
+password:         '<%= ENV["YALE_ILLIAD_MSSQL_PWD"] %>'
 pool:             5
 timeout:          5000
+export_folder:    '/tmp/yale_illiad/'
+batch_size:       10000

@@ -1,14 +1,16 @@
 load_sequence:         5
+
+# Source Config
+source_adapter:        mssql
+source_table:          "id_catalog_code"
+column_mappings:
+  catalog_code: catalog_code
+  catalog_code_desc: institution
+  catalog_library_id: library_id
+export_file_name:      "institutions.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Ezborrow::Institution"
 truncate_before_load:  "yes"
-filter:                ""
-select_sql: |
-                       catalog_code AS catalog_code,
-                       catalog_code_desc AS institution,
-                       catalog_library_id AS library_id
 
-source_tables: |
-                       id_catalog_code WITH (NOLOCK)
-
-unique_column:         "catalog_library_id"
-fetch_rows_size:       10000

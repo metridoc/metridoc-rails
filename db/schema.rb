@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180923204607) do
+ActiveRecord::Schema.define(version: 20181202173853) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,7 +43,6 @@ ActiveRecord::Schema.define(version: 20180923204607) do
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
     t.string "request_number", limit: 12
-    t.string "patron_id", limit: 20
     t.string "patron_type", limit: 1
     t.string "author", limit: 300
     t.string "title", limit: 400
@@ -51,7 +50,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "publication_place", limit: 256
     t.string "publication_year", limit: 4
     t.string "edition", limit: 24
-    t.string "lccn", limit: 32
+    t.string "lccn", limit: 50
     t.string "isbn", limit: 24
     t.string "isbn_2", limit: 24
     t.datetime "request_date"
@@ -64,6 +63,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "oclc"
     t.string "oclc_text", limit: 25
     t.string "local_item_found", limit: 1
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_call_numbers", force: :cascade do |t|
@@ -72,27 +72,32 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
     t.datetime "process_date"
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_exception_codes", force: :cascade do |t|
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_institutions", force: :cascade do |t|
     t.string "catalog_code", limit: 1, null: false
     t.string "institution", limit: 64, null: false
     t.integer "library_id"
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_min_ship_dates", force: :cascade do |t|
     t.string "request_number", limit: 12, null: false
     t.datetime "min_ship_date", null: false
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 50
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_print_dates", force: :cascade do |t|
@@ -101,22 +106,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "note", limit: 256
     t.datetime "process_date"
     t.integer "library_id"
-  end
-
-  create_table "borrowdirect_report_distribution_tmps", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "bd_report_distribution_tmp_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
-  end
-
-  create_table "borrowdirect_report_distributions", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "bd_report_distribution_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "borrowdirect_ship_dates", force: :cascade do |t|
@@ -124,6 +114,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.datetime "ship_date", null: false
     t.string "exception_code", limit: 3
     t.datetime "process_date"
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|
@@ -149,6 +140,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "call_number", limit: 256
     t.string "local_item_found", limit: 1
     t.string "publication_date", limit: 255
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_call_numbers", force: :cascade do |t|
@@ -157,27 +149,32 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "supplier_code", limit: 20
     t.string "call_number", limit: 256
     t.datetime "process_date"
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_exception_codes", force: :cascade do |t|
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_institutions", force: :cascade do |t|
     t.string "catalog_code", limit: 1, null: false
     t.string "institution", limit: 64, null: false
     t.integer "library_id"
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_min_ship_dates", force: :cascade do |t|
     t.string "request_number", limit: 12, null: false
     t.datetime "min_ship_date", null: false
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 32
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_print_dates", force: :cascade do |t|
@@ -186,14 +183,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "note", limit: 256
     t.datetime "process_date"
     t.integer "library_id"
-  end
-
-  create_table "ezborrow_report_distributions", force: :cascade do |t|
-    t.string "email_addr", limit: 32, null: false
-    t.integer "institution_id", null: false
-    t.bigint "ezb_report_distribution_id", null: false
-    t.bigint "version", null: false
-    t.string "library_id", limit: 255, null: false
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "ezborrow_ship_dates", force: :cascade do |t|
@@ -201,6 +191,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.datetime "ship_date"
     t.string "exception_code", limit: 3
     t.datetime "process_date"
+    t.boolean "is_legacy", default: false, null: false
   end
 
   create_table "illiad_borrowings", force: :cascade do |t|
@@ -211,6 +202,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "transaction_status", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_borrowings_on_institution_id"
   end
 
@@ -220,16 +212,28 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.integer "group_no", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_groups_on_institution_id"
+  end
+
+  create_table "illiad_history_records", force: :cascade do |t|
+    t.bigint "institution_id", null: false
+    t.bigint "transaction_number", null: false
+    t.datetime "record_datetime", null: false
+    t.string "entry", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
+    t.index ["institution_id"], name: "index_illiad_history_records_on_institution_id"
   end
 
   create_table "illiad_lender_groups", force: :cascade do |t|
     t.bigint "institution_id", null: false
-    t.integer "demographic"
     t.integer "group_no", null: false
     t.string "lender_code", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_lender_groups_on_institution_id"
   end
 
@@ -239,8 +243,11 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "billing_category", limit: 255
     t.string "lender_code", limit: 255, null: false
     t.string "library_name", limit: 255
+    t.integer "address_number"
+    t.string "nvtgc", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_lender_infos_on_institution_id"
   end
 
@@ -254,6 +261,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.float "turnaround"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_lending_trackings_on_institution_id"
   end
 
@@ -265,6 +273,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "transaction_number", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_lendings_on_institution_id"
   end
 
@@ -276,6 +285,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "transaction_number", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_reference_numbers_on_institution_id"
   end
 
@@ -294,6 +304,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.boolean "turnarounds_processed", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_trackings_on_institution_id"
   end
 
@@ -301,7 +312,7 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.bigint "institution_id", null: false
     t.string "billing_amount", limit: 255
     t.string "call_number", limit: 255
-    t.string "cited_in", limit: 5000
+    t.string "cited_in", limit: 10000
     t.string "esp_number", limit: 255
     t.string "ifm_cost", limit: 255
     t.string "in_process_date", limit: 255
@@ -330,30 +341,32 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.datetime "transaction_date"
     t.bigint "transaction_number", null: false
     t.string "transaction_status", limit: 255
-    t.string "user_id", limit: 255
-    t.bigint "user_name"
+    t.string "user_name", limit: 255
     t.string "borrower_nvtgc", limit: 255
     t.string "original_nvtgc", limit: 255
+    t.datetime "creation_date"
+    t.integer "lender_address_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_transactions_on_institution_id"
   end
 
   create_table "illiad_user_infos", force: :cascade do |t|
     t.bigint "institution_id", null: false
+    t.string "status", limit: 255
     t.string "department", limit: 255
     t.string "nvtgc", limit: 255
-    t.string "org", limit: 255
-    t.string "rank", limit: 255
-    t.string "user_id", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_user_infos_on_institution_id"
   end
 
   create_table "institutions", force: :cascade do |t|
     t.string "name", null: false
     t.string "code", null: false
+    t.string "zip_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -783,9 +796,12 @@ ActiveRecord::Schema.define(version: 20180923204607) do
     t.string "user_flags"
   end
 
-  create_table "test", force: :cascade do |t|
-    t.bigint "test_int"
-    t.string "test_8c", limit: 8
+  create_table "ups_zones", force: :cascade do |t|
+    t.string "from_prefix", null: false
+    t.string "to_prefix", null: false
+    t.integer "zone", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end

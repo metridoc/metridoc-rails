@@ -1,18 +1,22 @@
 load_sequence:         3
+
+# Source Config
+source_adapter:        mssql
+source_table:          "id_audit"
+column_mappings:
+  "id_audit.request_number": request_number
+  "id_audit.time_stamp": print_date
+  "id_audit.note": note
+  "d.date_processed": process_date
+  "c.catalog_library_id": library_id
+join_tables:
+  - "LEFT JOIN id_delivery d ON id_audit.request_number = d.request_number"
+  - "LEFT JOIN id_catalog_code c ON catalog_code_desc = replace(id_audit.note,'Printed At: ','')"
+filters:
+  - "id_audit.stat_location": "8"
+export_file_name:      "print_dates.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Borrowdirect::PrintDate"
 truncate_before_load:  "yes"
-filter:                "a.stat_location='8'"
-select_sql: |
-                       a.request_number,
-                       a.time_stamp AS print_date,
-                       a.note,
-                       d.date_processed AS process_date,
-                       c.catalog_library_id AS library_id
-
-source_tables: |
-                       id_audit a WITH (NOLOCK)
-                       LEFT JOIN id_delivery d WITH (NOLOCK) ON a.request_number = d.request_number
-                       LEFT JOIN id_catalog_code c WITH (NOLOCK) ON catalog_code_desc = replace(a.note,'Printed At: ','')
-
-unique_column:         "CONCAT(a.request_number, '___',  CONVERT(varchar, a.time_stamp, 120))"
-fetch_rows_size:       10000
