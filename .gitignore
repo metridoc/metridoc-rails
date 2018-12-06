@@ -38,7 +38,7 @@
 /config/local_env.yml
 .env
 
-# Ignore Rubymine artifacts`
+# Ignore Rubymine artifacts
 .idea
 
 # Ignore local secrets.yml file
