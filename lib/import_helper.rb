@@ -112,12 +112,168 @@ module ImportHelper
 
     end
 
+
+    def export_legacy_mysql_data(prefix, export_folder)
+      db_conn_hash = {    host:     ENV["LEGACY_MYSQL_HOST"],
+                          port:     ENV["LEGACY_MYSQL_PORT"],
+                          database: ENV["LEGACY_MYSQL_DB"],
+                          username: ENV["LEGACY_MYSQL_UID"],
+                          password: ENV["LEGACY_MYSQL_PWD"],
+                          adapter:  'mysql2',
+                          encoding: 'utf8',
+                          pool:     5,
+                          timeout:  5000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      table_names = []
+
+      require "csv"
+
+      table_results = connection.select_all("SHOW TABLES LIKE '#{prefix}%';")
+      table_results.each do |tr|
+        table_names << tr.values.first
+      end
+
+      connection.close
+
+      table_names.each do |table_name|
+        export_legacy_mysql_table(table_name, export_folder)
+      end
+
+    end
+
+    def export_legacy_mysql_table(mysql_table_name, export_folder)
+      db_conn_hash = {    host:     ENV["LEGACY_MYSQL_HOST"],
+                          port:     ENV["LEGACY_MYSQL_PORT"],
+                          database: ENV["LEGACY_MYSQL_DB"],
+                          username: ENV["LEGACY_MYSQL_UID"],
+                          password: ENV["LEGACY_MYSQL_PWD"],
+                          adapter:  'mysql2',
+                          encoding: 'utf8',
+                          pool:     5,
+                          timeout:  5000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      require "csv"
+
+      csv_file_path = File.join(export_folder, "#{mysql_table_name}.csv")
+
+      log "Started exporting mysql table #{mysql_table_name}"
+
+      row_results = connection.select_all("SELECT * FROM #{mysql_table_name};")
+
+      CSV.open(csv_file_path, "wb") do |csv|
+        if row_results.count > 0
+          csv << row_results.first.keys
+        end
+        n = 0
+        row_results.each do |row|
+          csv << row.values
+          n = n + 1
+          log("Exported #{n} rows.") if n % 10000 == 0
+        end
+      end
+
+      log "Finished exporting mysql table #{mysql_table_name}"
+
+      connection.close
+    end
+
+    def import_legacy_csv(institution_code, export_folder, csv_name, target_model)
+      institution_id = Institution.get_id_from_code(institution_code)
+      class_name = target_model.constantize
+      has_institution_id = class_name.has_attribute?('institution_id')
+      batch_size = 10000
+
+      if has_institution_id
+        class_name.where(is_legacy: true, institution_id: institution_id).delete_all
+      else
+        class_name.where(is_legacy: true).delete_all
+      end
+
+      csv_file_path = File.join(export_folder, csv_name)
+
+      require "csv"
+      csv = CSV.read(csv_file_path)
+
+      headers = csv.first
+
+      records = []
+      n_errors = 0
+      csv.drop(1).each_with_index do |row, n|
+        if n_errors >= 100
+          log "Too may errors #{n_errors}, exiting!"
+          records = []
+          break
+        end
+        z = {}
+        z.merge!(is_legacy: true)
+        z.merge!(institution_id: institution_id) if has_institution_id
+        headers.each_with_index do |k,i| 
+          z[k.underscore.to_sym] = row[i] if k != 'id' && class_name.has_attribute?(k.underscore)
+        end
+        records << class_name.new(z)
+
+        if records.size >= batch_size
+          success = false
+          begin
+            class_name.import records
+            log "Imported #{records.size} records into #{target_model}"
+            records = []
+            success = true
+          rescue => ex
+            log "Error => #{ex.message}"
+          end
+
+          if !success
+            log "Switching to individual mode"
+            records.each do |record|
+              unless record.save
+                log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+              end
+            end
+            records = []
+          end
+        end
+
+      end
+      if records.size > 0
+        success = false
+        begin
+          class_name.import records
+          log "Imported #{records.size} records into #{target_model}"
+          records = []
+          success = true
+        rescue => ex
+          log "Error => #{ex.message}"
+        end
+
+        if !success
+          log "Switching to individual mode"
+          records.each do |record|
+            unless record.save
+              log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+            end
+          end
+          records = []
+        end
+
+      end
+
+      log "#{n_errors} errors with #{target_model}" if n_errors > 0
+      log "Finished importing #{target_model}"
+
+      return true
+    end
+
     def import_mysql_table(prefix, table_name, namespace)
-      db_conn_hash = {    host:     ENV["#{namespace.upcase}_MYSQL_HOST"],
-                          port:     ENV["#{namespace.upcase}_MYSQL_PORT"],
-                          database: ENV["#{namespace.upcase}_MYSQL_DB"],
-                          username: ENV["#{namespace.upcase}_MYSQL_UID"],
-                          password: ENV["#{namespace.upcase}_MYSQL_PWD"],
+      db_conn_hash = {    host:     ENV["LEGACY_MYSQL_HOST"],
+                          port:     ENV["LEGACY_MYSQL_PORT"],
+                          database: ENV["LEGACY_MYSQL_DB"],
+                          username: ENV["LEGACY_MYSQL_UID"],
+                          password: ENV["LEGACY_MYSQL_PWD"],
                           adapter:  'mysql2',
                           encoding: 'utf8',
                           pool:     5,
