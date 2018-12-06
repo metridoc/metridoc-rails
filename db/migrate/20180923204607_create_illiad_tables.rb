@@ -4,11 +4,12 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     create_table :institutions do |t|
       t.string :name, null: false
       t.string :code, null: false
+      t.string :zip_code
       t.timestamps null: false
     end
 
     create_table :illiad_borrowings do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.string :request_type , limit: 255, null: false
       t.datetime :transaction_date , null: false
       t.integer :transaction_number , limit: 8, null: false
@@ -17,31 +18,32 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :illiad_groups do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.string :group_name , limit: 255, null: false
       t.integer :group_no , null: false
       t.timestamps null: false
     end
 
     create_table :illiad_lender_groups do |t|
-      t.belongs_to :institution, null: false
-      t.integer :demographic 
+      t.belongs_to :institution, null: false, index: true
       t.integer :group_no , null: false
       t.string :lender_code , limit: 255, null: false
       t.timestamps null: false
     end
 
     create_table :illiad_lender_infos do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.string :address , limit: 328
       t.string :billing_category , limit: 255
       t.string :lender_code , limit: 255, null: false
       t.string :library_name , limit: 255
+      t.integer :address_number
+      t.string  :nvtgc , limit: 255
       t.timestamps null: false
     end
 
     create_table :illiad_lendings do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.string :request_type , limit: 255, null: false
       t.string :status , limit: 255, null: false
       t.datetime :transaction_date , null: false
@@ -50,7 +52,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :illiad_lending_trackings do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.datetime :arrival_date 
       t.datetime :completion_date 
       t.string :completion_status , limit: 255
@@ -61,7 +63,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :illiad_reference_numbers do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.string :oclc , limit: 255
       t.string :ref_number , limit: 255
       t.string :ref_type , limit: 255
@@ -70,7 +72,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :illiad_trackings do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.datetime :order_date 
       t.string :process_type , limit: 255, null: false
       t.datetime :receive_date 
@@ -86,7 +88,7 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :illiad_transactions do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
       t.string :billing_amount , limit: 255
       t.string :call_number , limit: 255
       t.string :cited_in , limit: 10000
@@ -118,20 +120,27 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.datetime :transaction_date 
       t.integer :transaction_number , limit: 8, null: false
       t.string :transaction_status , limit: 255
-      t.string :user_id , limit: 255
-      t.integer :user_name , limit: 8
+      t.string :user_name, limit: 255
       t.string :borrower_nvtgc , limit: 255
       t.string :original_nvtgc , limit: 255
+      t.datetime :creation_date
+      t.integer :lender_address_number
       t.timestamps null: false
     end
 
     create_table :illiad_user_infos do |t|
-      t.belongs_to :institution, null: false
+      t.belongs_to :institution, null: false, index: true
+      t.string :status , limit: 255
       t.string :department , limit: 255
       t.string :nvtgc , limit: 255
-      t.string :org , limit: 255
-      t.string :rank , limit: 255
-      t.string :user_id , limit: 255, null: false
+      t.timestamps null: false
+    end
+
+    create_table :illiad_history_records do |t|
+      t.belongs_to :institution, null: false, index: true
+      t.integer    :transaction_number , limit: 8, null: false
+      t.datetime   :record_datetime, null: false
+      t.string     :entry, null: false
       t.timestamps null: false
     end
 

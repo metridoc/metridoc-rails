@@ -1,32 +1,36 @@
 load_sequence:         6
-target_model:          "Illiad::Lending"
-truncate_before_load:  "yes"
-filter: |
+
+# Source Config
+source_adapter:        mssql
+source_table:           Transactions
+column_mappings:
+  "Tracking.TransactionNumber": transaction_number
+  "Transactions.RequestType": request_type
+  "Tracking.ChangedTo": status
+  "MIN(Tracking.DateTime)": transaction_date
+filter_raw: |
                         (
                             (
-                              T1.RequestType = 'Article' 
+                              Transactions.RequestType = 'Article'
                               AND
-                              T2.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
                             )
                             OR
                             (
-                              T1.RequestType = 'Loan'
+                              Transactions.RequestType = 'Loan'
                               AND
-                              T2.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
+                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
                             )
                         )
-select_sql: |
-                        T2.TransactionNumber AS transaction_number,
-                        T1.RequestType AS request_type,
-                        T2.ChangedTo AS status,
-                        MIN(T2.DateTime) AS transaction_date
-source_tables: |
-                        Transactions T1
-                        INNER JOIN Tracking T2 ON T2.TransactionNumber = T1.TransactionNumber AND T1.ProcessType = 'Lending'
-group_by_sql: |
-                        T2.TransactionNumber,
-                        T1.RequestType,
-                        T2.ChangedTo
-unique_column:          (CAST(T1.TransactionNumber AS VARCHAR) + '___' + T1.RequestType + '___' + T2.ChangedTo)
-# column_mappings:
-fetch_rows_size:        10000
+join_tables:
+  - INNER JOIN Tracking ON Tracking.TransactionNumber = Transactions.TransactionNumber AND Transactions.ProcessType = 'Lending'
+group_by_columns:
+  - "Tracking.TransactionNumber"
+  - "Transactions.RequestType"
+  - "Tracking.ChangedTo"
+export_file_name:      "lending.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::Lending"
+truncate_before_load:  "yes"

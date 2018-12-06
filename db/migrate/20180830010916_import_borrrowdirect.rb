@@ -2,7 +2,6 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
   def change
     create_table :borrowdirect_bibliographies do |t|
       t.string :request_number , limit: 12
-      t.string :patron_id , limit: 20
       t.string :patron_type , limit: 1
       t.string :author , limit: 300
       t.string :title , limit: 400
@@ -23,6 +22,7 @@ class ImportBorrrowdirect < ActiveRecord::Migration[5.1]
       t.bigint :oclc 
       t.string :oclc_text , limit: 25
       t.string :local_item_found , limit: 1
+      t.string :lccn, limit: 50
     end
 
     create_table :borrowdirect_call_numbers do |t|

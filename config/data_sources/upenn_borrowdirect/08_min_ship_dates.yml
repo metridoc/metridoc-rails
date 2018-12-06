@@ -1,5 +1,5 @@
 load_sequence:         8
-adapter:               'native_sql'
+target_adapter:        "native_sql"
 target_model:          "Borrowdirect::MinShipDate"
 truncate_before_load:  "yes"
 sqls:

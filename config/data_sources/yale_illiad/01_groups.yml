@@ -1,10 +1,18 @@
 load_sequence:         1
+
+# Source Config
+source_adapter:        mssql
+select_distinct:       true
+source_table:          "Groups"
+column_mappings:
+  GroupNumber: group_no
+  GroupName:   group_name
+export_file_name:      "groups.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Illiad::Group"
 truncate_before_load:  "yes"
-filter:                ""
-select_distinct:       true
-select_sql:            "GroupNumber AS group_no, GroupName"
-source_tables:         "Groups"
-unique_column:         "GroupNumber"
-column_mappings:
-  GroupName:   group_name
+target_mappings:
+  group_no: group_no
+  group_name: group_name

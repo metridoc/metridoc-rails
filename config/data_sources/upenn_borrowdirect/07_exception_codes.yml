@@ -1,13 +1,14 @@
 load_sequence:         7
+
+# Source Config
+source_adapter:        mssql
+source_table:          "id_exception_code"
+column_mappings:
+  exception_code: exception_code
+  exception_code_desc: exception_code_desc
+export_file_name:      "exception_codes.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Borrowdirect::ExceptionCode"
 truncate_before_load:  "yes"
-filter:                ""
-select_sql: |
-                       exception_code,
-                       exception_code_desc
-
-source_tables: |
-                       id_exception_code WITH (NOLOCK)
-
-unique_column:         "exception_code"
-fetch_rows_size:       10000

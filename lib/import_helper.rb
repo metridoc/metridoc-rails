@@ -112,12 +112,168 @@ module ImportHelper
 
     end
 
+
+    def export_legacy_mysql_data(prefix, export_folder)
+      db_conn_hash = {    host:     ENV["LEGACY_MYSQL_HOST"],
+                          port:     ENV["LEGACY_MYSQL_PORT"],
+                          database: ENV["LEGACY_MYSQL_DB"],
+                          username: ENV["LEGACY_MYSQL_UID"],
+                          password: ENV["LEGACY_MYSQL_PWD"],
+                          adapter:  'mysql2',
+                          encoding: 'utf8',
+                          pool:     5,
+                          timeout:  5000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      table_names = []
+
+      require "csv"
+
+      table_results = connection.select_all("SHOW TABLES LIKE '#{prefix}%';")
+      table_results.each do |tr|
+        table_names << tr.values.first
+      end
+
+      connection.close
+
+      table_names.each do |table_name|
+        export_legacy_mysql_table(table_name, export_folder)
+      end
+
+    end
+
+    def export_legacy_mysql_table(mysql_table_name, export_folder)
+      db_conn_hash = {    host:     ENV["LEGACY_MYSQL_HOST"],
+                          port:     ENV["LEGACY_MYSQL_PORT"],
+                          database: ENV["LEGACY_MYSQL_DB"],
+                          username: ENV["LEGACY_MYSQL_UID"],
+                          password: ENV["LEGACY_MYSQL_PWD"],
+                          adapter:  'mysql2',
+                          encoding: 'utf8',
+                          pool:     5,
+                          timeout:  5000 }
+
+      connection = ActiveRecord::Base.establish_connection(db_conn_hash).connection
+
+      require "csv"
+
+      csv_file_path = File.join(export_folder, "#{mysql_table_name}.csv")
+
+      log "Started exporting mysql table #{mysql_table_name}"
+
+      row_results = connection.select_all("SELECT * FROM #{mysql_table_name};")
+
+      CSV.open(csv_file_path, "wb") do |csv|
+        if row_results.count > 0
+          csv << row_results.first.keys
+        end
+        n = 0
+        row_results.each do |row|
+          csv << row.values
+          n = n + 1
+          log("Exported #{n} rows.") if n % 10000 == 0
+        end
+      end
+
+      log "Finished exporting mysql table #{mysql_table_name}"
+
+      connection.close
+    end
+
+    def import_legacy_csv(institution_code, export_folder, csv_name, target_model)
+      institution_id = Institution.get_id_from_code(institution_code)
+      class_name = target_model.constantize
+      has_institution_id = class_name.has_attribute?('institution_id')
+      batch_size = 10000
+
+      if has_institution_id
+        class_name.where(is_legacy: true, institution_id: institution_id).delete_all
+      else
+        class_name.where(is_legacy: true).delete_all
+      end
+
+      csv_file_path = File.join(export_folder, csv_name)
+
+      require "csv"
+      csv = CSV.read(csv_file_path)
+
+      headers = csv.first
+
+      records = []
+      n_errors = 0
+      csv.drop(1).each_with_index do |row, n|
+        if n_errors >= 100
+          log "Too may errors #{n_errors}, exiting!"
+          records = []
+          break
+        end
+        z = {}
+        z.merge!(is_legacy: true)
+        z.merge!(institution_id: institution_id) if has_institution_id
+        headers.each_with_index do |k,i| 
+          z[k.underscore.to_sym] = row[i] if k != 'id' && class_name.has_attribute?(k.underscore)
+        end
+        records << class_name.new(z)
+
+        if records.size >= batch_size
+          success = false
+          begin
+            class_name.import records
+            log "Imported #{records.size} records into #{target_model}"
+            records = []
+            success = true
+          rescue => ex
+            log "Error => #{ex.message}"
+          end
+
+          if !success
+            log "Switching to individual mode"
+            records.each do |record|
+              unless record.save
+                log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+              end
+            end
+            records = []
+          end
+        end
+
+      end
+      if records.size > 0
+        success = false
+        begin
+          class_name.import records
+          log "Imported #{records.size} records into #{target_model}"
+          records = []
+          success = true
+        rescue => ex
+          log "Error => #{ex.message}"
+        end
+
+        if !success
+          log "Switching to individual mode"
+          records.each do |record|
+            unless record.save
+              log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+            end
+          end
+          records = []
+        end
+
+      end
+
+      log "#{n_errors} errors with #{target_model}" if n_errors > 0
+      log "Finished importing #{target_model}"
+
+      return true
+    end
+
     def import_mysql_table(prefix, table_name, namespace)
-      db_conn_hash = {    host:     ENV["#{namespace.upcase}_MYSQL_HOST"],
-                          port:     ENV["#{namespace.upcase}_MYSQL_PORT"],
-                          database: ENV["#{namespace.upcase}_MYSQL_DB"],
-                          username: ENV["#{namespace.upcase}_MYSQL_UID"],
-                          password: ENV["#{namespace.upcase}_MYSQL_PWD"],
+      db_conn_hash = {    host:     ENV["LEGACY_MYSQL_HOST"],
+                          port:     ENV["LEGACY_MYSQL_PORT"],
+                          database: ENV["LEGACY_MYSQL_DB"],
+                          username: ENV["LEGACY_MYSQL_UID"],
+                          password: ENV["LEGACY_MYSQL_PWD"],
                           adapter:  'mysql2',
                           encoding: 'utf8',
                           pool:     5,
@@ -346,7 +502,7 @@ module ImportHelper
       end
     end
 
-    def import_insitutition(folder_name, test_mode = false, sequences_only = [])
+    def import_institution(folder_name, test_mode = false, sequences_only = [])
       get_tasks_yamls(folder_name, sequences_only).each do |task|
         puts "Running task: #{task["load_sequence"]}"
         #TODO Add other types of load here as well, such as mysql, csv, etc.
@@ -362,12 +518,12 @@ module ImportHelper
       end
     end
 
-    def export_insitutition(folder_name, output_path, sequences_only = [])
+    def export_institution(folder_name, output_path, sequences_only = [])
       get_tasks_yamls(folder_name, sequences_only).each do |task|
         puts "Running task: #{task["load_sequence"]}"
         #TODO Add other types of load here as well, such as mysql
         if task["adapter"] == "sqlserver"
-          export_to_mssql_table_to_csv(task, File.join(output_path, "#{task["target_model"]}.csv"))
+          export_from_mssql_table_to_csv(task, File.join(output_path, "#{task["target_model"]}.csv"))
         end
       end
     end
@@ -439,7 +595,7 @@ module ImportHelper
 
     def import_mssql_table(params, test_mode = false)
       csv_file_path =  Tempfile.new([params["target_model"],'.csv'], 'tmp').path
-      export_to_mssql_table_to_csv(params, csv_file_path, test_mode)
+      export_from_mssql_table_to_csv(params, csv_file_path, test_mode)
       params["csv_file_path"] = csv_file_path
       params["bypass_validations"] = true
 
@@ -582,102 +738,10 @@ module ImportHelper
       return true
     end
 
-
-    def export_to_mssql_table_to_csv(params, csv_file_path, test_mode = false)
-      institution_id = Institution.get_id_from_code(params["institution_code"])
-
-      opts = {    host:     params["host"],
-                  port:     params["port"],
-                  database: params["database"],
-                  username: params["username"],
-                  password: params["password"],
-                  adapter:  'sqlserver',
-                  pool:     5,
-                  timeout:  120000 }
-
-      db = TinyTds::Client.new opts
-
-      target_model = params["target_model"]
-      filter = params["filter"]
-      distinct = params["select_distinct"]
-      select_sql = params["select_sql"]
-      source_tables = params["source_tables"]
-      unique_column = params["unique_column"]
-      group_by_sql = params["group_by_sql"]
-      column_mappings = params["column_mappings"] || {}
-      fetch_rows_size = params["fetch_rows_size"] || 0
-
-      column_mappings = {} unless column_mappings.is_a?(Hash)
-      fetch_rows_size = fetch_rows_size.to_i
-
-      do_paging = fetch_rows_size > 0 && unique_column.present?
-
-      log "Started exporting #{target_model} into #{csv_file_path}"
-
-      if test_mode
-        fetch_rows_size = 100
-        do_paging = true
-      end
-
-      if do_paging && unique_column.present?
-        sql =  " SELECT #{distinct ? "DISTINCT" : ""} TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
-               " FROM " + source_tables +
-               " WHERE 1=1 "
-        sql += "   AND (#{filter}) " if filter.present?
-        if group_by_sql.present?
-          sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
-        end
-        sql += " ORDER BY #{ unique_column } ASC "
-      else
-        sql =  " SELECT #{distinct ? "DISTINCT" : ""} #{test_mode ? "TOP #{fetch_rows_size}" : ""} " + select_sql +
-               " FROM " + source_tables +
-               " WHERE 1=1 "
-        sql += " AND (#{filter}) " if filter.present?
-        sql += " GROUP BY " + group_by_sql if group_by_sql.present?
-      end
-      sql.gsub!("\n", " ")
-
-      require "csv"
-
-      CSV.open(csv_file_path, "wb") do |csv|
-        log "Executing query: #{sql}"
-        row_results = db.execute( sql )
-        if row_results.count > 0
-          csv << row_results.first.except("unique_column_val").keys.map { |x| column_mappings[x].present? ? column_mappings[x] : x }
-        end
-        last_unique_column_val = ""
-
-        done = false
-        while !done
-          row_results.each do |row|
-            csv << row.except("unique_column_val").values
-            last_unique_column_val = row["unique_column_val"]
-          end
-
-          if do_paging && last_unique_column_val.present?
-            sql = "  SELECT TOP #{fetch_rows_size} " + select_sql + ", (#{unique_column}) AS unique_column_val " +
-                  "  FROM " + source_tables +
-                  "  WHERE 1=1 "
-            sql += "   AND (#{filter}) " if filter.present?
-            sql += "   AND (#{unique_column}) > '#{last_unique_column_val.to_s.gsub("'", "''")}' "
-            if group_by_sql.present?
-              sql += " GROUP BY " + group_by_sql + ", (#{unique_column}) "
-            end
-            sql += " ORDER BY #{ unique_column } ASC "
-            sql.gsub!("\n", " ")
-            row_results = db.execute( sql )
-            last_unique_column_val = ""
-          else
-            done = true
-          end
-
-          done = true if test_mode
-        end # while !done
-
-      end # CSV.open
-      db.close
-      log "Finished exporting #{target_model} into #{csv_file_path}"
-    end
+  def export_from_mssql_table_to_csv(params, csv_file_path, test_mode = false)
+    mssql_helper = ImportHelper::Mssql.new(params, csv_file_path, test_mode)
+    mssql_helper.export_table_to_csv
+  end
 
     def audit_query_mssql_table(params)
 

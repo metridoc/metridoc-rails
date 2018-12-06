@@ -15,11 +15,6 @@ module MetridocsRails510
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    env_file = File.join(Rails.root, 'config', 'local_env.yml')
-    YAML.load(File.open(env_file)).each do |key, value|
-      ENV[key.to_s] = value
-    end if !Rails.env.production? && File.exists?(env_file)
-
     config.autoload_paths += %W(#{Rails.root}/lib)
   end
 end

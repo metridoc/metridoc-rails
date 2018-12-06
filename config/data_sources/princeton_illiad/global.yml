@@ -1,10 +1,11 @@
 ---
 institution_code: 'PRINCETON'
-adapter:          'sqlserver'
-host:             ENV["PRINCETON_ILLIAD_MSSQL_HOST"]
-port:             ENV["PRINCETON_ILLIAD_MSSQL_PORT"]
-database:         ENV["PRINCETON_ILLIAD_MSSQL_DB"]
-username:         ENV["PRINCETON_ILLIAD_MSSQL_UID"]
-password:         ENV["PRINCETON_ILLIAD_MSSQL_PWD"]
+host:             '<%= ENV["PRINCETON_ILLIAD_MSSQL_HOST"] %>'
+port:             '<%= ENV["PRINCETON_ILLIAD_MSSQL_PORT"] %>'
+database:         '<%= ENV["PRINCETON_ILLIAD_MSSQL_DB"] %>'
+username:         '<%= ENV["PRINCETON_ILLIAD_MSSQL_UID"] %>'
+password:         '<%= ENV["PRINCETON_ILLIAD_MSSQL_PWD"] %>'
 pool:             5
 timeout:          5000
+export_folder:    '/tmp/princeton_illiad/'
+batch_size:       10000

@@ -1,43 +1,50 @@
 load_sequence:         5
+
+# Source Config
+source_adapter:        mssql
+filter:
+  - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
+source_table: Transactions
+column_mappings:
+  "TransactionNumber": transaction_number
+  "RequestType": request_type
+  "LoanAuthor": loan_author
+  "LoanTitle": loan_title
+  "LoanPublisher": loan_publisher
+  "LoanPlace": loan_location
+  "LoanDate": loan_date
+  "LoanEdition": loan_edition
+  "PhotoJournalTitle": photo_journal_title
+  "PhotoJournalVolume": photo_journal_volume
+  "PhotoJournalIssue": photo_journal_issue
+  "PhotoJournalMonth": photo_journal_month
+  "PhotoJournalYear": photo_journal_year
+  "PhotoJournalInclusivePages": photo_journal_inclusive_pages
+  "PhotoArticleAuthor": photo_article_author
+  "PhotoArticleTitle": photo_article_title
+  "SUBSTRING(CitedIn, 1, 10000)": cited_in
+  "TransactionStatus": transaction_status
+  "TransactionDate": transaction_date
+  "issn": issn
+  "ESPNumber": esp_number
+  "LendingString": lender_codes
+  "LendingLibrary": lending_library
+  "ReasonForCancellation": reason_for_cancellation
+  "CallNumber": call_number
+  "Location": location
+  "ProcessType": process_type
+  "SystemID": system_id
+  "IFMCost": ifm_cost
+  "InProcessDate": in_process_date
+  "BillingAmount": billing_amount
+  "CreationDate": creation_date
+  "LenderAddressNumber": lender_address_number
+  "username": user_name
+  "BorrowerNVTGC" : borrower_nvtgc
+  "OriginalNVTGC" : original_nvtgc
+export_file_name:      "transactions.csv"
+
+# Target Config
+target_adapter:        csv
 target_model:          "Illiad::Transaction"
 truncate_before_load:  "yes"
-filter:                " TransactionStatus in ('Request Finished','Cancelled by ILL Staff') "
-select_sql: |
-                        TransactionNumber as transaction_number,
-                        SUBSTRING(sys.fn_sqlvarbasetostr(HASHBYTES('MD5',UserName)),3,32) as user_id,
-                        RequestType as request_type,
-                        LoanAuthor as loan_author,
-                        LoanTitle as loan_title,
-                        LoanPublisher as loan_publisher,
-                        LoanPlace as loan_location,
-                        LoanDate as loan_date,
-                        LoanEdition as loan_edition,
-                        PhotoJournalTitle as photo_journal_title,
-                        PhotoJournalVolume as photo_journal_volume,
-                        PhotoJournalIssue as photo_journal_issue,
-                        PhotoJournalMonth as photo_journal_month,
-                        PhotoJournalYear as photo_journal_year,
-                        PhotoJournalInclusivePages as photo_journal_inclusive_pages,
-                        PhotoArticleAuthor as photo_article_author,
-                        PhotoArticleTitle as photo_article_title,
-                        SUBSTRING(CitedIn, 1, 10000) as cited_in,
-                        TransactionStatus as transaction_status,
-                        TransactionDate as transaction_date,
-                        issn,
-                        ESPNumber as esp_number,
-                        LendingString as lender_codes,
-                        LendingLibrary as lending_library,
-                        ReasonForCancellation as reason_for_cancellation,
-                        CallNumber as call_number,
-                        Location as location,
-                        ProcessType as process_type,
-                        SystemID as system_id,
-                        IFMCost as ifm_cost,
-                        InProcessDate as in_process_date,
-                        BillingAmount as billing_amount
-source_tables: |
-                        Transactions
-unique_column:          TransactionNumber
-# column_mappings:
-fetch_rows_size:        10000
-
