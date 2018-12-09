@@ -74,8 +74,16 @@ module Import
         class_name.has_attribute?('institution_id')
       end
 
+      def has_legacy_flag?
+        class_name.has_attribute?('is_legacy')
+      end
+
       def truncate
-        class_name.where(has_institution_id? ? {institution_id: institution_id} : nil).delete_all
+        filters = {}
+        filters.merge!(institution_id: institution_id) if has_institution_id?
+        filters.merge!(is_legacy: false) if has_legacy_flag? && task_config["truncate_legacy_data"] != "yes"
+
+        class_name.where(filters).delete_all
       end
 
       def sqls
