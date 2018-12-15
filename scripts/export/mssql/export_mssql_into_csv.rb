@@ -1,5 +1,5 @@
 # require 'rubygems'
-ENV['BUNDLE_GEMFILE'] = 'Gemfile.sqlserver2008'
+ENV['BUNDLE_GEMFILE'] = 'Gemfile.sqlserver'
 require 'bundler/setup'
 Bundler.require(:default)
 
