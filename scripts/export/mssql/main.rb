@@ -7,6 +7,8 @@ module Export
         @folder, @test_mode = folder, test_mode
         require 'dotenv'
         Dotenv.load(File.join(root_path, ".env"))
+
+        raise "#{folder} config directory doesn't exist." unless Dir.exist?(File.join(root_path, "config", "data_sources", folder))
       end
 
       def root_path
