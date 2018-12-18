@@ -59,6 +59,7 @@ module Import
       def institution_id
         return @institution_id if @institution_id.present?
         @institution_id = Institution.get_id_from_code(global_config["institution_code"])
+        raise "Institution not found in database for [#{ global_config["institution_code"] }]." if @institution_id.blank?
       end
 
     end
