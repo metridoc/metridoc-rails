@@ -6,6 +6,8 @@ module Import
         @folder, @test_mode = folder, test_mode
         require 'dotenv'
         Dotenv.load(File.join(root_path, ".env"))
+
+        raise "#{folder} config directory doesn't exist." unless Dir.exist?(File.join(root_path, "config", "data_sources", folder))
       end
 
       def root_path
@@ -57,6 +59,7 @@ module Import
       def institution_id
         return @institution_id if @institution_id.present?
         @institution_id = Institution.get_id_from_code(global_config["institution_code"])
+        raise "Institution not found in database for [#{ global_config["institution_code"] }]." if @institution_id.blank?
       end
 
     end

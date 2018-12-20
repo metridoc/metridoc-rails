@@ -30,7 +30,7 @@ gem 'jbuilder', '~> 2.5'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-gem 'tiny_tds', '~> 1.0.5'
+gem 'tiny_tds', '~> 2.1.0'
 gem 'activerecord-sqlserver-adapter', '~> 5.1.0'
 
 gem 'pg'

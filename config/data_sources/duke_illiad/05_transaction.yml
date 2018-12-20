@@ -1,0 +1,50 @@
+load_sequence:         5
+
+# Source Config
+source_adapter:        mssql
+filter:
+  - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
+source_table: Transactions
+column_mappings:
+  "TransactionNumber": transaction_number
+  "RequestType": request_type
+  "LoanAuthor": loan_author
+  "LoanTitle": loan_title
+  "LoanPublisher": loan_publisher
+  "LoanPlace": loan_location
+  "LoanDate": loan_date
+  "LoanEdition": loan_edition
+  "PhotoJournalTitle": photo_journal_title
+  "PhotoJournalVolume": photo_journal_volume
+  "PhotoJournalIssue": photo_journal_issue
+  "PhotoJournalMonth": photo_journal_month
+  "PhotoJournalYear": photo_journal_year
+  "PhotoJournalInclusivePages": photo_journal_inclusive_pages
+  "PhotoArticleAuthor": photo_article_author
+  "PhotoArticleTitle": photo_article_title
+  "SUBSTRING(CitedIn, 1, 10000)": cited_in
+  "TransactionStatus": transaction_status
+  "TransactionDate": transaction_date
+  "issn": issn
+  "ESPNumber": esp_number
+  "LendingString": lender_codes
+  "LendingLibrary": lending_library
+  "ReasonForCancellation": reason_for_cancellation
+  "CallNumber": call_number
+  "Location": location
+  "ProcessType": process_type
+  "SystemID": system_id
+  "IFMCost": ifm_cost
+  "InProcessDate": in_process_date
+  "BillingAmount": billing_amount
+  "CreationDate": creation_date
+  "LenderAddressNumber": lender_address_number
+  "username": user_name
+  "BorrowerNVTGC" : borrower_nvtgc
+  "OriginalNVTGC" : original_nvtgc
+export_file_name:      "transactions.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::Transaction"
+truncate_before_load:  "yes"

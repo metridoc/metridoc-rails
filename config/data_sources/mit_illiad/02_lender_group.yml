@@ -1,0 +1,16 @@
+load_sequence:         2
+
+# Source Config
+source_adapter:        mssql
+select_distinct:       true
+source_adapter:        mssql
+source_table:          "GroupsLink"
+column_mappings:
+  GroupNumber:  group_no
+  LenderString: lender_code
+export_file_name:      "lender_groups.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::LenderGroup"
+truncate_before_load:  "yes"
