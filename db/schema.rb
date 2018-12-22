@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181202173853) do
+ActiveRecord::Schema.define(version: 20181222191334) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -204,6 +204,8 @@ ActiveRecord::Schema.define(version: 20181202173853) do
     t.datetime "updated_at", null: false
     t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_borrowings_on_institution_id"
+    t.index ["transaction_number"], name: "index_illiad_borrowings_on_transaction_number"
+    t.index ["transaction_status"], name: "index_illiad_borrowings_on_transaction_status"
   end
 
   create_table "illiad_groups", force: :cascade do |t|
@@ -306,6 +308,7 @@ ActiveRecord::Schema.define(version: 20181202173853) do
     t.datetime "updated_at", null: false
     t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_trackings_on_institution_id"
+    t.index ["order_date"], name: "index_illiad_trackings_on_order_date"
   end
 
   create_table "illiad_transactions", force: :cascade do |t|
