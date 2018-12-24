@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181222191334) do
+ActiveRecord::Schema.define(version: 20181224190049) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,10 +82,11 @@ ActiveRecord::Schema.define(version: 20181222191334) do
   end
 
   create_table "borrowdirect_institutions", force: :cascade do |t|
-    t.string "catalog_code", limit: 1, null: false
-    t.string "institution", limit: 64, null: false
-    t.integer "library_id"
-    t.boolean "is_legacy", default: false, null: false
+    t.integer "library_id", null: false
+    t.string "library_symbol", limit: 25, null: false
+    t.string "institution_name", limit: 100
+    t.string "prime_post_zipcode", limit: 16
+    t.decimal "weighting_factor", precision: 5, scale: 2
   end
 
   create_table "borrowdirect_min_ship_dates", force: :cascade do |t|
@@ -159,10 +160,11 @@ ActiveRecord::Schema.define(version: 20181222191334) do
   end
 
   create_table "ezborrow_institutions", force: :cascade do |t|
-    t.string "catalog_code", limit: 1, null: false
-    t.string "institution", limit: 64, null: false
-    t.integer "library_id"
-    t.boolean "is_legacy", default: false, null: false
+    t.integer "library_id", null: false
+    t.string "library_symbol", limit: 25, null: false
+    t.string "institution_name", limit: 100
+    t.string "prime_post_zipcode", limit: 16
+    t.decimal "weighting_factor", precision: 5, scale: 2
   end
 
   create_table "ezborrow_min_ship_dates", force: :cascade do |t|
