@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181224190049) do
+ActiveRecord::Schema.define(version: 20181225013006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -346,7 +346,6 @@ ActiveRecord::Schema.define(version: 20181224190049) do
     t.datetime "transaction_date"
     t.bigint "transaction_number", null: false
     t.string "transaction_status", limit: 255
-    t.string "user_name", limit: 255
     t.string "borrower_nvtgc", limit: 255
     t.string "original_nvtgc", limit: 255
     t.datetime "creation_date"

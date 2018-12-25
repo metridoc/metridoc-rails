@@ -220,8 +220,12 @@ module Import
             if !success
               log "Switching to individual mode"
               records.each do |record|
-                unless record.save
-                  log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+                begin
+                  unless record.save
+                    log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+                  end
+                rescue => ex
+                  log "Error => #{ex.message} --- [#{record.inspect}]"
                 end
               end
               records = []
