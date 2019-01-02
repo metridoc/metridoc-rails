@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   app:
-    image: metridoc
+    image: metridoc:staging
     environment:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:

@@ -34,7 +34,6 @@ en:
     #common names
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
-<<<<<<< HEAD
   active_admin:
     dashboard_heading: "Welcome to MetriDoc"
     dashboard_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
@@ -62,5 +61,3 @@ en:
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "Placeholder homepage text"
-=======
->>>>>>> master
