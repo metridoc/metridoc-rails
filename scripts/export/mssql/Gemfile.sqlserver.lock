@@ -24,11 +24,9 @@ GEM
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     json (1.8.6)
-    mini_portile2 (2.3.0)
     minitest (5.11.3)
     thread_safe (0.3.6)
-    tiny_tds (1.0.5)
-      mini_portile2 (~> 2.0)
+    tiny_tds (2.1.2)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
 
@@ -38,7 +36,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-sqlserver-adapter
   dotenv
-  tiny_tds (~> 1.0.5)
+  tiny_tds (~> 2.1.0)
 
 RUBY VERSION
    ruby 2.5.1p57

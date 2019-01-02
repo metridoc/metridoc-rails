@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181202173853) do
+ActiveRecord::Schema.define(version: 20181225013006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -82,10 +82,11 @@ ActiveRecord::Schema.define(version: 20181202173853) do
   end
 
   create_table "borrowdirect_institutions", force: :cascade do |t|
-    t.string "catalog_code", limit: 1, null: false
-    t.string "institution", limit: 64, null: false
-    t.integer "library_id"
-    t.boolean "is_legacy", default: false, null: false
+    t.integer "library_id", null: false
+    t.string "library_symbol", limit: 25, null: false
+    t.string "institution_name", limit: 100
+    t.string "prime_post_zipcode", limit: 16
+    t.decimal "weighting_factor", precision: 5, scale: 2
   end
 
   create_table "borrowdirect_min_ship_dates", force: :cascade do |t|
@@ -162,10 +163,11 @@ ActiveRecord::Schema.define(version: 20181202173853) do
   end
 
   create_table "ezborrow_institutions", force: :cascade do |t|
-    t.string "catalog_code", limit: 1, null: false
-    t.string "institution", limit: 64, null: false
-    t.integer "library_id"
-    t.boolean "is_legacy", default: false, null: false
+    t.integer "library_id", null: false
+    t.string "library_symbol", limit: 25, null: false
+    t.string "institution_name", limit: 100
+    t.string "prime_post_zipcode", limit: 16
+    t.decimal "weighting_factor", precision: 5, scale: 2
   end
 
   create_table "ezborrow_min_ship_dates", force: :cascade do |t|
@@ -210,6 +212,8 @@ ActiveRecord::Schema.define(version: 20181202173853) do
     t.datetime "updated_at", null: false
     t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_borrowings_on_institution_id"
+    t.index ["transaction_number"], name: "index_illiad_borrowings_on_transaction_number"
+    t.index ["transaction_status"], name: "index_illiad_borrowings_on_transaction_status"
   end
 
   create_table "illiad_groups", force: :cascade do |t|
@@ -312,6 +316,7 @@ ActiveRecord::Schema.define(version: 20181202173853) do
     t.datetime "updated_at", null: false
     t.boolean "is_legacy", default: false, null: false
     t.index ["institution_id"], name: "index_illiad_trackings_on_institution_id"
+    t.index ["order_date"], name: "index_illiad_trackings_on_order_date"
   end
 
   create_table "illiad_transactions", force: :cascade do |t|
@@ -347,7 +352,6 @@ ActiveRecord::Schema.define(version: 20181202173853) do
     t.datetime "transaction_date"
     t.bigint "transaction_number", null: false
     t.string "transaction_status", limit: 255
-    t.string "user_name", limit: 255
     t.string "borrower_nvtgc", limit: 255
     t.string "original_nvtgc", limit: 255
     t.datetime "creation_date"
