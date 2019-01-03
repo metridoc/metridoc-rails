@@ -6,6 +6,18 @@
     cp config/database.yml.example config/database.yml # modify as necessary
     rake db:create
 
+## Load a DB snapshot to staging
+
+The staging DB is also being used by the prototype Production environment, and privileges need to be reestablished after each load:
+    cd ~/application/current/ && RAILS_ENV=staging rake db:environment:set db:drop db:create
+    # update this next line with your snapshot timestamp
+    time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postgres psql metridoc_staging
+
+    # This should work but doesn't. Not sure why: echo "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO serano;" | sudo -u postgres psql
+    # So we do this instead
+    echo "\dt;" | sudo -u postgres psql metridoc_staging | tail -n +4 | awk '{print $3}' > /tmp/tables.txt
+    for i in `cat /tmp/tables.txt`; do echo "GRANT ALL PRIVILEGES ON $i TO serano;" | sudo -u postgres psql metridoc_staging; done
+
 ## Importing data
 
 There are two data source types planned at the moment, import:csv and import:mysql.
