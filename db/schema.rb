@@ -107,10 +107,7 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.string "note", limit: 256
     t.datetime "process_date"
     t.integer "library_id"
-<<<<<<< HEAD
-=======
     t.boolean "is_legacy", default: false, null: false
->>>>>>> master
   end
 
   create_table "borrowdirect_ship_dates", force: :cascade do |t|
@@ -188,10 +185,7 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.string "note", limit: 256
     t.datetime "process_date"
     t.integer "library_id"
-<<<<<<< HEAD
-=======
     t.boolean "is_legacy", default: false, null: false
->>>>>>> master
   end
 
   create_table "ezborrow_ship_dates", force: :cascade do |t|
@@ -806,8 +800,6 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.string "user_flags"
   end
 
-<<<<<<< HEAD
-=======
   create_table "ups_zones", force: :cascade do |t|
     t.string "from_prefix", null: false
     t.string "to_prefix", null: false
@@ -816,5 +808,4 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.datetime "updated_at", null: false
   end
 
->>>>>>> master
 end
