@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MetriDoc</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= favicon_link_tag(asset_path('favicon.ico')) %>
+</head>
+
+<body class="index active_admin">
+<div id="header">
+  <h1 class="site_title" id="site_title"><%= image_tag('logo.png', :alt => 'MetriDoc', :id => 'site_title_image') %></h1>
+  <ul class="header-item tabs" id="tabs">
+    <li id="login_homepage"><a data-method="get" href="/admin/login">Log in</a></li>
+  </ul>
+</div>
+
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+      <div id="dashboard_default_message">
+        <h1><%= I18n.t('pages.homepage_heading') %></h1>
+        <p><%= I18n.t('pages.homepage_text') %></p>
+      </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

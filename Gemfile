@@ -39,8 +39,14 @@ gem 'devise'
 gem 'activeadmin'
 gem 'haml'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'active_material', github: 'vigetlabs/active_material'
+gem 'active_admin_sidebar'
 
+gem 'chartkick'
+gem 'active_median'
+gem 'groupdate'
+
+gem 'dotenv-rails', groups: [:development, :test]
 group :development, :test do
   gem 'pry'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -64,4 +70,5 @@ group :development do
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+# Some versions of Ubuntu also requires this gem
+gem 'tzinfo-data'
