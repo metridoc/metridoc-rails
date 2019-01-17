@@ -46,6 +46,8 @@ gem 'chartkick'
 gem 'active_median'
 gem 'groupdate'
 
+gem 'chronic'
+
 gem 'dotenv-rails', groups: [:development, :test]
 group :development, :test do
   gem 'pry'

@@ -1,0 +1,20 @@
+load_sequence:         4
+
+# Source Config
+source_adapter:        mssql
+filters:
+  - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
+source_table:           Transactions
+join_tables:
+  - "INNER JOIN WorldCatInformation I ON I.TransactionNumber = Transactions.TransactionNumber"
+column_mappings:
+  "I.TransactionNumber": transaction_number
+  "I.OCLCNumber": oclc
+  "I.Type": ref_type
+  "I.Data": ref_number
+export_file_name:      "reference_numbers.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::ReferenceNumber"
+truncate_before_load:  "yes"

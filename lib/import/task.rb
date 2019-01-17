@@ -1,4 +1,5 @@
 require "csv"
+require 'chronic'
 
 module Import
 
@@ -148,7 +149,7 @@ module Import
 
         truncate if truncate_before_load?
 
-        csv = CSV.read(csv_file_path)
+        csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
 
         headers = csv.first
 
@@ -199,6 +200,8 @@ module Import
               end
             end
 
+            val = Chronic.parse(val) if class_name.columns_hash[column_name].type == :datetime
+
             atts[column_name] = val
           end
 
@@ -207,61 +210,51 @@ module Import
           records << class_name.new(atts)
 
           if records.size >= batch_size
-            success = false
-            begin
-              class_name.import records
-              log "Imported #{records.size} records."
-              records = []
-              success = true
-            rescue => ex
-              log "Error => #{ex.message}"
-            end
-
-            if !success
-              log "Switching to individual mode"
-              records.each do |record|
-                begin
-                  unless record.save
-                    log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
-                  end
-                rescue => ex
-                  log "Error => #{ex.message} --- [#{record.inspect}]"
-                end
-              end
-              records = []
-            end
-
+            n_errors += import_records(records)
+            records = []
             break if test_mode
           end
 
         end
+
         if records.size > 0
-          success = false
-          begin
-            class_name.import records
-            log "Imported #{records.size} records."
-            records = []
-            success = true
-          rescue => ex
-            log "Error => #{ex.message}"
-          end
-
-          if !success
-            log "Switching to individual mode"
-            records.each do |record|
-              unless record.save
-                log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
-              end
-            end
-            records = []
-          end
-
+          n_errors += import_records(records)
+          records = []
         end
 
         log "#{n_errors} errors" if n_errors > 0
         log "Finished importing #{import_file_name}."
 
         return true
+      end
+
+      def import_records(records)
+        begin
+          class_name.import records
+          log "Imported #{records.size} records."
+          return 0
+        rescue => ex
+          log "Error => #{ex.message}"
+        end
+
+        n_errors = 0
+        log "Switching to individual mode"
+        records.each do |record|
+          begin
+            unless record.save
+              log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+              n_errors += 1
+            end
+          rescue => ex
+            log "Error => #{ex.message} record:[#{record.inspect}]"
+            n_errors += 1
+            record.attribute_names.each do |a|
+              log "#{a} --- #{record.send(a).size rescue "n/a"} "
+            end
+          end
+        end
+
+        return n_errors
       end
 
       def valid_integer?(v)
