@@ -5,17 +5,17 @@ module Import
 
     class Task
 
-      attr_accessor :mssql_main, :task_file, :test_mode
-      def initialize(mssql_main, task_file, test_mode = false)
-        @mssql_main, @task_file, @test_mode = mssql_main, task_file, test_mode
+      attr_accessor :main_driver, :task_file, :test_mode
+      def initialize(main_driver, task_file, test_mode = false)
+        @main_driver, @task_file, @test_mode = main_driver, task_file, test_mode
       end
 
       def global_config
-        mssql_main.global_config
+        main_driver.global_config
       end
 
       def institution_id
-        @mssql_main.institution_id
+        @main_driver.institution_id
       end
 
       def do_validations?
@@ -121,10 +121,6 @@ module Import
         return true
       end
 
-      def import_folder
-        task_config["import_folder"] || task_config["export_folder"]
-      end
-
       def import_file_name
         task_config["import_file_name"] || task_config["export_file_name"] || task_config["file_name"]
       end
@@ -136,7 +132,7 @@ module Import
       def import
         log "Starting to import #{import_file_name}"
 
-        csv_file_path = File.join(import_folder, import_file_name)
+        csv_file_path = File.join(@main_driver.import_folder, import_file_name)
 
         transformations.each do |column, rules|
           transformations[column]["engine"] = lambda do |v|
