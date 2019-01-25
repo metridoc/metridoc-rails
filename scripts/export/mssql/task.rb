@@ -5,18 +5,13 @@ module Export
 
     class Task
 
-      attr_accessor :mssql_main, :task_file, :test_mode
-      def initialize(mssql_main, task_file, test_mode = false)
-        @mssql_main, @task_file, @test_mode = mssql_main, task_file, test_mode
-      end
-
-      def global_config
-        mssql_main.global_config
+      def initialize(main_driver, task_file)
+        @main_driver, @task_file = main_driver, task_file
       end
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = global_config.merge( YAML.load(ERB.new(File.read(task_file)).result) )
+        @task_config = @main_driver.global_config.merge( YAML.load(ERB.new(File.read(@task_file)).result) )
       end
 
       def import_model_name
@@ -27,7 +22,7 @@ module Export
         return import_model_name.constantize if (import_model_name.constantize rescue nil)
         klass = Object.const_set(import_model_name, Class.new(ActiveRecord::Base))
         klass.table_name = task_config['source_table']
-        klass.establish_connection mssql_main.db_opts
+        klass.establish_connection @main_driver.db_opts
         klass.primary_key = nil
         # TODO handle multiple source_tables / break them into joins
         klass
@@ -47,6 +42,10 @@ module Export
           scope = scope.group(group_by_columns)
         end
         scope
+      end
+
+      def test_mode?
+        @main_driver.test_mode?
       end
 
       def source_adapter
@@ -81,20 +80,23 @@ module Export
       def execute
         log "Started exporting #{import_model_name}"
 
-        csv_file_path = File.join(global_config["export_folder"], task_config["export_file_name"].downcase)
+        FileUtils.mkdir_p task_config["export_folder"]
+
+        csv_file_path = File.join(task_config["export_folder"], task_config["export_file_name"].downcase)
 
         CSV.open(csv_file_path, "wb") do |csv|
           csv << column_mappings.map{|k,v| v}
 
           data.each_with_index do |obj, i|
             csv << column_mappings.each_with_index.map { |(k, v), i| obj.send(v) }
-            break if test_mode && i >= 100
+            break if test_mode? && i >= 100
             puts "Processed #{i} records" if i > 0 && i % 10000 == 0
           end
 
         end # CSV.open
 
         log "Ended exporting #{import_model_name}"
+        return true
       end
 
       def column_mappings
