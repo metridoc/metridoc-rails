@@ -11,7 +11,7 @@ require './task.rb'
 parameters = [
   ["c", "config_folder", "Required Configuration Folder"],
   ["t", "test_mode", "Optional Test mode true/false"],
-  ["s", "sigle_step", "Optional Single Step to run"],
+  ["s", "single_step", "Optional Single Step to run"],
   ["e", "export_folder", "Optional Export Folder"],
 ]
 
