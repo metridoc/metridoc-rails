@@ -108,10 +108,23 @@ module Import
         class_name.has_attribute?('is_legacy')
       end
 
+      def legacy_filter_date_field
+        task_config["legacy_filter_date_field"]
+      end
+
       def truncate
         filters = {}
         filters.merge!(institution_id: institution_id) if has_institution_id?
-        filters.merge!(is_legacy: false) if has_legacy_flag? && task_config["truncate_legacy_data"] != "yes"
+
+        if has_legacy_flag? && task_config["truncate_legacy_data"] != "yes"
+          filters.merge!(is_legacy: false)
+          # mark records older than 1 year old as legacy
+          if legacy_filter_date_field.present?
+            log "Setting Legacy Flag for #{class_name.name} records older than 1 year."
+            class_name.where(filters).where(class_name.arel_table[legacy_filter_date_field].lt(1.year.ago)).update_all(is_legacy: true)
+          end
+        end
+
 
         class_name.where(filters).delete_all
       end

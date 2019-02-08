@@ -18,3 +18,4 @@ export_file_name:      "ship_dates.csv"
 target_adapter:        csv
 target_model:          "Ezborrow::ShipDate"
 truncate_before_load:  "yes"
+legacy_filter_date_field: "ship_date"
