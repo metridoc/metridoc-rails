@@ -14,6 +14,7 @@ join_tables:
 filters:
   - "id_holdings.call_number IS NOT NULL"
 export_file_name:      "call_numbers.csv"
+export_filter_date_sql: "d.date_processed > ?"
 
 # Target Config
 target_adapter:        csv

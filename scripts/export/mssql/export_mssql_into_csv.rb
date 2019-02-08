@@ -31,6 +31,7 @@ parameters = [
   ["t", "test_mode", "Optional Test mode true/false"],
   ["s", "single_step", "Optional Single Step to run"],
   ["e", "export_folder", "Optional Export Folder"],
+  ["f", "from_date", "From Date"],
 ]
 
 options = {}

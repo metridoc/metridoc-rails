@@ -29,6 +29,7 @@ group_by_columns:
   - "Transactions.RequestType"
   - "Tracking.ChangedTo"
 export_file_name:      "lending.csv"
+export_filter_date_sql: "Tracking.DateTime > ?"
 
 # Target Config
 target_adapter:        csv

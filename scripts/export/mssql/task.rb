@@ -29,6 +29,19 @@ module Export
         klass
       end
 
+      def export_filter_date_sql
+        task_config["export_filter_date_sql"]
+      end
+
+      def from_date
+        @from_date if @from_date.present?
+        @from_date = nil
+        if task_config["from_date"].present?
+          @from_date =  Date.parse( task_config["from_date"] )
+        end
+        @from_date
+      end
+
       def data
         scope = import_model.select(select_clause)
         scope = scope.distinct if task_config['select_distinct']
@@ -38,6 +51,9 @@ module Export
         end
         filters.each do |filter|
           scope = scope.where(filter)
+        end
+        if export_filter_date_sql.present? && from_date.present?
+          scope = scope.where(export_filter_date_sql, from_date)
         end
         if group_by_columns.present?
           scope = scope.group(group_by_columns)
