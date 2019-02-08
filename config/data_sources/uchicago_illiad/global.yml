@@ -7,6 +7,5 @@ username:         '<%= ENV["CHICAGO_ILLIAD_MSSQL_UID"]  %>'
 password:         '<%= ENV["CHICAGO_ILLIAD_MSSQL_PWD"]  %>'
 pool:             5
 timeout:          5000
-tds_version:      7.3
 export_folder:    '/tmp/uchicago_illiad/'
 batch_size:       10000

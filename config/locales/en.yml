@@ -61,3 +61,10 @@ en:
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "Placeholder homepage text"
+
+  activerecord:
+    models:
+      log/job_execution_step: 
+        one: "Job Execution Step"
+        other: "Job Execution Steps"
+

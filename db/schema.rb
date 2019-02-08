@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181225013006) do
+ActiveRecord::Schema.define(version: 20181229210024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -329,14 +329,14 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.string "loan_edition", limit: 255
     t.string "loan_location", limit: 255
     t.string "loan_publisher", limit: 255
-    t.string "loan_title", limit: 500
+    t.string "loan_title", limit: 255
     t.string "location", limit: 255
     t.string "photo_article_author", limit: 255
-    t.string "photo_article_title", limit: 500
+    t.string "photo_article_title", limit: 255
     t.string "photo_journal_inclusive_pages", limit: 255
     t.string "photo_journal_issue", limit: 255
     t.string "photo_journal_month", limit: 255
-    t.string "photo_journal_title", limit: 500
+    t.string "photo_journal_title", limit: 255
     t.string "photo_journal_volume", limit: 255
     t.string "photo_journal_year", limit: 255
     t.string "process_type", limit: 255
@@ -798,6 +798,28 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.integer "user_external_id"
     t.string "user_notes"
     t.string "user_flags"
+  end
+
+  create_table "log_job_execution_steps", force: :cascade do |t|
+    t.bigint "job_execution_id", null: false
+    t.string "step_name", null: false
+    t.json "step_yml", null: false
+    t.datetime "started_at", null: false
+    t.datetime "status_set_at", null: false
+    t.string "status", null: false
+    t.text "log_text"
+    t.index ["job_execution_id"], name: "index_log_job_execution_steps_on_job_execution_id"
+  end
+
+  create_table "log_job_executions", force: :cascade do |t|
+    t.string "source_name", null: false
+    t.string "job_type", null: false
+    t.string "mac_address"
+    t.json "global_yml", null: false
+    t.datetime "started_at", null: false
+    t.datetime "status_set_at", null: false
+    t.string "status", null: false
+    t.text "log_text"
   end
 
   create_table "ups_zones", force: :cascade do |t|

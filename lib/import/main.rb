@@ -34,13 +34,22 @@ module Import
       end
 
       def execute(sequences_only = [])
+        log_job_execution
+
         task_files(sequences_only).each do |task_file|
           t = Task.new(self, task_file, test_mode?)
-          return false unless t.execute
+          log("Started executing step [#{task_file}]")
+          unless t.execute
+            log("Failed executing step [#{task_file}]")
+            log_job_execution.set_status!('failed')
+            return false
+          end
+          log("Ended executing step [#{task_file}]")
         end
 
         move_source_files if move_to_folder.present?
 
+        log_job_execution.set_status!('successful')
         return true
       end
 
@@ -87,7 +96,31 @@ module Import
       def institution_id
         return @institution_id if @institution_id.present?
         @institution_id = Institution.get_id_from_code(global_config["institution_code"])
-        raise "Institution not found in database for [#{ global_config["institution_code"] }]." if @institution_id.blank?
+        if @institution_id.blank?
+          msg  = "Institution not found in database for [#{ global_config["institution_code"] }]."
+          log(msg)
+          log_job_execution.set_status!('failed')
+          raise msg
+        end
+      end
+
+      def log_job_execution
+        return @log_job_execution if @log_job_execution.present?
+
+        @log_job_execution = Log::JobExecution.create!(
+                                                        source_name: config_folder,
+                                                        job_type: 'import',
+                                                        global_yml: global_config,
+                                                        mac_address: ApplicationHelper.mac_address,
+                                                        started_at: Time.now,
+                                                        status: 'running'
+                                                      )
+      end
+
+      def log(m)
+        log = "#{Time.now} - #{m}"
+        log_job_execution.log_line(log)
+        puts log
       end
 
     end

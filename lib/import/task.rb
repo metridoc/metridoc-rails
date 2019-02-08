@@ -5,13 +5,27 @@ module Import
 
     class Task
 
-      attr_accessor :main_driver, :task_file, :test_mode
       def initialize(main_driver, task_file, test_mode = false)
         @main_driver, @task_file, @test_mode = main_driver, task_file, test_mode
       end
 
+      def log_job_execution
+        @main_driver.log_job_execution
+      end
+
+      def log_job_execution_step
+        return @log_job_execution_step if @log_job_execution_step.present?
+
+        @log_job_execution_step = log_job_execution.job_execution_steps.create!(
+                                                          step_name: task_config["load_sequence"],
+                                                          step_yml: task_config,
+                                                          started_at: Time.now,
+                                                          status: 'running'
+                                                    )
+      end
+
       def global_config
-        main_driver.global_config
+        @main_driver.global_config
       end
 
       def institution_id
@@ -42,7 +56,7 @@ module Import
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = global_config.merge(YAML.load_file(task_file))
+        @task_config = global_config.merge(YAML.load_file(@task_file))
       end
 
       def target_adapter
@@ -50,20 +64,35 @@ module Import
       end
 
       def execute
+        log_job_execution_step
+
+        return_value = false
         if target_adapter == "csv"
-          return import
+          return_value = import
         elsif target_adapter == "native_sql"
-          return execute_native_query
+          return_value = execute_native_query
         elsif target_adapter == "console_command"
-          return execute_console_command
+          return_value = execute_console_command
         else
           raise "Unsupported target_adapter type >> #{target_adapter}"
         end
+
+        if return_value
+          log_job_execution_step.set_status!("successful")
+        else
+          log_job_execution_step.set_status!("failed")
+        end
+
+        return return_value
+
+        rescue => ex
+        log "Error => [#{ex.message}]"
+        log_job_execution_step.set_status!("failed")
         return false
       end
 
       def batch_size
-        test_mode ? 100 : task_config["batch_size"] || 10000
+        @test_mode ? 100 : task_config["batch_size"] || 10000
       end
 
       def class_name
@@ -208,7 +237,7 @@ module Import
           if records.size >= batch_size
             n_errors += import_records(records)
             records = []
-            break if test_mode
+            break if @test_mode
           end
 
         end
@@ -268,7 +297,9 @@ module Import
       end
 
       def log(m)
-        puts "#{Time.now} - #{m}"
+        log = "#{Time.now} - #{m}"
+        log_job_execution_step.log_line(log)
+        puts log
       end
 
     end # class Task
