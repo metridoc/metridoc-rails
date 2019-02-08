@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181225013006) do
+ActiveRecord::Schema.define(version: 20190204195608) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -194,6 +194,22 @@ ActiveRecord::Schema.define(version: 20181225013006) do
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+  end
+
+  create_table "gate_count_card_swipes", force: :cascade do |t|
+    t.date "swipe_date"
+    t.string "swipe_time"
+    t.string "door_name"
+    t.string "affiliation_desc"
+    t.string "center_desc"
+    t.string "dept_desc"
+    t.string "usc_desc"
+  end
+
+  create_table "geo_data_zip_codes", force: :cascade do |t|
+    t.string "zip_code"
+    t.string "latitude"
+    t.string "longitude"
   end
 
   create_table "illiad_borrowings", force: :cascade do |t|
