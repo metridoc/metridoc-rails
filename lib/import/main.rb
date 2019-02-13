@@ -102,6 +102,7 @@ module Import
           log_job_execution.set_status!('failed')
           raise msg
         end
+        @institution_id
       end
 
       def log_job_execution

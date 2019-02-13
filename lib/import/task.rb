@@ -46,9 +46,9 @@ module Import
         return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
 
         if task_config["column_mappings"].present?
-          @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column => target_column} }.inject(:merge)
+          @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column.strip => target_column.strip} }.inject(:merge)
         else
-          @target_mappings = headers.map{|column| class_name.has_attribute?(column.underscore) ? {column.underscore => column.underscore} : nil }.compact.inject(:merge)
+          @target_mappings = headers.map{|column| class_name.has_attribute?(column.underscore) ? {column.strip.underscore => column.strip.underscore} : nil }.compact.inject(:merge)
         end
 
         return @target_mappings
@@ -156,7 +156,7 @@ module Import
 
         sqls.each do |sql|
           sql = sql % {institution_id: institution_id}
-          log "Executing Query #{sql}"
+          log "Executing Query [#{sql}]"
           ActiveRecord::Base.connection.execute(sql)
         end
 
@@ -202,7 +202,7 @@ module Import
 
           cols = {}
           headers.each_with_index do |k,i| 
-            cols[k.underscore.to_sym] = row[i]
+            cols[k.strip.underscore.to_sym] = row[i]
           end
 
           row_error = false
