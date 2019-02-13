@@ -286,9 +286,9 @@ module Import
           rescue => ex
             log "Error => #{ex.message} record:[#{record.inspect}]"
             n_errors += 1
-            record.attribute_names.each do |a|
-              log "#{a} --- #{record.send(a).size rescue "n/a"} "
-            end
+            # record.attribute_names.each do |a|
+            #   log "#{a} --- #{record.send(a).size rescue "n/a"} "
+            # end
           end
         end
 
