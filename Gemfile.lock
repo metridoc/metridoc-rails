@@ -84,6 +84,7 @@ GEM
     chartkick (3.0.1)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
+    chronic (0.10.2)
     coderay (1.1.2)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
@@ -281,10 +282,11 @@ DEPENDENCIES
   byebug
   capybara (~> 2.13.0)
   chartkick
+  chronic
   coffee-rails (~> 4.2)
   devise
-  groupdate
   dotenv-rails
+  groupdate
   haml
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
@@ -308,4 +310,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.3
+   1.16.4

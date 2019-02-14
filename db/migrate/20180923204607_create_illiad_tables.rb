@@ -103,14 +103,14 @@ class CreateIlliadTables < ActiveRecord::Migration[5.1]
       t.string :loan_edition , limit: 255
       t.string :loan_location , limit: 255
       t.string :loan_publisher , limit: 255
-      t.string :loan_title , limit: 255
+      t.string :loan_title , limit: 500
       t.string :location , limit: 255
       t.string :photo_article_author , limit: 255
-      t.string :photo_article_title , limit: 255
+      t.string :photo_article_title , limit: 500
       t.string :photo_journal_inclusive_pages , limit: 255
       t.string :photo_journal_issue , limit: 255
       t.string :photo_journal_month , limit: 255
-      t.string :photo_journal_title , limit: 255
+      t.string :photo_journal_title , limit: 500
       t.string :photo_journal_volume , limit: 255
       t.string :photo_journal_year , limit: 255
       t.string :process_type , limit: 255

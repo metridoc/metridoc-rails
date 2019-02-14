@@ -29,8 +29,10 @@ group_by_columns:
   - "Transactions.RequestType"
   - "Tracking.ChangedTo"
 export_file_name:      "lending.csv"
+export_filter_date_sql: "Tracking.DateTime > ?"
 
 # Target Config
 target_adapter:        csv
 target_model:          "Illiad::Lending"
 truncate_before_load:  "yes"
+legacy_filter_date_field: "transaction_date"
