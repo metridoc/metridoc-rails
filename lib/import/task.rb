@@ -40,7 +40,7 @@ module Import
         task_config["truncate_before_load"] == "yes"
       end
 
-      def target_mappings(headers)
+      def target_mappings(headers = nil)
         return @target_mappings if @target_mappings.present?
 
         return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
@@ -69,6 +69,8 @@ module Import
         return_value = false
         if target_adapter == "csv"
           return_value = import
+        elsif target_adapter == "xml"
+          return_value = import_xml
         elsif target_adapter == "native_sql"
           return_value = execute_native_query
         elsif target_adapter == "console_command"
@@ -293,6 +295,54 @@ module Import
         end
 
         return n_errors
+      end
+
+      def iterator_path
+        task_config["iterator_path"]
+      end
+
+      def import_xml
+        log "Starting to import XML #{import_file_name}"
+
+        xml_file_path = File.join(@main_driver.import_folder, import_file_name)
+
+        truncate if truncate_before_load?
+
+        doc = Nokogiri::XML( File.open(xml_file_path) )
+        doc.remove_namespaces!
+        records = []
+        n_errors = 0
+        doc.xpath(iterator_path).each do |xml_row|
+          row_error = false
+          atts = {}
+          atts.merge!(institution_id: institution_id) if has_institution_id?
+          target_mappings.each do |column_name, x_path|
+            node = xml_row.xpath(x_path)
+            val = node.is_a?(Nokogiri::XML::NodeSet) ? (node.present? ? node.first.text : "") : node
+            atts[column_name] = val.gsub(/\s+/, ' ').strip
+          end
+
+          next if row_error
+
+          records << class_name.new(atts)
+
+          if records.size >= batch_size
+            n_errors += import_records(records)
+            records = []
+            break if @test_mode
+          end
+
+        end
+
+        if records.size > 0
+          n_errors += import_records(records)
+          records = []
+        end
+
+        log "#{n_errors} errors" if n_errors > 0
+        log "Finished importing XML #{import_file_name}."
+
+        return true
       end
 
       def valid_integer?(v)
