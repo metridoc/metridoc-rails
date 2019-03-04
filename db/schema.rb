@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190204195608) do
+ActiveRecord::Schema.define(version: 20190214042906) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -345,14 +345,14 @@ ActiveRecord::Schema.define(version: 20190204195608) do
     t.string "loan_edition", limit: 255
     t.string "loan_location", limit: 255
     t.string "loan_publisher", limit: 255
-    t.string "loan_title", limit: 500
+    t.string "loan_title", limit: 255
     t.string "location", limit: 255
     t.string "photo_article_author", limit: 255
-    t.string "photo_article_title", limit: 500
+    t.string "photo_article_title", limit: 255
     t.string "photo_journal_inclusive_pages", limit: 255
     t.string "photo_journal_issue", limit: 255
     t.string "photo_journal_month", limit: 255
-    t.string "photo_journal_title", limit: 500
+    t.string "photo_journal_title", limit: 255
     t.string "photo_journal_volume", limit: 255
     t.string "photo_journal_year", limit: 255
     t.string "process_type", limit: 255
@@ -814,6 +814,56 @@ ActiveRecord::Schema.define(version: 20190204195608) do
     t.integer "user_external_id"
     t.string "user_notes"
     t.string "user_flags"
+  end
+
+  create_table "log_job_execution_steps", force: :cascade do |t|
+    t.bigint "job_execution_id", null: false
+    t.string "step_name", null: false
+    t.json "step_yml", null: false
+    t.datetime "started_at", null: false
+    t.datetime "status_set_at", null: false
+    t.string "status", null: false
+    t.text "log_text"
+    t.index ["job_execution_id"], name: "index_log_job_execution_steps_on_job_execution_id"
+  end
+
+  create_table "log_job_executions", force: :cascade do |t|
+    t.string "source_name", null: false
+    t.string "job_type", null: false
+    t.string "mac_address"
+    t.json "global_yml", null: false
+    t.datetime "started_at", null: false
+    t.datetime "status_set_at", null: false
+    t.string "status", null: false
+    t.text "log_text"
+  end
+
+  create_table "marc_book_mods", force: :cascade do |t|
+    t.string "title"
+    t.string "name"
+    t.string "name_date"
+    t.string "role"
+    t.string "type_of_resource"
+    t.string "genre"
+    t.string "origin_place_code"
+    t.string "origin_place"
+    t.string "origin_publisher"
+    t.string "origin_date_issued"
+    t.string "origin_issuance"
+    t.string "language"
+    t.string "physical_description_form"
+    t.string "physical_description_extent"
+    t.string "notes", limit: 1000
+    t.string "subject"
+    t.string "classification"
+    t.string "related_item_title"
+    t.string "lccn_identifier"
+    t.string "oclc_identifier"
+    t.string "record_content_source"
+    t.string "record_creation_date"
+    t.string "record_change_date"
+    t.string "record_identifier"
+    t.string "record_origin"
   end
 
   create_table "ups_zones", force: :cascade do |t|

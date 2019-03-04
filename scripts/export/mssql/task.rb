@@ -1,3 +1,4 @@
+require '../../../app/models/log/job_execution_step.rb'
 require "csv"
 
 module Export
@@ -28,6 +29,19 @@ module Export
         klass
       end
 
+      def export_filter_date_sql
+        task_config["export_filter_date_sql"]
+      end
+
+      def from_date
+        @from_date if @from_date.present?
+        @from_date = nil
+        if task_config["from_date"].present?
+          @from_date =  Date.parse( task_config["from_date"] )
+        end
+        @from_date
+      end
+
       def data
         scope = import_model.select(select_clause)
         scope = scope.distinct if task_config['select_distinct']
@@ -37,6 +51,9 @@ module Export
         end
         filters.each do |filter|
           scope = scope.where(filter)
+        end
+        if export_filter_date_sql.present? && from_date.present?
+          scope = scope.where(export_filter_date_sql, from_date)
         end
         if group_by_columns.present?
           scope = scope.group(group_by_columns)
@@ -78,7 +95,7 @@ module Export
       end
 
       def execute
-        log "Started exporting #{import_model_name}"
+        log_job_execution_step
 
         FileUtils.mkdir_p task_config["export_folder"]
 
@@ -95,16 +112,39 @@ module Export
 
         end # CSV.open
 
-        log "Ended exporting #{import_model_name}"
+        log_job_execution_step.set_status!("successful")
         return true
+
+        rescue => ex
+        log "Error => [#{ex.message}]"
+        log_job_execution_step.set_status!("failed")
+        return false
       end
 
       def column_mappings
         task_config['column_mappings']
       end
 
+      def log_job_execution_step
+        return @log_job_execution_step if @log_job_execution_step.present?
+
+        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
+        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
+        Log::JobExecutionStep.establish_connection dbconfig[environment]
+
+        @log_job_execution_step = Log::JobExecutionStep.create!(
+                                                          job_execution_id: @main_driver.log_job_execution.id,
+                                                          step_name: task_config["load_sequence"],
+                                                          step_yml: task_config,
+                                                          started_at: Time.now,
+                                                          status: 'running'
+                                                    )
+      end
+
       def log(m)
-        puts "#{Time.now} - #{m}"
+        log = "#{Time.now} - #{m}"
+        log_job_execution_step.log_line(log)
+        puts log
       end
 
     end # class Task

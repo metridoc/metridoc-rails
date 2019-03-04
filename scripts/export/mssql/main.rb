@@ -1,3 +1,6 @@
+require '../../../app/models/log/job_execution.rb'
+require '../../../app/helpers/application_helper.rb'
+
 module Export
   module Mssql
 
@@ -25,12 +28,21 @@ module Export
       end
 
       def execute(sequences_only = [])
+        @log_job_execution = log_job_execution
+
         task_files(sequences_only).each do |task_file|
           t = Task.new(self, task_file)
           next unless t.source_adapter == 'mssql'
-          return false unless t.execute
+          log("Started executing step [#{task_file}]")
+          unless t.execute
+            log("Failed executing step [#{task_file}]")
+            log_job_execution.set_status!('failed')
+            return false
+          end
+          log("Ended executing step [#{task_file}]")
         end
 
+        log_job_execution.set_status!('successful')
         return true
       end
 
@@ -78,7 +90,33 @@ module Export
                     timeout:  120000 }
       end
 
+      def log_job_execution
+        return @log_job_execution if @log_job_execution.present?
+
+        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
+        dbconfig = YAML.load(File.read(File.join(root_path, 'config', 'database.yml')))
+
+        Log::JobExecution.establish_connection dbconfig[environment]
+
+        @log_job_execution = Log::JobExecution.create!(
+                                                        source_name: config_folder,
+                                                        job_type: 'export',
+                                                        global_yml: global_config,
+                                                        mac_address: ApplicationHelper.mac_address,
+                                                        started_at: Time.now,
+                                                        status: 'running'
+                                                      )
+      end
+
+      def log(m)
+        log = "#{Time.now} - #{m}"
+        log_job_execution.log_line(log)
+        puts log
+      end
+
     end
 
   end
 end
+
+

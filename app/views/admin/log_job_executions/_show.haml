@@ -1,0 +1,50 @@
+.attributes_table
+  %table
+    %tr.row
+      %th= Log::JobExecution.human_attribute_name("source_name")
+      %td= log_job_execution.source_name
+    %tr.row
+      %th= Log::JobExecution.human_attribute_name("job_type")
+      %td= log_job_execution.job_type
+
+/
+/
+/     t.string "source_name", null: false
+/     t.string "job_type", null: false
+/     t.string "mac_address"
+/     t.json "global_yml", null: false
+/     t.datetime "started_at", null: false
+/     t.datetime "status_set_at", null: false
+/     t.string "status", null: false
+/     t.text "log_text"
+/
+
+/
+/ <div class="panel">
+/               <h3>Ups Zone Details</h3>
+/               <div class="panel_contents">
+/                 <div class="attributes_table ups_zone" id="attributes_table_ups_zone_93">
+/                   <table border="0" cellspacing="0" cellpadding="0">
+/                     <tr class="row row-from_prefix">
+/                       <th>From Prefix</th>
+/                       <td>988</td>
+/                     </tr>
+/                     <tr class="row row-to_prefix">
+/                       <th>To Prefix</th>
+/                       <td>994</td>
+/                     </tr>
+/                     <tr class="row row-zone">
+/                       <th>Zone</th>
+/                       <td>5</td>
+/                     </tr>
+/                     <tr class="row row-created_at">
+/                       <th>Ingested on</th>
+/                       <td>December 06, 2018 18:27</td>
+/                     </tr>
+/                     <tr class="row row-updated_at">
+/                       <th>Updated At</th>
+/                       <td>December 06, 2018 18:27</td>
+/                     </tr>
+/                   </table>
+/                 </div>
+/               </div>

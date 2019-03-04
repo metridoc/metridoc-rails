@@ -4,6 +4,24 @@ require 'bundler/setup'
 require 'optparse'
 Bundler.require(:default)
 
+# hack to get the activerecord 4.1.2 work with Ruby 2.5.1
+module Arel
+  module Visitors
+    class DepthFirst < Arel::Visitors::Visitor
+      alias :visit_Integer :terminal
+    end
+
+    class Dot < Arel::Visitors::Visitor
+      alias :visit_Integer :visit_String
+    end
+
+    class ToSql < Arel::Visitors::Visitor
+      alias :visit_Integer :literal
+    end
+  end
+end
+
+
 # require 'active_record'
 require './main.rb'
 require './task.rb'
@@ -11,8 +29,9 @@ require './task.rb'
 parameters = [
   ["c", "config_folder", "Required Configuration Folder"],
   ["t", "test_mode", "Optional Test mode true/false"],
-  ["s", "sigle_step", "Optional Single Step to run"],
+  ["s", "single_step", "Optional Single Step to run"],
   ["e", "export_folder", "Optional Export Folder"],
+  ["f", "from_date", "From Date"],
 ]
 
 options = {}

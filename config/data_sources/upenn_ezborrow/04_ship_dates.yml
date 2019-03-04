@@ -13,8 +13,10 @@ join_tables:
 filters:
   - "id_audit.exception_code <> 'NULL'"
 export_file_name:      "ship_dates.csv"
+export_filter_date_sql: "id_audit.time_stamp > ?"
 
 # Target Config
 target_adapter:        csv
 target_model:          "Ezborrow::ShipDate"
 truncate_before_load:  "yes"
+legacy_filter_date_field: "ship_date"
