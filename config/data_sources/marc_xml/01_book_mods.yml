@@ -1,0 +1,36 @@
+load_sequence:         1
+
+# Source Config
+import_file_name:      "books_mods.xml"
+
+# Target Config
+target_adapter:        xml
+target_model:          "Marc::BookMod"
+truncate_before_load:  "yes"
+iterator_path:         "/modsCollection/mods"
+target_mappings:
+  title: "concat(normalize-space(titleInfo/nonSort/text()), ' ', normalize-space(titleInfo/title/text()))"
+  name: "name/namePart[not(@type='date')]"
+  name_date: "name/namePart[@type='date']"
+  role: "name/role/roleTerm"
+  type_of_resource: "typeOfResource"
+  genre: "genre"
+  origin_place_code: "originInfo/place/placeTerm[@type='code']"
+  origin_place: "originInfo/place/placeTerm[@type='text']"
+  origin_publisher: "originInfo/publisher"
+  origin_date_issued: "originInfo/dateIssued"
+  origin_issuance: "originInfo/issuance"
+  language: "language/languageTerm"
+  physical_description_form: "physicalDescription/form"
+  physical_description_extent: "physicalDescription/extent"
+  notes: "note"
+  subject: "subject"
+  classification: "classification"
+  related_item_title: "relatedItem/titleInfo/title"
+  lccn_identifier: "identifier[@type='lccn']"
+  oclc_identifier: "identifier[@type='oclc']"
+  record_content_source: "recordInfo/recordContentSource"
+  record_creation_date: "recordInfo/recordCreationDate"
+  record_change_date: "recordInfo/recordChangeDate"
+  record_identifier: "recordInfo/recordIdentifier"
+  record_origin: "recordInfo/recordOrigin"
