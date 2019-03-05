@@ -23,7 +23,6 @@ target_mappings:
   language: "language/languageTerm"
   physical_description_form: "physicalDescription/form"
   physical_description_extent: "physicalDescription/extent"
-  notes: "note"
   subject: "subject"
   classification: "classification"
   related_item_title: "relatedItem/titleInfo/title"

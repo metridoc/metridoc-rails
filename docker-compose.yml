@@ -9,7 +9,7 @@ services:
     ports:
       - '80:80'
     secrets:
-      - source: metridoc_rails_db_config
+      - source: metridoc_rails_db_config_3
         target: /home/app/webapp/config/database.yml
         uid: '9999'
         gid: '9999'
@@ -31,7 +31,7 @@ services:
 secrets:
   metridoc_db_password:
     external: true
-  metridoc_rails_db_config:
+  metridoc_rails_db_config_3:
     external: true
   metridoc_rails_secrets_config:
     external: true
