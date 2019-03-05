@@ -3,6 +3,8 @@ ActiveAdmin.register_page "Keyserver" do
   #   ['admin', 'keyserver']
   # end
 
+  menu false
+
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }

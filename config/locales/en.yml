@@ -35,33 +35,67 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    dashboard: "Home"
     dashboard_heading: "Welcome to MetriDoc"
-    dashboard_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
+    dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>
+                        <ul>
+                          <li>IvyPlus</li>
+                            <ul>
+                              <li><a href=\"/admin/borrowdirect\">BorrowDirect</a></li>
+                              <li><a href=\"/admin/ezborrow\">E-Z Borrow</a></li>
+                              <li><a href=\"/admin/illiad\">ILLiad</a></li>
+                            </ul>
+                            <li><a href=\"/admin/keyserver\">Keyserver</a></li>
+                            <li><a href=\"/admin/gate_count_card_swipes\">Gate counts</a></li>
+                            <li><a href=\"/admin/marcdata\">Marc data</a></li>
+                            <li><a href=\"/admin/misc\">Geospatial data</a></li>
+                          </ul>"
     about: "About MetriDoc"
-    about_text: "Placeholder for about page content"
+    about_text_html: "<p>Libraries plan and operate services in an environment dense with useful management data but poor in business intelligence.  Every user interaction with the library, and many outcomes of that interaction, leave measurable, informative traces in the IT and human systems that deliver service.  The challenge libraries face is to gather and transform the wealth of systems data into information.  MetriDoc is a solution to that challenge.</p>
+
+                 <p>Beginning with funding from the Institute for Museum and Library Services, Penn developed an automated framework for extracting, transforming, and loading data into a normalized repository of service events.  The data model supported by the repository would make it possible to unite different types of service events, from reference consultations to ill transactions and database lookups, using demographic keys or other variables, thus allowing libraries to create pictures of scholarly communities or service platforms based on use.  The framework reduces the cost and workflow overhead of producing useful and interesting statistics and it insulates business intelligence—one of the library’s most understated assets—from commercial interests and privacy threats.</p>
+
+                 <p>MetriDoc is built on the Ruby on Rails framework and related Rails plugins, which manage the harvest, parsing and data transformation processes need to prepare data for the MetriDoc repository.  The repository is exposed to third party applications, like Tableau, that can exploit API or ODBC connections to create visualizations and complex statistics.</p>
+
+                 <p>Presently, MetriDoc is the analytics platform for the IvyPlus Resources Sharing Service, BorrowDirect.  The latter includes comprehensive interlibrary loan data logged by Illiad and the Relais D2D platforms used by the 13 libraries of the IvyPlus.  In addition, Penn continues to develop applications for use with the framework to analyze building entry logs, Keyserver license management logs, reference consultations, and instructional events, and liaison development activities.</p>
+
+                 <p>The MetriDoc code base is available under Apache-2 license for open source development.  It’s GitHub repository is located at <a href=\"https://github.com/metridoc\">MetriDoc GitHub account</a>.  Contacts about MetriDoc may be directed to the Library Technology Services division of the Penn Libraries, at <a href=\"mailto:libhelpdesk@upenn.edu\">libhelpdesk@upenn.edu</a>.</p>"
     policies: "Policies"
     policies_text: "Placeholder for policies content"
     tutorials: "Tutorials"
+    logs: "Logs"
+    comments: "Comments"
+    resource_sharing: "Resource sharing data"
+    documentation: "Documentation"
+    marc_data: "MARC data"
+    gate_counts: "Gate counts"
     borrowdirect:
+      borrowdirect_menu: "BorrowDirect"
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 borrowing institutions"
       right_column_heading: "Top 10 lending institutions"
     ezborrow:
+      ezborrow_menu: "E-Z Borrow"
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 borrowing institutions"
       right_column_heading: "Top 10 lending institutions"
     illiad:
+      illiad_menu: "ILLiad"
       columns_heading: "Example data visualizations"
       left_column_heading: "Borrowing institutions"
       right_column_heading: "Borrowing transaction dates, last 100 days"
     keyserver:
+      keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 computer display models"
       right_column_heading: "Top 10 program publishers"
+    misc: "Supplemental Data"
+    misc_heading: "Supplemental Data"
+    geo_data:
+      zip_codes: "U.S. Census Zip Codes"
   pages:
     homepage_heading: "Welcome to MetriDoc"
-    homepage_text: "Placeholder homepage text"
-
+    homepage_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
   activerecord:
     models:
       log/job_execution:

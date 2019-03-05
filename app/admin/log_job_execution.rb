@@ -1,6 +1,8 @@
 ActiveAdmin.register Log::JobExecution do
   actions :index, :show
 
+  menu false
+
   index do
     column :id
     column :source_name
