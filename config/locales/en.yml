@@ -49,7 +49,6 @@ en:
                             <li><a href=\"/admin/marcdata\">Marc data</a></li>
                             <li><a href=\"/admin/misc\">Geospatial data</a></li>
                           </ul>"
->>>>>>> 696f5c036d72c37fab8ccb16653be5274274ae3e
     about: "About MetriDoc"
     about_text_html: "<p>Libraries plan and operate services in an environment dense with useful management data but poor in business intelligence.  Every user interaction with the library, and many outcomes of that interaction, leave measurable, informative traces in the IT and human systems that deliver service.  The challenge libraries face is to gather and transform the wealth of systems data into information.  MetriDoc is a solution to that challenge.</p>
 
