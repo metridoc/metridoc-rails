@@ -45,9 +45,9 @@ en:
                               <li><a href=\"/admin/illiad\">ILLiad</a></li>
                             </ul>
                             <li><a href=\"/admin/keyserver\">Keyserver</a></li>
-                            <li><a href=\"/admin/gate_count_card_swipes\">Gate counts</a></li>
+                            <li><a href=\"/admin/gatecount\">Gate counts</a></li>
                             <li><a href=\"/admin/marcdata\">Marc data</a></li>
-                            <li><a href=\"/admin/misc\">Geospatial data</a></li>
+                            <li><a href=\"/admin/misc\">Supplemental data</a></li>
                           </ul>"
     about: "About MetriDoc"
     about_text_html: "<p>Libraries plan and operate services in an environment dense with useful management data but poor in business intelligence.  Every user interaction with the library, and many outcomes of that interaction, leave measurable, informative traces in the IT and human systems that deliver service.  The challenge libraries face is to gather and transform the wealth of systems data into information.  MetriDoc is a solution to that challenge.</p>
@@ -83,6 +83,11 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Borrowing institutions"
       right_column_heading: "Borrowing transaction dates, last 100 days"
+    gatecount:
+      gatecount_menu: "Gate count"
+      columns_heading: "Example data visualizations"
+      left_column_heading: "Card swipe by frequency"
+      right_column_heading: "Card swipe transactions, %{date_range}"
     keyserver:
       keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"

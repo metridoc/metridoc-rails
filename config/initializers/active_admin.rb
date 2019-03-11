@@ -304,7 +304,7 @@ ActiveAdmin.setup do |config|
         sites.add label:  I18n.t("active_admin.keyserver.keyserver_menu"),
                   url: :admin_keyserver_path
         sites.add label: I18n.t("active_admin.gate_counts"),
-                  url: :admin_gate_count_card_swipes_path
+                  url: :admin_gatecount_path
         sites.add label: I18n.t("active_admin.marc_data"),
                   url: :admin_marcdata_path
         sites.add label: I18n.t("active_admin.misc"),

@@ -27,5 +27,5 @@ ActiveAdmin.register Marc::BookMod do
                   :record_identifier, 
                   :record_origin
 
-  actions :all
+  actions :all, :except => [:edit, :update, :destroy]
 end
