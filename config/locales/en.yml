@@ -46,7 +46,7 @@ en:
                               <li><a href=\"/admin/illiad\">ILLiad</a></li>
                             </ul>
                             <li><a href=\"/admin/keyserver\">Keyserver</a></li>
-                            <li><a href=\"/admin/gate_count_card_swipes\">Gate counts</a></li>
+                            <li><a href=\"/admin/gatecount\">Gate counts</a></li>
                             <li><a href=\"/admin/marcdata\">Marc data</a></li>
                             <li><a href=\"/admin/misc\">Supplemental data</a></li>
                           </ul>"
