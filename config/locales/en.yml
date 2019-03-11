@@ -45,9 +45,9 @@ en:
                               <li><a href=\"/admin/illiad\">ILLiad</a></li>
                             </ul>
                             <li><a href=\"/admin/keyserver\">Keyserver</a></li>
-                            <li><a href=\"/admin/gate_count_card_swipes\">Gate counts</a></li>
+                            <li><a href=\"/admin/gatecount\">Gate counts</a></li>
                             <li><a href=\"/admin/marcdata\">Marc data</a></li>
-                            <li><a href=\"/admin/misc\">Geospatial data</a></li>
+                            <li><a href=\"/admin/misc\">Supplemental data</a></li>
                           </ul>"
 >>>>>>> 696f5c036d72c37fab8ccb16653be5274274ae3e
     about: "About MetriDoc"
@@ -84,6 +84,11 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Borrowing institutions"
       right_column_heading: "Borrowing transaction dates, last 100 days"
+    gatecount:
+      gatecount_menu: "Gate count"
+      columns_heading: "Example data visualizations"
+      left_column_heading: "Card swipe by frequency"
+      right_column_heading: "Card swipe transactions, %{date_range}"
     keyserver:
       keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"
