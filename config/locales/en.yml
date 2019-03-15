@@ -63,7 +63,9 @@ en:
     policies_text: "Placeholder for policies content"
     tutorials: "Tutorials"
     logs: "Logs"
-    comments: "Comments"
+    comments_heading: "Comments"
+    comments:
+      title_content: "Comments"
     resource_sharing: "Resource sharing data"
     documentation: "Documentation"
     marc_data: "MARC data"
@@ -95,6 +97,9 @@ en:
       right_column_heading: "Top 10 program publishers"
     misc: "Supplemental Data"
     misc_heading: "Supplemental Data"
+    library_profiles_heading: "Participating Libraries"
+    library_profiles:
+      profiles: "Library Profiles"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
   pages:

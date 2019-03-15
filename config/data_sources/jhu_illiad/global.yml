@@ -1,0 +1,12 @@
+---
+institution_code: 'JHU'
+host:             '<%= ENV["JHU_ILLIAD_MSSQL_HOST"] %>'
+port:             '<%= ENV["JHU_ILLIAD_MSSQL_PORT"] %>'
+database:         '<%= ENV["JHU_ILLIAD_MSSQL_DB"]   %>'
+username:         '<%= ENV["JHU_ILLIAD_MSSQL_UID"]  %>'
+password:         '<%= ENV["JHU_ILLIAD_MSSQL_PWD"]  %>'
+pool:             5
+timeout:          5000
+tds_version:      7.3
+export_folder:    '/tmp/jhu_illiad/'
+batch_size:       10000
