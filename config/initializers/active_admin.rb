@@ -309,10 +309,12 @@ ActiveAdmin.setup do |config|
                   url: :admin_marcdata_path
         sites.add label: I18n.t("active_admin.misc"),
                   url: :admin_misc_path
-        sites.add label: I18n.t("active_admin.comments"),
+        sites.add label: I18n.t("active_admin.comments_heading"),
                   url: :admin_comments_path
         sites.add label: I18n.t("active_admin.logs"),
                   url: :admin_log_job_executions_path
+        sites.add label: I18n.t("active_admin.library_profiles_heading"),
+                  url: :admin_libraryprofile_path
       end
     end
 
