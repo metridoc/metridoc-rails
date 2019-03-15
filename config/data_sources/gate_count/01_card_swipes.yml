@@ -1,5 +1,5 @@
 load_sequence:         1
 target_model:          "GateCount::CardSwipe"
 target_adapter:        "csv"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
 file_name:             "gate.csv"
