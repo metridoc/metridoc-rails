@@ -48,7 +48,7 @@ gem 'groupdate'
 
 gem 'chronic'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails'
 group :development, :test do
   gem 'pry'
   gem 'pry-rails'

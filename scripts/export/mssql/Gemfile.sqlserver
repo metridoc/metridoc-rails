@@ -1,7 +1,9 @@
 source 'https://rubygems.org'
 ruby '2.5.1'
 
+gem 'activerecord', '4.1.2'
 gem 'tiny_tds', '~> 2.1.0'
 gem 'activerecord-sqlserver-adapter'
 gem 'dotenv'
+gem 'pry-rails'
 gem 'pg', '~> 0.20.0'
