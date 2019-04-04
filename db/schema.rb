@@ -14,7 +14,6 @@ ActiveRecord::Schema.define(version: 20190314201909) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "uuid-ossp"
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
@@ -40,18 +39,6 @@ ActiveRecord::Schema.define(version: 20190314201909) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
-  end
-
-  create_table "bookmarks", id: :serial, force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "user_type"
-    t.string "document_id"
-    t.string "document_type"
-    t.binary "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["document_id"], name: "index_bookmarks_on_document_id"
-    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
@@ -884,6 +871,7 @@ ActiveRecord::Schema.define(version: 20190314201909) do
     t.string "language"
     t.string "physical_description_form"
     t.string "physical_description_extent"
+    t.string "notes", limit: 1000
     t.string "subject"
     t.string "classification"
     t.string "related_item_title"
@@ -896,46 +884,12 @@ ActiveRecord::Schema.define(version: 20190314201909) do
     t.string "record_origin"
   end
 
-  create_table "orm_resources", id: :uuid, default: -> { "uuid_generate_v4()" }, force: :cascade do |t|
-    t.jsonb "metadata", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "internal_resource"
-    t.integer "lock_version"
-    t.index "metadata jsonb_path_ops", name: "index_orm_resources_on_metadata_jsonb_path_ops", using: :gin
-    t.index ["internal_resource"], name: "index_orm_resources_on_internal_resource"
-    t.index ["metadata"], name: "index_orm_resources_on_metadata", using: :gin
-    t.index ["updated_at"], name: "index_orm_resources_on_updated_at"
-  end
-
-  create_table "searches", id: :serial, force: :cascade do |t|
-    t.binary "query_params"
-    t.integer "user_id"
-    t.string "user_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_searches_on_user_id"
-  end
-
   create_table "ups_zones", force: :cascade do |t|
     t.string "from_prefix", null: false
     t.string "to_prefix", null: false
     t.integer "zone", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "users", force: :cascade do |t|
-    t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
-    t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "guest", default: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
 end
