@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::LenderInfo do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :address, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :billing_category, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :lender_code, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]

@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::Group do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :group_name, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :group_no, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
 

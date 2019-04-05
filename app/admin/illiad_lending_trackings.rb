@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::LendingTracking do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :arrival_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :completion_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :completion_status, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
