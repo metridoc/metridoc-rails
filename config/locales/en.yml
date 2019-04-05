@@ -62,6 +62,9 @@ en:
     policies: "Policies"
     policies_text: "Placeholder for policies content"
     tutorials: "Tutorials"
+    filters:
+      predicates:
+        not_cont: "Does not contain"
     logs: "Logs"
     comments_heading: "Comments"
     comments:

@@ -89,7 +89,13 @@ body.active_admin {
     }
     img.penn_lib_logo {
       width: 200px;
-      display: block;
+      border-right: 1px #5d5d5d solid;
+      padding-right: 10px;
+      margin-right: 10px;
+      padding-bottom: 10px;
+    }
+    img.iplc_logo {
+      margin-left: 10px;
       padding-bottom: 10px;
     }
   }

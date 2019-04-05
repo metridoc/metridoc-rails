@@ -8,7 +8,7 @@
   %h2= t 'active_admin.ezborrow.columns_heading'
   #left-col
     %h3= t 'active_admin.ezborrow.left_column_heading'
-    = pie_chart display_names_ezb(Ezborrow::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9])
+    = pie_chart display_names_ezb(Ezborrow::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9]), download: true
   #right-col
     %h3= t 'active_admin.ezborrow.right_column_heading'
-    = bar_chart display_names_ezb(Ezborrow::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9])
+    = bar_chart display_names_ezb(Ezborrow::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9]), download: true

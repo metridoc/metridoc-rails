@@ -9,4 +9,11 @@ ActiveAdmin.register Institution do
     column :zip_code
     column :ups_zone
   end
+
+  preserve_default_filters!
+
+  filter :name, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+  filter :code, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+  filter :zip_code, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+
 end

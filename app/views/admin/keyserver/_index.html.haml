@@ -8,8 +8,8 @@
   %h2= t 'active_admin.keyserver.columns_heading.columns_heading'
   #left-col
     %h3= t 'active_admin.keyserver.left_column_heading'
-    = column_chart Keyserver::Computer.group(:computer_display_model).count.sort_by {|k,v| v}.reverse[0..4]
+    = column_chart Keyserver::Computer.group(:computer_display_model).count.sort_by {|k,v| v}.reverse[0..4], download: true
 
   #right-col
     %h3= t 'active_admin.keyserver.right_column_heading'
-    = bar_chart Keyserver::Program.group(:program_publisher).count.sort_by {|k,v| v}.reverse[0..9]
+    = bar_chart Keyserver::Program.group(:program_publisher).count.sort_by {|k,v| v}.reverse[0..9], download: true
