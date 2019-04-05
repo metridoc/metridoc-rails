@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::ReferenceNumber do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :oclc, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :ref_number, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :ref_type, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]

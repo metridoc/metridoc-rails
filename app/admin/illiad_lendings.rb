@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::Lending do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :request_type, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :status, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :transaction_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]

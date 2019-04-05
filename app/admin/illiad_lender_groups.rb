@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::LenderGroup do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :demographic, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :group_no, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :lender_code, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]

@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::Tracking do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :order_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :process_type, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :receive_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]

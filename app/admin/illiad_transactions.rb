@@ -5,7 +5,6 @@ ActiveAdmin.register Illiad::Transaction do
 
   preserve_default_filters!
 
-  filter :institution_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :billing_amount, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :call_number, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :cited_in, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
