@@ -1,4 +1,0 @@
-load_sequence:         27
-target_model:          "Keyserver::UserFolder"
-truncate_before_load:  "yes"
-file_name:             "UserFolders.csv"

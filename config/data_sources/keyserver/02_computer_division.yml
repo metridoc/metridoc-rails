@@ -1,4 +1,0 @@
-load_sequence:         2
-target_model:          "Keyserver::ComputerDivision"
-truncate_before_load:  "yes"
-file_name:             "ComputerDivisions.csv"

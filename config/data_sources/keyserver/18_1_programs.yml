@@ -1,4 +1,0 @@
-load_sequence:         18.1
-target_model:          "Keyserver::Program"
-truncate_before_load:  "yes"
-file_name:             "Programs.csv"
