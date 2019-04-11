@@ -39,6 +39,16 @@ class AlterKeyserverTables < ActiveRecord::Migration[5.1]
       t.string :program_status
     end
 
+    create_table :keyserver_computers do |t|
+      t.string :computer_id
+      t.string :computer_name
+      t.string :computer_platform
+      t.string :computer_protocol
+      t.string :computer_domain
+      t.string :computer_description
+      t.string :computer_division_id
+    end
+
     create_table :keyserver_status_terms do |t|
       t.string :term_id
       t.string :term_value

@@ -3,7 +3,7 @@ class CreateComputerDivisionsTable < ActiveRecord::Migration[5.1]
 
     drop_table :keyserver_computers
 
-    create_table :computer_divisions do |t|
+    create_table :keyserver_divisions do |t|
       t.string :division_id
       t.string :division_server_id
       t.string :division_name
