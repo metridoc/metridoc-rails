@@ -26,106 +26,12 @@ class AlterKeyserverTables < ActiveRecord::Migration[5.1]
     drop_table :keyserver_product_components
     drop_table :keyserver_servers
     drop_table :keyserver_policies
-    remove_column :keyserver_computers, :computer_server_id
-    remove_column :keyserver_computers, :computer_server_id
-    remove_column :keyserver_computers, :computer_user_name
-    remove_column :keyserver_computers, :computer_address
-    remove_column :keyserver_computers, :computer_virtual_host
-    remove_column :keyserver_computers, :computer_gmt_offset
-    remove_column :keyserver_computers, :computer_os_family
-    remove_column :keyserver_computers, :computer_os_type
-    remove_column :keyserver_computers, :computer_os_version
-    remove_column :keyserver_computers, :computer_os_release
-    remove_column :keyserver_computers, :computer_os_install_date
-    remove_column :keyserver_computers, :computer_os64_bit
-    remove_column :keyserver_computers, :computer_cpu_type
-    remove_column :keyserver_computers, :computer_cpu_count
-    remove_column :keyserver_computers, :computer_cpu_clock
-    remove_column :keyserver_computers, :computer_cpu64_bit
-    remove_column :keyserver_computers, :computer_hyper_threading
-    remove_column :keyserver_computers, :computer_multicore
-    remove_column :keyserver_computers, :computer_capabilities
-    remove_column :keyserver_computers, :computer_ram_size
-    remove_column :keyserver_computers, :computer_ram_type
-    remove_column :keyserver_computers, :computer_ram_array
-    remove_column :keyserver_computers, :computer_disk_size
-    remove_column :keyserver_computers, :computer_free_space
-    remove_column :keyserver_computers, :computer_disk_manufacturer
-    remove_column :keyserver_computers, :computer_disk_model
-    remove_column :keyserver_computers, :computer_display_width
-    remove_column :keyserver_computers, :computer_display_height
-    remove_column :keyserver_computers, :computer_display_depth
-    remove_column :keyserver_computers, :computer_display_manufacturer
-    remove_column :keyserver_computers, :computer_display_model
-    remove_column :keyserver_computers, :computer_display_serial
-    remove_column :keyserver_computers, :computer_video_manufacturer
-    remove_column :keyserver_computers, :computer_video_model
-    remove_column :keyserver_computers, :computer_vram_size
-    remove_column :keyserver_computers, :computer_mac_address
-    remove_column :keyserver_computers, :computer_mac_manufacturer
-    remove_column :keyserver_computers, :computer_mac_model
-    remove_column :keyserver_computers, :computer_wireless_address
-    remove_column :keyserver_computers, :computer_wireless_manufacturer
-    remove_column :keyserver_computers, :computer_wireless_model
-    remove_column :keyserver_computers, :computer_mac_array
-    remove_column :keyserver_computers, :computer_site
-    remove_column :keyserver_computers, :computer_oem_serial
-    remove_column :keyserver_computers, :computer_os_serial
-    remove_column :keyserver_computers, :computer_baseboard_serial
-    remove_column :keyserver_computers, :computer_system_serial
-    remove_column :keyserver_computers, :computer_manufacturer
-    remove_column :keyserver_computers, :computer_model
-    remove_column :keyserver_computers, :computer_bios_serial
-    remove_column :keyserver_computers, :computer_bios_model
-    remove_column :keyserver_computers, :computer_bios_version
-    remove_column :keyserver_computers, :computer_cdrom_present
-    remove_column :keyserver_computers, :computer_cdrom_writable
-    remove_column :keyserver_computers, :computer_cdrom_manufacturer
-    remove_column :keyserver_computers, :computer_cdrom_model
-    remove_column :keyserver_computers, :computer_dvd_present
-    remove_column :keyserver_computers, :computer_dvd_writable
-    remove_column :keyserver_computers, :computer_sound_manufacturer
-    remove_column :keyserver_computers, :computer_sound_model
-    remove_column :keyserver_computers, :computer_lease_expiration
-    remove_column :keyserver_computers, :computer_last_login
-    remove_column :keyserver_computers, :computer_last_audit
-    remove_column :keyserver_computers, :computer_base_audit
-    remove_column :keyserver_computers, :computer_client_version
-    remove_column :keyserver_computers, :computer_user_session
-    remove_column :keyserver_computers, :computer_acknowledged
-    remove_column :keyserver_computers, :computer_allowed
-    remove_column :keyserver_computers, :computer_audit
-    remove_column :keyserver_computers, :computer_division_id
-    remove_column :keyserver_computers, :computer_asset_id
-    remove_column :keyserver_computers, :computer_location
-    remove_column :keyserver_computers, :computer_owner
-    remove_column :keyserver_computers, :computer_confirmed
-    remove_column :keyserver_computers, :computer_confirmed_by
-    remove_column :keyserver_computers, :computer_notes
-    remove_column :keyserver_computers, :computer_flags
-    remove_column :keyserver_programs, :program_char_stamp
-    remove_column :keyserver_programs, :program_name
-    remove_column :keyserver_programs, :program_ai_version
-    remove_column :keyserver_programs, :program_version_mask
-    remove_column :keyserver_programs, :program_version
-    remove_column :keyserver_programs, :program_path
-    remove_column :keyserver_programs, :program_file_name
-    remove_column :keyserver_programs, :program_keyed
-    remove_column :keyserver_programs, :program_acknowledged
-    remove_column :keyserver_programs, :program_audit
-    remove_column :keyserver_programs, :program_folder_id
-    remove_column :keyserver_programs, :program_launch_seen
-    remove_column :keyserver_programs, :program_disc_method
-    remove_column :keyserver_programs, :program_discovered
-    remove_column :keyserver_programs, :program_create_date
-    remove_column :keyserver_programs, :program_user_name
-    remove_column :keyserver_programs, :program_computer_id
-    remove_column :keyserver_programs, :program_notes
-    remove_column :keyserver_programs, :program_flags
+    drop_table :keyserver_computers
+    drop_table :keyserver_programs
 
 
 
-    change_table :keyserver_computers do |t|
+    create_table :keyserver_computers do |t|
       t.string :computer_id
       t.string :computer_name
       t.string :computer_platform
@@ -134,7 +40,7 @@ class AlterKeyserverTables < ActiveRecord::Migration[5.1]
       t.string :computer_description
     end
 
-    change_table :keyserver_programs do |t|
+    create_table :keyserver_programs do |t|
       t.string :program_id
       t.string :program_variant
       t.string :program_variant_name
