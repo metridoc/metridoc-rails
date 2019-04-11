@@ -132,6 +132,7 @@ class AlterKeyserverTables < ActiveRecord::Migration[5.1]
       t.string :computer_protocol
       t.string :computer_domain
       t.string :computer_description
+      t.string :computer_division_id
     end
 
     change_table :keyserver_programs do |t|
@@ -179,9 +180,9 @@ class AlterKeyserverTables < ActiveRecord::Migration[5.1]
       t.string :usage_event
       t.string :usage_user_group
       t.string :usage_division
-      t.string :usage_when
+      t.datetime :usage_when
       t.string :usage_time
-      t.string :usage_other_time
+      t.datetime :usage_other_time
     end
 
   end
