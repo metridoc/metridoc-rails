@@ -29,18 +29,6 @@ class AlterKeyserverTables < ActiveRecord::Migration[5.1]
     drop_table :keyserver_computers
     drop_table :keyserver_programs
 
-
-
-    create_table :keyserver_computers do |t|
-      t.string :computer_id
-      t.string :computer_name
-      t.string :computer_platform
-      t.string :computer_protocol
-      t.string :computer_domain
-      t.string :computer_description
-      t.string :computer_division_id
-    end
-
     create_table :keyserver_programs do |t|
       t.string :program_id
       t.string :program_variant
