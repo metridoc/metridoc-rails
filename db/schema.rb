@@ -397,6 +397,7 @@ ActiveRecord::Schema.define(version: 20190411002652) do
     t.string "computer_platform"
     t.string "computer_protocol"
     t.string "computer_domain"
+    t.string "computer_description"
     t.string "computer_division_id"
   end
 

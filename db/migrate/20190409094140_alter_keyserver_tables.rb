@@ -1,33 +1,33 @@
 class AlterKeyserverTables < ActiveRecord::Migration[5.1]
   def change
-    drop_table :keyserver_product_folders
-    drop_table :keyserver_licensed_computers
-    drop_table :keyserver_products
-    drop_table :keyserver_purchase_orders
-    drop_table :keyserver_contracts
-    drop_table :keyserver_hotfixes
-    drop_table :keyserver_purchase_allocations
-    drop_table :keyserver_users
-    drop_table :keyserver_computer_group_members
-    drop_table :keyserver_policy_folders
-    drop_table :keyserver_user_folders
-    drop_table :keyserver_purchase_items
-    drop_table :keyserver_locations
-    drop_table :keyserver_program_folders
-    drop_table :keyserver_licensed_users
-    drop_table :keyserver_purchase_supports
-    drop_table :keyserver_computer_divisions
-    drop_table :keyserver_purchase_codes
-    drop_table :keyserver_purchase_documents
-    drop_table :keyserver_computer_groups
-    drop_table :keyserver_purchase_folders
-    drop_table :keyserver_audits
-    drop_table :keyserver_policy_products
-    drop_table :keyserver_product_components
-    drop_table :keyserver_servers
-    drop_table :keyserver_policies
-    drop_table :keyserver_computers
-    drop_table :keyserver_programs
+    drop_table :keyserver_product_folders do; end
+    drop_table :keyserver_licensed_computers do; end
+    drop_table :keyserver_products do; end
+    drop_table :keyserver_purchase_orders do; end
+    drop_table :keyserver_contracts do; end
+    drop_table :keyserver_hotfixes do; end
+    drop_table :keyserver_purchase_allocations do; end
+    drop_table :keyserver_users do; end
+    drop_table :keyserver_computer_group_members do; end
+    drop_table :keyserver_policy_folders do; end
+    drop_table :keyserver_user_folders do; end
+    drop_table :keyserver_purchase_items do; end
+    drop_table :keyserver_locations do; end
+    drop_table :keyserver_program_folders do; end
+    drop_table :keyserver_licensed_users do; end
+    drop_table :keyserver_purchase_supports do; end
+    drop_table :keyserver_computer_divisions do; end
+    drop_table :keyserver_purchase_codes do; end
+    drop_table :keyserver_purchase_documents do; end
+    drop_table :keyserver_computer_groups do; end
+    drop_table :keyserver_purchase_folders do; end
+    drop_table :keyserver_audits do; end
+    drop_table :keyserver_policy_products do; end
+    drop_table :keyserver_product_components do; end
+    drop_table :keyserver_servers do; end
+    drop_table :keyserver_policies do; end
+    drop_table :keyserver_computers do; end
+    drop_table :keyserver_programs do; end
 
     create_table :keyserver_programs do |t|
       t.string :program_id
