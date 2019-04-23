@@ -10,7 +10,7 @@ RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz
 
 RUN tar -xzf freetds-1.00.27.tar.gz
 WORKDIR freetds-1.00.27
-RUN ls -la 
+RUN ls -la
 RUN ./configure --prefix=/usr/local --with-tdsver=7.3
 RUN make
 RUN make install
@@ -26,10 +26,8 @@ WORKDIR /home/app/webapp
 COPY --chown=app:app . /home/app/webapp
 RUN bundle install
 
-RUN cp config/secrets.examples.yml config/secrets.yml
 RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
 
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
