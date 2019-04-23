@@ -19,12 +19,12 @@ RUN rm -f /etc/service/nginx/down /etc/nginx/sites-enabled/default
 COPY webapp.conf /etc/nginx/sites-enabled/webapp
 
 USER app
-
-COPY Gemfile* /home/app/webapp/
 WORKDIR /home/app/webapp
 
-COPY --chown=app:app . /home/app/webapp
+COPY Gemfile* ./
 RUN bundle install
+
+COPY --chown=app:app . .
 
 RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
