@@ -46,9 +46,9 @@ module Import
         return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
 
         if task_config["column_mappings"].present?
-          @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column.strip => target_column.strip} }.inject(:merge)
+          @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column.to_s.strip => target_column.to_s.strip} }.inject(:merge)
         else
-          @target_mappings = headers.map{|column| class_name.has_attribute?(column.underscore) ? {column.strip.underscore => column.strip.underscore} : nil }.compact.inject(:merge)
+          @target_mappings = headers.map{|column| class_name.has_attribute?(column.underscore) ? {column.to_s.strip.underscore => column.to_s.strip.underscore} : nil }.compact.inject(:merge)
         end
 
         return @target_mappings
@@ -204,7 +204,7 @@ module Import
 
           cols = {}
           headers.each_with_index do |k,i| 
-            cols[k.strip.underscore.to_sym] = row[i]
+            cols[k.to_s.strip.underscore.to_sym] = row[i]
           end
 
           row_error = false
@@ -319,7 +319,7 @@ module Import
           target_mappings.each do |column_name, x_path|
             node = xml_row.xpath(x_path)
             val = node.is_a?(Nokogiri::XML::NodeSet) ? (node.present? ? node.first.text : "") : node
-            atts[column_name] = val.gsub(/\s+/, ' ').strip
+            atts[column_name] = val.gsub(/\s+/, ' ').to_s.strip
           end
 
           next if row_error

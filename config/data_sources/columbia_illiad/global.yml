@@ -1,0 +1,11 @@
+---
+institution_code: 'COLUMBIA'
+host:             '<%= ENV["COLUMBIA_ILLIAD_MSSQL_HOST"] %>'
+port:             '<%= ENV["COLUMBIA_ILLIAD_MSSQL_PORT"] %>'
+database:         '<%= ENV["COLUMBIA_ILLIAD_MSSQL_DB"]   %>'
+username:         '<%= ENV["COLUMBIA_ILLIAD_MSSQL_UID"]  %>'
+password:         '<%= ENV["COLUMBIA_ILLIAD_MSSQL_PWD"]  %>'
+pool:             5
+timeout:          5000
+export_folder:    '/tmp/columbia_illiad/'
+batch_size:       10000

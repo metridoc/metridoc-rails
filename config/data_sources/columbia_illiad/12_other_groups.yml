@@ -1,0 +1,33 @@
+load_sequence:         12
+target_adapter:        'native_sql'
+target_model:          "Illiad::Group"
+truncate_before_load:  "no"
+sqls:
+  - |
+                        INSERT INTO illiad_groups (
+                                  institution_id,
+                                  group_no,
+                                  group_name,
+                                  created_at,
+                                  updated_at
+                        ) VALUES (
+                                  %{institution_id},
+                                  -2,
+                                  'Other',
+                                  NOW(),
+                                  NOW()
+                        );
+  - |
+                        INSERT INTO illiad_lender_groups (
+                                  institution_id,
+                                  group_no,
+                                  lender_code,
+                                  created_at,
+                                  updated_at
+                        ) VALUES (
+                                  %{institution_id},
+                                  -2,
+                                  'Other',
+                                  NOW(),
+                                  NOW()
+                        );
