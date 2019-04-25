@@ -7,8 +7,6 @@
 # Ignore bundler config.
 /.bundle
 
-/config/database.yml
-
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
@@ -40,6 +38,3 @@
 
 # Ignore Rubymine artifacts
 .idea
-
-# Ignore local secrets.yml file
-/config/secrets.yml
