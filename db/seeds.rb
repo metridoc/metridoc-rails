@@ -19,6 +19,7 @@ Institution.create!(name: 'STANFORD', code: 'STANFORD', zip_code: '94305') if In
 Institution.create!(name: 'BROWN', code: 'BROWN', zip_code: '02912') if Institution.of_code('BROWN').blank?
 Institution.create!(name: 'JHU', code: 'JHU', zip_code: '21218') if Institution.of_code('JHU').blank?
 Institution.create!(name: 'CORNELL', code: 'CORNELL', zip_code: '14853') if Institution.of_code('CORNELL').blank?
+Institution.create!(name: 'COLUMBIA', code: 'COLUMBIA', zip_code: '10027') if Institution.of_code('COLUMBIA').blank?
 
 ups_zones = [
               ['004', '005', '8'],
