@@ -19,6 +19,8 @@ services:
         uid: '9999'
         gid: '9999'
         mode: 0440
+    volumes:
+      - staging_data:/var/lib/
   db:
     image: postgres:10.5-alpine
     environment:
@@ -40,3 +42,4 @@ secrets:
 
 volumes:
   db_data:
+  staging_data:

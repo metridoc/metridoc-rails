@@ -62,6 +62,7 @@ en:
     policies: "Policies"
     policies_text: "Placeholder for policies content"
     tutorials: "Tutorials"
+    tutorials_text: "This section contains information about how this application's data is structured, and several ways to interact with it."
     filters:
       predicates:
         not_cont: "Does not contain"
@@ -87,7 +88,7 @@ en:
       illiad_menu: "ILLiad"
       columns_heading: "Example data visualizations"
       left_column_heading: "Borrowing institutions"
-      right_column_heading: "Borrowing transaction dates, last 100 days"
+      right_column_heading: "Lending transactions, %{date_range}"
     gatecount:
       gatecount_menu: "Gate count"
       columns_heading: "Example data visualizations"
