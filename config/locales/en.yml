@@ -61,7 +61,7 @@ en:
                  <p>The MetriDoc code base is available under Apache-2 license for open source development.  It’s GitHub repository is located at <a href=\"https://github.com/metridoc\">MetriDoc GitHub account</a>.  Contacts about MetriDoc may be directed to the Library Technology Services division of the Penn Libraries, at <a href=\"mailto:libhelpdesk@upenn.edu\">libhelpdesk@upenn.edu</a>.</p>"
     policies: "Policies"
     policies_text: "Placeholder for policies content"
-    tutorials: "Tutorials"
+    tutorials: "Resources"
     tutorials_text: "This section contains information about how this application's data is structured, and several ways to interact with it."
     filters:
       predicates:
