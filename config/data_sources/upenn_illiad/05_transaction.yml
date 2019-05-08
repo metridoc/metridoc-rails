@@ -39,12 +39,13 @@ column_mappings:
   "BillingAmount": billing_amount
   "CreationDate": creation_date
   "LenderAddressNumber": lender_address_number
-  "username": user_name
   "BorrowerNVTGC" : borrower_nvtgc
   "OriginalNVTGC" : original_nvtgc
 export_file_name:      "transactions.csv"
+export_filter_date_sql: "CreationDate > ?"
 
 # Target Config
 target_adapter:        csv
 target_model:          "Illiad::Transaction"
 truncate_before_load:  "yes"
+legacy_filter_date_field: "creation_date"

@@ -1,4 +1,0 @@
-load_sequence:         26
-target_model:          "Keyserver::Server"
-truncate_before_load:  "yes"
-file_name:             "Servers.csv"

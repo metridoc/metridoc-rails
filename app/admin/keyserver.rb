@@ -1,7 +1,5 @@
 ActiveAdmin.register_page "Keyserver" do
-  # breadcrumb do
-  #   ['admin', 'keyserver']
-  # end
+  menu false
 
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

@@ -1,0 +1,20 @@
+default: &default
+  adapter: postgresql
+
+development:
+  <<: *default
+  database: metridoc_development
+  username: kate
+  password:
+
+test:
+  <<: *default
+  database: metridoc_test
+  username: metridoc_test
+  password: metridoc_test
+
+production:
+  <<: *default
+  database: metridoc
+  username: metridoc
+  password: <%= ENV["DATABASE_PASSWORD"] %>

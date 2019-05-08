@@ -1,4 +1,0 @@
-load_sequence:         10
-target_model:          "Keyserver::Location"
-truncate_before_load:  "yes"
-file_name:             "Locations.csv"

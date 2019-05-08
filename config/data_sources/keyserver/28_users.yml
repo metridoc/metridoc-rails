@@ -1,4 +1,0 @@
-load_sequence:         28
-target_model:          "Keyserver::User"
-truncate_before_load:  "yes"
-file_name:             "Users.csv"

@@ -1,4 +1,0 @@
-load_sequence:         14
-target_model:          "Keyserver::ProductComponent"
-truncate_before_load:  "yes"
-file_name:             "ProductComponents.csv"

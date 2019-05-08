@@ -1,0 +1,103 @@
+body.active_admin {
+
+  #active_admin_content.left_sidebar #main_content_wrapper {
+    margin-left: 20px;
+  }
+
+  #main_content {
+    padding: 10px;
+    h1, h2, h3, h4, h5, h6 {
+      text-align: left;
+      padding: 15px;
+    }
+    h2 {
+      font-size: 24px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+
+    .index_table, .panel_contents table {
+      table-layout: auto !important;
+      word-break: inherit;
+      td {
+        width: auto !important;
+      }
+    }
+
+
+    .col-actions {
+      width: 100px;
+    }
+    #data-viz {
+      overflow: auto;
+    }
+
+    .container {
+      clear: both;
+      margin: 30px 10px;
+    }
+
+    .container-text {
+      margin:10px;
+      background-color: #f5f5f5;
+      max-width: 550px;
+      padding: 10px;
+    }
+
+    #left-col, #right-col {
+      background-color: #dadada;
+      width: 45%;
+      padding: 10px;
+      margin: 0px 10px;
+    }
+    #left-col {
+      float: left;
+    }
+    #right-col {
+      float: right;
+    }
+
+    #left-col-tut {
+      float: left;
+    }
+    #right-col-tut {
+      float: right;
+    }
+  }
+
+  #filters_sidebar_section {
+    width: 300px;
+  }
+
+  .comments {
+    .panel_contents {
+      padding: 20px;
+    }
+  }
+
+  #header {
+    img {
+      width: 250px;
+    }
+  }
+
+  #footer {
+    text-align: left;
+    span {
+      font-size: 12px;
+    }
+    img.penn_lib_logo {
+      width: 200px;
+      border-right: 1px #5d5d5d solid;
+      padding-right: 10px;
+      margin-right: 10px;
+      padding-bottom: 10px;
+    }
+    img.iplc_logo {
+      margin-left: 10px;
+      padding-bottom: 10px;
+    }
+  }
+
+}

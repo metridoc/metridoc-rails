@@ -1,4 +1,0 @@
-load_sequence:         9
-target_model:          "Keyserver::LicensedUser"
-truncate_before_load:  "yes"
-file_name:             "LicensedUsers.csv"

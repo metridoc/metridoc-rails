@@ -2,11 +2,13 @@ load_sequence:         5
 
 # Source Config
 source_adapter:        mssql
-source_table:          "id_catalog_code"
+source_table:          "ID_LIBRARY"
 column_mappings:
-  catalog_code: catalog_code
-  catalog_code_desc: institution
-  catalog_library_id: library_id
+  LIBRARY_ID: library_id
+  LIBRARY_SYMBOL: library_symbol
+  INSTITUTION_NAME: institution_name
+  PRIME_POST_ZIPCODE: prime_post_zipcode
+  WEIGHTING_FACTOR: weighting_factor
 export_file_name:      "institutions.csv"
 
 # Target Config

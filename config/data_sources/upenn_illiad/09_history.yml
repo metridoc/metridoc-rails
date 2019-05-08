@@ -14,8 +14,10 @@ filter_raw: |
                         WHERE T.TransactionNumber = History.TransactionNumber
                       )
 export_file_name:      "history.csv"
+export_filter_date_sql: "History.DateTime > ?"
 
 # Target Config
 target_adapter:        csv
 truncate_before_load:  "yes"
 target_model:          "Illiad::HistoryRecord"
+legacy_filter_date_field: "record_datetime"

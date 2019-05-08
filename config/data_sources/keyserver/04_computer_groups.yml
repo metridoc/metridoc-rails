@@ -1,4 +1,0 @@
-load_sequence:         4
-target_model:          "Keyserver::ComputerGroup"
-truncate_before_load:  "yes"
-file_name:             "ComputerGroups.csv"

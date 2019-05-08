@@ -1,0 +1,21 @@
+load_sequence:         9
+
+# Source Config
+source_adapter:        mssql
+source_table:          "History"
+column_mappings:
+  "History.TransactionNumber": transaction_number
+  "History.DateTime": record_datetime
+  "History.entry": entry
+filter_raw: |
+                      EXISTS (
+                        SELECT *
+                        FROM  Transactions T
+                        WHERE T.TransactionNumber = History.TransactionNumber
+                      )
+export_file_name:      "history.csv"
+
+# Target Config
+target_adapter:        csv
+truncate_before_load:  "yes"
+target_model:          "Illiad::HistoryRecord"

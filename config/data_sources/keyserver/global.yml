@@ -1,4 +1,4 @@
 ---
 institution_code: 'UPENN'
 target_adapter:   'csv'
-import_folder:    '/Users/erhanberber/development/NM/docs/metridoc/keyserverexport11082016/'
+import_folder:    '/tmp/keyserver'
