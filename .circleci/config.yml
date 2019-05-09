@@ -14,6 +14,7 @@ workflows:
           context: quay.io
           registry: quay.io
           image: upennlibraries/metridoc
+          tag: $CIRCLE_BRANCH
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
