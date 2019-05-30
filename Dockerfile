@@ -21,7 +21,7 @@ COPY webapp.conf /etc/nginx/sites-enabled/webapp
 USER app
 WORKDIR /home/app/webapp
 
-COPY Gemfile* ./
+COPY --chown=app:app Gemfile* ./
 RUN bundle install
 
 COPY --chown=app:app . .
