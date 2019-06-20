@@ -33,6 +33,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'pg'
 gem 'mysql2'
 
+gem 'makara', '~> 0.4.1'
+
 gem 'activerecord-import'
 
 gem 'devise'
