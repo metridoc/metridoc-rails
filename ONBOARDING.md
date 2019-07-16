@@ -15,3 +15,6 @@ Developers who need to contribute to the development of the Metridoc application
 - Accept the invite for the [UPenn Libraries](https://quay.io/organization/upennlibraries) Quay.io organization and teams.
 - Follow the [`metridoc-rails`](https://circleci.com/gh/metridoc/metridoc-rails) project on CircleCI.
 - Install [Docker](https://docs.docker.com/install/) on your workstation.
+- Review the following docs in this repo:
+  - [README](README.md)
+  - [CONTRIBUTING](CONTRIBUTING.md)
