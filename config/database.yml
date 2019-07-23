@@ -4,8 +4,8 @@ default: &default
 development:
   <<: *default
   database: metridoc_development
-  username: kate
-  password:
+  username: metridoc_development
+  password: metridoc_development
 
 test:
   <<: *default

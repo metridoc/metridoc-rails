@@ -2,14 +2,14 @@ version: '3.7'
 
 services:
   app:
-    image: metridoc:staging
+    image: metridoc
     environment:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
     ports:
       - '80:80'
     secrets:
-      - source: metridoc_rails_db_config_3
+      - source: metridoc_rails_db_config
         target: /home/app/webapp/config/database.yml
         uid: '9999'
         gid: '9999'
@@ -19,14 +19,12 @@ services:
         uid: '9999'
         gid: '9999'
         mode: 0440
-    volumes:
-      - staging_data:/var/lib/
   db:
     image: postgres:10.5-alpine
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/metridoc_db_password
     ports:
-      - '5432:5432' 
+      - '5432:5432'
     secrets:
       - metridoc_db_password
     volumes:
@@ -35,11 +33,10 @@ services:
 secrets:
   metridoc_db_password:
     external: true
-  metridoc_rails_db_config_3:
+  metridoc_rails_db_config:
     external: true
   metridoc_rails_secrets_config:
     external: true
 
 volumes:
   db_data:
-  staging_data:
