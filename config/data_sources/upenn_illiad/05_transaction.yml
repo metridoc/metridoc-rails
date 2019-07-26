@@ -43,6 +43,7 @@ column_mappings:
   "OriginalNVTGC" : original_nvtgc
 export_file_name:      "transactions.csv"
 export_filter_date_sql: "CreationDate > ?"
+export_filter_date_range_sql: "CreationDate > ? AND CreationDate < ?"
 
 # Target Config
 target_adapter:        csv

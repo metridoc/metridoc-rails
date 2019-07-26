@@ -21,10 +21,12 @@ GEM
     builder (3.2.3)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
-    dotenv (2.7.2)
+    dotenv (2.7.4)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     json (1.8.6)
+    makara (0.4.1)
+      activerecord (>= 3.0.0)
     method_source (0.9.2)
     minitest (5.11.3)
     pg (0.20.0)
@@ -45,6 +47,7 @@ DEPENDENCIES
   activerecord (= 4.1.2)
   activerecord-sqlserver-adapter
   dotenv
+  makara
   pg (~> 0.20.0)
   pry-rails
   tiny_tds (~> 2.1.0)
@@ -53,4 +56,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   2.0.1
+   1.16.3

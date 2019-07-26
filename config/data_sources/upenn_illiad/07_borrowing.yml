@@ -33,6 +33,7 @@ from_raw: |
                           GROUP BY h.TransactionNumber, t.RequestType ) AS S
 export_file_name:      "borrowing.csv"
 export_filter_date_sql: "S.transaction_date > ?"
+export_filter_date_range_sql: "S.transaction_date > ? AND S.transaction_date < ?"
 
 # Target Config
 target_adapter:        csv
