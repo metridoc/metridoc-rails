@@ -21,3 +21,4 @@ export_filter_date_range_sql: "History.DateTime > ? AND History.DateTime < ?"
 target_adapter:        csv
 truncate_before_load:  "yes"
 target_model:          "Illiad::HistoryRecord"
+legacy_filter_date_field: "record_datetime"
