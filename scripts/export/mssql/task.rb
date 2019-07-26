@@ -33,6 +33,10 @@ module Export
         task_config["export_filter_date_sql"]
       end
 
+      def export_filter_date_range_sql
+        task_config["export_filter_date_range_sql"]
+      end
+
       def from_date
         @from_date if @from_date.present?
         @from_date = nil
@@ -40,6 +44,15 @@ module Export
           @from_date =  Date.parse( task_config["from_date"] )
         end
         @from_date
+      end
+
+      def to_date
+        @to_date if @to_date.present?
+        @to_date = nil
+        if task_config["to_date"].present?
+          @to_date =  Date.parse( task_config["to_date"] )
+        end
+        @to_date
       end
 
       def data
@@ -54,6 +67,10 @@ module Export
         end
         if export_filter_date_sql.present? && from_date.present?
           scope = scope.where(export_filter_date_sql, from_date)
+        end
+
+        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
+          scope = scope.where(export_filter_date_range_sql, from_date, to_date)
         end
         if group_by_columns.present?
           scope = scope.group(group_by_columns)

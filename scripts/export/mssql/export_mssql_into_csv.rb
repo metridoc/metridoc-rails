@@ -33,6 +33,7 @@ parameters = [
   ["s", "single_step", "Optional Single Step to run"],
   ["e", "export_folder", "Optional Export Folder"],
   ["f", "from_date", "From Date"],
+  ["o", "to_date", "To Date"]
 ]
 
 options = {}
