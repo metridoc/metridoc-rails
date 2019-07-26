@@ -37,3 +37,4 @@ export_file_name:      "borrowing.csv"
 target_adapter:        csv
 target_model:          "Illiad::Borrowing"
 truncate_before_load:  "yes"
+legacy_filter_date_field: "transaction_date"
