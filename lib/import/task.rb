@@ -274,7 +274,7 @@ module Import
           log "Imported #{records.size} records."
           return 0
         rescue => ex
-          log "Error => #{ex.message}"
+          log "Error on import. Query too large to display."
         end
 
         n_errors = 0
