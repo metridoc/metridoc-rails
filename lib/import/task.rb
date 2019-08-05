@@ -189,7 +189,7 @@ module Import
 
         truncate if truncate_before_load?
 
-        csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+        csv = CSV.read(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
 
         headers = csv.first
 
