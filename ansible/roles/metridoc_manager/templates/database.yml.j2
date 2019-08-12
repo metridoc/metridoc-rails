@@ -1,0 +1,23 @@
+default: &default
+  adapter: postgresql_makara
+  database: postgres
+  username: postgres
+  password: {{ postgres_database_password }}
+  pool: 8
+  makara:
+    sticky: false
+    connections:
+      - role: master
+        host: primary-db
+        disable_blacklist: true
+      - role: slave
+        host: replica-db
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

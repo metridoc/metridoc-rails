@@ -1,0 +1,29 @@
+---
+- name: create metridoc config directory
+  file:
+    path: '{{ config_dir }}/metridoc'
+    state: directory
+
+- name: copy docker compose file
+  copy:
+    src: docker-compose.yml
+    dest: '{{ config_dir }}/metridoc/docker-compose.yml'
+
+- name: create docker secrets for rails configs
+  docker_secret:
+    name: metridoc_rails_{{ item }}_config_{{ lookup('vars', 'rails_' + item + '_config_version') }}
+    data: '{{ lookup("template", item + ".yml.j2") }}'
+    state: present
+  loop:
+    - database
+    - secrets
+  no_log: true
+  tags:
+    - docker
+
+- name: start docker services
+  environment: '{{ docker_stack_env }}'
+  command: docker stack deploy -c {{ config_dir }}/metridoc/docker-compose.yml metridoc
+  changed_when: false
+  tags:
+    - docker

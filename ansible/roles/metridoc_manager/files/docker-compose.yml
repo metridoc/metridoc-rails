@@ -1,0 +1,115 @@
+version: '3.7'
+
+services:
+  app:
+    image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
+    deploy:
+      replicas: ${METRIDOC_REPLICAS}
+      resources:
+        limits:
+          memory: 10g
+      update_config:
+        parallelism: 1
+    environment:
+      PASSENGER_APP_ENV: ${RAILS_ENV}
+      RAILS_ENV:
+
+      COLUMBIA_ILLIAD_MSSQL_DB:
+      COLUMBIA_ILLIAD_MSSQL_HOST:
+      COLUMBIA_ILLIAD_MSSQL_PORT:
+      COLUMBIA_ILLIAD_MSSQL_PWD:
+      COLUMBIA_ILLIAD_MSSQL_UID:
+
+      CORNELL_ILLIAD_MSSQL_DB:
+      CORNELL_ILLIAD_MSSQL_HOST:
+      CORNELL_ILLIAD_MSSQL_PORT:
+      CORNELL_ILLIAD_MSSQL_PWD:
+      CORNELL_ILLIAD_MSSQL_UID:
+
+      DARTMOUTH_ILLIAD_MSSQL_DB:
+      DARTMOUTH_ILLIAD_MSSQL_HOST:
+      DARTMOUTH_ILLIAD_MSSQL_PORT:
+      DARTMOUTH_ILLIAD_MSSQL_PWD:
+      DARTMOUTH_ILLIAD_MSSQL_UID:
+
+      DUKE_ILLIAD_MSSQL_DB:
+      DUKE_ILLIAD_MSSQL_HOST:
+      DUKE_ILLIAD_MSSQL_PORT:
+      DUKE_ILLIAD_MSSQL_PWD:
+      DUKE_ILLIAD_MSSQL_UID:
+
+      HARVARD_ILLIAD_MSSQL_DB:
+      HARVARD_ILLIAD_MSSQL_HOST:
+      HARVARD_ILLIAD_MSSQL_PORT:
+      HARVARD_ILLIAD_MSSQL_PWD:
+      HARVARD_ILLIAD_MSSQL_UID:
+
+      MIT_ILLIAD_MSSQL_DB:
+      MIT_ILLIAD_MSSQL_HOST:
+      MIT_ILLIAD_MSSQL_PORT:
+      MIT_ILLIAD_MSSQL_PWD:
+      MIT_ILLIAD_MSSQL_UID:
+
+      PRINCETON_ILLIAD_MSSQL_DB:
+      PRINCETON_ILLIAD_MSSQL_HOST:
+      PRINCETON_ILLIAD_MSSQL_PORT:
+      PRINCETON_ILLIAD_MSSQL_PWD:
+      PRINCETON_ILLIAD_MSSQL_UID:
+
+      UPENN_BORROWDIRECT_MSSQL_DB:
+      UPENN_BORROWDIRECT_MSSQL_HOST:
+      UPENN_BORROWDIRECT_MSSQL_PORT:
+      UPENN_BORROWDIRECT_MSSQL_PWD:
+      UPENN_BORROWDIRECT_MSSQL_UID:
+
+      UPENN_EZBORROW_MSSQL_DB:
+      UPENN_EZBORROW_MSSQL_HOST:
+      UPENN_EZBORROW_MSSQL_PORT:
+      UPENN_EZBORROW_MSSQL_PWD:
+      UPENN_EZBORROW_MSSQL_UID:
+
+      UPENN_ILLIAD_MSSQL_DB:
+      UPENN_ILLIAD_MSSQL_HOST:
+      UPENN_ILLIAD_MSSQL_PORT:
+      UPENN_ILLIAD_MSSQL_PWD:
+      UPENN_ILLIAD_MSSQL_UID:
+
+      YALE_ILLIAD_MSSQL_DB:
+      YALE_ILLIAD_MSSQL_HOST:
+      YALE_ILLIAD_MSSQL_PORT:
+      YALE_ILLIAD_MSSQL_PWD:
+      YALE_ILLIAD_MSSQL_UID:
+
+    networks:
+      - app
+      - database
+    ports:
+      - '80:80'
+    secrets:
+      - source: metridoc_rails_database_config
+        target: /home/app/webapp/config/database.yml
+        uid: '${APP_USER_UID}'
+        gid: '${APP_USER_GID}'
+        mode: 0440
+      - source: metridoc_rails_secrets_config
+        target: /home/app/webapp/config/secrets.yml
+        uid: '${APP_USER_UID}'
+        gid: '${APP_USER_GID}'
+        mode: 0440
+
+networks:
+  app:
+    driver: overlay
+  database:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: ${DATABASE_SUBNET}
+
+secrets:
+  metridoc_rails_database_config:
+    external: true
+    name: metridoc_rails_database_config_${RAILS_DATABASE_CONFIG_VERSION}
+  metridoc_rails_secrets_config:
+    external: true
+    name: metridoc_rails_secrets_config_${RAILS_SECRETS_CONFIG_VERSION}

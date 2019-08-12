@@ -1,0 +1,24 @@
+---
+config_dir: /root/deployments/metridoc
+database_subnet: 10.0.2.0/24
+postgres_database_password: x
+rails_secret_key_base: x
+rails_app_user_gid: 9999
+rails_app_user_uid: 9999
+
+# Docker config / secret versions
+postgres_database_password_version: v1
+rails_database_config_version: v1
+rails_secrets_config_version: v1
+
+docker_stack_env:
+  APP_USER_GID: '{{ rails_app_user_gid }}'
+  APP_USER_UID: '{{ rails_app_user_uid }}'
+  DATABASE_SUBNET: '{{ database_subnet }}'
+  METRIDOC_IMAGE_TAG: local
+  METRIDOC_REPLICAS: 1
+  RAILS_ENV: development
+
+  POSTGRES_DATABASE_PASSWORD_VERSION: '{{ postgres_database_password_version }}'
+  RAILS_DATABASE_CONFIG_VERSION: '{{ rails_database_config_version }}'
+  RAILS_SECRETS_CONFIG_VERSION: '{{ rails_secrets_config_version }}'

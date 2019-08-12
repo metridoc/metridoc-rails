@@ -1,0 +1,6 @@
+[swarm_managers]
+metridoc01.library.upenn.int
+
+[swarm_workers]
+metridoc01.library.upenn.int
+metridoc02.library.upenn.int
