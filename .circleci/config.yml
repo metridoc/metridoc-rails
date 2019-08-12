@@ -4,6 +4,33 @@ orbs:
   docker-publish: upenn-libraries/docker-publish@0.1.0
   gitleaks: upenn-libraries/gitleaks@0.1.1
 
+commands:
+  molecule_test:
+    description: Run the `molecule test` command within a role directory
+    parameters:
+      role:
+        description: Name of the Ansible role
+        type: string
+    steps:
+      - run:
+          command: molecule test
+          working_directory: ansible/roles/<< parameters.role >>
+
+jobs:
+  test_role:
+    description: Test an Ansible role using Molecule
+    parameters:
+      role:
+        description: Name of the Ansible role
+        type: string
+    docker:
+      - image: quay.io/ansible/molecule:2.22rc3
+    steps:
+      - checkout
+      - setup_remote_docker
+      - molecule_test:
+          role: << parameters.role >>
+
 workflows:
   build_and_test:
     jobs:
@@ -16,5 +43,10 @@ workflows:
           image: upennlibraries/metridoc
           tag: $CIRCLE_BRANCH
           label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
+      - test_role:
+          name: test_metridoc_manager_role
+          role: metridoc_manager
           requires:
             - gitleaks/check_local
