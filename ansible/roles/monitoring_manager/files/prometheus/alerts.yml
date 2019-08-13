@@ -1,0 +1,42 @@
+groups:
+  - name: postgres
+    rules:
+      - alert: DiskAlmostFull
+        expr: >
+          (100 - 100 * (node_filesystem_avail_bytes{mountpoint='/var'} / node_filesystem_size_bytes{mountpoint='/var'}) *
+          on(instance) group_left(node_name) node_meta)
+          >= 90
+        labels:
+          service: metridoc_db
+          severity: warning
+        annotations:
+          summary: '`/var` is at least 90% full on `{{ $labels.node_name }}`'
+          description: >-
+            The `/var` partition is {{ $value | printf "%.2f" }}% full on
+            `{{ $labels.node_name }}`. The partition needs to have existing
+            disk space freed or additional space allocated.
+      - alert: MemoryUsageHigh
+        expr: >
+          (100 - 100 * (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) *
+          on(instance) group_left(node_name) node_meta)
+          >= 80
+        labels:
+          service: metridoc_db
+          severity: warning
+        annotations:
+          summary: 'Total memory usage is at least 80% on `{{ $labels.node_name }}`'
+          description: >-
+            Memory usage is at {{ $value | printf "%.2f" }}% on
+            `{{ $labels.node_name }}`. Memory-intensive jobs or scripts should
+            be cancelled to prevent OOM errors.
+      - alert: ReplicationStopped
+        expr: pg_replication_state != 1
+        labels:
+          service: metridoc_db
+          severity: error
+        annotations:
+          summary: Streaming replication has stopped
+          description: >-
+            The primary database is unable to stream transaction logs to the
+            replica. The primary may have lost the ability to connect to the
+            replica or the replica may have failed.

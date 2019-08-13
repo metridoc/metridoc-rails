@@ -1,0 +1,30 @@
+---
+- name: create metridoc config directory
+  file:
+    path: '{{ config_dir }}/jenkins'
+    state: directory
+
+- name: copy docker compose file
+  copy:
+    src: docker-compose.yml
+    dest: '{{ config_dir }}/jenkins/docker-compose.yml'
+
+- name: label jenkins swarm node
+  docker_node:
+    hostname: '{{ jenkins_swarm_node }}'
+    labels:
+      jenkins: 'true'
+  tags:
+    - docker
+
+- name: start docker services
+  environment: '{{ docker_stack_env }}'
+  command: docker stack deploy -c {{ config_dir }}/jenkins/docker-compose.yml metridoc
+  changed_when: false
+  tags:
+    - docker
+
+- debug:
+    msg: Docker services are deploying in the background. Check host to see progress.
+  tags:
+    - docker

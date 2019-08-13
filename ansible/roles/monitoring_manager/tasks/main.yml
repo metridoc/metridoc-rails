@@ -1,0 +1,83 @@
+---
+- name: create config directories
+  file:
+    path: '{{ config_dir }}/postgres/monitoring/{{ item }}'
+    state: directory
+  loop:
+    - alertmanager
+    - grafana
+    - grafana_db
+    - node_exporter
+    - postgres_exporter
+    - prometheus
+
+- name: copy configs
+  copy:
+    src: '{{ item }}'
+    dest: '{{ config_dir }}/postgres/monitoring/{{ item }}'
+  loop:
+    - docker-compose.yml
+    - alertmanager/templates.tmpl
+    - grafana/dashboards.yml
+    - grafana/dashboard_home.json
+    - grafana/dashboard_postgres.json
+    - grafana/datasources.yml
+    - node_exporter/docker-entrypoint.sh
+    - postgres_exporter/queries.yml
+    - prometheus/alerts.yml
+    - prometheus/prometheus.yml
+
+- name: create grafana database pg_hba config file
+  template:
+    src: grafana_db/pg_hba.conf.j2
+    dest: '{{ config_dir }}/postgres/monitoring/grafana_db/pg_hba.conf'
+
+- name: create docker secrets
+  docker_secret:
+    name: metridoc_{{ item }}_{{ lookup("vars", item + "_version") }}
+    data: '{{ lookup("vars", item) }}'
+    state: present
+  loop:
+    - grafana_admin_password
+    - grafana_database_password
+    - postgres_monitoring_password
+  no_log: true
+  tags:
+    - docker
+
+- name: create docker secret for alertmanager config template
+  docker_secret:
+    name: metridoc_alertmanager_config_{{ alertmanager_config_version }}
+    data: '{{ lookup("template", "alertmanager/alertmanager.yml.j2") }}'
+    state: present
+  no_log: true
+  tags:
+    - docker
+
+- name: label alertmanager-1 swarm node
+  docker_node:
+    hostname: '{{ alertmanager_1_swarm_node }}'
+    labels:
+      alertmanager-1: 'true'
+  tags:
+    - docker
+
+- name: label alertmanager-2 swarm node
+  docker_node:
+    hostname: '{{ alertmanager_2_swarm_node }}'
+    labels:
+      alertmanager-2: 'true'
+  tags:
+    - docker
+
+- name: start docker services
+  environment: '{{ docker_stack_env }}'
+  command: docker stack deploy -c {{ config_dir }}/postgres/monitoring/docker-compose.yml metridoc
+  changed_when: false
+  tags:
+    - docker
+
+- debug:
+    msg: Docker services are deploying in the background. Check host to see progress.
+  tags:
+    - docker

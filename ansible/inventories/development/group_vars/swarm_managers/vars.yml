@@ -1,24 +1,79 @@
 ---
 config_dir: /root/deployments/metridoc
+alertmanager_slack_api_url: http://localhost
 database_subnet: 10.0.2.0/24
+grafana_admin_password: x
+grafana_database_password: x
+monitoring_subnet: 10.0.3.0/24
 postgres_database_password: x
+postgres_monitoring_password: x
+postgres_replication_password: x
 rails_secret_key_base: x
 rails_app_user_gid: 9999
 rails_app_user_uid: 9999
 
+alertmanager_1_swarm_node: '{{ local_swarm_node }}'
+alertmanager_2_swarm_node: '{{ local_swarm_node }}'
+jenkins_swarm_node: '{{ local_swarm_node }}'
+postgres_primary_swarm_node: '{{ local_swarm_node }}'
+postgres_replica_swarm_node: '{{ local_swarm_node }}'
+
 # Docker config / secret versions
+alertmanager_config_version: v1
+alertmanager_templates_version: v1
+grafana_admin_password_version: v1
+grafana_dashboards_version: v1
+grafana_dashboard_home_version: v1
+grafana_dashboard_postgres_version: v1
+grafana_database_password_version: v1
+grafana_database_pg_hba_conf_version: v1
+grafana_datasources_version: v1
+node_exporter_entrypoint_version: v1
 postgres_database_password_version: v1
+postgres_exporter_queries_version: v1
+postgres_init_primary_version: v1
+postgres_monitoring_password_version: v1
+postgres_pgpass_version: v1
+postgres_primary_pg_hba_conf_version: v1
+postgres_replica_pg_hba_conf_version: v1
+postgres_start_replica_version: v1
+prometheus_alerts_version: v1
+prometheus_config_version: v1
 rails_database_config_version: v1
 rails_secrets_config_version: v1
 
 docker_stack_env:
+  ALERTMANAGER_1_EXTERNAL_URL: http://localhost:9093
+  ALERTMANAGER_2_EXTERNAL_URL: http://localhost:9094
   APP_USER_GID: '{{ rails_app_user_gid }}'
   APP_USER_UID: '{{ rails_app_user_uid }}'
   DATABASE_SUBNET: '{{ database_subnet }}'
+  GF_SERVER_ROOT_URL: http://localhost:3000
+  GF_SMTP_HOST: localhost:25
   METRIDOC_IMAGE_TAG: local
   METRIDOC_REPLICAS: 1
+  MONITORING_SUBNET: '{{ monitoring_subnet }}'
   RAILS_ENV: development
 
+  ALERTMANAGER_CONFIG_VERSION: '{{ alertmanager_config_version }}'
+  ALERTMANAGER_TEMPLATES_VERSION: '{{ alertmanager_templates_version }}'
+  GRAFANA_ADMIN_PASSWORD_VERSION: '{{ grafana_admin_password_version }}'
+  GRAFANA_DASHBOARDS_VERSION: '{{ grafana_dashboards_version }}'
+  GRAFANA_DASHBOARD_HOME_VERSION: '{{ grafana_dashboard_home_version }}'
+  GRAFANA_DASHBOARD_POSTGRES_VERSION: '{{ grafana_dashboard_postgres_version }}'
+  GRAFANA_DATABASE_PASSWORD_VERSION: '{{ grafana_database_password_version }}'
+  GRAFANA_DATABASE_PG_HBA_CONF_VERSION: '{{ grafana_database_pg_hba_conf_version }}'
+  GRAFANA_DATASOURCES_VERSION: '{{ grafana_datasources_version }}'
+  NODE_EXPORTER_ENTRYPOINT_VERSION: '{{ node_exporter_entrypoint_version }}'
   POSTGRES_DATABASE_PASSWORD_VERSION: '{{ postgres_database_password_version }}'
+  POSTGRES_EXPORTER_QUERIES_VERSION: '{{ postgres_exporter_queries_version }}'
+  POSTGRES_INIT_PRIMARY_VERSION: '{{ postgres_init_primary_version }}'
+  POSTGRES_MONITORING_PASSWORD_VERSION: '{{ postgres_monitoring_password_version }}'
+  POSTGRES_PGPASS_VERSION: '{{ postgres_pgpass_version }}'
+  POSTGRES_PRIMARY_PG_HBA_CONF_VERSION: '{{ postgres_primary_pg_hba_conf_version }}'
+  POSTGRES_REPLICA_PG_HBA_CONF_VERSION: '{{ postgres_replica_pg_hba_conf_version }}'
+  POSTGRES_START_REPLICA_VERSION: '{{ postgres_start_replica_version }}'
+  PROMETHEUS_ALERTS_VERSION: '{{ prometheus_alerts_version }}'
+  PROMETHEUS_CONFIG_VERSION: '{{ prometheus_config_version }}'
   RAILS_DATABASE_CONFIG_VERSION: '{{ rails_database_config_version }}'
   RAILS_SECRETS_CONFIG_VERSION: '{{ rails_secrets_config_version }}'

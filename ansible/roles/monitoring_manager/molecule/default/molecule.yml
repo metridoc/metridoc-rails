@@ -1,0 +1,25 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: instance
+    image: centos:7
+    groups:
+      - swarm_managers
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      group_vars: ../../../../inventories/molecule/group_vars/
+  lint:
+    name: ansible-lint
+  options:
+    skip-tags: docker
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
