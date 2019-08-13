@@ -1,6 +1,6 @@
 # Metridoc Config
 
-This repository contains configuration management, scripts, and tools related to the [Metridoc](https://github.com/metridoc/metridoc-rails) application.
+This repository contains configuration management, scripts, and tools related to the Metridoc application.
 
 This configuration is used to run the newer Metridoc Rails application rather than the older Grails application.
 
@@ -8,7 +8,6 @@ This configuration is used to run the newer Metridoc Rails application rather th
 
 * [Ansible](#ansible)
 * [Directory Layout](#directory-layout)
-* [Local Development for Metridoc](#local-development-for-metridoc)
 * [Commands](#commands)
 * [Playbooks](#playbooks)
 * [Adding Credentials for New Data Sources](#adding-credentials-for-new-data-sources)
@@ -39,23 +38,6 @@ git pull origin master
 3. Run a playbook against the production inventory. For example, to deploy updates to the Metridoc application containers only:
 ```#bash
 ansible-playbook -i inventories/production --vault-id=vault_passwd.py metridoc.yml
-```
-
-## Local Development for Metridoc
-
-The `deploy_local.sh` script can be used to set up a Docker-based local development environment for Metridoc. It will run the `local.yml` playbook against the `development` inventory (configured to run on `localhost`) in a Docker container and create services for the application and the primary database instance.
-
-A local Git repository for Metridoc will be used to build an initial Docker image. The default location for the repo is in a sibling directory to the `metridoc_config` repo named `metridoc-rails`. This can be changed by setting the `$METRIDOC_REPO_DIR` environment variable.
-
-Docker will need to be installed and running with Swarm mode enabled.
-
-```#bash
-# Initialize a local one-node swarm
-docker swarm init
-
-# Deploy local environment
-cd ansible
-./deploy_local.sh
 ```
 
 ## Commands
