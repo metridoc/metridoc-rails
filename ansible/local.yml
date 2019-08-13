@@ -2,6 +2,7 @@
 - hosts: swarm_managers
   gather_facts: false
   roles:
+    - postgres_primary_manager
     - metridoc_manager
 
 - hosts: swarm_managers
