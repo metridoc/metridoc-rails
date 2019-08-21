@@ -17,6 +17,18 @@ commands:
           working_directory: ansible/roles/<< parameters.role >>
 
 jobs:
+  deploy:
+    docker:
+      - image: quay.io/upennlibraries/ansible:2.8
+    working_directory: /project/ansible
+    steps:
+      - checkout
+      - run: |
+          ansible-playbook
+            -i inventories/production
+            -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -W %h:%p -q $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PORT\""'
+            --vault-id vault_passwd.py
+            metridoc.yml
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
@@ -65,3 +77,13 @@ workflows:
           role: postgres_replica_manager
           requires:
             - gitleaks/check_local
+      - deploy:
+          filters:
+            branches:
+              only: staging
+          requires:
+            - docker-publish/publish
+            - test_jenkins_manager_role
+            - test_metridoc_manager_role
+            - test_postgres_primary_manager_role
+            - test_postgres_replica_manager_role
