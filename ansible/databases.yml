@@ -1,0 +1,3 @@
+---
+- import_playbook: primary_database.yml
+- import_playbook: replica_databases.yml

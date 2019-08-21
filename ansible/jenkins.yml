@@ -1,0 +1,6 @@
+---
+- hosts: swarm_managers
+  remote_user: confman
+  become: true
+  roles:
+    - jenkins_manager
