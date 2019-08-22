@@ -20,15 +20,17 @@ jobs:
   deploy:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
-    working_directory: /project/ansible
     steps:
       - checkout
-      - run: |
-          ansible-playbook
-            -i inventories/production
-            -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -W %h:%p -q $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PORT\""'
-            --vault-id vault_passwd.py
-            metridoc.yml
+      - run:
+          working_directory: ~/project/ansible
+          command: |
+            ansible-playbook \
+              -vvvv \
+              -i inventories/test \
+              -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -W %h:%p -q $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST:$SSH_DEPLOY_PORT\""' \
+              --vault-id vault_passwd.py \
+              metridoc.yml
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
@@ -49,41 +51,41 @@ workflows:
       - gitleaks/check_local:
           image: quay.io/upennlibraries/gitleaks:v2.0.0
           options: --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
-      - docker-publish/publish:
-          context: quay.io
-          registry: quay.io
-          image: upennlibraries/metridoc
-          tag: $CIRCLE_BRANCH
-          label_prefix: edu.upenn.library
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_jenkins_manager_role
-          role: jenkins_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_metridoc_manager_role
-          role: metridoc_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_postgres_primary_manager_role
-          role: postgres_primary_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_postgres_replica_manager_role
-          role: postgres_replica_manager
-          requires:
-            - gitleaks/check_local
+      # - docker-publish/publish:
+      #     context: quay.io
+      #     registry: quay.io
+      #     image: upennlibraries/metridoc
+      #     tag: $CIRCLE_BRANCH
+      #     label_prefix: edu.upenn.library
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_jenkins_manager_role
+      #     role: jenkins_manager
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_metridoc_manager_role
+      #     role: metridoc_manager
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_postgres_primary_manager_role
+      #     role: postgres_primary_manager
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_postgres_replica_manager_role
+      #     role: postgres_replica_manager
+      #     requires:
+      #       - gitleaks/check_local
       - deploy:
           filters:
             branches:
-              only: staging
-          requires:
-            - docker-publish/publish
-            - test_jenkins_manager_role
-            - test_metridoc_manager_role
-            - test_postgres_primary_manager_role
-            - test_postgres_replica_manager_role
+              only: circleci_cd
+          # requires:
+          #   - docker-publish/publish
+            # - test_jenkins_manager_role
+            # - test_metridoc_manager_role
+            # - test_postgres_primary_manager_role
+            # - test_postgres_replica_manager_role
