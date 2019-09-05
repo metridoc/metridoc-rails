@@ -22,6 +22,9 @@ jobs:
       - image: quay.io/upennlibraries/ansible:2.8
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - 70:5d:2c:e0:35:ce:a0:c6:85:ba:12:b2:72:a8:9e:b0
       - run:
           working_directory: ~/project/ansible
           command: |
