@@ -31,7 +31,7 @@ jobs:
             ansible-playbook \
               -vvvv \
               -i inventories/test \
-              -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -W %h:%p -q $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST -p $SSH_DEPLOY_PORT\""' \
+              -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -vvv -W %h:%p $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST -p $SSH_DEPLOY_PORT\""' \
               --vault-id vault_passwd.py \
               metridoc.yml
   test_role:
