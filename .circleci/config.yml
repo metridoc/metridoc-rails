@@ -26,12 +26,14 @@ jobs:
           fingerprints:
             - 70:5d:2c:e0:35:ce:a0:c6:85:ba:12:b2:72:a8:9e:b0
       - run:
+          command: echo "$SSH_DEPLOY_KNOWN_HOST" > ~/.ssh/known_hosts
+      - run:
           working_directory: ~/project/ansible
           command: |
             ansible-playbook \
               -vvvv \
               -i inventories/test \
-              -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -vvv -W %h:%p $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST -p $SSH_DEPLOY_PORT\""' \
+              -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -W %h:%p -q $SSH_DEPLOY_USER@$SSH_DEPLOY_HOST -p $SSH_DEPLOY_PORT\""' \
               --vault-id vault_passwd.py \
               metridoc.yml
   test_role:
