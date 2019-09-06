@@ -25,6 +25,7 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - b2:03:f9:cd:7a:fa:e6:bc:1d:35:b7:01:d2:51:5a:7d
+            - 2a:52:6a:74:8f:5f:78:6b:04:06:7e:f8:eb:aa:50:bd
       - run:
           command: |
             echo "$SSH_BASTION_KNOWN_HOST" >> ~/.ssh/known_hosts
