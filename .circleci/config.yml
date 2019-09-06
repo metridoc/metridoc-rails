@@ -26,7 +26,9 @@ jobs:
           fingerprints:
             - 70:5d:2c:e0:35:ce:a0:c6:85:ba:12:b2:72:a8:9e:b0
       - run:
-          command: echo "$SSH_BASTION_KNOWN_HOST" > ~/.ssh/known_hosts
+          command: |
+            echo "$SSH_BASTION_KNOWN_HOST" >> ~/.ssh/known_hosts
+            echo "$DEPLOY_TARGET_KNOWN_HOST" >> ~/.ssh/known_hosts
       - run:
           working_directory: ~/project/ansible
           command: |
