@@ -34,7 +34,6 @@ jobs:
           working_directory: ~/project/ansible
           command: |
             ansible-playbook \
-              -vvvv \
               -i inventories/test \
               -e 'ansible_ssh_common_args="-o ProxyCommand=\"ssh -W %h:%p -q $SSH_BASTION_USER@$SSH_BASTION_HOST -p $SSH_BASTION_PORT\""' \
               --vault-id vault_passwd.py \
