@@ -8,6 +8,7 @@ This configuration is used to run the newer Metridoc Rails application rather th
 
 * [Ansible](#ansible)
 * [Directory Layout](#directory-layout)
+* [Installation](#installation)
 * [Commands](#commands)
 * [Playbooks](#playbooks)
 * [Adding Credentials for New Data Sources](#adding-credentials-for-new-data-sources)
@@ -24,20 +25,44 @@ We use Ansible mainly to:
 
 This repo follows the layout described in the [Ansible Best Practices](https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html#alternative-directory-layout) documentation.
 
-1. Log in to the deployment server, become the configuration management user, and go to the `colenda_config/ansible` directory.
+## Installation
+
+Ansible can be run with [Docker](https://docs.docker.com/install/) using our [Ansible image](https://quay.io/repository/upennlibraries/ansible) or [installed locally with Pip](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#latest-releases-via-pip). It can be run from any host that has valid credentials and access to the hosts in inventory.
+
+### Configuration
+
+Ansible can be configured with environment variables:
+
 ```#bash
-cd ~/colenda_config/ansible
+export AWS_ACCESS_KEY_ID=x
+export AWS_SECRET_ACCESS_KEY=x
+export ANSIBLE_ASK_PASS=true # For password-based SSH authentication
+export ANSIBLE_REMOTE_USER=remote_user # The user that will be used for SSH authentication
+export ANSIBLE_VAULT_PASSWORD_FILE=vault_password.py
 ```
 
-2. Pull any updates.
+You can also use a [configuration file](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-configuration-settings-locations). If you're using Docker, you'll need to mount that file into your container.
+
+### Docker Aliases
+
+These aliases should be added to your shell config if you're running Ansible with Docker:
+
 ```#bash
-git checkout master
-git pull origin master
+ANSIBLE_DOCKER_RUN='docker run --rm -it -e ANSIBLE_ASK_PASS -e ANSIBLE_REMOTE_USER -e ANSIBLE_VAULT_PASSWORD_FILE -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -v $HOME/.ssh/known_hosts:/root/.ssh/known_hosts -v $PWD:/project -w /project quay.io/upennlibraries/ansible:2.8'
+ANSIBLE_SSH_ARGS='-e "ansible_user=${ANSIBLE_REMOTE_USER}"'
+
+alias ansible="$ANSIBLE_DOCKER_RUN ansible $ANSIBLE_SSH_ARGS"
+alias ansible-playbook="$ANSIBLE_DOCKER_RUN ansible-playbook $ANSIBLE_SSH_ARGS"
+alias ansible-vault="$ANSIBLE_DOCKER_RUN ansible-vault"
 ```
 
-3. Run a playbook against the production inventory. For example, to deploy updates to the Metridoc application containers only:
+### Local Install Aliases
+
+These aliases should be added to your shell config if you're installing Ansible locally:
+
 ```#bash
-ansible-playbook -i inventories/production --vault-id=vault_passwd.py metridoc.yml
+alias ansible='ansible -e "ansible_user=${ANSIBLE_REMOTE_USER}"'
+alias ansible-playbook='ansible-playbook -e "ansible_user=${ANSIBLE_REMOTE_USER}"'
 ```
 
 ## Commands
@@ -49,16 +74,16 @@ All commands are run from within the `ansible` directory.
 ./deploy_local.sh
 
 # Configure and deploy entire stack to hosts in production inventory
-ansible-playbook -i inventories/production --vault-id=vault_passwd.py site.yml
+ansible-playbook -i inventories/production site.yml
 
 # Deploy only the Metridoc application to production
-ansible-playbook -i inventories/production --vault-id=vault_passwd.py metridoc.yml
+ansible-playbook -i inventories/production metridoc.yml
 
 # Deploy primary and replica databases to production
-ansible-playbook -i inventories/production --vault-id=vault_passwd.py databases.yml
+ansible-playbook -i inventories/production databases.yml
 
 # Deploy Jenkins server to production
-ansible-playbook -i inventories/production --vault-id=vault_passwd.py jenkins.yml
+ansible-playbook -i inventories/production jenkins.yml
 ```
 
 ## Playbooks
@@ -80,9 +105,9 @@ All user, host, password, IP, and other access information provided by other ins
 
 To add credentials for a new data source:
 
-1. Login to the deploy server as the configuration management user and go to the directory with Metridoc's Ansible playbooks.
+1. Go to the Ansible directory.
 ```#bash
-cd ~/metridoc_config/ansible
+cd ansible
 ```
 2. Add the new environment variables to the `docker_stack_env` dictionary. They should reference the Vault-encrypted variables that you will add next:
 ```#yaml
@@ -109,7 +134,7 @@ environment:
 ```
 4. Open the [Vault-encrypted production variables file](ansible/inventories/production/group_vars/swarm_managers/vault.yml) with local Vault credentials:
 ```#bash
-ansible-vault edit --vault-id=vault_passwd.py inventories/production/group_vars/swarm_managers/vault.yml
+ansible-vault edit inventories/production/group_vars/swarm_managers/vault.yml
 ```
 5. Add the secret variables corresponding to the earlier environment variables to the Vault-encrypted file:
 ```#yaml
@@ -121,11 +146,11 @@ vault_institution_service_mssql_pwd: 'x'
 vault_institution_service_mssql_uid: 'x'
 #...
 ```
-6. Save the file, commit it, and push it to the `origin-https` remote. This will use password auth so you won't need to install your private SSH key:
+6. Save the file, commit it, and push it:
 ```#bash
 git add ansible/inventories/production/group_vars/swarm_managers
 git commit
-git push origin-https
+git push
 ```
 
 ## Testing
@@ -139,5 +164,5 @@ docker run \
   -v $PWD:/project \
   -v /var/run/docker.sock:/var/run/docker.sock \
   quay.io/ansible/molecule:2.22rc3 \
-  molecule test
+    molecule test
 ```
