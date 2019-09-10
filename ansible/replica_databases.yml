@@ -1,6 +1,5 @@
 ---
 - hosts: swarm_managers
-  remote_user: confman
   become: true
   roles:
     - postgres_replica_manager

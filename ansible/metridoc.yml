@@ -1,6 +1,5 @@
 ---
 - hosts: swarm_managers
-  remote_user: deploy
   become: true
   roles:
     - metridoc_manager
