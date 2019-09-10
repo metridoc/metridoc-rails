@@ -1,5 +1,5 @@
 ---
 - hosts: swarm_managers
-  become: true
+  become: yes
   roles:
     - postgres_primary_manager

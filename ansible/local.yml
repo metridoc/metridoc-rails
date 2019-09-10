@@ -1,12 +1,15 @@
 ---
-- hosts: swarm_managers
-  gather_facts: false
-  roles:
-    - postgres_primary_manager
-    - metridoc_manager
+- import_playbook: primary_database.yml
+  vars:
+    become: no
+    gather_facts: no
+- import_playbook: metridoc.yml
+  vars:
+    become: no
+    gather_facts: no
 
 - hosts: swarm_managers
-  gather_facts: false
+  gather_facts: no
   tasks:
     - name: mount local source repository into development container
       command: >
