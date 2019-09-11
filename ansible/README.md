@@ -86,7 +86,7 @@ ansible-playbook -i inventories/production jenkins.yml
   - `jenkins.yml` - deploys the Jenkins server used for job management.
   - `metridoc.yml` - deploys containers for the Metridoc Rails application.
   - `monitoring.yml` - deploys containers for the monitoring and alerting stack.
-- `local.yml` - deploy the `development` inventory locally. This is intended for developing the Metridoc application and supporting services locally. Does not deploy Jenkins, monitoring services, or the replica database. The [`local.sh`](local.sh) script can be used to run this playbook via Docker container and perform additional local configuration.
+- `local.yml` - deploy the `development` inventory locally. This is intended for developing the Metridoc application and supporting services locally. Does not deploy Jenkins, monitoring services, or the replica database. The `local.sh` script in the repository root can be used to run this playbook via Docker container and perform additional local configuration.
 
 ## Adding Credentials for New Data Sources
 
@@ -112,7 +112,7 @@ docker_stack_env:
 #...
 ```
 3.
-Add the new environment variables to the `app` service in the [`metridoc_manager` Docker Compose file](ansible/roles/metridoc_manager/files/docker-compose.yml).
+Add the new environment variables to the `app` service in the [`metridoc_manager` Docker Compose file](roles/metridoc_manager/files/docker-compose.yml).
 ```#yaml
 #...
 environment:
@@ -123,7 +123,7 @@ environment:
   INSTITUTION_SERVICE_MSSQL_UID:
 #...
 ```
-4. Open the [Vault-encrypted production variables file](ansible/inventories/production/group_vars/swarm_managers/vault.yml) with local Vault credentials:
+4. Open the [Vault-encrypted production variables file](inventories/production/group_vars/swarm_managers/vault.yml) with local Vault credentials:
 ```#bash
 ansible-vault edit inventories/production/group_vars/swarm_managers/vault.yml
 ```
