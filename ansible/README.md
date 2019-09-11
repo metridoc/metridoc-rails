@@ -43,26 +43,20 @@ export ANSIBLE_VAULT_PASSWORD_FILE=vault_password.py
 
 You can also use a [configuration file](https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-configuration-settings-locations). If you're using Docker, you'll need to mount that file into your container.
 
-### Docker Aliases
+### Docker
 
-These aliases should be added to your shell config if you're running Ansible with Docker:
+The [`docker.sh`](docker.sh) script can be used to run Ansible with Docker:
 
 ```#bash
-ANSIBLE_DOCKER_RUN='docker run --rm -it -e ANSIBLE_ASK_PASS -e ANSIBLE_REMOTE_USER -e ANSIBLE_VAULT_PASSWORD_FILE -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -v $HOME/.ssh/known_hosts:/root/.ssh/known_hosts -v $PWD:/project -w /project quay.io/upennlibraries/ansible:2.8'
-ANSIBLE_SSH_ARGS='-e "ansible_user=${ANSIBLE_REMOTE_USER}"'
-
-alias ansible="$ANSIBLE_DOCKER_RUN ansible $ANSIBLE_SSH_ARGS"
-alias ansible-playbook="$ANSIBLE_DOCKER_RUN ansible-playbook $ANSIBLE_SSH_ARGS"
-alias ansible-vault="$ANSIBLE_DOCKER_RUN ansible-vault"
+./docker.sh ansible-playbook -i inventories/production site.yml
 ```
 
-### Local Install Aliases
-
-These aliases should be added to your shell config if you're installing Ansible locally:
+These aliases can be added to your shell config for convenience:
 
 ```#bash
-alias ansible='ansible -e "ansible_user=${ANSIBLE_REMOTE_USER}"'
-alias ansible-playbook='ansible-playbook -e "ansible_user=${ANSIBLE_REMOTE_USER}"'
+alias ansible="./docker.sh ansible"
+alias ansible-playbook="./docker.sh ansible-playbook"
+alias ansible-vault="./docker.sh ansible-vault"
 ```
 
 ## Commands
