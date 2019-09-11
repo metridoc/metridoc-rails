@@ -6,7 +6,7 @@
 
 Docker is the preferred way to create a local development environment for Metridoc.
 
-The `deploy_local.sh` script can be used to set up a Docker-based local development environment for Metridoc. It will run the `local.yml` playbook against the `development` inventory (configured to run on `localhost`) in a Docker container and create services for the application and the primary database instance.
+The `local.sh` script can be used to set up a Docker-based local development environment for Metridoc. It will run the `local.yml` Ansible playbook against the `development` inventory (configured to run on `localhost`) in a Docker container and create services for the application and the primary database instance.
 
 #### Requirements
 
@@ -20,8 +20,7 @@ The `deploy_local.sh` script can be used to set up a Docker-based local developm
 docker swarm init
 
 # Deploy local environment
-cd ansible
-./deploy_local.sh
+./local.sh
 ```
 
 #### Accessing Container

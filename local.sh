@@ -4,7 +4,7 @@ set -e
 
 # Mounted Metridoc source repo can be overridden by setting METRIDOC_REPO_DIR
 # Default value is in parent directory of `ansible` directory
-METRIDOC_REPO_DIR=${METRIDOC_REPO_DIR:-$(dirname $PWD)}
+METRIDOC_REPO_DIR=$PWD
 METRIDOC_IMAGE_TAG=quay.io/upennlibraries/metridoc:local
 
 # Initial local image build
@@ -12,7 +12,7 @@ echo 'Building local Metridoc image...'
 docker build -t $METRIDOC_IMAGE_TAG $METRIDOC_REPO_DIR
 
 # Ansible-managed files are stored in gitignored local directory
-LOCAL_DIR=$PWD/.local
+LOCAL_DIR=$PWD/ansible/.local
 mkdir -p $LOCAL_DIR
 
 # Get UID / GID of host Metridoc repo directory
@@ -25,11 +25,11 @@ echo 'Deploying Docker stack...'
 docker run \
   --rm \
   -it \
-  -v $PWD:/project \
+  -v $PWD/ansible:/project \
   -v $LOCAL_DIR:/root/deployments/metridoc \
   -v /var/run/docker.sock:/var/run/docker.sock \
   quay.io/upennlibraries/ansible:2.8 \
     ansible-playbook \
       -i /project/inventories/development \
-      -e "ansible_dir=$PWD metridoc_repo_dir=$METRIDOC_REPO_DIR rails_app_user_uid=$HOST_UID rails_app_user_gid=$HOST_GID"\
+      -e "metridoc_repo_dir=$METRIDOC_REPO_DIR rails_app_user_uid=$HOST_UID rails_app_user_gid=$HOST_GID"\
       /project/local.yml
