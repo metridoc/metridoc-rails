@@ -50,7 +50,7 @@ docker_stack_env:
   DATABASE_SUBNET: '{{ database_subnet }}'
   GF_SERVER_ROOT_URL: http://metridoc01.library.upenn.int:3000
   GF_SMTP_HOST: '{{ vault_grafana_smtp_host }}'
-  METRIDOC_IMAGE_TAG: staging
+  METRIDOC_IMAGE_TAG: '{{ metridoc_image_tag }}'
   METRIDOC_REPLICAS: 2
   MONITORING_SUBNET: '{{ monitoring_subnet }}'
   RAILS_ENV: production
