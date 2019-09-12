@@ -1,8 +1,11 @@
 .dockerignore
 .git
 .gitignore
+.gitleaks.toml
 Dockerfile
 docker-compose.yml
+local.sh
+local_docker_init.sh
 *.md
 
 ansible/
