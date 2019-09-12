@@ -30,6 +30,6 @@ docker run \
   -v /var/run/docker.sock:/var/run/docker.sock \
   quay.io/upennlibraries/ansible:2.8 \
     ansible-playbook \
-      -i /project/inventories/development \
+      -i /project/inventories/local \
       -e "metridoc_repo_dir=$METRIDOC_REPO_DIR rails_app_user_uid=$HOST_UID rails_app_user_gid=$HOST_GID"\
       /project/local.yml
