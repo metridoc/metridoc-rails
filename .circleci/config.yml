@@ -54,7 +54,7 @@ jobs:
           role: << parameters.role >>
 
 workflows:
-  build_and_test:
+  build_test_and_deploy:
     jobs:
       - gitleaks/check_local:
           image: quay.io/upennlibraries/gitleaks:v2.0.0
