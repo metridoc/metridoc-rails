@@ -8,8 +8,8 @@ workflows:
   build_and_test:
     jobs:
       - gitleaks/check_local:
-          image: quay.io/upennlibraries/gitleaks:v1.24.0
-          options: --redact
+          image: quay.io/upennlibraries/gitleaks:v1.25.1
+          options: --redact --branch=$CIRCLE_BRANCH
       - docker-publish/publish:
           context: quay.io
           registry: quay.io
