@@ -65,13 +65,26 @@ module Export
         filters.each do |filter|
           scope = scope.where(filter)
         end
-        if export_filter_date_sql.present? && from_date.present?
-          scope = scope.where(export_filter_date_sql, from_date)
+        if Rails.env.production?
+
+          if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
+            raise "Ranged queries not supported in production mode.  Specify a from OR a to date."
+          end
+
+          if export_filter_date_sql.present? && from_date.present?
+            scope = scope.where(export_filter_date_sql, from_date)
+          end
+
+          if export_filter_date_sql.present? && to_date.present?
+            from_date = to_date - 365.days.ago
+            scope = scope.where(export_filter_date_sql, from_date, to_date)
+          end
+        else
+          if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
+            scope = scope.where(export_filter_date_range_sql, from_date, to_date)
+          end
         end
 
-        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
-          scope = scope.where(export_filter_date_range_sql, from_date, to_date)
-        end
         if group_by_columns.present?
           scope = scope.group(group_by_columns)
         end
