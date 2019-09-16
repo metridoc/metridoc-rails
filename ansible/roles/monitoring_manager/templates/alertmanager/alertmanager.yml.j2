@@ -1,0 +1,19 @@
+global:
+  slack_api_url: {{ alertmanager_slack_api_url }}
+
+templates:
+  - /etc/alertmanager/*.tmpl
+
+route:
+  group_by: [alertname, service]
+  receiver: metridoc_slack
+
+receivers:
+  - name: metridoc_slack
+    slack_configs:
+    - send_resolved: true
+      {% raw %}
+      color: '{{ template "slack.color" . }}'
+      title: '{{ template "slack.title" . }}'
+      text: '{{ template "slack.text" . }}'
+      {% endraw %}

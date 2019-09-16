@@ -1,0 +1,7 @@
+/* Replication */
+SET password_encryption='scram-sha-256';
+CREATE USER replication WITH REPLICATION PASSWORD '{{ postgres_replication_password }}';
+
+/* Monitoring */
+SET password_encryption='md5';
+CREATE USER monitoring WITH PASSWORD '{{ postgres_monitoring_password }}' IN ROLE pg_monitor;

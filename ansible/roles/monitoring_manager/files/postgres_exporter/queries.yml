@@ -1,0 +1,13 @@
+pg_replication:
+  query: >
+    SELECT COALESCE(
+      (
+        SELECT CASE WHEN state = 'streaming' THEN 1 ELSE 0 END
+        FROM pg_stat_replication
+      ),
+      0
+    ) AS state;
+  metrics:
+    - state:
+        usage: GAUGE
+        description: Whether replication is streaming or not

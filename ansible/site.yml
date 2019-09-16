@@ -1,0 +1,5 @@
+---
+- import_playbook: databases.yml
+- import_playbook: metridoc.yml
+- import_playbook: jenkins.yml
+- import_playbook: monitoring.yml

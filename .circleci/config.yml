@@ -4,8 +4,57 @@ orbs:
   docker-publish: upenn-libraries/docker-publish@0.1.0
   gitleaks: upenn-libraries/gitleaks@0.1.1
 
+commands:
+  molecule_test:
+    description: Run the `molecule test` command within a role directory
+    parameters:
+      role:
+        description: Name of the Ansible role
+        type: string
+    steps:
+      - run:
+          command: molecule test
+          working_directory: ansible/roles/<< parameters.role >>
+
+jobs:
+  deploy:
+    docker:
+      - image: quay.io/upennlibraries/ansible:2.8
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - ba:9a:a2:2e:b8:da:75:a7:94:d4:fc:42:4f:48:d5:9d
+      - run:
+          command: |
+            echo "$SSH_BASTION_KNOWN_HOST" >> ~/.ssh/known_hosts
+            echo "$DEPLOY_TARGET_KNOWN_HOST" >> ~/.ssh/known_hosts
+      - run:
+          working_directory: ~/project/ansible
+          command: |
+            ansible-playbook \
+              -i inventories/production \
+              -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
+              -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
+              -u deploy \
+              --vault-id vault_password.py \
+              metridoc.yml
+  test_role:
+    description: Test an Ansible role using Molecule
+    parameters:
+      role:
+        description: Name of the Ansible role
+        type: string
+    docker:
+      - image: quay.io/ansible/molecule:2.22rc3
+    steps:
+      - checkout
+      - setup_remote_docker
+      - molecule_test:
+          role: << parameters.role >>
+
 workflows:
-  build_and_test:
+  build_test_and_deploy:
     jobs:
       - gitleaks/check_local:
           image: quay.io/upennlibraries/gitleaks:v2.0.0
@@ -14,7 +63,36 @@ workflows:
           context: quay.io
           registry: quay.io
           image: upennlibraries/metridoc
-          tag: $CIRCLE_BRANCH
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
+      - test_role:
+          name: test_jenkins_manager_role
+          role: jenkins_manager
+          requires:
+            - gitleaks/check_local
+      - test_role:
+          name: test_metridoc_manager_role
+          role: metridoc_manager
+          requires:
+            - gitleaks/check_local
+      - test_role:
+          name: test_postgres_primary_manager_role
+          role: postgres_primary_manager
+          requires:
+            - gitleaks/check_local
+      - test_role:
+          name: test_postgres_replica_manager_role
+          role: postgres_replica_manager
+          requires:
+            - gitleaks/check_local
+      - deploy:
+          filters:
+            branches:
+              only: master
+          requires:
+            - docker-publish/publish
+            - test_jenkins_manager_role
+            - test_metridoc_manager_role
+            - test_postgres_primary_manager_role
+            - test_postgres_replica_manager_role

@@ -4,7 +4,9 @@
 
 ### Using Docker
 
-The process below will work for local development but the setup process available in the [Metridoc configuration management repo](https://github.com/upenn-libraries/metridoc_config#local-development-for-metridoc) is recommended. It simplifies local setup, provides a working development configuration, manages most interactions with Docker, and more closely resembles the production config.
+Docker is the preferred way to create a local development environment for Metridoc.
+
+The `local.sh` script can be used to set up a Docker-based local development environment for Metridoc. It will run the `local.yml` Ansible playbook against the `local` inventory (configured to run on `localhost`) in a Docker container and create services for the application and the primary database instance.
 
 #### Requirements
 
@@ -13,44 +15,19 @@ The process below will work for local development but the setup process availabl
 
 #### Setup
 
-Start Docker in Swarm Mode
-```
+```#bash
+# Initialize a local one-node swarm
 docker swarm init
+
+# Deploy local environment
+./local.sh
 ```
 
-Build image
-```
-docker build -t metridoc .
-```
+#### Accessing Container
 
-Create Docker secrets
-```
-# Modify `config/database.yml` and `config/secrets.yml` as necessary
-# `metridoc_db_password` secret must match `password` in `config/database.yml`
-echo 'metridoc_development' | docker secret create metridoc_db_password -
-cat config/database.yml | docker secret create metridoc_rails_db_config -
-cat config/secrets.yml | docker secret create metridoc_rails_secrets_config -
-```
-
-Deploy Docker stack
-```
-RAILS_ENV=development docker stack deploy -c docker-compose.yml metridoc
-```
-
-Create, migrate, and seed local database
-```
-# Get container ID by service name and execute command on container
-docker exec $(docker ps -q -f name=metridoc_app) bundle exec rake db:setup
-```
-
-Access interactive shell in container
 ```
 docker exec -it $(docker ps -q -f name=metridoc_app) /bin/bash
 ```
-
-#### Applying Changes
-
-To apply changes to your local Docker containers, rebuild the `metridoc` image and then redeploy the Docker stack.
 
 ### Using Homebrew
 

@@ -1,0 +1,64 @@
+version: '3.7'
+
+services:
+  replica-db:
+    image: postgres:11.3-alpine
+    command: >
+      postgres
+        -c hba_file=/var/lib/postgresql/pg_hba.conf
+    configs:
+      - source: postgres_replica_pg_hba_conf
+        target: /var/lib/postgresql/pg_hba.conf
+        uid: '70'
+        gid: '70'
+      - source: postgres_start_replica
+        target: /usr/local/bin/start_replica.sh
+        mode: 0555
+    deploy:
+      mode: replicated
+      placement:
+        constraints:
+          - node.labels.postgres-replica == true
+      replicas: 1
+    entrypoint: start_replica.sh
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_database_password
+    networks:
+      - database
+    ports:
+      - '5432:5432'
+    secrets:
+      - postgres_database_password
+      - source: postgres_pgpass
+        target: /var/lib/postgresql/.pgpass
+        uid: '70'
+        gid: '70'
+        mode: 0400
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+
+configs:
+  postgres_replica_pg_hba_conf:
+    file: pg_hba.conf
+    name: metridoc_postgres_replica_pg_hba_conf_${POSTGRES_REPLICA_PG_HBA_CONF_VERSION}
+  postgres_start_replica:
+    file: start_replica.sh
+    name: metridoc_postgres_start_replica_${POSTGRES_START_REPLICA_VERSION}
+
+networks:
+  database:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: ${DATABASE_SUBNET}
+
+secrets:
+  postgres_database_password:
+    external: true
+    name: metridoc_postgres_database_password_${POSTGRES_DATABASE_PASSWORD_VERSION}
+  postgres_pgpass:
+    external: true
+    name: metridoc_postgres_pgpass_${POSTGRES_PGPASS_VERSION}
+
+volumes:
+  postgres_replica_data:

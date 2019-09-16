@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  primary-db:
+    image: postgres:11.3-alpine
+    command: >
+      postgres
+        -c hba_file=/var/lib/postgresql/pg_hba.conf
+        -c log_min_error_statement=log
+    configs:
+      - source: postgres_primary_pg_hba_conf
+        target: /var/lib/postgresql/pg_hba.conf
+        uid: '70'
+        gid: '70'
+    deploy:
+      mode: replicated
+      placement:
+        constraints:
+          - node.labels.postgres-primary == true
+      replicas: 1
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_database_password
+    networks:
+      - database
+    secrets:
+      - postgres_database_password
+      - source: postgres_init_primary
+        target: /docker-entrypoint-initdb.d/00_init_primary.sql
+    volumes:
+      - postgres_primary_data:/var/lib/postgresql/data
+
+configs:
+  postgres_primary_pg_hba_conf:
+    file: pg_hba.conf
+    name: metridoc_postgres_primary_pg_hba_conf_${POSTGRES_PRIMARY_PG_HBA_CONF_VERSION}
+
+networks:
+  database:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: ${DATABASE_SUBNET}
+
+secrets:
+  postgres_database_password:
+    external: true
+    name: metridoc_postgres_database_password_${POSTGRES_DATABASE_PASSWORD_VERSION}
+  postgres_init_primary:
+    external: true
+    name: metridoc_postgres_init_primary_${POSTGRES_INIT_PRIMARY_VERSION}
+
+volumes:
+  postgres_primary_data:

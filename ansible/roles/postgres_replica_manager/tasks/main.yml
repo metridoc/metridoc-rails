@@ -1,0 +1,58 @@
+---
+- name: create config directory
+  file:
+    path: '{{ config_dir }}/postgres/replica'
+    state: directory
+
+- name: copy docker compose file
+  copy:
+    src: docker-compose.yml
+    dest: '{{ config_dir }}/postgres/replica/docker-compose.yml'
+
+- name: copy start_replica script
+  copy:
+    src: start_replica.sh
+    dest: '{{ config_dir }}/postgres/replica/start_replica.sh'
+
+- name: create pg_hba config file
+  template:
+    src: pg_hba.conf.j2
+    dest: '{{ config_dir }}/postgres/replica/pg_hba.conf'
+
+- name: create docker secret for database password
+  docker_secret:
+    name: metridoc_postgres_database_password_{{ postgres_database_password_version }}
+    data: '{{ postgres_database_password }}'
+    state: present
+  no_log: true
+  tags:
+    - docker
+
+- name: create docker secret for .pgpass file
+  docker_secret:
+    name: metridoc_postgres_pgpass_{{ postgres_pgpass_version }}
+    data: '{{ lookup("template", ".pgpass.j2") }}'
+    state: present
+  no_log: true
+  tags:
+    - docker
+
+- name: label replica swarm node
+  docker_node:
+    hostname: '{{ postgres_replica_swarm_node }}'
+    labels:
+      postgres-replica: 'true'
+  tags:
+    - docker
+
+- name: start docker services
+  environment: '{{ docker_stack_env }}'
+  command: docker stack deploy -c {{ config_dir }}/postgres/replica/docker-compose.yml metridoc
+  changed_when: false
+  tags:
+    - docker
+
+- debug:
+    msg: Docker services are deploying in the background. Check host to see progress.
+  tags:
+    - docker

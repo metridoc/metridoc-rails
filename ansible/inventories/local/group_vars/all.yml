@@ -1,0 +1,4 @@
+---
+ansible_connection: local
+local_swarm_node: >-
+  {{ lookup("pipe", "docker node inspect -f '{{ '{{' }}.Description.Hostname{{ '}}' }}' self") }}
