@@ -9,7 +9,7 @@ workflows:
     jobs:
       - gitleaks/check_local:
           image: quay.io/upennlibraries/gitleaks:v1.25.1
-          options: --redact --repo-config --branch=$CIRCLE_BRANCH
+          options: --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
       - docker-publish/publish:
           context: quay.io
           registry: quay.io
