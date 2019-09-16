@@ -1,4 +1,0 @@
-load_sequence:         1
-target_model:          "Keyserver::Audit"
-truncate_before_load:  "yes"
-file_name:             "Audits.csv"

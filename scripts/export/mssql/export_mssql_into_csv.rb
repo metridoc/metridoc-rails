@@ -2,6 +2,7 @@
 ENV['BUNDLE_GEMFILE'] = 'Gemfile.sqlserver'
 require 'bundler/setup'
 require 'optparse'
+require 'makara'
 Bundler.require(:default)
 
 # hack to get the activerecord 4.1.2 work with Ruby 2.5.1
@@ -32,6 +33,7 @@ parameters = [
   ["s", "single_step", "Optional Single Step to run"],
   ["e", "export_folder", "Optional Export Folder"],
   ["f", "from_date", "From Date"],
+  ["o", "to_date", "To Date"]
 ]
 
 options = {}

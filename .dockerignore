@@ -3,4 +3,10 @@
 .gitignore
 Dockerfile
 docker-compose.yml
-README.md
+*.md
+
+log/**/*
+tmp/**/*
+
+# Include any directory placeholder files
+!**/.keep

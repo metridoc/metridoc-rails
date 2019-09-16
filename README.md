@@ -1,12 +1,10 @@
 # README
 
-## Setup development environment
-
-    brew install freetds # this may resolve some dependencies needed by tiny_tds, but not all of us had that problem.
-    cp config/database.yml.example config/database.yml # modify as necessary
-    rake db:create
+## Setting Up a Local Development Environment
 
 ### Using Docker
+
+The process below will work for local development but the setup process available in the [Metridoc configuration management repo](https://github.com/upenn-libraries/metridoc_config#local-development-for-metridoc) is recommended. It simplifies local setup, provides a working development configuration, manages most interactions with Docker, and more closely resembles the production config.
 
 #### Requirements
 
@@ -29,9 +27,9 @@ Create Docker secrets
 ```
 # Modify `config/database.yml` and `config/secrets.yml` as necessary
 # `metridoc_db_password` secret must match `password` in `config/database.yml`
-echo 'password' | docker secret create metridoc_db_password -
+echo 'metridoc_development' | docker secret create metridoc_db_password -
 cat config/database.yml | docker secret create metridoc_rails_db_config -
-cat config/secrets.examples.yml | docker secret create metridoc_rails_secrets_config -
+cat config/secrets.yml | docker secret create metridoc_rails_secrets_config -
 ```
 
 Deploy Docker stack
@@ -53,6 +51,12 @@ docker exec -it $(docker ps -q -f name=metridoc_app) /bin/bash
 #### Applying Changes
 
 To apply changes to your local Docker containers, rebuild the `metridoc` image and then redeploy the Docker stack.
+
+### Using Homebrew
+
+    brew install freetds # this may resolve some dependencies needed by tiny_tds, but not all of us had that problem.
+    bundle install
+    bundle exec rake db:setup
 
 ## Load a DB snapshot to staging
 

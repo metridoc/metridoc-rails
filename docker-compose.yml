@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   app:
-    image: metridoc:staging
+    image: metridoc
     environment:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
@@ -23,6 +23,8 @@ services:
     image: postgres:10.5-alpine
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/metridoc_db_password
+    ports:
+      - '5432:5432'
     secrets:
       - metridoc_db_password
     volumes:

@@ -1,2 +1,26 @@
 %p= t 'active_admin.tutorials_text'
 
+%ul
+  %li
+    %a{ :href => :sql_syntax, :title => "SQL joins" }
+      SQL joins
+  %li
+    %a{ :href => "https://github.com/metridoc/metridoc-rails/wiki", :title => "Technical documentation" }
+      Technical documentation on GitHub
+  %li
+    = link_to "MetriDoc database schema (image)", asset_path( 'metridoc_schema.png')
+
+
+%h2 External resources
+
+%ul
+  %li
+    = link_to "Tableau training videos (official)", "https://www.tableau.com/learn/training"
+  %li
+    = link_to "Tableau tutorials (TutorialsPoint)", "https://www.tutorialspoint.com/tableau/"
+  %li
+    = link_to "TextQL - interact with spreadsheets using SQL", "https://github.com/dinedal/textql"
+  %li
+    = link_to "Candela - Open Source data visualization for the web", "https://candela.readthedocs.io/en/latest/"
+  %li
+    = link_to "Kibana - 10-minute walkthrough", "https://www.elastic.co/guide/en/kibana/3.0/using-kibana-for-the-first-time.html"

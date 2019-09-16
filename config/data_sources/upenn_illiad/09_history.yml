@@ -15,6 +15,7 @@ filter_raw: |
                       )
 export_file_name:      "history.csv"
 export_filter_date_sql: "History.DateTime > ?"
+export_filter_date_range_sql: "History.DateTime > ? AND History.DateTime < ?"
 
 # Target Config
 target_adapter:        csv

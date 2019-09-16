@@ -33,6 +33,8 @@ gem 'jbuilder', '~> 2.5'
 gem 'pg'
 gem 'mysql2'
 
+gem 'makara', '~> 0.4.1'
+
 gem 'activerecord-import'
 
 gem 'devise'
@@ -48,9 +50,10 @@ gem 'groupdate'
 
 gem 'chronic'
 
-gem 'dotenv-rails', groups: [:development, :test]
+gem 'dotenv-rails'
 group :development, :test do
   gem 'pry'
+  gem 'pry-rails'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
@@ -69,6 +72,7 @@ group :development do
   #tiny_tds and activerecord-sqlserver-adapter gems are needed by only import_helper.rb, which is not really part of the app, it is more for diagnosing/troubleshooting sql server sources
   gem 'tiny_tds', '~> 2.1.0'
   gem 'activerecord-sqlserver-adapter', '~> 5.1.0'
+  gem 'rails_db'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

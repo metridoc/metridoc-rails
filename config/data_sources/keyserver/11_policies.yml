@@ -1,4 +1,0 @@
-load_sequence:         11
-target_model:          "Keyserver::Policy"
-truncate_before_load:  "yes"
-file_name:             "Policies.csv"

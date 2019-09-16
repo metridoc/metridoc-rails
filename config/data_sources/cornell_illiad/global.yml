@@ -1,0 +1,11 @@
+---
+institution_code: 'CORNELL'
+host:             '<%= ENV["CORNELL_ILLIAD_MSSQL_HOST"] %>'
+port:             '<%= ENV["CORNELL_ILLIAD_MSSQL_PORT"] %>'
+database:         '<%= ENV["CORNELL_ILLIAD_MSSQL_DB"]   %>'
+username:         '<%= ENV["CORNELL_ILLIAD_MSSQL_UID"]  %>'
+password:         '<%= ENV["CORNELL_ILLIAD_MSSQL_PWD"]  %>'
+pool:             5
+timeout:          5000
+export_folder:    '/tmp/cornell_illiad/'
+batch_size:       10000

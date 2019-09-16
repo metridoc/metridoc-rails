@@ -15,7 +15,6 @@ class CreateMarcTable < ActiveRecord::Migration[5.1]
       t.string :language
       t.string :physical_description_form
       t.string :physical_description_extent
-      t.string :notes, limit: 1000
       t.string :subject
       t.string :classification
       t.string :related_item_title

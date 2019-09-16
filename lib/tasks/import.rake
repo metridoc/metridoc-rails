@@ -9,6 +9,8 @@ task :import => :environment do |_t, args|
     ["s", "single_step", "Optional Single Step to run"],
     ["i", "import_folder", "Optional Import Folder"],
     ["m", "move_to_folder", "Optional Move to Folder to move the files under after import is done"],
+    ["f", "from_date", "From Date"],
+    ["o", "to_date", "To Date"]
   ]
 
   options = {}

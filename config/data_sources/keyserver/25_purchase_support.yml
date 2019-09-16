@@ -1,4 +1,0 @@
-load_sequence:         25
-target_model:          "Keyserver::PurchaseSupport"
-truncate_before_load:  "yes"
-file_name:             "PurchaseSupport.csv"

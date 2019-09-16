@@ -1,4 +1,0 @@
-load_sequence:         8
-target_model:          "Keyserver::LicensedComputer"
-truncate_before_load:  "yes"
-file_name:             "LicensedComputers.csv"

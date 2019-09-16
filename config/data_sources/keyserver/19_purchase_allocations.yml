@@ -1,4 +1,0 @@
-load_sequence:         19
-target_model:          "Keyserver::PurchaseAllocation"
-truncate_before_load:  "yes"
-file_name:             "PurchaseAllocations.csv"
