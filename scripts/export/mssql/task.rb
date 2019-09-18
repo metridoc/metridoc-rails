@@ -65,7 +65,7 @@ module Export
         filters.each do |filter|
           scope = scope.where(filter)
         end
-        if Rails.env.production?
+        if ENV["RAILS_ENV"] == "production"
 
           if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
             raise "Ranged queries not supported in production mode.  Specify a from OR a to date."
