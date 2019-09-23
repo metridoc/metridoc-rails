@@ -1,6 +1,6 @@
 # Contributing
 
-1. Branch off of `staging`.
+1. Branch off of `master`.
 2. Test building the Docker image and running the application locally.
   * Instructions for testing Ansible roles are in the [Ansible README](ansible/README.md#Testing).
 3. Submit a PR. A maintainer will be notified and your PR will be reviewed once all tests pass in [CircleCI](https://circleci.com/gh/metridoc/metridoc-rails) and there are no merge conflicts.
