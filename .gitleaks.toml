@@ -73,14 +73,13 @@ commits = [
   '8c3caad5948e39e7b0f68946d87f243820b0bc09',
   'ff10d01b41c6a0908ed89088be5c41a3a6eccd82',
   '0f87c748b8ee396ba541fa9cd0eec0cc5f49a30d',
-  # False positives
-  '3e605913256d192de1d66320d2fcc03fee4e1569',
 ]
 files = [
   '\.gitleaks\.toml',
   '(.*?)(jpg|gif|doc|pdf|bin|md)$',
   '(.*?)examples?\.yml$',
   'seeds\.rb',
+  'lib/export/mssql/main.rb',
 ]
 regexes = [
   # Values set by Ansible variables
