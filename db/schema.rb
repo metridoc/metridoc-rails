@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190718170048) do
+ActiveRecord::Schema.define(version: 20190919160733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -39,6 +39,12 @@ ActiveRecord::Schema.define(version: 20190718170048) do
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "bookkeeping_data_loads", force: :cascade do |t|
+    t.string "table_name"
+    t.string "earliest"
+    t.string "latest"
   end
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
@@ -116,6 +122,12 @@ ActiveRecord::Schema.define(version: 20190718170048) do
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+  end
+
+  create_table "data_loads_ranges", force: :cascade do |t|
+    t.string "table_name"
+    t.datetime "start"
+    t.datetime "end"
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|

@@ -19,6 +19,7 @@ GEM
       tzinfo (~> 1.1)
     arel (5.0.1.20140414130214)
     builder (3.2.3)
+    byebug (11.0.1)
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
     dotenv (2.7.4)
@@ -33,6 +34,9 @@ GEM
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
+    pry-byebug (3.7.0)
+      byebug (~> 11.0)
+      pry (~> 0.10)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     thread_safe (0.3.6)
@@ -49,6 +53,7 @@ DEPENDENCIES
   dotenv
   makara
   pg (~> 0.20.0)
+  pry-byebug
   pry-rails
   tiny_tds (~> 2.1.0)
 
@@ -56,4 +61,4 @@ RUBY VERSION
    ruby 2.5.1p57
 
 BUNDLED WITH
-   1.16.3
+   1.17.3

@@ -1,8 +1,3 @@
-require '../../../app/models/log/job_execution_step.rb'
-require '../../../app/models/bookkeeping/data_load.rb'
-
-require 'csv'
-
 module Export
   module Mssql
 
@@ -68,23 +63,34 @@ module Export
           scope = scope.where(filter)
         end
 
-        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
+        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
+        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
+        Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
+        table = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder'])
+
+        if export_filter_date_range_sql.present? && from_date.present? && to_date.present? && !table.nil?
           raise "Ranged queries not supported in production mode.  Specify a from OR a to date."
         end
 
-        if export_filter_date_sql.present? && from_date.present?
-          validate_range_request('from')
-          scope = scope.where(export_filter_date_sql, from_date)
+        earliest = table.earliest.to_date unless table.nil?
+        if export_filter_date_sql.present?# && from_date.present?
+          if to_date.present?
+            scope = scope.where(export_filter_date_sql, Date.today - 1.years)
+          elsif from_date.present?
+            validate_range_request('from', earliest, nil) unless earliest.nil?
+            scope = scope.where(export_filter_date_sql, from_date)
+          end
         end
 
         if export_filter_date_range_sql.present? && to_date.present?
-          validate_range_request('to')
+          validate_range_request('to', earliest, nil) unless earliest.nil?
           scope = scope.where(export_filter_date_range_sql, Date.today - 1.years, to_date)
         end
 
         if group_by_columns.present?
           scope = scope.group(group_by_columns)
         end
+
         scope
       end
 
@@ -121,11 +127,7 @@ module Export
         column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
       end
 
-      def validate_range_request(req_type)
-        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
-        Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
-        earliest = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder']).earliest.to_date
+      def validate_range_request(req_type, earliest, run_date)
         if req_type == 'from'
           raise "From date cannot be greater than #{earliest}" unless from_date < earliest
         elsif req_type == 'to'
@@ -135,20 +137,6 @@ module Export
           raise 'Invalid range request type.  Please specify "from" or "to."'
         end
 
-      end
-
-      def update_bookkeeping_table
-        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
-        Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
-        table = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder'])
-        unless from_date.nil? || from_date > table.earliest.to_date
-          table.earliest = from_date.to_s
-        end
-        unless to_date.nil? || to_date < table.latest.to_date
-          table.latest = to_date.to_s
-        end
-        table.save!
       end
 
       def execute

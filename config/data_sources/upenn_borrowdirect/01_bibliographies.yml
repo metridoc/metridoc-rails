@@ -34,6 +34,8 @@ filters:
   - "h.holdings_seq_2": "1"
 export_file_name:      "bibliographies.csv"
 export_filter_date_sql: "id_request.date_entered > ?"
+export_filter_date_range_sql: "id_request.date_entered > ? AND id_request.date_entered < ?"
+
 
 # Target Config
 target_adapter:        csv
