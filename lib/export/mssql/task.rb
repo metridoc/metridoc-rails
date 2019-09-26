@@ -75,7 +75,7 @@ module Export
         earliest = table.earliest.to_date unless table.nil?
         if export_filter_date_sql.present?# && from_date.present?
           if to_date.present?
-            scope = scope.where(export_filter_date_sql, Date.today - 7.days)
+            scope = scope.where(export_filter_date_sql, Date.today - 1.years)
           elsif from_date.present?
             validate_range_request('from', earliest, nil) unless earliest.nil?
             scope = scope.where(export_filter_date_sql, from_date)
@@ -84,7 +84,7 @@ module Export
 
         if export_filter_date_range_sql.present? && to_date.present?
           validate_range_request('to', earliest, nil) unless earliest.nil?
-          scope = scope.where(export_filter_date_range_sql, Date.today - 7.days, to_date)
+          scope = scope.where(export_filter_date_range_sql, Date.today - 1.years, to_date)
         end
 
         if group_by_columns.present?
@@ -132,7 +132,7 @@ module Export
           raise "From date cannot be greater than #{earliest}" unless from_date < earliest
         elsif req_type == 'to'
           raise "To date cannot be earlier than #{earliest}" if to_date < earliest
-          raise "To date must be after #{Date.today - 7.days}" if to_date < Date.today - 7.days
+          raise "To date must be after #{Date.today - 1.years}" if to_date < Date.today - 1.years
         else
           raise 'Invalid range request type.  Please specify "from" or "to."'
         end
