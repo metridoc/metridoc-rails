@@ -4,7 +4,9 @@ require 'optparse'
 namespace "export_import" do
 
   desc "Generate TODO File for export/import"
-  task :prepare => :environment do
+  task :prepare, [:outfile] => [:environment] do |_t, args|
+    args.with_defaults(:outfile => 'job.todo')
+    outfile = args[:outfile]
     parameters = [
       ["c", "config_folder", "Required Configuration Folder"],
       ["f", "from_date", "From Date"],
@@ -23,14 +25,17 @@ namespace "export_import" do
 
     args = option_parser.order!(ARGV) {}
     option_parser.parse!(args)
-    File.open("job.todo", 'w') do |f|
+    File.open(outfile, 'w') do |f|
       f.write("---\n")
       options.each do |k,v| f.write("#{k}: #{v}\n") end
     end
   end
 
   desc "Export data and import it; Execute 'rake make_todo' first"
-  task :execute => :environment do
+  task :execute, [:infile] => [:environment] do |_t, args|
+    args.with_defaults(:infile => 'job.todo')
+    infile = args[:infile]
+
     LOGGER = Logger.new $stdout
     LOGGER.level = Logger::INFO
 
@@ -70,6 +75,6 @@ namespace "export_import" do
       end
     end
 
-    TodoRunner.run 'job.todo'
+    TodoRunner.run infile
   end
 end
