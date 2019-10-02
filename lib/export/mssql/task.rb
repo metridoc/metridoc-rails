@@ -73,18 +73,18 @@ module Export
         end
 
         earliest = table.earliest.to_date unless table.nil?
-        if export_filter_date_sql.present?# && from_date.present?
-          if to_date.present?
-            scope = scope.where(export_filter_date_sql, Date.today - 1.years)
-          elsif from_date.present?
+        if export_filter_date_sql.present? && !earliest.nil?
+          if from_date.present?
             validate_range_request('from', earliest, nil) unless earliest.nil?
             scope = scope.where(export_filter_date_sql, from_date)
+          elsif to_date.present?
+            scope = scope.where(export_filter_date_sql, Date.today - 1.years)
           end
         end
 
-        if export_filter_date_range_sql.present? && to_date.present?
+        if export_filter_date_range_sql.present?
           validate_range_request('to', earliest, nil) unless earliest.nil?
-          scope = scope.where(export_filter_date_range_sql, Date.today - 1.years, to_date)
+          scope = scope.where(export_filter_date_range_sql, from_date || Date.today - 1.years, to_date || earliest)
         end
 
         if group_by_columns.present?
