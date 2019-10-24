@@ -75,6 +75,9 @@ ansible-playbook -i inventories/production databases.yml
 
 # Deploy Jenkins server to production
 ansible-playbook -i inventories/production jenkins.yml
+
+# Recreate all PostgreSQL replicas in production
+ansible-playbook -i inventories/production recreate_replica_databases.yml
 ```
 
 ## Playbooks
@@ -87,6 +90,7 @@ ansible-playbook -i inventories/production jenkins.yml
   - `metridoc.yml` - deploys containers for the Metridoc Rails application.
   - `monitoring.yml` - deploys containers for the monitoring and alerting stack.
 - `local.yml` - deploy the `local` inventory locally. This is intended for developing the Metridoc application and supporting services locally. Does not deploy Jenkins, monitoring services, or the replica database. The `local.sh` script in the repository root can be used to run this playbook via Docker container and perform additional local configuration.
+- `recreate_replica_databases.yml` - remove all PostgreSQL replicas, delete their data, and restart them. The pg_basebackup and streaming replication processes will recreate the replicas automatically as the containers start. This is useful if the replicas fall behind the primary and cannot recover or become corrupted. **Recreating all replicas will prevent users from directly accessing the database while the replicas are being recreated.** Web users will not be affected since our ActiveRecord database driver will fall back to the primary if no replicas are available.
 
 ## Adding Credentials for New Data Sources
 
