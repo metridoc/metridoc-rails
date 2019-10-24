@@ -14,6 +14,9 @@
     - name: get container id
       command: docker ps -qlf name=metridoc_app
       register: container_id
+      until: container_id.stdout != ''
+      retries: 5
+      delay: 3
     - name: migrate and seed database
       command: >
         docker exec
