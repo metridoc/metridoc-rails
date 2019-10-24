@@ -4,3 +4,9 @@ metridoc01.library.upenn.int
 [swarm_workers]
 metridoc01.library.upenn.int
 metridoc02.library.upenn.int
+
+[primary_databases]
+metridoc01.library.upenn.int
+
+[replica_databases]
+metridoc02.library.upenn.int

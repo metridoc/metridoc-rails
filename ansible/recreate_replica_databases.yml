@@ -1,0 +1,19 @@
+- hosts: swarm_managers
+  become: yes
+  tasks:
+    - name: remove replica service
+      docker_swarm_service:
+        name: metridoc_replica-db
+        state: absent
+
+- hosts: replica_databases
+  become: yes
+  tasks:
+    - name: remove replica database volume
+      command: docker volume rm metridoc_postgres_replica_data
+      register: remove_volume_result
+      until: remove_volume_result.rc == 0
+      retries: 6
+      delay: 5
+
+- import_playbook: replica_databases.yml
