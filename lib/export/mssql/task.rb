@@ -66,10 +66,6 @@ module Export
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
         dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
 
-        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
-          raise "Ranged queries not supported in production mode.  Specify a from OR a to date."
-        end
-
         if export_filter_date_sql.present? && from_date.present?
           scope = scope.where(export_filter_date_sql, from_date)
         end
