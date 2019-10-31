@@ -148,11 +148,13 @@ module Export
 
         CSV.open(csv_file_path, "wb") do |csv|
           csv << column_mappings.map{|k,v| v}
+          db = data
+          response = db.connection.query(db.to_sql)
 
-          data.each_with_index do |obj, i|
-            csv << column_mappings.each_with_index.map { |(k, v), i| obj.send(v) }
-            break if test_mode? && i >= 100
-            puts "Processed #{i} records" if i > 0 && i % 10000 == 0
+          if test_mode?
+            response[0...100].each { |r| csv << r }
+          else
+            response.each_slice(10000) {|rows| rows.each {|r| csv << r} }
           end
 
         end # CSV.open
