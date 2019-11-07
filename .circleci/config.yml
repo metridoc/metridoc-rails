@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  docker-publish: upenn-libraries/docker-publish@0.2.0
-  gitleaks: upenn-libraries/gitleaks@0.1.2
+  docker-publish: upenn-libraries/docker-publish@0.1.0
+  gitleaks: upenn-libraries/gitleaks@0.1.1
 
 commands:
   molecule_test:
