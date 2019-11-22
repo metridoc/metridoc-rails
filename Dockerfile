@@ -5,6 +5,7 @@ RUN apt-get update && apt-get install -qq -y --no-install-recommends \
   build-essential \
   libc6-dev \
   net-tools \
+  postgresql-client \
   xsltproc
 
 RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz
