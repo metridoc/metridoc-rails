@@ -69,6 +69,13 @@ module Preprocess
         return_value = false
         if target_adapter == "csv"
           return_value = preprocess
+        elsif target_adapter == "xml"
+          # Too big of a change to preprocess XML here, so keep doing it during the import
+          return_value = true
+        elsif target_adapter == "native_sql"
+          return_value = true
+        elsif target_adapter == "console_command"
+          return_value = true
         else
           raise "Unsupported target_adapter type >> #{target_adapter}"
         end
