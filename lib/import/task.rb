@@ -178,91 +178,19 @@ module Import
 
         csv_file_path = File.join(@main_driver.import_folder, import_file_name)
 
-        transformations.each do |column, rules|
-          transformations[column]["engine"] = lambda do |v|
-            rules.each do |rule, val|
-              return val if /#{rule}/i.match(v)
-            end
-            return v
-          end
-        end
-
         truncate if truncate_before_load?
 
-        csv = CSV.read(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        headers = csv.readline.join(',')
+        csv.close
 
-        headers = csv.first
+        table_name = class_name.table_name
+        password = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['password']
+        cmd = "PGPASSWORD='#{password}' psql -Upostgres -h primary-db -c \
+              \"\\copy #{table_name}(#{headers}) FROM '#{csv_file_path}' WITH DELIMITER ',' HEADER CSV\""
 
-        records = []
-        n_errors = 0
-        csv.drop(1).each_with_index do |row, n|
-          if n_errors >= 100
-            log "Too many errors #{n_errors}, exiting!"
-            records = []
-            break
-          end
+        system(cmd)
 
-          cols = {}
-          headers.each_with_index do |k,i| 
-            cols[k.to_s.strip.underscore.to_sym] = row[i]
-          end
-
-          row_error = false
-          atts = {}
-          atts.merge!(institution_id: institution_id) if has_institution_id?
-          target_mappings(headers).each do |column_name, target_column|
-            if cols.key?(target_column.to_sym)
-              val = cols[target_column.to_sym]
-            else
-              val = target_column % cols
-            end
-
-            val = transformations[column_name]["engine"].call(val) if transformations[column_name].present?
-
-            if do_validations?
-              if class_name.columns_hash[column_name].type == :integer && !valid_integer?(val)
-                log "Invalid integer #{val} in #{row.join(",")}"
-                n_errors = n_errors + 1
-                row_error = true
-                next
-              end
-              if class_name.columns_hash[column_name].type == :datetime && !valid_datetime?(val)
-                log "Invalid datetime #{val} in #{row.join(",")}"
-                n_errors = n_errors + 1
-                row_error = true
-                next
-              end
-              if class_name.columns_hash[column_name].type == :date && !valid_datetime?(val)
-                log "Invalid date #{val} in #{row.join(",")}"
-                n_errors = n_errors + 1
-                row_error = true
-                next
-              end
-            end
-
-            val = Chronic.parse(val) if class_name.columns_hash[column_name].type == :datetime
-
-            atts[column_name] = val
-          end
-
-          next if row_error
-
-          records << class_name.new(atts)
-
-          if records.size >= batch_size
-            n_errors += import_records(records)
-            records = []
-            break if @test_mode
-          end
-
-        end
-
-        if records.size > 0
-          n_errors += import_records(records)
-          records = []
-        end
-
-        log "#{n_errors} errors" if n_errors > 0
         log "Finished importing #{import_file_name}."
 
         return true
