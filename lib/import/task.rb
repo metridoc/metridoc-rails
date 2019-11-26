@@ -32,10 +32,6 @@ module Import
         @main_driver.institution_id
       end
 
-      def do_validations?
-        task_config["do_validations"] == "yes"
-      end
-
       def truncate_before_load?
         task_config["truncate_before_load"] == "yes"
       end
@@ -169,10 +165,6 @@ module Import
         task_config["import_file_name"] || task_config["export_file_name"] || task_config["file_name"]
       end
 
-      def transformations
-        task_config["transformations"] || {}
-      end
-
       def import
         log "Starting to import #{import_file_name}"
 
@@ -270,20 +262,6 @@ module Import
         log "#{n_errors} errors" if n_errors > 0
         log "Finished importing XML #{import_file_name}."
 
-        return true
-      end
-
-      def valid_integer?(v)
-        return v.blank? || v.match(/\A[+-]?\d+\z/).present?
-      end
-
-      def valid_datetime?(v)
-        return true if v.blank?
-        begin
-           DateTime.parse(v)
-        rescue ArgumentError
-           return false
-        end
         return true
       end
 
