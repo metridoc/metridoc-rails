@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190919160733) do
+ActiveRecord::Schema.define(version: 20191204143414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 20190919160733) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "roles_mask"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
@@ -473,15 +474,17 @@ ActiveRecord::Schema.define(version: 20190919160733) do
   end
 
   create_table "library_profile_profiles", force: :cascade do |t|
+    t.string "metridoc_code"
+    t.string "oclc_symbol"
+    t.string "bd_symbol"
+    t.string "docline_symbol"
     t.string "institution_name"
     t.string "library_name"
-    t.string "library_name_symbol"
+    t.string "name_symbol"
     t.string "also_called"
-    t.string "zip_code"
+    t.string "zip_code_location"
     t.string "country"
-    t.string "oclc_symbol"
-    t.string "docline_symbol"
-    t.string "borrowdirect_symbol"
+    t.string "null_ignore"
     t.string "palci"
     t.string "trln"
     t.string "btaa"
