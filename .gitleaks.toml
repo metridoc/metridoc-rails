@@ -80,6 +80,7 @@ files = [
   '(.*?)examples?\.yml$',
   'seeds\.rb',
   'lib/export/mssql/main.rb',
+  'lib/import/task.rb',
 ]
 regexes = [
   # Values set by Ansible variables
