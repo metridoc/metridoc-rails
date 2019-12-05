@@ -193,7 +193,11 @@ module Preprocess
         temp_csv = CSV.open(temp_file, 'wb')
 
         headers = csv.shift
+        headers.unshift("institution_id") if has_institution_id?
+        headers << 'created_at'
+        headers << 'updated_at'
         temp_csv << headers
+        timestamp = DateTime.now.to_s
 
         n_errors = 0
         csv.each do |row|
@@ -244,6 +248,9 @@ module Preprocess
 
             atts[column_name] = val
           end
+
+          atts[:created_at] = timestamp
+          atts[:updated_at] = timestamp
 
           temp_csv << atts.map {|k,v| v}
           next if row_error
