@@ -103,12 +103,20 @@ module Preprocess
         @class_name = task_config["target_model"].constantize
       end
 
+      def has_created_at?
+        class_name.has_attribute?('created_at')
+      end
+
       def has_institution_id?
         class_name.has_attribute?('institution_id')
       end
 
       def has_legacy_flag?
         class_name.has_attribute?('is_legacy')
+      end
+
+      def has_updated_at?
+        class_name.has_attribute?('updated_at')
       end
 
       def legacy_filter_date_field
@@ -178,7 +186,6 @@ module Preprocess
         log "Starting to preprocess #{import_file_name}"
 
         csv_file_path = File.join(@main_driver.import_folder, import_file_name)
-
         transformations.each do |column, rules|
           transformations[column]["engine"] = lambda do |v|
             rules.each do |rule, val|
@@ -193,7 +200,14 @@ module Preprocess
         temp_csv = CSV.open(temp_file, 'wb')
 
         headers = csv.shift
-        temp_csv << headers
+
+        output_headers = headers.clone
+        output_headers.unshift("institution_id") if has_institution_id?
+        output_headers << 'created_at' if has_created_at?
+        output_headers << 'updated_at' if has_updated_at?
+
+        temp_csv << output_headers
+        timestamp = DateTime.now.to_s
 
         n_errors = 0
         csv.each do |row|
@@ -244,6 +258,9 @@ module Preprocess
 
             atts[column_name] = val
           end
+
+          atts[:created_at] = timestamp if has_created_at?
+          atts[:updated_at] = timestamp if has_updated_at?
 
           temp_csv << atts.map {|k,v| v}
           next if row_error
