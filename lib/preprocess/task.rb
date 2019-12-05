@@ -178,7 +178,6 @@ module Preprocess
         log "Starting to preprocess #{import_file_name}"
 
         csv_file_path = File.join(@main_driver.import_folder, import_file_name)
-
         transformations.each do |column, rules|
           transformations[column]["engine"] = lambda do |v|
             rules.each do |rule, val|
@@ -193,10 +192,13 @@ module Preprocess
         temp_csv = CSV.open(temp_file, 'wb')
 
         headers = csv.shift
-        headers.unshift("institution_id") if has_institution_id?
-        headers << 'created_at'
-        headers << 'updated_at'
-        temp_csv << headers
+
+        output_headers = headers.clone
+        output_headers.unshift("institution_id") if has_institution_id?
+        output_headers << 'created_at'
+        output_headers << 'updated_at'
+
+        temp_csv << output_headers
         timestamp = DateTime.now.to_s
 
         n_errors = 0
