@@ -16,6 +16,7 @@ filters:
   - "id_audit.stat_location": "8"
 export_file_name:      "print_dates.csv"
 export_filter_date_sql: "id_audit.time_stamp > ?"
+export_filter_date_range_sql: "id_audit.time_stamp > ? AND id_audit.time_stamp < ?"
 
 # Target Config
 target_adapter:        csv
