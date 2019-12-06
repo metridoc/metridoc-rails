@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190919160733) do
+ActiveRecord::Schema.define(version: 20190927193949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,12 +122,6 @@ ActiveRecord::Schema.define(version: 20190919160733) do
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
-  end
-
-  create_table "data_loads_ranges", force: :cascade do |t|
-    t.string "table_name"
-    t.datetime "start"
-    t.datetime "end"
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|
@@ -541,6 +535,41 @@ ActiveRecord::Schema.define(version: 20190919160733) do
     t.string "record_origin"
   end
 
+  create_table "sceti_projects", force: :cascade do |t|
+    t.string "name", null: false
+    t.boolean "active"
+  end
+
+  create_table "sceti_trackings", force: :cascade do |t|
+    t.bigint "sceti_project_id"
+    t.date "date_received_in_sceti"
+    t.date "date_returned"
+    t.date "deadline"
+    t.boolean "remove_from_project"
+    t.string "MMS_ID"
+    t.string "ARK_ID"
+    t.integer "image_count"
+    t.string "pages_to_digitize"
+    t.string "file_location"
+    t.string "title"
+    t.string "patron_name"
+    t.integer "project_id"
+    t.text "condition_notes"
+    t.text "general_notes"
+    t.boolean "qa"
+    t.string "imaged_by"
+    t.date "imaged_date"
+    t.string "uploaded_to_colenda_by"
+    t.date "uploaded_to_colenda_date"
+    t.string "qa_by"
+    t.date "qa_date"
+    t.string "metadata_created_by"
+    t.date "metadata_created_date"
+    t.string "web_qa_by"
+    t.date "web_qa_date"
+    t.index ["sceti_project_id"], name: "index_sceti_trackings_on_sceti_project_id"
+  end
+
   create_table "ups_zones", force: :cascade do |t|
     t.string "from_prefix", null: false
     t.string "to_prefix", null: false
@@ -549,4 +578,5 @@ ActiveRecord::Schema.define(version: 20190919160733) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "sceti_trackings", "sceti_projects"
 end
