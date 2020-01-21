@@ -1,6 +1,15 @@
 # README
 
-## Setting Up a Local Development Environment
+## Setup development environment
+
+    brew install freetds # this may resolve some dependencies needed by tiny_tds, but not all of us had that problem.
+    cp config/database.example.yml config/database.yml # modify as necessary
+    cp config/secrets.example.yml config/secrets.yml
+    rake db:create
+    mkdir db/snapshots
+    # copy a db snapshot to the snapshots directory
+    gunzip -c db/snapshots/mdoc_12.18.19.sql.gz | psql metridoc_development
+    rails s
 
 ### Using Docker
 
