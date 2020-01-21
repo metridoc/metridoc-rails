@@ -38,3 +38,9 @@
 
 # Ignore Rubymine artifacts
 .idea
+
+# Ignore Mac directory meta files
+.DS_Store
+
+# Ignore local secrets.yml file
+/config/secrets.yml
