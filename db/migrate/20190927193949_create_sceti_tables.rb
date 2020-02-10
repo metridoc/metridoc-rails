@@ -19,7 +19,6 @@ class CreateScetiTables < ActiveRecord::Migration[5.1]
             t.string :file_location
             t.string :title
             t.string :patron_name
-            t.integer :project_id
             t.text :condition_notes
             t.text :general_notes
             t.boolean :qa
