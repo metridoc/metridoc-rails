@@ -12,8 +12,8 @@ class CreateScetiTables < ActiveRecord::Migration[5.1]
             t.date :date_returned
             t.date :deadline
             t.boolean :remove_from_project
-            t.string :MMS_ID
-            t.string :ARK_ID
+            t.string :mms_id
+            t.string :ark_id
             t.integer :image_count
             t.string :pages_to_digitize
             t.string :file_location
