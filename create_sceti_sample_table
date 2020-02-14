@@ -2,7 +2,7 @@ CREATE TABLE ScetiSample(
     TrackingID integer,
     DateOrderTaken date,
     CallNumMSSNum varchar(100),
-    BibID integer,
+    BibID varchar(100),
     Collection varchar(100),
     PatronName varchar(100),
     Project varchar(100),
