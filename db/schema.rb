@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(version: 20190927193949) do
-=======
 ActiveRecord::Schema.define(version: 20191204143414) do
->>>>>>> 3fcc67d32fda882eb1791aec9b213d88a7949f73
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +37,6 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "roles_mask"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
@@ -553,14 +548,13 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.date "date_returned"
     t.date "deadline"
     t.boolean "remove_from_project"
-    t.string "MMS_ID"
-    t.string "ARK_ID"
+    t.string "mms_id"
+    t.string "ark_id"
     t.integer "image_count"
     t.string "pages_to_digitize"
     t.string "file_location"
     t.string "title"
     t.string "patron_name"
-    t.integer "project_id"
     t.text "condition_notes"
     t.text "general_notes"
     t.boolean "qa"
@@ -575,6 +569,38 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.string "web_qa_by"
     t.date "web_qa_date"
     t.index ["sceti_project_id"], name: "index_sceti_trackings_on_sceti_project_id"
+  end
+
+  create_table "scetisample", id: false, force: :cascade do |t|
+    t.integer "trackingid"
+    t.date "dateordertaken"
+    t.string "callnummssnum", limit: 100
+    t.string "bibid", limit: 100
+    t.string "collection", limit: 100
+    t.string "patronname", limit: 100
+    t.string "project", limit: 100
+    t.date "deadline"
+    t.string "pagestodig", limit: 100
+    t.integer "totalnumimages"
+    t.string "storagefolder", limit: 100
+    t.date "sentsceti"
+    t.string "scetireceived", limit: 100
+    t.date "returnedsceti"
+    t.string "sccreturned", limit: 100
+    t.date "metadatacomplete"
+    t.string "metadataby", limit: 100
+    t.date "imagingcomplete"
+    t.string "imagingby", limit: 100
+    t.date "processingcomplete"
+    t.string "processingby", limit: 100
+    t.date "proofpubl"
+    t.string "proofpublby", limit: 100
+    t.string "conditionnotes"
+    t.string "notesinstructions"
+    t.boolean "removedproject"
+    t.integer "numfoldouts"
+    t.boolean "qafailure"
+    t.boolean "qapass"
   end
 
   create_table "ups_zones", force: :cascade do |t|

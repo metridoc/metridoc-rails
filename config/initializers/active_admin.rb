@@ -196,7 +196,7 @@ ActiveAdmin.setup do |config|
   #   config.register_stylesheet 'my_stylesheet.css'
   #
   # You can provide an options hash for more control, which is passed along to stylesheet_link_tag():
-  #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
+     config.register_stylesheet 'my_print_stylesheet.css', media: :print
   #
   # To load a javascript file:
   #   config.register_javascript 'my_javascript.js'
@@ -291,6 +291,7 @@ ActiveAdmin.setup do |config|
 
   config.view_factory.footer = Footer
 
+=begin
   config.namespace :admin do |admin|
 
     admin.build_menu do |menu|
@@ -331,6 +332,7 @@ ActiveAdmin.setup do |config|
       end
     end
   end
+=end
 
   # == Sorting
   #
