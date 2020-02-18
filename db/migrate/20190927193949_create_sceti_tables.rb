@@ -12,9 +12,9 @@ class CreateScetiTables < ActiveRecord::Migration[5.1]
             t.date :date_returned
             t.date :deadline
             t.boolean :remove_from_project
-            t.string :mms_id
-            t.string :ark_id
-            t.integer :image_count
+            t.string :mms
+            t.string :ark
+            t.integer :images
             t.string :pages_to_digitize
             t.string :file_location
             t.string :title
@@ -33,7 +33,6 @@ class CreateScetiTables < ActiveRecord::Migration[5.1]
             t.string :web_qa_by
             t.date :web_qa_date
         end
-      
         
     end
   end

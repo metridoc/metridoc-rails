@@ -1,6 +1,6 @@
 ActiveAdmin.register Sceti::Tracking do
   menu false
-  permit_params :date_received_in_sceti, :date_returned, :deadline, :remove_from_project, :mms_id, :ark_id, :image_count, :pages_to_digitize, :file_location, :title, :patron_name, :sceti_project_id, :condition_notes, :general_notes, :qa, :imaged_by, :imaged_date, :uploaded_to_colenda_by, :uploaded_to_colenda_date, :qa_by, :qa_date, :metadata_created_by, :metadata_created_date, :web_qa_by, :web_qa_date
+  permit_params :date_received_in_sceti, :date_returned, :deadline, :remove_from_project, :mms, :ark, :images, :pages_to_digitize, :file_location, :title, :patron_name, :sceti_project_id, :condition_notes, :general_notes, :qa, :imaged_by, :imaged_date, :uploaded_to_colenda_by, :uploaded_to_colenda_date, :qa_by, :qa_date, :metadata_created_by, :metadata_created_date, :web_qa_by, :web_qa_date
 
   index do
     column "Tracking ID", :id
@@ -10,9 +10,9 @@ ActiveAdmin.register Sceti::Tracking do
     column :date_received_in_sceti
     column :date_returned
     column :deadline
-    column "MMS ID", :mms_id
-    column "ARK ID",:ark_id
-    column :image_count
+    column "MMS ID", :mms
+    column "ARK ID",:ark
+    column "Image Count", :images
     column :pages_to_digitize
     column :file_location
     column :condition_notes
@@ -30,7 +30,7 @@ ActiveAdmin.register Sceti::Tracking do
     actions
   end
 
-  filter :project, filters: [:starts_with]
+  filter :project
   filter :date_received_in_sceti
   filter :date_returned
   filter :deadline
