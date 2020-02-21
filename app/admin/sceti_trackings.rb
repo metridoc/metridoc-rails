@@ -1,6 +1,6 @@
 ActiveAdmin.register Sceti::Tracking do
   menu false
-  permit_params :date_received_in_sceti, :date_returned, :deadline, :remove_from_project, :mms, :ark, :images, :pages_to_digitize, :file_location, :title, :patron_name, :sceti_project_id, :condition_notes, :general_notes, :qa, :imaged_by, :imaged_date, :uploaded_to_colenda_by, :uploaded_to_colenda_date, :qa_by, :qa_date, :metadata_created_by, :metadata_created_date, :web_qa_by, :web_qa_date
+  permit_params :date_received_in_sceti, :date_returned, :deadline, :remove_from_project, :mms, :ark, :images, :pages_to_digitize, :file_location, :title, :patron_name, :sceti_project_id, :condition_notes, :general_notes, :qa, :imaged_by, :imaged_date, :uploaded_to_colenda_by, :uploaded_to_colenda_date, :qa_by, :qa_date, :metadata_created_by, :metadata_created_date
 
   index do
     column "Tracking ID", :id

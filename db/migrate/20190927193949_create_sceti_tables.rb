@@ -30,8 +30,6 @@ class CreateScetiTables < ActiveRecord::Migration[5.1]
             t.date :qa_date
             t.string :metadata_created_by
             t.date :metadata_created_date
-            t.string :web_qa_by
-            t.date :web_qa_date
         end
         
     end

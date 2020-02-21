@@ -21,9 +21,7 @@ INSERT INTO sceti_trackings(
     qa_by,
     qa_date,
     metadata_created_by,
-    metadata_created_date,
-    web_qa_by,
-    web_qa_date
+    metadata_created_date
 )
 SELECT 
     P.id AS sceti_project_id,
@@ -48,7 +46,5 @@ SELECT
     null AS qa_by,
     null AS qa_date,
     S.MetadataBy AS metadata_created_by,
-    S.MetadataComplete AS metadata_created_date,
-    null AS web_qa_by,
-    null AS web_qa_date
+    S.MetadataComplete AS metadata_created_date
 FROM scetisample S LEFT OUTER JOIN sceti_projects P ON S.Project=P.Name

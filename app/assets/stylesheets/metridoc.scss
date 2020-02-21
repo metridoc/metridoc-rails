@@ -24,7 +24,9 @@ body.active_admin {
         width: auto !important;
       }
     }
-
+    .batch_actions_selector{
+	display: none;
+    }
 
     .col-actions {
       width: 100px;
@@ -99,5 +101,6 @@ body.active_admin {
       padding-bottom: 10px;
     }
   }
+
 
 }
