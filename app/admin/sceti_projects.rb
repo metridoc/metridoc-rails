@@ -7,11 +7,11 @@ ActiveAdmin.register Sceti::Project do
   filter :name
   filter :active
 
-  form do |f|
-    f.input :name, :input_html => { :maxlength => 200 }
-    f.input :active
+  #form do |f|
+  #  f.input :name, :input_html => { :maxlength => 200 }
+  #  f.input :active
 
-    f.actions
-  end
+  #  f.actions
+  #end
 
 end
