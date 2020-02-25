@@ -50,6 +50,8 @@ gem 'groupdate'
 
 gem 'chronic'
 
+gem 'rb-readline'
+
 gem 'dotenv-rails'
 group :development, :test do
   gem 'pry'

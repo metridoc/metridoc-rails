@@ -330,6 +330,16 @@ ActiveAdmin.setup do |config|
                   url: :admin_tutorials_path
       end
     end
+
+    admin.build_menu do |menu|
+      menu.add label: DataSource::Source.model_name.human(count: 2), priority: 4 do |sites|
+        sites.add label: DataSource::Template.model_name.human(count: 2),
+                  url: :admin_templates_path
+        sites.add label: DataSource::Source.model_name.human(count: 2),
+                  url: :admin_sources_path
+      end
+    end
+
   end
 
   # == Sorting

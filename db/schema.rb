@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191204143414) do
+ActiveRecord::Schema.define(version: 20200219191957) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,7 +37,6 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "roles_mask"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
@@ -125,10 +124,74 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.boolean "is_legacy", default: false, null: false
   end
 
-  create_table "data_loads_ranges", force: :cascade do |t|
-    t.string "table_name"
-    t.datetime "start"
-    t.datetime "end"
+  create_table "data_source_source_steps", force: :cascade do |t|
+    t.bigint "data_source_source_id", null: false
+    t.integer "load_sequence", null: false
+    t.string "name", null: false
+    t.string "select_distinct"
+    t.string "source_table"
+    t.string "column_mappings"
+    t.string "filter_raw"
+    t.string "export_file_name"
+    t.string "export_filter_date_sql"
+    t.string "export_filter_date_range_sql"
+    t.string "sqls"
+    t.string "target_adapter"
+    t.string "truncate_before_load"
+    t.string "target_model"
+    t.string "transformations"
+    t.string "legacy_filter_date_field"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_source_id"], name: "index_data_source_source_steps_on_data_source_source_id"
+  end
+
+  create_table "data_source_sources", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "data_source_template_id"
+    t.string "institution_code"
+    t.string "source_adapter"
+    t.string "host"
+    t.string "port"
+    t.string "database"
+    t.string "username"
+    t.string "password"
+    t.string "export_folder"
+    t.string "import_folder"
+    t.integer "batch_size"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_template_id"], name: "index_data_source_sources_on_data_source_template_id"
+  end
+
+  create_table "data_source_template_steps", force: :cascade do |t|
+    t.bigint "data_source_template_id", null: false
+    t.integer "load_sequence", null: false
+    t.string "name", null: false
+    t.string "select_distinct"
+    t.string "source_table"
+    t.string "column_mappings"
+    t.string "filter_raw"
+    t.string "export_file_name"
+    t.string "export_filter_date_sql"
+    t.string "export_filter_date_range_sql"
+    t.string "sqls"
+    t.string "target_adapter"
+    t.string "truncate_before_load"
+    t.string "target_model"
+    t.string "transformations"
+    t.string "legacy_filter_date_field"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_template_id"], name: "index_data_source_template_steps_on_data_source_template_id"
+  end
+
+  create_table "data_source_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "source_adapter"
+    t.integer "batch_size"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|
@@ -358,14 +421,14 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.string "loan_edition", limit: 255
     t.string "loan_location", limit: 255
     t.string "loan_publisher", limit: 255
-    t.string "loan_title", limit: 500
+    t.string "loan_title", limit: 255
     t.string "location", limit: 255
     t.string "photo_article_author", limit: 255
-    t.string "photo_article_title", limit: 500
+    t.string "photo_article_title", limit: 255
     t.string "photo_journal_inclusive_pages", limit: 255
     t.string "photo_journal_issue", limit: 255
     t.string "photo_journal_month", limit: 255
-    t.string "photo_journal_title", limit: 500
+    t.string "photo_journal_title", limit: 255
     t.string "photo_journal_volume", limit: 255
     t.string "photo_journal_year", limit: 255
     t.string "process_type", limit: 255
@@ -532,6 +595,7 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.string "language"
     t.string "physical_description_form"
     t.string "physical_description_extent"
+    t.string "notes", limit: 1000
     t.string "subject"
     t.string "classification"
     t.string "related_item_title"
@@ -552,4 +616,7 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "data_source_source_steps", "data_source_sources"
+  add_foreign_key "data_source_sources", "data_source_templates"
+  add_foreign_key "data_source_template_steps", "data_source_templates"
 end

@@ -120,4 +120,16 @@ en:
       marc/book_mod:
         one: "Book Mod"
         other: "Book Mods"
+      data_source/template:
+        one: "Data Source Template"
+        other: "Data Source Templates"
+      data_source/template_step:
+        one: "Data Source Template Step"
+        other: "Data Source Template Steps"
+      data_source/source:
+        one: "Data Source"
+        other: "Data Sources"
+      data_source/source_step:
+        one: "Data Source Step"
+        other: "Data Source Steps"
 
