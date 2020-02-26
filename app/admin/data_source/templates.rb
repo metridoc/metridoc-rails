@@ -1,7 +1,7 @@
 ActiveAdmin.register DataSource::Template, as: "Template" do
   actions :index, :edit, :show
 
-  menu false
+  menu if: proc{ authorized?(:read, DataSource::Template) }, parent: DataSource::Source.model_name.human(count: 2), priority: 1
 
   index do
     column :id

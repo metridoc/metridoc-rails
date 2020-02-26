@@ -1,5 +1,5 @@
 ActiveAdmin.register DataSource::Source, as: "Source" do
-  menu false
+  menu if: proc{ authorized?(:read, DataSource::Source) }, parent: DataSource::Source.model_name.human(count: 2), priority: 2
 
   index do
     column :name

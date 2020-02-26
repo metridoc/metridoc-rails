@@ -35,6 +35,7 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    new_link: "New %{model}"
     dashboard_heading: "Welcome to MetriDoc"
     dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>
                         <ul>
@@ -106,6 +107,12 @@ en:
       profiles: "Library Profiles"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
+  phrases:
+    security: "Security"
+    please_select: "Please Select..."
+    access_levels:
+      read-only: "Read Only"
+      edit: "Edit"
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
@@ -132,4 +139,13 @@ en:
       data_source/source_step:
         one: "Data Source Step"
         other: "Data Source Steps"
+      security/user_role:
+        one: "User Role"
+        other: "User Roles"
+      security/user_role_access_definition:
+        one: "User Role Access Definition"
+        other: "User Roles Access Definitions"
+      admin_user:
+        one: "Admin User"
+        other: "Admin Users"
 

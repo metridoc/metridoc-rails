@@ -62,7 +62,7 @@ ActiveAdmin.setup do |config|
   # method in a before filter of all controller actions to
   # ensure that there is a user with proper rights. You can use
   # CanCanAdapter or make your own. Please refer to documentation.
-  # config.authorization_adapter = ActiveAdmin::CanCanAdapter
+  config.authorization_adapter = "ActiveAdminAuthorization"
 
   # In case you prefer Pundit over other solutions you can here pass
   # the name of default policy class. This policy will be used in every
@@ -331,14 +331,23 @@ ActiveAdmin.setup do |config|
       end
     end
 
-    admin.build_menu do |menu|
-      menu.add label: DataSource::Source.model_name.human(count: 2), priority: 4 do |sites|
-        sites.add label: DataSource::Template.model_name.human(count: 2),
-                  url: :admin_templates_path
-        sites.add label: DataSource::Source.model_name.human(count: 2),
-                  url: :admin_sources_path
-      end
-    end
+    # admin.build_menu do |menu|
+    #   menu.add label: DataSource::Source.model_name.human(count: 2), priority: 4 do |sites|
+    #     sites.add label: DataSource::Template.model_name.human(count: 2),
+    #               url: :admin_templates_path
+    #     sites.add label: DataSource::Source.model_name.human(count: 2),
+    #               url: :admin_sources_path
+    #   end
+    # end
+
+    # admin.build_menu do |menu|
+    #   menu.add label: Security::UserRole.model_name.human(count: 2), priority: 4 do |sites|
+    #     sites.add label: Security::UserRole.model_name.human(count: 2),
+    #               url: :admin_user_roles_path
+    #     sites.add label: AdminUser.model_name.human(count: 2),
+    #               url: :admin_admin_users_path
+    #   end
+    # end
 
   end
 

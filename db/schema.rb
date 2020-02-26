@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200219191957) do
+ActiveRecord::Schema.define(version: 20200225054453) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -37,6 +37,8 @@ ActiveRecord::Schema.define(version: 20200219191957) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "super_admin", default: false, null: false
+    t.integer "user_role_id"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
@@ -616,7 +618,24 @@ ActiveRecord::Schema.define(version: 20200219191957) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_role_access_definitions", force: :cascade do |t|
+    t.bigint "user_role_id", null: false
+    t.string "element", null: false
+    t.string "access_level", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_role_id"], name: "index_user_role_access_definitions_on_user_role_id"
+  end
+
+  create_table "user_roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "admin_users", "user_roles"
   add_foreign_key "data_source_source_steps", "data_source_sources"
   add_foreign_key "data_source_sources", "data_source_templates"
   add_foreign_key "data_source_template_steps", "data_source_templates"
+  add_foreign_key "user_role_access_definitions", "user_roles"
 end
