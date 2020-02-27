@@ -178,7 +178,9 @@ module Import
 
         table_name = class_name.table_name
         password = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['password']
-        cmd = "PGPASSWORD='#{password}' psql -Upostgres -h primary-db -c \
+        username = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['username']
+        host = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['host']
+        cmd = "PGPASSWORD='#{password}' psql -U#{username} -h #{host} -c \
               \"\\copy #{table_name}(#{headers}) FROM '#{csv_file_path}' WITH DELIMITER ',' HEADER CSV\""
 
         system(cmd)

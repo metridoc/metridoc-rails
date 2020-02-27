@@ -6,12 +6,14 @@ development:
   database: metridoc_development
   username: metridoc_development
   password: metridoc_development
+  host: localhost
 
 test:
   <<: *default
   database: metridoc_test
   username: metridoc_test
   password: metridoc_test
+  host: localhost
 
 production:
   <<: *default

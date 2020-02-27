@@ -1,6 +1,8 @@
 require "csv"
 require 'chronic'
 
+require 'pry-byebug'
+
 module Preprocess
 
     class Task
@@ -195,6 +197,10 @@ module Preprocess
           end
         end
 
+        # this seems to be the only way at present to avoid the U+FEFF BOM problem w/ csv files
+        # input_file = File.open(csv_file_path, encoding: 'bom:utf-8')
+        # csv = CSV.new(input_file).read
+        # input_file.close
         csv = CSV.read(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
         temp_file = Tempfile.new("#{import_file_name}.tmp")
         temp_csv = CSV.open(temp_file, 'wb')
@@ -208,7 +214,6 @@ module Preprocess
 
         temp_csv << output_headers
         timestamp = DateTime.now.to_s
-
         n_errors = 0
         csv.each do |row|
           if n_errors >= 100
@@ -255,6 +260,7 @@ module Preprocess
             end
 
             val = Chronic.parse(val) if class_name.columns_hash[column_name].type == :datetime
+            # binding.pry
 
             atts[column_name] = val
           end
