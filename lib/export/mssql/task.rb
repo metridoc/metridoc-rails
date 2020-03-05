@@ -65,26 +65,13 @@ module Export
 
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
         dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
-        Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
-        table = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder'])
 
-        if export_filter_date_range_sql.present? && from_date.present? && to_date.present? && !table.nil?
-          raise "Ranged queries not supported in production mode.  Specify a from OR a to date."
+        if export_filter_date_sql.present? && from_date.present?
+          scope = scope.where(export_filter_date_sql, from_date)
         end
 
-        earliest = table.earliest.to_date unless table.nil?
-        if export_filter_date_sql.present? && !earliest.nil?
-          if from_date.present?
-            validate_range_request('from', earliest, nil) unless earliest.nil?
-            scope = scope.where(export_filter_date_sql, from_date)
-          elsif to_date.present?
-            scope = scope.where(export_filter_date_sql, Date.today - 1.years)
-          end
-        end
-
-        if export_filter_date_range_sql.present?
-          validate_range_request('to', earliest, nil) unless earliest.nil?
-          scope = scope.where(export_filter_date_range_sql, from_date || Date.today - 1.years, to_date || earliest)
+        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
+          scope = scope.where(export_filter_date_range_sql, from_date, to_date)
         end
 
         if group_by_columns.present?
@@ -125,18 +112,6 @@ module Export
 
       def select_clause
         column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
-      end
-
-      def validate_range_request(req_type, earliest, run_date)
-        if req_type == 'from'
-          raise "From date cannot be greater than #{earliest}" unless from_date < earliest
-        elsif req_type == 'to'
-          raise "To date cannot be earlier than #{earliest}" if to_date < earliest
-          raise "To date must be after #{Date.today - 1.years}" if to_date < Date.today - 1.years
-        else
-          raise 'Invalid range request type.  Please specify "from" or "to."'
-        end
-
       end
 
       def execute

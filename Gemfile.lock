@@ -1,11 +1,4 @@
 GIT
-  remote: https://github.com/upenn-libraries/todo_runner.git
-  revision: 3a3c31e2928c85759f360b640e3b879931ef4398
-  tag: v0.4.2
-  specs:
-    todo_runner (0.4.2)
-
-GIT
   remote: https://github.com/vigetlabs/active_material.git
   revision: 59efa02b4517258a0f22c8951f1a4f21401f44b9
   specs:
@@ -331,7 +324,6 @@ DEPENDENCIES
   spring-watcher-listen (~> 2.0.0)
   sqlite3
   tiny_tds (~> 2.1.0)
-  todo_runner!
   turbolinks (~> 5)
   tzinfo-data
   uglifier (>= 1.3.0)
