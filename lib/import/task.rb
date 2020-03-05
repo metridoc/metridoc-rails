@@ -5,8 +5,8 @@ module Import
 
     class Task
 
-      def initialize(main_driver, task_file, test_mode = false)
-        @main_driver, @task_file, @test_mode = main_driver, task_file, test_mode
+      def initialize(main_driver, step, test_mode = false)
+        @main_driver, @step, @test_mode = main_driver, step, test_mode
       end
 
       def log_job_execution
@@ -52,7 +52,7 @@ module Import
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = global_config.merge(YAML.load_file(@task_file))
+        @task_config = global_config.merge(@step.attributes)
       end
 
       def target_adapter
@@ -162,7 +162,9 @@ module Import
       end
 
       def import_file_name
-        task_config["import_file_name"] || task_config["export_file_name"] || task_config["file_name"]
+        return task_config["import_file_name"] if task_config["import_file_name"].present?
+        return task_config["export_file_name"] if task_config["export_file_name"].present?
+        task_config["file_name"]
       end
 
       def import
@@ -173,12 +175,16 @@ module Import
         truncate if truncate_before_load?
 
         csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
-        headers = csv.readline.join(',')
+        headers = csv.readline.map{|c| c.gsub(/[\s\/]+/, '_').downcase }.join(',')
         csv.close
 
         table_name = class_name.table_name
         password = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['password']
-        cmd = "PGPASSWORD='#{password}' psql -Upostgres -h primary-db -c \
+        username = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['username']
+        database = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['database']
+        host = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['host']
+
+        cmd = "PGPASSWORD='#{password}' psql -U#{username} -h #{host} -d #{database} -c \
               \"\\copy #{table_name}(#{headers}) FROM '#{csv_file_path}' WITH DELIMITER ',' HEADER CSV\""
 
         system(cmd)

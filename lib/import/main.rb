@@ -7,9 +7,9 @@ module Import
         require 'dotenv'
         Dotenv.load(File.join(root_path, ".env"))
 
-        raise "Missing Config Folder" if config_folder.blank?
+        raise "Missing Data Source" if config_folder.blank?
 
-        raise "Config Folder [#{config_folder}] doesn't exist." unless Dir.exist?(File.join(root_path, "config", "data_sources", config_folder))
+        raise "Data Source [#{config_folder}] doesn't exist." unless DataSource::Source.find_by_name(config_folder).present?
       end
 
       def root_path
@@ -36,15 +36,15 @@ module Import
       def execute(sequences_only = [])
         log_job_execution
 
-        task_files(sequences_only).each do |task_file|
-          t = Task.new(self, task_file, test_mode?)
-          log("Started executing step [#{task_file}]")
+        steps(sequences_only).each do |step|
+          t = Task.new(self, step, test_mode?)
+          log("Started executing step [#{step.name}]")
           unless t.execute
-            log("Failed executing step [#{task_file}]")
+            log("Failed executing step [#{step.name}]")
             log_job_execution.set_status!('failed')
             return false
           end
-          log("Ended executing step [#{task_file}]")
+          log("Ended executing step [#{step.name}]")
         end
 
         move_source_files if move_to_folder.present?
@@ -60,37 +60,22 @@ module Import
         end
       end
 
-      def task_files(sequences_only = [])
+      def steps(sequences_only = [])
         sequences_only = [sequences_only] if sequences_only.present? && !sequences_only.is_a?(Array)
 
-        full_paths = Dir[ File.join(root_path, "config", "data_sources", config_folder, "**", "*")]
-        tasks = []
-        full_paths.each do |full_path|
-          next if File.basename(full_path) == "global.yml"
-
-          table_params = YAML.load_file(full_path)
-          seq = table_params["load_sequence"] || 0
-
-          next if sequences_only.present? && !sequences_only.include?(seq)
-
-          tasks << {load_sequence: seq, full_path: full_path}
-        end
-
-        tasks.sort_by{|t| t[:load_sequence]}.map{|t| t[:full_path]}
+        return sequences_only.present? ? data_source.source_steps.where(load_sequence: sequences_only).order(:load_sequence) : data_source.source_steps.order(:load_sequence)
       end
 
       def global_config
         return @global_params unless @global_params.blank?
 
-        global_params = {}
-
-        yml_path = File.join(root_path, "config", "data_sources", config_folder, "global.yml")
-
-        if File.exist?(yml_path)
-          global_params = YAML.load(ERB.new(File.read(yml_path)).result)
-        end
+        global_params = data_source.attributes
 
         @global_params = global_params.merge(@options.stringify_keys)
+      end
+
+      def data_source
+        data_source = DataSource::Source.find_by_name(config_folder)
       end
 
       def institution_id

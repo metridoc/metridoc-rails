@@ -1,6 +1,5 @@
 ActiveAdmin.register_page "Ezborrow" do
-
-  menu false
+  menu if: proc{ authorized?(:read, "EzBorrow") }, parent: I18n.t("active_admin.resource_sharing")
 
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

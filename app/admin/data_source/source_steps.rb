@@ -21,7 +21,8 @@ ActiveAdmin.register DataSource::SourceStep, as: "SourceStep" do
                 :truncate_before_load,
                 :target_model,
                 :transformations,
-                :legacy_filter_date_field
+                :legacy_filter_date_field,
+                :file_name
 
   filter :load_sequence
 
@@ -30,5 +31,27 @@ ActiveAdmin.register DataSource::SourceStep, as: "SourceStep" do
     column :name
     actions
   end
+
+  form do |f|
+    f.input :source
+    f.input :name
+    f.input :load_sequence
+    f.input :select_distinct
+    f.input :source_table
+    f.input :column_mappings, as: :text
+    f.input :filter_raw, as: :text
+    f.input :export_file_name
+    f.input :export_filter_date_sql, as: :text
+    f.input :export_filter_date_range_sql, as: :text
+    f.input :sqls, as: :text
+    f.input :target_adapter
+    f.input :truncate_before_load
+    f.input :target_model
+    f.input :transformations
+    f.input :legacy_filter_date_field
+    f.input :file_name
+    f.actions
+  end
+  
 
 end

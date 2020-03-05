@@ -16,6 +16,7 @@ class AdminUser < ApplicationRecord
   end
 
   def authorized?(action, subject)
+    return true if self.super_admin?
     return self.user_role.blank? ? false : self.user_role.authorized?(action, subject)
   end
 

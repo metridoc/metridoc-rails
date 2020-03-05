@@ -1,6 +1,5 @@
 ActiveAdmin.register_page "Borrowdirect" do
-
-  menu false
+  menu if: proc{ authorized?(:read, "BorrowDirect") }, parent: I18n.t("active_admin.resource_sharing")
 
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

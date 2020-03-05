@@ -23,6 +23,7 @@ class DynamicDataSources < ActiveRecord::Migration[5.1]
       t.string     :export_filter_date_sql
       t.string     :export_filter_date_range_sql
       t.string     :sqls
+      t.string     :file_name
 
       t.string     :target_adapter
       t.string     :truncate_before_load
@@ -67,6 +68,7 @@ class DynamicDataSources < ActiveRecord::Migration[5.1]
       t.string     :export_filter_date_sql
       t.string     :export_filter_date_range_sql
       t.string     :sqls
+      t.string     :file_name
 
       t.string     :target_adapter
       t.string     :truncate_before_load

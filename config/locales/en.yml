@@ -35,6 +35,7 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    has_many_delete: "Remove"
     new_link: "New %{model}"
     dashboard_heading: "Welcome to MetriDoc"
     dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>
@@ -100,8 +101,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
-    misc: "Supplemental Data"
-    misc_heading: "Supplemental Data"
+    supplemental_data:
+      supplemental_data_menu: "Supplemental Data"
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
@@ -112,7 +113,16 @@ en:
     please_select: "Please Select..."
     access_levels:
       read-only: "Read Only"
-      edit: "Edit"
+      read-write: "Read/Write"
+    user_role_elements:
+      borrowdirect: "Borrow Direct"
+      ezborrow: "E-Z Borrow"
+      gatecount: "Gate Counts"
+      illiad: "Illiad"
+      keyserver: "Key Server"
+      marc: "MARC Data"
+      libraryprofile: "Participating Libraries"
+      supplementaldata: "Supplemental Data"
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
@@ -148,4 +158,7 @@ en:
       admin_user:
         one: "Admin User"
         other: "Admin Users"
+      misc/consultation_data:
+        one: "Consultation Data"
+        other: "Consultation Data"
 

@@ -1,6 +1,6 @@
 ActiveAdmin.register_page "GateCount" do
+  menu if: proc{ authorized?(:read, "GateCount") }, parent: I18n.t("active_admin.resource_sharing")
 
-  menu false
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }

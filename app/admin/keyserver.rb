@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Keyserver" do
-  menu false
+  menu if: proc{ authorized?(:read, "Keyserver") }, parent: I18n.t("active_admin.resource_sharing")
 
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

@@ -4,7 +4,7 @@ ActiveAdmin.register LibraryProfile::Profile do
   actions :all, :except => [:new, :edit, :update, :destroy]
 
   controller do
-    before_action { @page_title = I18n.t("active_admin.library_profiles.profiles") }
+    before_action { @page_title = I18n.t("active_admin.library_profile.library_profile_menu") }
   end
 
   preserve_default_filters!

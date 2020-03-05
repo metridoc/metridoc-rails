@@ -295,26 +295,10 @@ ActiveAdmin.setup do |config|
 
     admin.build_menu do |menu|
       menu.add label: I18n.t("active_admin.resource_sharing"), priority: 1 do |sites|
-        sites.add label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"),
-                  url: :admin_borrowdirect_path
-        sites.add label: I18n.t("active_admin.ezborrow.ezborrow_menu"),
-                  url: :admin_ezborrow_path
-        sites.add label: I18n.t("active_admin.illiad.illiad_menu"),
-                  url: :admin_illiad_path
-        sites.add label:  I18n.t("active_admin.keyserver.keyserver_menu"),
-                  url: :admin_keyserver_path
-        sites.add label: I18n.t("active_admin.gate_counts"),
-                  url: :admin_gatecount_path
-        sites.add label: I18n.t("active_admin.marc_data"),
-                  url: :admin_marcdata_path
-        sites.add label: I18n.t("active_admin.misc"),
-                  url: :admin_misc_path
         sites.add label: I18n.t("active_admin.comments_heading"),
                   url: :admin_comments_path
         sites.add label: I18n.t("active_admin.logs"),
                   url: :admin_log_job_executions_path
-        sites.add label: I18n.t("active_admin.library_profiles_heading"),
-                  url: :admin_libraryprofile_path
       end
     end
 

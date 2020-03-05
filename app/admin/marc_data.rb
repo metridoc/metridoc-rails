@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "MarcData" do
-  menu false
+  menu if: proc{ authorized?(:read, "Marc") }, parent: I18n.t("active_admin.resource_sharing")
 
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

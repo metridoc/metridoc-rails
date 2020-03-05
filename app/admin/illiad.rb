@@ -1,5 +1,6 @@
 ActiveAdmin.register_page "Illiad" do
-  menu false
+  menu if: proc{ authorized?(:read, "Illiad") }, parent: I18n.t("active_admin.resource_sharing")
+
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }

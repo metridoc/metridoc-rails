@@ -21,6 +21,7 @@ ActiveAdmin.register DataSource::TemplateStep, as: "TemplateStep" do
                 :target_model,
                 :transformations,
                 :legacy_filter_date_field
+                :file_name
 
   filter :load_sequence
 
