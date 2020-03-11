@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.0'
+gem 'rails', '~> 5.2.0'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use Puma as the app server
@@ -51,6 +51,8 @@ gem 'groupdate'
 gem 'chronic'
 
 gem 'rb-readline'
+gem 'delayed_job_active_record'
+gem 'daemons'
 
 gem 'dotenv-rails'
 group :development, :test do
@@ -73,7 +75,7 @@ group :development do
 
   #tiny_tds and activerecord-sqlserver-adapter gems are needed by only import_helper.rb, which is not really part of the app, it is more for diagnosing/troubleshooting sql server sources
   gem 'tiny_tds', '~> 2.1.0'
-  gem 'activerecord-sqlserver-adapter', '~> 5.1.0'
+  gem 'activerecord-sqlserver-adapter', '~> 5.2.0'
   gem 'rails_db'
 end
 

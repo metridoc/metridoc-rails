@@ -109,6 +109,7 @@ en:
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
   phrases:
+    tools: "Tools"
     security: "Security"
     please_select: "Please Select..."
     access_levels:
@@ -121,8 +122,15 @@ en:
       illiad: "Illiad"
       keyserver: "Key Server"
       marc: "MARC Data"
+      tools: "Tools"
       libraryprofile: "Participating Libraries"
       supplementaldata: "Supplemental Data"
+    file_upload_import:
+      statuses:
+        pending: "Pending"
+        in-progress: "In Progress"
+        success: "Success"
+        failed:  "Failed"
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
@@ -161,4 +169,7 @@ en:
       misc/consultation_data:
         one: "Consultation Data"
         other: "Consultation Data"
+      tools/file_upload_import:
+        one: "File Upload Import"
+        other: "File Upload Imports"
 

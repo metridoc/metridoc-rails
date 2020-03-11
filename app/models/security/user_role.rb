@@ -17,6 +17,7 @@ class Security::UserRole < ApplicationRecord
                         "DataSource::Template", 
                         "DataSource::Source",
                         "SupplementalData",
+                        "Tools",
                       ]
   ACCESS_LEVELS = ["read-only", "read-write"]
 
@@ -33,6 +34,12 @@ class Security::UserRole < ApplicationRecord
     s = DataSource::Source if s == DataSource::SourceStep
 
     s = "BorrowDirect" if s.to_s.downcase.start_with?("borrowdirect")
+    s = "EzBorrow" if s.to_s.downcase.start_with?("ezborrow")
+    s = "GateCount" if s.to_s.downcase.start_with?("gatecount")
+    s = "Illiad" if s.to_s.downcase.start_with?("illiad")
+    s = "Keyserver" if s.to_s.downcase.start_with?("keyserver")
+    s = "Marc" if s.to_s.downcase.start_with?("marc")
+    s = "Tools" if s.to_s.downcase.start_with?("tools")
 
     s = "SupplementalData" if s.to_s.in?(["UpsZone", "GeoData::ZipCode", "Institution"])
 

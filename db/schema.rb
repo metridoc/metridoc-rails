@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200304014430) do
+ActiveRecord::Schema.define(version: 2020_03_09_023548) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,27 @@ ActiveRecord::Schema.define(version: 20200304014430) do
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "admin_users", force: :cascade do |t|
@@ -198,6 +219,21 @@ ActiveRecord::Schema.define(version: 20200304014430) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
   create_table "ezborrow_bibliographies", force: :cascade do |t|
     t.string "request_number", limit: 12
     t.string "patron_id", limit: 20
@@ -274,6 +310,18 @@ ActiveRecord::Schema.define(version: 20200304014430) do
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+  end
+
+  create_table "file_upload_imports", force: :cascade do |t|
+    t.string "target_model", null: false
+    t.string "comments"
+    t.integer "uploaded_by_id"
+    t.datetime "uploaded_at", null: false
+    t.string "status"
+    t.datetime "last_attempted_at"
+    t.string "last_error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
@@ -668,6 +716,7 @@ ActiveRecord::Schema.define(version: 20200304014430) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
   add_foreign_key "data_source_source_steps", "data_source_sources"
   add_foreign_key "data_source_sources", "data_source_templates"

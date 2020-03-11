@@ -64,7 +64,7 @@ module Import
 
         return_value = false
         if target_adapter == "csv"
-          return_value = import
+          return_value = import_csv
         elsif target_adapter == "xml"
           return_value = import_xml
         elsif target_adapter == "native_sql"
@@ -167,18 +167,25 @@ module Import
         task_config["file_name"]
       end
 
-      def import
-        log "Starting to import #{import_file_name}"
-
-        csv_file_path = File.join(@main_driver.import_folder, import_file_name)
-
+      def import_csv
         truncate if truncate_before_load?
 
-        csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        csv_file_path = File.join(@main_driver.import_folder, import_file_name)
+        table_name = class_name.table_name
+        external_encoding = global_config['encoding'] || 'UTF-8'
+
+        log "Starting to import #{import_file_name}"
+        return_value = bulk_import(csv_file_path, table_name)
+        log "Finished importing #{import_file_name}."
+
+        return return_value[0]
+      end
+
+      def self.bulk_import(csv_file_path, table_name, external_encoding = 'UTF-8')
+        csv = CSV.open(csv_file_path, {external_encoding: external_encoding, internal_encoding: 'UTF-8'})
         headers = csv.readline.map{|c| c.gsub(/[\s\/]+/, '_').downcase }.join(',')
         csv.close
 
-        table_name = class_name.table_name
         password = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['password']
         username = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['username']
         database = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['database']
@@ -189,9 +196,9 @@ module Import
 
         system(cmd)
 
-        log "Finished importing #{import_file_name}."
-
-        return true
+        return [true, ""]
+        rescue => error
+          return [false, error.inspect]
       end
 
       def import_records(records)

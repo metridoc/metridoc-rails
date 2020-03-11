@@ -20,6 +20,10 @@ class AdminUser < ApplicationRecord
     return self.user_role.blank? ? false : self.user_role.authorized?(action, subject)
   end
 
+  def full_name
+    "#{self.email}"
+  end
+
   protected 
   def password_required? 
     self.encrypted_password.blank?
