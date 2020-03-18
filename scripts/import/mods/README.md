@@ -39,3 +39,18 @@ This document describes the workflow for loading [marc21 XML](https://www.loc.go
   processing artifacts/part-00000_2.xml...
   # and so on
   ```
+
+  When the data begins to load, you should start to see output like the following:
+
+  ```bash
+  loading /tmp/books_mods_0.xml...
+  (in /home/app/webapp)
+  /tmp/books_mods_0.xml loaded.
+  loading /tmp/books_mods_1.xml...
+  (in /home/app/webapp)
+  /tmp/books_mods_0.xml loaded.
+  loading /tmp/books_mods_2.xml...
+  # and so on
+  ```
+
+  You should now be able to see the data in the web interface for the `marc_book_mods` data model. 
