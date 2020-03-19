@@ -1,0 +1,12 @@
+docker cp metridoc_sample.csv [psql-container]:\
+docker cp create_sceti_sample_table [psql-container]:\
+docker cp cleanup_project_names.sql [psql-container]:\
+docker cp import_projects.sql [psql-container]:\
+docker cp import_trackings.sql [psql-container]:\
+
+On psql-container:
+  1. \i create_sceti_sample_table
+  2. COPY scetisample FROM '/metridoc_sample.csv' DELIMITER E'\t' CSV HEADER;
+  3. \i cleanup_project.names.sql
+  4. \i import_projects.sql
+  5. \i import_trackings.sql
