@@ -1,0 +1,3 @@
+---
+target_adapter: 'csv'
+import_folder: '/tmp/upenn_alma'
