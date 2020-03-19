@@ -1,5 +1,5 @@
 INSERT INTO sceti_projects(name, active)
-	SELECT Project AS name, 1 AS active
+	SELECT DISTINCT project AS name, true AS active
 	FROM scetisample 
-	WHERE Project IS NOT NULL AND Project <> ''
-	ORDER BY Project
+	WHERE project IS NOT NULL AND project <> ''
+	ORDER BY project
