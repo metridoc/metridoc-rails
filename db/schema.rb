@@ -563,14 +563,14 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "loan_edition", limit: 255
     t.string "loan_location", limit: 255
     t.string "loan_publisher", limit: 255
-    t.string "loan_title", limit: 500
+    t.string "loan_title", limit: 255
     t.string "location", limit: 255
     t.string "photo_article_author", limit: 255
-    t.string "photo_article_title", limit: 500
+    t.string "photo_article_title", limit: 255
     t.string "photo_journal_inclusive_pages", limit: 255
     t.string "photo_journal_issue", limit: 255
     t.string "photo_journal_month", limit: 255
-    t.string "photo_journal_title", limit: 500
+    t.string "photo_journal_title", limit: 255
     t.string "photo_journal_volume", limit: 255
     t.string "photo_journal_year", limit: 255
     t.string "process_type", limit: 255
@@ -737,6 +737,7 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "language"
     t.string "physical_description_form"
     t.string "physical_description_extent"
+    t.string "notes", limit: 1000
     t.string "subject"
     t.string "classification"
     t.string "related_item_title"
@@ -790,13 +791,13 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_role_access_definitions", force: :cascade do |t|
+  create_table "user_role_sections", force: :cascade do |t|
     t.bigint "user_role_id", null: false
-    t.string "element", null: false
+    t.string "section", null: false
     t.string "access_level", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_role_id"], name: "index_user_role_access_definitions_on_user_role_id"
+    t.index ["user_role_id"], name: "index_user_role_sections_on_user_role_id"
   end
 
   create_table "user_roles", force: :cascade do |t|
@@ -805,4 +806,9 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "admin_users", "user_roles"
+  add_foreign_key "data_source_source_steps", "data_source_sources"
+  add_foreign_key "data_source_sources", "data_source_templates"
+  add_foreign_key "data_source_template_steps", "data_source_templates"
+  add_foreign_key "user_role_sections", "user_roles"
 end
