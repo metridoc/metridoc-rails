@@ -805,10 +805,4 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "admin_users", "user_roles"
-  add_foreign_key "data_source_source_steps", "data_source_sources"
-  add_foreign_key "data_source_sources", "data_source_templates"
-  add_foreign_key "data_source_template_steps", "data_source_templates"
-  add_foreign_key "user_role_access_definitions", "user_roles"
 end

@@ -35,21 +35,12 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    supplemental_data: "Supplemental Data"
+    bookkeeping: "Bookkeeping"
+    has_many_delete: "Remove"
+    new_link: "New %{model}"
     dashboard_heading: "Welcome to MetriDoc"
-    dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>
-                        <ul>
-                          <li>IvyPlus</li>
-                            <ul>
-                              <li><a href=\"/admin/borrowdirect\">BorrowDirect</a></li>
-                              <li><a href=\"/admin/ezborrow\">E-Z Borrow</a></li>
-                              <li><a href=\"/admin/illiad\">ILLiad</a></li>
-                            </ul>
-                            <li><a href=\"/admin/keyserver\">Keyserver</a></li>
-                            <li><a href=\"/admin/gatecount\">Gate counts</a></li>
-                            <li><a href=\"/admin/consultation\">Consultation data</a></li>
-                            <li><a href=\"/admin/marcdata\">Marc data</a></li>
-                            <li><a href=\"/admin/misc\">Supplemental data</a></li>
-                          </ul>"
+    dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>"
     about: "About MetriDoc"
     about_text_html: "<p>Libraries plan and operate services in an environment dense with useful management data but poor in business intelligence.  Every user interaction with the library, and many outcomes of that interaction, leave measurable, informative traces in the IT and human systems that deliver service.  The challenge libraries face is to gather and transform the wealth of systems data into information.  MetriDoc is a solution to that challenge.</p>
 
@@ -109,6 +100,26 @@ en:
       profiles: "Library Profiles"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
+  phrases:
+    security: "Security"
+    please_select: "Please Select..."
+    access_levels:
+      read-only: "Read Only"
+      read-write: "Read/Write"
+    user_role_elements:
+      borrowdirect: "Borrow Direct"
+      ezborrow: "E-Z Borrow"
+      gatecount: "Gate Counts"
+      illiad: "Illiad"
+      keyserver: "Key Server"
+      marc: "MARC Data"
+      tools: "Tools"
+      libraryprofile: "Participating Libraries"
+      supplementaldata: "Supplemental Data"
+      log: "Log"
+      bookkeeping: "Bookkeeping"
+      security: "Security"
+
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
@@ -123,4 +134,16 @@ en:
       marc/book_mod:
         one: "Book Mod"
         other: "Book Mods"
+      admin_user:
+        one: "Admin User"
+        other: "Admin Users"
+      security/user_role:
+        one: "User Role"
+        other: "User Roles"
+      security/user_role_access_definition:
+        one: "User Role Access Definition"
+        other: "User Roles Access Definitions"
+      admin_user:
+        one: "Admin User"
+        other: "Admin Users"
 
