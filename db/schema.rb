@@ -552,4 +552,19 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_role_access_definitions", force: :cascade do |t|
+    t.bigint "user_role_id", null: false
+    t.string "element", null: false
+    t.string "access_level", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_role_id"], name: "index_user_role_access_definitions_on_user_role_id"
+  end
+
+  create_table "user_roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
 end
