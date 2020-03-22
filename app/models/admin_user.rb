@@ -17,7 +17,12 @@ class AdminUser < ApplicationRecord
 
   def authorized?(action, subject)
     return true if self.super_admin?
-    return self.user_role.blank? ? false : self.user_role.authorized?(action, subject)
+
+    if self.user_role.blank?
+      return !Security::UserRole.subject_secured?(subject)
+    end
+
+    return self.user_role.authorized?(action, subject)
   end
 
   def full_name

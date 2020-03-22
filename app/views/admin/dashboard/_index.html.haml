@@ -3,15 +3,16 @@
 %p
   = t 'active_admin.dashboard_text_html'
   %ul
-    %li
-      IvyPlus
-      %ul
-        - if authorized?(:read, "Borrowdirect")
-          %li= link_to "BorrowDirect", "/admin/borrowdirect"
-        - if authorized?(:read, "EzBorrow")
-          %li= link_to "E-Z Borrow", "/admin/ezborrow"
-        - if authorized?(:read, "Illiad")
-          %li= link_to "ILLiad", "/admin/illiad"
+    - if authorized?(:read, "Borrowdirect") || authorized?(:read, "EzBorrow") || authorized?(:read, "Illiad")
+      %li
+        IvyPlus
+        %ul
+          - if authorized?(:read, "Borrowdirect")
+            %li= link_to "BorrowDirect", "/admin/borrowdirect"
+          - if authorized?(:read, "EzBorrow")
+            %li= link_to "E-Z Borrow", "/admin/ezborrow"
+          - if authorized?(:read, "Illiad")
+            %li= link_to "ILLiad", "/admin/illiad"
     - if authorized?(:read, "Keyserver")
       %li= link_to "Keyserver", "/admin/keyserver"
     - if authorized?(:read, "GateCount")

@@ -104,7 +104,7 @@ en:
     access_levels:
       read-only: "Read Only"
       read-write: "Read/Write"
-    user_role_elements:
+    user_role_sections:
       borrowdirect: "Borrow Direct"
       ezborrow: "E-Z Borrow"
       gatecount: "Gate Counts"
@@ -138,9 +138,9 @@ en:
       security/user_role:
         one: "User Role"
         other: "User Roles"
-      security/user_role_access_definition:
-        one: "User Role Access Definition"
-        other: "User Roles Access Definitions"
+      security/user_role_section:
+        one: "User Role Section"
+        other: "User Roles Sections"
       admin_user:
         one: "Admin User"
         other: "Admin Users"
