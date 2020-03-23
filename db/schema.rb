@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191204143414) do
+ActiveRecord::Schema.define(version: 20200316193520) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,27 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
   create_table "admin_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -37,9 +58,19 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "roles_mask"
+    t.boolean "super_admin", default: false, null: false
+    t.integer "user_role_id"
+    t.string "first_name"
+    t.string "last_name"
     t.index ["email"], name: "index_admin_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
+  end
+
+  create_table "andyrid_instructions", force: :cascade do |t|
+    t.datetime "submitted"
+    t.string "consultation_or_instruction"
+    t.string "staff_member_name"
+    t.text "description"
   end
 
   create_table "bookkeeping_data_loads", force: :cascade do |t|
@@ -125,10 +156,127 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.boolean "is_legacy", default: false, null: false
   end
 
-  create_table "data_loads_ranges", force: :cascade do |t|
-    t.string "table_name"
-    t.datetime "start"
-    t.datetime "end"
+  create_table "consultation_interactions", force: :cascade do |t|
+    t.datetime "submitted"
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "staff_expertise"
+    t.datetime "event_date"
+    t.string "mode_of_consultation"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "outcome"
+    t.string "research_community"
+    t.string "total_attendance"
+    t.string "location"
+    t.string "event_length"
+    t.string "prep_time"
+    t.string "number_of_interactions"
+    t.string "patron_type"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "school_affiliation"
+    t.string "department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "patron_question"
+    t.text "session_description"
+    t.text "notes"
+    t.string "ip"
+    t.string "refer"
+    t.string "browser"
+  end
+
+  create_table "consultation_tables", force: :cascade do |t|
+  end
+
+  create_table "data_source_source_steps", force: :cascade do |t|
+    t.bigint "data_source_source_id", null: false
+    t.integer "load_sequence", null: false
+    t.string "name", null: false
+    t.string "select_distinct"
+    t.string "source_table"
+    t.string "column_mappings"
+    t.string "filter_raw"
+    t.string "export_file_name"
+    t.string "export_filter_date_sql"
+    t.string "export_filter_date_range_sql"
+    t.string "sqls"
+    t.string "file_name"
+    t.string "target_adapter"
+    t.string "truncate_before_load"
+    t.string "target_model"
+    t.string "transformations"
+    t.string "legacy_filter_date_field"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_source_id"], name: "index_data_source_source_steps_on_data_source_source_id"
+  end
+
+  create_table "data_source_sources", force: :cascade do |t|
+    t.string "name", null: false
+    t.bigint "data_source_template_id"
+    t.string "institution_code"
+    t.string "source_adapter"
+    t.string "host"
+    t.string "port"
+    t.string "database"
+    t.string "username"
+    t.string "password"
+    t.string "export_folder"
+    t.string "import_folder"
+    t.integer "batch_size"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_template_id"], name: "index_data_source_sources_on_data_source_template_id"
+  end
+
+  create_table "data_source_template_steps", force: :cascade do |t|
+    t.bigint "data_source_template_id", null: false
+    t.integer "load_sequence", null: false
+    t.string "name", null: false
+    t.string "select_distinct"
+    t.string "source_table"
+    t.string "column_mappings"
+    t.string "filter_raw"
+    t.string "export_file_name"
+    t.string "export_filter_date_sql"
+    t.string "export_filter_date_range_sql"
+    t.string "sqls"
+    t.string "file_name"
+    t.string "target_adapter"
+    t.string "truncate_before_load"
+    t.string "target_model"
+    t.string "transformations"
+    t.string "legacy_filter_date_field"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["data_source_template_id"], name: "index_data_source_template_steps_on_data_source_template_id"
+  end
+
+  create_table "data_source_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "source_adapter"
+    t.integer "batch_size"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
   end
 
   create_table "ezborrow_bibliographies", force: :cascade do |t|
@@ -207,6 +355,18 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+  end
+
+  create_table "file_upload_imports", force: :cascade do |t|
+    t.string "target_model", null: false
+    t.string "comments"
+    t.integer "uploaded_by_id"
+    t.datetime "uploaded_at", null: false
+    t.string "status"
+    t.datetime "last_attempted_at"
+    t.string "last_error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
@@ -544,6 +704,39 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.string "record_origin"
   end
 
+  create_table "misc_consultation_data", force: :cascade do |t|
+    t.datetime "submitted"
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "staff_expertise"
+    t.date "event_date"
+    t.string "mode_of_consultation"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "outcome"
+    t.string "research_community"
+    t.integer "total_attendance"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
+    t.string "patron_type"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "school_affiliation"
+    t.string "department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "patron_question"
+    t.string "session_description"
+    t.string "notes"
+    t.string "ip"
+    t.string "refer"
+    t.string "browser"
+  end
+
   create_table "ups_zones", force: :cascade do |t|
     t.string "from_prefix", null: false
     t.string "to_prefix", null: false
@@ -552,4 +745,25 @@ ActiveRecord::Schema.define(version: 20191204143414) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "user_role_access_definitions", force: :cascade do |t|
+    t.bigint "user_role_id", null: false
+    t.string "element", null: false
+    t.string "access_level", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_role_id"], name: "index_user_role_access_definitions_on_user_role_id"
+  end
+
+  create_table "user_roles", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "admin_users", "user_roles"
+  add_foreign_key "data_source_source_steps", "data_source_sources"
+  add_foreign_key "data_source_sources", "data_source_templates"
+  add_foreign_key "data_source_template_steps", "data_source_templates"
+  add_foreign_key "user_role_access_definitions", "user_roles"
 end
