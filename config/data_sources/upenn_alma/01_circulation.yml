@@ -3,8 +3,9 @@ load_sequence: 1
 target_model: "Alma::Circulation"
 target_adapter: "csv"
 file_name: "alma_circulation_daily.csv"
-column_mappings:
+target_mappings:
   "Policy Name": policy_name
+  "Barcode": barcode
   "Item Id": item_id
   "Permanent Call Number": permanent_call_number
   "Classification Code": classification_code
@@ -21,7 +22,7 @@ column_mappings:
   "Title": title
   "Title (Normalized)": title_normalized
   "Author": author
-  "Bibliographic Material Type": bibliographid_material_type
+  "Bibliographic Material Type": bibliographic_material_type
   "Physical Item Material Type": physical_item_material_type
   "Bibliographic Resource Type": bibliographic_resource_type
   "ISBN": isbn
@@ -31,7 +32,7 @@ column_mappings:
   "OCLC Control Number (019)": oclc_control_number_019
   "OCLC Control Number (035a)": oclc_control_number_035a
   "OCLC Control Number (035z)": oclc_control_number_035z
-  "OCLC Control Number (035a+z)": oclc_control_number_035az
+  "OCLC Control Number (035a+z)": oclc_control_number_az
   "Library Name": library_name
   "Location Name": location_name
   "Resource Sharing Library": resource_sharing_library
@@ -46,5 +47,3 @@ column_mappings:
   "Loan Date": loan_date
   "Due Date": due_date
   "Original Due Date": original_due_date
-
-

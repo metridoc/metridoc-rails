@@ -201,7 +201,7 @@ module Preprocess
 
         headers = csv.shift
 
-        output_headers = headers.clone
+        output_headers = headers.map do |h| target_mappings(headers)[h] end
         output_headers.unshift("institution_id") if has_institution_id?
         output_headers << 'created_at' if has_created_at?
         output_headers << 'updated_at' if has_updated_at?
@@ -254,7 +254,7 @@ module Preprocess
               end
             end
 
-            val = Chronic.parse(val) if class_name.columns_hash[column_name].type == :datetime
+            val = Chronic.parse(val) if class_name.columns_hash[target_column].type == :datetime
 
             atts[column_name] = val
           end
