@@ -29,6 +29,10 @@ class AdminUser < ApplicationRecord
     "#{self.email}"
   end
 
+  def can_edit_system_admin_attribute?(admin_user)
+    return system_admin? && admin_user != self
+  end
+
   protected 
   def password_required? 
     self.encrypted_password.blank?

@@ -140,7 +140,7 @@ en:
         other: "User Roles"
       security/user_role_section:
         one: "User Role Section"
-        other: "User Roles Sections"
+        other: "User Role Sections"
       admin_user:
         one: "Admin User"
         other: "Admin Users"

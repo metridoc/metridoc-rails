@@ -1,11 +1,15 @@
 ActiveAdmin.register AdminUser do
-  permit_params :email,
+  permit_params do
+              [
+                :email,
                 :first_name,
                 :last_name,
                 :password,
                 :password_confirmation,
-                :super_admin,
-                :user_role_id
+                current_admin_user.super_admin? ? :super_admin : nil,
+                current_admin_user.authorized?('read-write', "Security") ? :user_role_id : nil,
+              ]
+  end
 
   actions :all
 
@@ -32,7 +36,7 @@ ActiveAdmin.register AdminUser do
         row :last_name
         row :email
         row :user_role_id
-        row :super_admin
+        row :super_admin if current_admin_user.super_admin?
       end
   end
 
@@ -48,7 +52,7 @@ ActiveAdmin.register AdminUser do
       f.input :first_name
       f.input :last_name
       f.input :email
-      f.input :user_role_id, as: :select, collection: Security::UserRole.all.map{|r| [r.name, r.id]}, include_blank: t("phrases.please_select")
+      f.input :user_role_id, as: :select, collection: Security::UserRole.all.map{|r| [r.name, r.id]}, include_blank: t("phrases.please_select") if current_admin_user.authorized?('read-write', "Security")
       f.input :super_admin if current_admin_user.super_admin?
       f.input :password
       f.input :password_confirmation
