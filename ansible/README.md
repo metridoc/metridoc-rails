@@ -13,6 +13,7 @@ This configuration is used to run the newer Metridoc Rails application rather th
 * [Playbooks](#playbooks)
 * [Adding Credentials for New Data Sources](#adding-credentials-for-new-data-sources)
 * [Testing](#testing)
+* [Deployment](#deployment)
 
 ## Ansible
 
@@ -157,3 +158,11 @@ docker run \
   quay.io/ansible/molecule:2.22rc3 \
     molecule test
 ```
+
+## Deployment
+
+New features are deployed by merging to the `master` branch of this repository.  If all CircleCI tests pass and images build on [quay.io](https://quay.io/repository/upennlibraries/metridoc-rails).
+
+To redeploy the application without releasing any new PRs to the master branch, navigate to `Settings/Webhooks` on the repository in GitHub, navigate to the CircleCI hook (labeled `https://circleci.com/hooks/github`) and click the `Edit` button.  
+
+Navigate to the `Recent Deliveries` section and click the `...` icon to the right of the most recent delivery, at the top of the list.  Click `Redeliver` to trigger a redeployment of the current version of the application without any new features.
