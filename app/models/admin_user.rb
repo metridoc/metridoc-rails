@@ -18,15 +18,16 @@ class AdminUser < ApplicationRecord
   def authorized?(action, subject)
     return true if self.super_admin?
 
-    if self.user_role.blank?
-      return !Security::UserRole.subject_secured?(subject)
-    end
+    # check for edit_profile
+    return true if subject == self
+
+    return !Security::UserRole.subject_secured?(subject) if self.user_role.blank?
 
     return self.user_role.authorized?(action, subject)
   end
 
   def full_name
-    "#{self.email}"
+    self.first_name.blank? && self.last_name.blank? ? "#{self.email}" : [self.first_name, self.last_name].join(" ")
   end
 
   def can_edit_system_admin_attribute?(admin_user)
