@@ -293,6 +293,14 @@ ActiveAdmin.setup do |config|
 
   config.namespace :admin do |admin|
 
+    admin.build_menu :utility_navigation do |menu|
+      user_menu = menu.add  label: proc { current_admin_user.full_name },
+                            url: proc { edit_profile_admin_admin_users_url },
+                            id: 'current_user',
+                            if:  proc { current_active_admin_user } # Check the permissions here
+      admin.add_logout_button_to_menu user_menu, 100
+    end
+
     admin.build_menu do |menu|
       menu.add label: I18n.t("active_admin.resource_sharing"), priority: 1 do |sites|
         sites.add label: I18n.t("active_admin.comments_heading"),

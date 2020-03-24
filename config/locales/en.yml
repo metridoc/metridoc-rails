@@ -35,6 +35,8 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    edit_resource: "Edit %{resource}"
+    delete_resource: "Delete %{resource}"
     supplemental_data: "Supplemental Data"
     bookkeeping: "Bookkeeping"
     has_many_delete: "Remove"
@@ -117,6 +119,7 @@ en:
       log: "Log"
       bookkeeping: "Bookkeeping"
       security: "Security"
+    are_you_sure: "Are you sure?"
 
   pages:
     homepage_heading: "Welcome to MetriDoc"

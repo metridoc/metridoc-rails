@@ -30,12 +30,27 @@ ActiveAdmin.register AdminUser do
     actions
   end
 
+  config.action_items.delete_if { |item| item.display_on?(:show) }
+
+  action_item :edit,
+              only: :show,
+              if: proc{ current_admin_user != resource && current_admin_user.authorized?('read-write', AdminUser) } do
+    link_to "#{I18n.t('active_admin.edit_resource', resource: AdminUser.model_name.human)}", edit_resource_path(resource)
+  end
+  action_item :destroy,
+              only: :show,
+              if: proc{ current_admin_user != resource && current_admin_user.authorized?('read-write', AdminUser) } do
+    link_to "#{I18n.t('active_admin.delete_resource', resource: AdminUser.model_name.human)}", resource_path(resource), method: :delete, data: {confirm: I18n.t("phrases.are_you_sure") }
+  end
+
   show do |admin_user|
       attributes_table do
         row :first_name
         row :last_name
         row :email
-        row :user_role_id
+        row :user_role_id do
+          admin_user.user_role_id.present? ? admin_user.user_role.name : "-"
+        end
         row :super_admin if current_admin_user.super_admin?
       end
   end
@@ -58,6 +73,20 @@ ActiveAdmin.register AdminUser do
       f.input :password_confirmation
     end
     f.actions
+  end
+
+  collection_action :edit_profile, method: :get do
+    render "edit_profile"
+  end
+
+  controller do
+    def action_methods
+      if current_admin_user.super_admin?
+        super
+      else
+        super - [:edit, :destroy, :update]
+      end
+    end
   end
 
 end
