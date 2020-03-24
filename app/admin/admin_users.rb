@@ -79,14 +79,4 @@ ActiveAdmin.register AdminUser do
     render "edit_profile"
   end
 
-  controller do
-    def action_methods
-      if current_admin_user.super_admin?
-        super
-      else
-        super - [:edit, :destroy, :update]
-      end
-    end
-  end
-
 end
