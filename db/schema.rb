@@ -70,7 +70,7 @@ ActiveRecord::Schema.define(version: 20200319153029) do
     t.string "oclc_control_number_019"
     t.string "oclc_control_number_035a"
     t.string "oclc_control_number_035z"
-    t.string "oclc_control_number_az"
+    t.string "oclc_control_number_035az"
     t.string "library_name"
     t.string "location_name"
     t.string "resource_sharing_library"

@@ -1,8 +1,6 @@
 require "csv"
 require 'chronic'
 
-require 'pry-byebug'
-
 module Preprocess
 
     class Task
@@ -197,17 +195,21 @@ module Preprocess
           end
         end
 
-        # this seems to be the only way at present to avoid the U+FEFF BOM problem w/ csv files
-        # input_file = File.open(csv_file_path, encoding: 'bom:utf-8')
-        # csv = CSV.new(input_file).read
-        # input_file.close
-        csv = CSV.read(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        csv = CSV.read(csv_file_path)
         temp_file = Tempfile.new("#{import_file_name}.tmp")
         temp_csv = CSV.open(temp_file, 'wb')
 
         headers = csv.shift
+        # assume there's a BOM that's prefixed to the first header field
+        headers[0].gsub!(/^\p{C}/, "")
 
-        output_headers = headers.clone
+        # TODO: change to how output_headers is set is specifically to deal w/
+        # TODO: Alma csv. figure out whether this breaks other csv.
+        output_headers = []
+        headers.each do |h|
+          output_headers << task_config['column_mappings'][h]
+        end
+
         output_headers.unshift("institution_id") if has_institution_id?
         output_headers << 'created_at' if has_created_at?
         output_headers << 'updated_at' if has_updated_at?
@@ -222,7 +224,9 @@ module Preprocess
           end
 
           cols = {}
-          headers.each_with_index do |k,i| 
+          #TODO: below might be redundant?
+          headers.each_with_index do |k,i|
+            k = k.gsub(" ", "_").delete("()+")
             cols[k.to_s.strip.underscore.to_sym] = row[i]
           end
 
@@ -260,7 +264,6 @@ module Preprocess
             end
 
             val = Chronic.parse(val) if class_name.columns_hash[column_name].type == :datetime
-            # binding.pry
 
             atts[column_name] = val
           end
