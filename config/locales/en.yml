@@ -46,6 +46,7 @@ en:
                             </ul>
                             <li><a href=\"/admin/keyserver\">Keyserver</a></li>
                             <li><a href=\"/admin/gatecount\">Gate counts</a></li>
+                            <li><a href=\"/admin/consultation\">Consultation data</a></li>
                             <li><a href=\"/admin/marcdata\">Marc data</a></li>
                             <li><a href=\"/admin/misc\">Supplemental data</a></li>
                           </ul>"
@@ -99,6 +100,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
+    consultation:
+      consultation_menu: "Consultation data"
     misc: "Supplemental Data"
     misc_heading: "Supplemental Data"
     library_profiles_heading: "Participating Libraries"

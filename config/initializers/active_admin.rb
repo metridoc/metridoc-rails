@@ -315,6 +315,8 @@ ActiveAdmin.setup do |config|
                   url: :admin_log_job_executions_path
         sites.add label: I18n.t("active_admin.library_profiles_heading"),
                   url: :admin_libraryprofile_path
+        sites.add label: I18n.t("active_admin.consultation.consultation_menu"),
+                  url: :admin_consultation_path
       end
     end
 
