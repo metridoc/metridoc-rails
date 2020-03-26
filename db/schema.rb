@@ -402,6 +402,14 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.boolean "is_legacy", default: false, null: false
   end
 
+  create_table "file_upload_import_logs", force: :cascade do |t|
+    t.bigint "file_upload_import_id", null: false
+    t.datetime "log_datetime", null: false
+    t.string "log_text"
+    t.integer "sequence", null: false
+    t.index ["file_upload_import_id"], name: "index_file_upload_import_logs_on_file_upload_import_id"
+  end
+
   create_table "file_upload_imports", force: :cascade do |t|
     t.string "target_model", null: false
     t.string "comments"
@@ -409,7 +417,6 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "uploaded_at", null: false
     t.string "status"
     t.datetime "last_attempted_at"
-    t.string "last_error"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -806,9 +813,11 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
   add_foreign_key "data_source_source_steps", "data_source_sources"
   add_foreign_key "data_source_sources", "data_source_templates"
   add_foreign_key "data_source_template_steps", "data_source_templates"
+  add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end

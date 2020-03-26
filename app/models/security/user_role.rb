@@ -14,7 +14,8 @@ class Security::UserRole < ApplicationRecord
                         "LibraryProfile",
                         "SupplementalData",
                         "Log",
-                        "Bookkeeping"
+                        "Bookkeeping",
+                        "Tools",
                       ]
   ACCESS_LEVELS = ["read-only", "read-write"]
 
