@@ -50,6 +50,9 @@ gem 'groupdate'
 
 gem 'chronic'
 
+gem 'delayed_job_active_record'
+gem 'daemons'
+
 gem 'dotenv-rails'
 group :development, :test do
   gem 'rb-readline'
@@ -74,6 +77,7 @@ group :development do
   gem 'tiny_tds', '~> 2.1.0'
   gem 'activerecord-sqlserver-adapter', '~> 5.2.0'
   gem 'rails_db'
+  gem "letter_opener"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

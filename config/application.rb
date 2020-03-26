@@ -16,5 +16,10 @@ module MetridocsRails510
     # -- all .rb files in that directory are automatically loaded.
 
     config.autoload_paths += %W(#{Rails.root}/lib)
+
+    config.active_job.queue_adapter = :delayed_job
+
+    require 'dotenv'
+    Dotenv.load
   end
 end

@@ -104,6 +104,12 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.6)
     crass (1.0.6)
+    daemons (1.3.1)
+    delayed_job (4.1.8)
+      activesupport (>= 3.0, < 6.1)
+    delayed_job_active_record (4.1.4)
+      activerecord (>= 3.0, < 6.1)
+      delayed_job (>= 3.0, < 5)
     devise (4.7.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -155,6 +161,10 @@ GEM
       activerecord
       kaminari-core (= 1.2.0)
     kaminari-core (1.2.0)
+    launchy (2.5.0)
+      addressable (~> 2.7)
+    letter_opener (1.7.0)
+      launchy (~> 2.2)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -168,7 +178,7 @@ GEM
       activerecord (>= 3.0.0)
     marcel (0.3.3)
       mimemagic (~> 0.3.2)
-    method_source (0.9.2)
+    method_source (1.0.0)
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2019.1009)
@@ -184,9 +194,9 @@ GEM
     pg (1.2.3)
     polyamorous (2.3.2)
       activerecord (>= 5.2.1)
-    pry (0.12.2)
-      coderay (~> 1.1.0)
-      method_source (~> 0.9.0)
+    pry (0.13.0)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
     pry-rails (0.3.9)
       pry (>= 0.10.4)
     public_suffix (4.0.3)
@@ -322,11 +332,14 @@ DEPENDENCIES
   chartkick
   chronic
   coffee-rails (~> 4.2)
+  daemons
+  delayed_job_active_record
   devise
   dotenv-rails
   groupdate
   haml
   jbuilder (~> 2.5)
+  letter_opener
   listen (>= 3.0.5, < 3.2)
   makara (~> 0.4.1)
   mysql2

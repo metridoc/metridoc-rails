@@ -29,6 +29,27 @@ ActiveRecord::Schema.define(version: 2020_03_11_171313) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
   create_table "admin_users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -200,6 +221,21 @@ ActiveRecord::Schema.define(version: 2020_03_11_171313) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer "priority", default: 0, null: false
+    t.integer "attempts", default: 0, null: false
+    t.text "handler", null: false
+    t.text "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string "locked_by"
+    t.string "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["priority", "run_at"], name: "delayed_jobs_priority"
+  end
+
   create_table "ezborrow_bibliographies", force: :cascade do |t|
     t.string "request_number", limit: 12
     t.string "patron_id", limit: 20
@@ -276,6 +312,25 @@ ActiveRecord::Schema.define(version: 2020_03_11_171313) do
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+  end
+
+  create_table "file_upload_import_logs", force: :cascade do |t|
+    t.bigint "file_upload_import_id", null: false
+    t.datetime "log_datetime", null: false
+    t.string "log_text"
+    t.integer "sequence", null: false
+    t.index ["file_upload_import_id"], name: "index_file_upload_import_logs_on_file_upload_import_id"
+  end
+
+  create_table "file_upload_imports", force: :cascade do |t|
+    t.string "target_model", null: false
+    t.string "comments"
+    t.integer "uploaded_by_id"
+    t.datetime "uploaded_at", null: false
+    t.string "status"
+    t.datetime "last_attempted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
@@ -614,6 +669,39 @@ ActiveRecord::Schema.define(version: 2020_03_11_171313) do
     t.string "record_origin"
   end
 
+  create_table "misc_consultation_data", force: :cascade do |t|
+    t.datetime "submitted"
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "staff_expertise"
+    t.date "event_date"
+    t.string "mode_of_consultation"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "outcome"
+    t.string "research_community"
+    t.integer "total_attendance"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
+    t.string "patron_type"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "school_affiliation"
+    t.string "department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "patron_question"
+    t.string "session_description"
+    t.string "notes"
+    t.string "ip"
+    t.string "refer"
+    t.string "browser"
+  end
+
   create_table "ups_zones", force: :cascade do |t|
     t.string "from_prefix", null: false
     t.string "to_prefix", null: false
@@ -637,9 +725,11 @@ ActiveRecord::Schema.define(version: 2020_03_11_171313) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
   add_foreign_key "data_source_source_steps", "data_source_sources"
   add_foreign_key "data_source_sources", "data_source_templates"
   add_foreign_key "data_source_template_steps", "data_source_templates"
+  add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
