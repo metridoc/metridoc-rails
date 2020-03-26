@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200316193520) do
+ActiveRecord::Schema.define(version: 2020_03_18_032644) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -788,6 +788,33 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "ip"
     t.string "refer"
     t.string "browser"
+  end
+
+  create_table "report_queries", force: :cascade do |t|
+    t.bigint "report_template_id"
+    t.integer "owner_id", null: false
+    t.string "name", null: false
+    t.string "comments"
+    t.string "select_section"
+    t.string "from_section"
+    t.string "where_section"
+    t.string "group_by_section"
+    t.string "order_section"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["report_template_id"], name: "index_report_queries_on_report_template_id"
+  end
+
+  create_table "report_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "comments"
+    t.string "select_section"
+    t.string "from_section"
+    t.string "where_section"
+    t.string "group_by_section"
+    t.string "order_section"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "ups_zones", force: :cascade do |t|
