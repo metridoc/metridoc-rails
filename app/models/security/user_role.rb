@@ -16,6 +16,7 @@ class Security::UserRole < ApplicationRecord
                         "Log",
                         "Bookkeeping",
                         "Tools",
+                        "Misc",
                       ]
   ACCESS_LEVELS = ["read-only", "read-write"]
 

@@ -35,6 +35,7 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    misc: "Miscellaneous"
     edit_resource: "Edit %{resource}"
     delete_resource: "Delete %{resource}"
     supplemental_data: "Supplemental Data"
@@ -93,8 +94,6 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
-    misc: "Supplemental Data"
-    misc_heading: "Supplemental Data"
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
@@ -120,6 +119,7 @@ en:
       log: "Log"
       bookkeeping: "Bookkeeping"
       security: "Security"
+      misc: "Miscellaneous"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:
