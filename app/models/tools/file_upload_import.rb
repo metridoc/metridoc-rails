@@ -7,7 +7,17 @@ class Tools::FileUploadImport < ApplicationRecord
   after_create  :queue_process
 
   UPLOADABLE_MODELS = [ Misc::ConsultationData,
-  ]
+                        Keyserver::StatusTerm,
+                        Keyserver::PlatformTerm,
+                        Keyserver::ReasonTerm,
+                        Keyserver::Program,
+                        Keyserver::EventTerm,
+                        Keyserver::Division,
+                        Keyserver::Computer,
+                        Keyserver::CpuTypeTerm,
+                        Keyserver::Usage,
+                        GateCount::CardSwipe,
+                      ]
 
   validates_presence_of :target_model, :uploaded_file
 
@@ -33,7 +43,12 @@ class Tools::FileUploadImport < ApplicationRecord
     batch_size = 100
     csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
 
-    headers = csv.first.map{|c| c.strip.gsub(/[\s\/]+/, '_').downcase }
+    headers = csv.first.map{|c| c.strip.underscore.gsub(/[\s\/]+/, '_').downcase }
+
+    unmatched_columns = headers.select { |column_name| target_class.columns_hash[column_name].blank? }
+    if unmatched_columns.present?
+      log "!!WARNING!!: These columns are not processed: [#{unmatched_columns.join(", ")}]"
+    end
 
     n_errors = 0
     n_inserted = 0
@@ -58,26 +73,28 @@ class Tools::FileUploadImport < ApplicationRecord
         headers.each do |column_name|
           val = cols[column_name.to_sym]
 
-          if target_class.columns_hash[column_name].type == :integer && !valid_integer?(val)
+          next if target_class.columns_hash[column_name].blank?
+
+          if target_class.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
             log "Invalid integer [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
             row_error = true
             next
           end
-          if target_class.columns_hash[column_name].type == :datetime && !valid_datetime?(val)
+          if target_class.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
             log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
             row_error = true
             next
           end
-          if target_class.columns_hash[column_name].type == :date && !valid_datetime?(val)
+          if target_class.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
             log "Invalid date [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
             row_error = true
             next
           end
 
-          val = Chronic.parse(val) if target_class.columns_hash[column_name].type == :datetime
+          val = Util.parse_datetime(val) if target_class.columns_hash[column_name].type == :datetime
 
           attributes[column_name] = val
         end
@@ -157,17 +174,6 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def target_model_name
     self.target_model.constantize.model_name.human
-  end
-
-  def valid_integer?(v)
-    return v.blank? || v.match(/\A[+-]?\d+\z/).present?
-  end
-
-  def valid_datetime?(v)
-    return true if v.blank?
-    return Chronic.parse(v).present?
-    rescue ArgumentError
-      return false
   end
 
   private

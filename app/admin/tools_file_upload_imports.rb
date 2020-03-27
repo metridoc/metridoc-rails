@@ -9,7 +9,7 @@ ActiveAdmin.register Tools::FileUploadImport do
 
   form do |f|
     f.inputs do
-      f.input :target_model, as: :select, collection: Tools::FileUploadImport::UPLOADABLE_MODELS.collect{|m| [m.model_name.human, m.to_s]}, include_blank: I18n.t("phrases.please_select")
+      f.input :target_model, as: :select, collection: Tools::FileUploadImport::UPLOADABLE_MODELS.sort_by{|m| m.model_name.human }.collect{|m| [m.model_name.human, m.to_s]}, include_blank: I18n.t("phrases.please_select")
       f.input :uploaded_file, as: :file
       f.input :comments
       f.actions
