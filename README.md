@@ -138,3 +138,14 @@ Then login using:
     http://localhost:3000/admin/
     Username: admin@example.com
     Password: password
+
+### ActionMailer Config
+
+The following ENV variables need to be set for actionmailer to work:
+
+    MAILER_USR='...'
+    MAILER_PWD='...'
+    MAILER_HOST='...'
+    MAILER_DOMAIN='...'
+    MAILER_DEFAULT_FROM='...'
+
