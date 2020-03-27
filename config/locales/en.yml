@@ -160,4 +160,37 @@ en:
       tools/file_upload_import:
         one: "File Upload Import"
         other: "File Upload Imports"
+      keyserver/usage:
+        one: "Keyserver Usage"
+        other: "Keyserver Usages"
+      keyserver/status_term:
+        one: "Keyserver Status Term"
+        other: "Keyserver Status Terms"
+      keyserver/platform_term:
+        one: "Keyserver Platform Term"
+        other: "Keyserver Platform Terms"
+      keyserver/reason_term:
+        one: "Keyserver Reason Term"
+        other: "Keyserver Reason Terms"
+      keyserver/program:
+        one: "Keyserver Program"
+        other: "Keyserver Programs"
+      keyserver/event_term:
+        one: "Keyserver Event Term"
+        other: "Keyserver Event Terms"
+      keyserver/division:
+        one: "Keyserver Division"
+        other: "Keyserver Divisions"
+      keyserver/computer:
+        one: "Keyserver Computer"
+        other: "Keyserver Computers"
+      keyserver/cpu_type_term:
+        one: "Keyserver CPU Type Term"
+        other: "Keyserver CPU Type Terms"
+      keyserver/usage:
+        one: "Keyserver Usage"
+        other: "Keyserver Usages"
+      gate_count/card_swipe:
+        one: "Gate Count Card Swipe"
+        other: "Gate Count Card Swipes"
 
