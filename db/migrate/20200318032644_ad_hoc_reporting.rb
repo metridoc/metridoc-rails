@@ -26,6 +26,11 @@ class AdHocReporting < ActiveRecord::Migration[5.2]
       t.string      :group_by_section
       t.string      :order_section
 
+      t.string      :status
+      t.datetime    :last_run_at
+      t.string      :last_error_message
+      t.string      :output_file_name
+
       t.timestamps null: false
     end
 

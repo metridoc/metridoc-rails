@@ -800,6 +800,10 @@ ActiveRecord::Schema.define(version: 2020_03_18_032644) do
     t.string "where_section"
     t.string "group_by_section"
     t.string "order_section"
+    t.string "status"
+    t.datetime "last_run_at"
+    t.string "last_error_message"
+    t.string "output_file_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["report_template_id"], name: "index_report_queries_on_report_template_id"

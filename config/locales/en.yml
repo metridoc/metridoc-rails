@@ -100,6 +100,8 @@ en:
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
   phrases:
+    process: "Process"
+    download: "Download"
     reports: "Reports"
     tools: "Tools"
     security: "Security"
@@ -124,6 +126,12 @@ en:
       report: "Reports"
     are_you_sure: "Are you sure?"
     file_upload_import:
+      statuses:
+        pending: "Pending"
+        in-progress: "In Progress"
+        success: "Success"
+        failed:  "Failed"
+    report_query:
       statuses:
         pending: "Pending"
         in-progress: "In Progress"
@@ -195,4 +203,25 @@ en:
       gate_count/card_swipe:
         one: "Gate Count Card Swipe"
         other: "Gate Count Card Swipes"
+      report/query:
+        one: "Report Query"
+        other: "Report Queries"
+      report/template:
+        one: "Report Template"
+        other: "Report Templates"
+    attributes:
+      report/query:
+        owner_id: "Owner"
+        name: "Name"
+        comments: "Comments"
+        select_section: "Select Section"
+        from_section: "From Section"
+        where_section: "Where Section"
+        group_by_section: "Group By Section"
+        order_section: "Order Section"
+        status: "Status"
+        last_run_at: "Last Run At"
+        last_error_message: "Last Error Message"
+        output_file_name: "Output File"
+
 
