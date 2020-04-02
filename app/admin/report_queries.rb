@@ -4,6 +4,7 @@ ActiveAdmin.register Report::Query do
   menu if: proc{ authorized?(:read, Report::Query) }, parent: I18n.t("phrases.reports")
 
   permit_params :name,
+                :report_template_id,
                 :owner_id,
                 :comments,
                 :select_section,
@@ -32,6 +33,9 @@ ActiveAdmin.register Report::Query do
       attributes_table do
         row :name
         row :comments
+        row :report_template_id do
+          report_query.report_template_id.present? ? report_query.report_template.name : "-"
+        end
         row :owner do
           report_query.owner ? report_query.owner.full_name : "-"
         end
@@ -72,5 +76,7 @@ ActiveAdmin.register Report::Query do
     resource.re_process
     redirect_to resource_path, notice: "Your file is in queue."
   end
+
+  scope("Your Queries", default: true) { |scope| scope.where(owner_id: current_admin_user.id) }
 
 end

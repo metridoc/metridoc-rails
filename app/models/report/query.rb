@@ -3,12 +3,15 @@ class Report::Query < ApplicationRecord
   self.table_name = "report_queries"
 
   belongs_to :owner, class_name: "AdminUser"
+  belongs_to :report_template, class_name: "Report::Template"
 
-  before_create :set_defaults
+  before_validation :set_defaults
   after_create  :queue_process
 
+  validates_presence_of :name, :select_section, :from_section
+
   def process
-    return unless self.status.blank?
+    return unless self.status.blank? || self.status == 'pending'
 
     self.update_columns(last_run_at: Time.now, status: "in-progress")
     ReportQueryMailer.with(report_query: self).started_notice.deliver_now
@@ -59,6 +62,15 @@ class Report::Query < ApplicationRecord
   private
   def set_defaults
     self.status = 'pending' if self.status.blank?
+
+    if new_record? && self.report_template_id.present? && self.select_section.blank? && self.from_section.blank? && self.where_section.blank? && self.group_by_section.blank? && self.order_section.blank?
+      self.select_section = self.report_template.select_section
+      self.from_section = self.report_template.from_section
+      self.where_section = self.report_template.where_section
+      self.group_by_section = self.report_template.group_by_section
+      self.order_section = self.report_template.order_section
+    end
+
   end
 
   def queue_process
