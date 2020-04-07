@@ -25,7 +25,8 @@ class Tools::FileUploadImport < ApplicationRecord
   def process
     return unless self.status.blank?
 
-    csv_file_path = ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key)
+    csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
+
     target_class = self.target_model.constantize
 
     file_upload_import_logs.destroy_all
@@ -67,7 +68,7 @@ class Tools::FileUploadImport < ApplicationRecord
         end
 
         cols = {}
-        headers.each_with_index do |k,i| 
+        headers.each_with_index do |k,i|
           cols[k.to_sym] = row[i]
         end
 
@@ -181,6 +182,20 @@ class Tools::FileUploadImport < ApplicationRecord
     end
 
     return n_errors > 0 ? {status: 'failed', n_errors: n_errors} : {status: 'success', n_inserted: records.size}
+  end
+
+  def decompress(file_path)
+    reader = Zlib::GzipReader.open(file_path)
+    file_name = "#{File.basename(file_path)}.csv"
+    decompressed_path = File.join(File.dirname(file_path), file_name)
+    File.open(decompressed_path, 'w') do |f|
+      reader.each_line do |line|
+        f.write(line)
+      end
+    end
+    decompressed_path
+  rescue Zlib::GzipFile::Error
+    file_path
   end
 
   def log(s)
