@@ -146,7 +146,7 @@ en:
       log/job_execution:
         one: "Log"
         other: "Logs"
-      log/job_execution_step: 
+      log/job_execution_step:
         one: "Job Execution Step"
         other: "Job Execution Steps"
       marc/book_mod:

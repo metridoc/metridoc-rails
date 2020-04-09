@@ -5,11 +5,13 @@ class AdHocReporting < ActiveRecord::Migration[5.2]
       t.string   :name, null: false
       t.string   :comments
 
-      t.string   :select_section
+      t.text     :select_section
       t.string   :from_section
+      t.string   :join_section
       t.string   :where_section
       t.string   :group_by_section
-      t.string   :order_section
+      t.text     :order_section
+      t.string   :order_direction_section
 
       t.timestamps null: false
     end
@@ -20,11 +22,13 @@ class AdHocReporting < ActiveRecord::Migration[5.2]
       t.string      :name, null: false
       t.string      :comments
 
-      t.string      :select_section
+      t.text        :select_section
       t.string      :from_section
+      t.string      :join_section
       t.string      :where_section
       t.string      :group_by_section
-      t.string      :order_section
+      t.text        :order_section
+      t.string      :order_direction_section
 
       t.string      :status
       t.datetime    :last_run_at

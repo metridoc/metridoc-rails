@@ -237,76 +237,13 @@ ActiveRecord::Schema.define(version: 2020_03_18_032644) do
   create_table "consultation_tables", force: :cascade do |t|
   end
 
-  create_table "data_source_source_steps", force: :cascade do |t|
-    t.bigint "data_source_source_id", null: false
-    t.integer "load_sequence", null: false
-    t.string "name", null: false
-    t.string "select_distinct"
-    t.string "source_table"
-    t.string "column_mappings"
-    t.string "filter_raw"
-    t.string "export_file_name"
-    t.string "export_filter_date_sql"
-    t.string "export_filter_date_range_sql"
-    t.string "sqls"
-    t.string "file_name"
-    t.string "target_adapter"
-    t.string "truncate_before_load"
-    t.string "target_model"
-    t.string "transformations"
-    t.string "legacy_filter_date_field"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["data_source_source_id"], name: "index_data_source_source_steps_on_data_source_source_id"
-  end
-
-  create_table "data_source_sources", force: :cascade do |t|
-    t.string "name", null: false
-    t.bigint "data_source_template_id"
-    t.string "institution_code"
-    t.string "source_adapter"
-    t.string "host"
-    t.string "port"
-    t.string "database"
-    t.string "username"
-    t.string "password"
-    t.string "export_folder"
-    t.string "import_folder"
-    t.integer "batch_size"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["data_source_template_id"], name: "index_data_source_sources_on_data_source_template_id"
-  end
-
-  create_table "data_source_template_steps", force: :cascade do |t|
-    t.bigint "data_source_template_id", null: false
-    t.integer "load_sequence", null: false
-    t.string "name", null: false
-    t.string "select_distinct"
-    t.string "source_table"
-    t.string "column_mappings"
-    t.string "filter_raw"
-    t.string "export_file_name"
-    t.string "export_filter_date_sql"
-    t.string "export_filter_date_range_sql"
-    t.string "sqls"
-    t.string "file_name"
-    t.string "target_adapter"
-    t.string "truncate_before_load"
-    t.string "target_model"
-    t.string "transformations"
-    t.string "legacy_filter_date_field"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["data_source_template_id"], name: "index_data_source_template_steps_on_data_source_template_id"
-  end
-
-  create_table "data_source_templates", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "source_adapter"
-    t.integer "batch_size"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "computer_divisions", force: :cascade do |t|
+    t.string "division_id"
+    t.string "division_server_id"
+    t.string "division_name"
+    t.string "division_section_id"
+    t.string "division_notes"
+    t.string "division_flags"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -795,11 +732,13 @@ ActiveRecord::Schema.define(version: 2020_03_18_032644) do
     t.integer "owner_id", null: false
     t.string "name", null: false
     t.string "comments"
-    t.string "select_section"
+    t.text "select_section"
     t.string "from_section"
+    t.string "join_section"
     t.string "where_section"
     t.string "group_by_section"
-    t.string "order_section"
+    t.text "order_section"
+    t.string "order_direction_section"
     t.string "status"
     t.datetime "last_run_at"
     t.string "last_error_message"
@@ -812,11 +751,13 @@ ActiveRecord::Schema.define(version: 2020_03_18_032644) do
   create_table "report_templates", force: :cascade do |t|
     t.string "name", null: false
     t.string "comments"
-    t.string "select_section"
+    t.text "select_section"
     t.string "from_section"
+    t.string "join_section"
     t.string "where_section"
     t.string "group_by_section"
-    t.string "order_section"
+    t.text "order_section"
+    t.string "order_direction_section"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -846,9 +787,6 @@ ActiveRecord::Schema.define(version: 2020_03_18_032644) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
-  add_foreign_key "data_source_source_steps", "data_source_sources"
-  add_foreign_key "data_source_sources", "data_source_templates"
-  add_foreign_key "data_source_template_steps", "data_source_templates"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
