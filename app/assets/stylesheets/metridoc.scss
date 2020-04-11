@@ -64,6 +64,13 @@ body.active_admin {
     #right-col-tut {
       float: right;
     }
+
+    .actions {
+      #upload-status {
+        font-weight: bold;
+        padding-left: 10px;
+      }
+    }
   }
 
   #filters_sidebar_section {

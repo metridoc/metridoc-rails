@@ -1,0 +1,12 @@
+active_admin_form_for [:admin, resource] do |f|
+  f.inputs do
+    f.input :target_model, as: :select, collection: Tools::FileUploadImport::UPLOADABLE_MODELS.sort_by{|m| m.model_name.human }.collect{|m| [m.model_name.human, m.to_s]}, include_blank: I18n.t('phrases.please_select')
+    f.input :uploaded_file, as: :file
+    f.input :comments
+    f.actions do
+      f.action :submit
+      f.action :cancel, wrapper_html: {class: 'cancel'}, label: t('active_admin.cancel')
+      li id: 'upload-status'
+    end
+  end
+end

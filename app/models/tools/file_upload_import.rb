@@ -19,7 +19,8 @@ class Tools::FileUploadImport < ApplicationRecord
                         GateCount::CardSwipe,
                       ]
 
-  validates_presence_of :target_model, :uploaded_file
+  validates :target_model, presence: true
+  validates :uploaded_file, attached: true
 
   def process
     return unless self.status.blank?

@@ -7,14 +7,22 @@ ActiveAdmin.register Tools::FileUploadImport do
                 :uploaded_file,
                 :comments
 
-  form do |f|
-    f.inputs do
-      f.input :target_model, as: :select, collection: Tools::FileUploadImport::UPLOADABLE_MODELS.sort_by{|m| m.model_name.human }.collect{|m| [m.model_name.human, m.to_s]}, include_blank: I18n.t("phrases.please_select")
-      f.input :uploaded_file, as: :file
-      f.input :comments
-      f.actions
+  controller do
+    def create
+      @file_import = Tools::FileUploadImport.new(permitted_params[:tools_file_upload_import])
+      @file_import.uploaded_by = current_admin_user
+
+      if @file_import.save
+        flash[:notice] = t("flash.actions.create.notice", resource_name: @file_import.model_name.human)
+      end
+
+      respond_to do |format|
+        format.js
+      end
     end
   end
+
+  form partial: 'form'
 
   show do |file_upload_import|
       attributes_table do
@@ -72,9 +80,4 @@ ActiveAdmin.register Tools::FileUploadImport do
     end
     actions
   end
-
-  before_create do |file_upload_import|
-    file_upload_import.uploaded_by = current_admin_user
-  end
-
 end
