@@ -1,0 +1,51 @@
+---
+load_sequence: 1
+target_model: "Alma::Circulation"
+target_adapter: "csv"
+file_name: "alma_circulation_daily.csv"
+column_mappings:
+  "Policy Name": policy_name
+  "Barcode": barcode
+  "Item Id": item_id
+  "Permanent Call Number": permanent_call_number
+  "Classification Code": classification_code
+  "LC Group1": lc_group1
+  "LC Group2": lc_group2
+  "LC Group3": lc_group3
+  "LC Group4": lc_group4
+  "LC Group5": lc_group5
+  "Dewey Number": dewey_number
+  "Dewey Group1": dewey_group1
+  "Dewey Group2": dewey_group2
+  "Dewey Group3": dewey_group3
+  "MMS Id": mms_id
+  "Title": title
+  "Title (Normalized)": title_normalized
+  "Author": author
+  "Bibliographic Material Type": bibliographic_material_type
+  "Physical Item Material Type": physical_item_material_type
+  "Bibliographic Resource Type": bibliographic_resource_type
+  "ISBN": isbn
+  "ISBN (Normalized)": isbn_normalized
+  "ISSN": issn
+  "ISSN (Normalized)": issn_normalized
+  "OCLC Control Number (019)": oclc_control_number_019
+  "OCLC Control Number (035a)": oclc_control_number_035a
+  "OCLC Control Number (035z)": oclc_control_number_035z
+  "OCLC Control Number (035a+z)": oclc_control_number_035az
+  "Library Name": library_name
+  "Location Name": location_name
+  "Resource Sharing Library": resource_sharing_library
+  "User Group": user_group
+  "Statistical Category 1": statistical_category_1
+  "Statistical Category 2": statistical_category_2
+  "Statistical Category 3": statistical_category_3
+  "Statistical Category 4": statistical_category_4
+  "Statistical Category 5": statistical_category_5
+  "Loan Year": loan_year
+  "Loan Fiscal Year": loan_fiscal_year
+  "Loan Date": loan_date
+  "Due Date": due_date
+  "Original Due Date": original_due_date
+
+
