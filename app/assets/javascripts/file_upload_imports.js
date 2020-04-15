@@ -45,6 +45,8 @@ function refreshProgressBar() {
     var n_rows_processed = data.n_rows_processed;
     var status = data.status;
 
+    if (total_rows_to_process == null || n_rows_processed == null || status == null) return;
+
     if (total_rows_to_process) {
       var completed_perc = parseInt((n_rows_processed / total_rows_to_process) * 100);
       if (completed_perc < 100) progressing = true;

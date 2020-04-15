@@ -23,7 +23,7 @@ class Tools::FileUploadImport < ApplicationRecord
   validates :uploaded_file, attached: true
 
   def process
-    return unless self.status.blank?
+    # return unless self.status.blank?
 
     csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
 
@@ -116,6 +116,7 @@ class Tools::FileUploadImport < ApplicationRecord
             update_progress(n_inserted)
           end
           records = []
+          sleep(3)
         end
 
       end
