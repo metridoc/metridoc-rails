@@ -53,6 +53,8 @@ class Tools::FileUploadImport < ApplicationRecord
     n_errors = 0
     n_inserted = 0
 
+    update_columns(total_rows_to_process: (csv.size-1), n_rows_processed: 0)
+
     Tools::FileUploadImport.transaction do
 
       records = []
@@ -109,6 +111,7 @@ class Tools::FileUploadImport < ApplicationRecord
             n_errors += return_val[:n_errors]
           else
             n_inserted += return_val[:n_inserted]
+            update_progress(n_inserted)
           end
           records = []
         end
@@ -121,6 +124,7 @@ class Tools::FileUploadImport < ApplicationRecord
           n_errors += return_val[:n_errors]
         else
           n_inserted += return_val[:n_inserted]
+          update_progress(n_inserted)
         end
         records = []
       end
@@ -139,6 +143,18 @@ class Tools::FileUploadImport < ApplicationRecord
     save!
 
     return n_errors <= 0
+  end
+
+  def update_progress(n_rows_processed)
+    Thread.new do
+      ActiveRecord::Base.connection_pool.with_connection do
+        Tools::FileUploadImport.find(id).update_columns(n_rows_processed: n_rows_processed)
+      end
+    end
+  end
+
+  def progress_text
+    n_rows_processed && n_rows_processed > 0 ? "#{n_rows_processed} of #{total_rows_to_process} rows processed" : "-"
   end
 
   def import_records(target_class, records)

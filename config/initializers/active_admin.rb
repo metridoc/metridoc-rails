@@ -201,6 +201,7 @@ ActiveAdmin.setup do |config|
   # To load a javascript file:
     config.register_javascript 'report_template.js'
     config.register_javascript 'report_query.js'
+    config.register_javascript 'file_upload_import.js'
 
   # == CSV options
   #

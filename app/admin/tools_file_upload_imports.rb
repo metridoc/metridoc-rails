@@ -34,6 +34,9 @@ ActiveAdmin.register Tools::FileUploadImport do
         row :status do
           file_upload_import.status.blank? ? I18n.t("phrases.file_upload_import.statuses.pending") : I18n.t("phrases.file_upload_import.statuses.#{file_upload_import.status}")
         end
+        row :progress do
+          "<div _file_upload_import_id=#{file_upload_import.id} >#{file_upload_import.progress_text}</div>".html_safe
+        end
         row :last_attempted_at do
           file_upload_import.last_attempted_at.blank? ? "-" : I18n.l(file_upload_import.last_attempted_at)
         end

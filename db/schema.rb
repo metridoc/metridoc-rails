@@ -356,6 +356,8 @@ ActiveRecord::Schema.define(version: 2020_03_18_032644) do
     t.datetime "last_attempted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_rows_to_process"
+    t.integer "n_rows_processed"
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
