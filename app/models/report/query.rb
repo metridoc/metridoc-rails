@@ -6,7 +6,7 @@ class Report::Query < ApplicationRecord
   before_save :remove_select_section_blank
 
   belongs_to :owner, class_name: "AdminUser"
-  belongs_to :report_template, class_name: "Report::Template"
+  belongs_to :report_template, class_name: "Report::Template", optional: true
 
   before_validation :set_defaults
   after_create  :queue_process
