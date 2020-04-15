@@ -1,12 +1,11 @@
 $(document).ready(function() {
-  pathName = window.location.pathname;
   if (userOnTemplatesNewOrEditPage()) {
     scanFromSectionChanges();
     scanJoinSectionChanges();
     reloadOnTemplateSelection();
 
     $("#report_template_from_section").on("input", scanFromSectionChanges);
-    $("#report_template_join_section_input textarea").on("input change", scanJoinSectionChanges);
+    $("#report_template_join_section_input textarea").on("input", scanJoinSectionChanges);
 
       // allows user to only select * or attributes
     $(document).on("change","#report_template_select_section_input input[type='checkbox']", function(event){
@@ -184,7 +183,7 @@ $(document).ready(function() {
     resetOrderOptions();
     $("#report_template_select_section_input input[type='checkbox]").prop("disabled", true);
     $("#report_template_join_section_input textarea").prop("disabled", true);
-    $("#report_template_join_section_input textarea").val("").
+    $("#report_template_join_section_input textarea").val("");
     $("#report_template_where_section_input textarea").prop("disabled", true);
     // $("#report_template_group_by_section_input textarea").prop("disabled", true);
     $("#report_template_order_section_input").prop("disabled", true);

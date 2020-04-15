@@ -4,6 +4,8 @@ class Report::Template < ApplicationRecord
   self.table_name = "report_templates"
   before_save :remove_select_section_blank
 
+  validates_presence_of :name
+
   def remove_select_section_blank
     if select_section.first == ''
       updated_select_section = select_section
