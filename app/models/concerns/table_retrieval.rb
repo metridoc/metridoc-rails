@@ -12,7 +12,7 @@ module TableRetrieval
   private
   def self.all_table_attributes_map
     Rails.cache.fetch("all_table_attributes_map", expires_in: 24.hours) do
-      all_tables = ApplicationRecord.descendants.reject(&:abstract_class?).collect(&:table_name)
+      all_tables = ActiveRecord::Base.connection.tables
       retrieve_attributes(all_tables)
     end
   end
