@@ -11,12 +11,12 @@ class Report::Query < ApplicationRecord
   before_validation :set_defaults
   after_create  :queue_process
 
-  validates_presence_of :name, :select_section, :from_section
+  validates_presence_of :name, :from_section
 
   def process
     return unless self.status.blank? || self.status == 'pending'
 
-    self.update_columns(last_run_at: Time.now, status: "in-progress")
+    self.update_columns(last_run_at: Time.now, status: "in-progress", total_rows_to_process: nil, n_rows_processed: nil)
     ReportQueryMailer.with(report_query: self).started_notice.deliver_now
 
     sleep(5) # give a quick brake to make sure both emails go out even if it is a fast process
@@ -26,21 +26,33 @@ class Report::Query < ApplicationRecord
   end
 
   def export
-    sql = "SELECT #{self.select_section.join(",")} FROM #{self.from_section}"
-    sql = sql + " WHERE #{self.where_section} " if self.where_section.present?
-    sql = sql + " GROUP BY #{self.group_by_section} " if self.group_by_section.present?
-    sql = sql + " ORDER BY #{self.order_section.first} #{self.order_direction_section}" if self.order_section.present?
+    sql_2 =         " FROM #{self.from_section}"
+    sql_2 = sql_2 + " WHERE #{self.where_section} " if self.where_section.present?
+    sql_2 = sql_2 + " GROUP BY #{self.group_by_section} " if self.group_by_section.present?
+    sql_2 = sql_2 + " ORDER BY #{self.order_section.first} #{self.order_direction_section}" if self.order_section.present?
+
+    sql = "SELECT COUNT(*) AS total_rows_to_process " + sql_2
+    result = ActiveRecord::Base.connection.exec_query(sql)
+    total_rows_to_process = result.rows.first[0]
+    update_column(:total_rows_to_process, total_rows_to_process)
+
+    sql = "SELECT #{self.select_section.blank? ? "*" : self.select_section.join(",")} " + sql_2
     result = ActiveRecord::Base.connection.exec_query(sql)
 
     self.output_file_name = "#{self.name.parameterize.underscore}_#{self.id}.csv"
 
     headers = result.columns
 
+    n_rows_processed = 0
     CSV.open("tmp/" + self.output_file_name, 'w', write_headers: true, headers: headers) do |csv|
       result.rows.each do |row|
+        n_rows_processed = n_rows_processed + 1
+        update_column(:n_rows_processed, n_rows_processed) if n_rows_processed == 1 || (n_rows_processed % 10 == 0)
         csv << row
+        sleep(1) if (n_rows_processed % 10 == 0) # TODO testing
       end
     end
+    update_column(:n_rows_processed, n_rows_processed)
 
     self.last_error_message = nil
     save!
@@ -56,11 +68,12 @@ class Report::Query < ApplicationRecord
   end
 
   def re_process
-    self.last_run_at = nil
-    self.status = nil
-    self.output_file_name = nil
-    save!
-    process
+    update_columns(last_run_at: nil, status: nil, output_file_name: nil, total_rows_to_process: nil, n_rows_processed: nil)
+    queue_process
+  end
+
+  def progress_text
+    n_rows_processed && n_rows_processed > 0 ? "#{n_rows_processed} of #{total_rows_to_process} rows exported" : "-"
   end
 
   def checkbox_options_for_select_section

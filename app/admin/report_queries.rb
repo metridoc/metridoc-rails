@@ -46,6 +46,9 @@ ActiveAdmin.register Report::Query do
         row :output_file_name do
           report_query.output_file_name.present? ? link_to(I18n.t("phrases.download"), download_admin_report_query_path(report_query), target: '_blank') : "-"
         end
+        row :progress do
+          "<div _report_query_id=#{report_query.id} >#{report_query.progress_text}</div>".html_safe
+        end
         row :last_run_at do
           report_query.last_run_at.blank? ? "-" : I18n.l(report_query.last_run_at)
         end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_15_023949) do
+ActiveRecord::Schema.define(version: 2020_04_22_135949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -747,6 +747,8 @@ ActiveRecord::Schema.define(version: 2020_04_15_023949) do
     t.string "output_file_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_rows_to_process"
+    t.integer "n_rows_processed"
     t.index ["report_template_id"], name: "index_report_queries_on_report_template_id"
   end
 
