@@ -263,6 +263,14 @@ $(document).ready(function() {
       } else {
         var url = document.location.href + "?template_id=" + this.value;
       };
+      var queryName = $("#report_query_name").val();
+      if (queryName != '') {
+        url = url + "&name=" + queryName;
+      };
+      var queryComments = $("#report_query_comments").val();
+      if (queryComments != '') {
+        url = url + "&comments=" + queryComments;
+      };
       document.location = url;
     });
   };

@@ -82,7 +82,11 @@ ActiveAdmin.register Report::Query do
 
     def import_params_from_template
       template = Report::Template.find(params[:template_id])
+      carryover_name = params[:name]
+      carryover_comments = params[:comments]
       @report_query = Report::Query.new(
+        name: carryover_name,
+        comments: carryover_comments,
         report_template_id: template.id,
         select_section: template.select_section,
         select_section_with_aggregates: template.select_section,
