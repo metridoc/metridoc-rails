@@ -10,28 +10,12 @@ ActiveAdmin.register Report::Query do
                 :from_section,
                 :join_section,
                 :where_section,
-                :group_by_section,
                 :order_direction_section,
                 select_section: [],
+                group_by_section: [],
                 order_section: []
 
-  form do |f|
-    f.inputs do
-      f.input :name
-      f.input :comments
-      f.input :report_template_id, as: :select, collection: Report::Template.all.collect{|t| [t.name, t.id]}, include_blank: I18n.t("phrases.please_select")
-
-      f.input :select_section, as: :check_boxes, :collection => f.object.checkbox_options_for_select_section, disabled: ["*"]
-      f.input :from_section, as: :datalist , :collection => TableRetrieval.all_tables
-      f.input :join_section, as: :text, input_html: {disabled: true, hidden: true}
-      f.input :where_section, as: :text, input_html: {disabled: true}
-      f.input :group_by_section, as: :text, input_html: {disabled: true}
-      f.input :order_section, as: :radio, :collection => f.object.radio_options_for_order_section, input_html: {disabled: true}
-      f.input :order_direction_section, as: :select, :collection => ["ASC", "DESC"], selected: f.object.order_direction_section, include_blank: false, input_html: {disabled: true}
-
-      f.actions
-    end
-  end
+  form partial:'form'
 
   show do |report_query|
       attributes_table do
@@ -101,6 +85,7 @@ ActiveAdmin.register Report::Query do
       @report_query = Report::Query.new(
         report_template_id: template.id,
         select_section: template.select_section,
+        select_section_with_aggregates: template.select_section,
         from_section: template.from_section,
         join_section: template.join_section,
         where_section: template.where_section,

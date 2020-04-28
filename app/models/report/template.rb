@@ -1,13 +1,16 @@
 class Report::Template < ApplicationRecord
   serialize :select_section, Array
+  serialize :group_by_section, Array
   serialize :order_section, Array
+  attr_accessor :select_section_with_aggregates
   self.table_name = "report_templates"
-  before_save :remove_select_section_blank
+
+  before_save :remove_select_section_bad_data
 
   validates_presence_of :name
 
-  def remove_select_section_blank
-    if select_section.first == ''
+  def remove_select_section_bad_data
+    if select_section.first == '' || select_section.first == 'Select section*'
       updated_select_section = select_section
       updated_select_section.shift
       self.select_section = updated_select_section
@@ -31,6 +34,10 @@ class Report::Template < ApplicationRecord
     full_field_names.map do |attribute_name|
       [attribute_name, attribute_name, {checked: order_section.include?(attribute_name)}]
     end
+  end
+
+  def select_section_with_aggregates
+    select_section
   end
 
   private

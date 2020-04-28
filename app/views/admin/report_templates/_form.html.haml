@@ -1,0 +1,14 @@
+= semantic_form_for [:admin, resource], builder: ActiveAdmin::FormBuilder do |f|
+  = f.inputs do
+    = f.input :name
+    = f.input :comments
+    = f.hidden_field :select_section_with_aggregates, as: :text
+    = f.input :select_section, as: :check_boxes, :collection => f.object.checkbox_options_for_select_section
+    = f.input :from_section, as: :select , :collection => TableRetrieval.all_tables, include_blank: I18n.t('phrases.please_select')
+    = f.input :join_section, as: :text
+    = f.input :where_section, as: :text
+    = f.input :group_by_section, as: :radio, :collection => f.object.radio_options_for_order_section
+    = f.input :order_section, as: :radio, :collection => f.object.radio_options_for_order_section
+    = f.input :order_direction_section, as: :select, :collection => ["ASC", "DESC"], selected: f.object.order_direction_section, include_blank: true
+
+    = f.actions

@@ -1,9 +1,12 @@
 require 'csv'
 class Report::Query < ApplicationRecord
   serialize :select_section, Array
+  serialize :group_by_section, Array
   serialize :order_section, Array
+  attr_accessor :select_section_with_aggregates
   self.table_name = "report_queries"
-  before_save :remove_select_section_blank
+
+  before_save :remove_select_section_bad_data
 
   belongs_to :owner, class_name: "AdminUser"
   belongs_to :report_template, class_name: "Report::Template", optional: true
@@ -29,7 +32,11 @@ class Report::Query < ApplicationRecord
     sql_2 =         " FROM #{self.from_section}"
     sql_2 = sql_2 + " WHERE #{self.where_section} " if self.where_section.present?
     sql_2 = sql_2 + " GROUP BY #{self.group_by_section} " if self.group_by_section.present?
-    sql_2 = sql_2 + " ORDER BY #{self.order_section.first} #{self.order_direction_section}" if self.order_section.present?
+    if self.order_section.present? && self.order_direction_section.present?
+      sql_2 = sql_2 + " ORDER BY #{self.order_section.first} #{self.order_direction_section} "
+    elsif self.order_section.present?
+      sql_2 = sql_2 + " ORDER BY #{self.order_section.first} "
+    end
 
     sql = "SELECT COUNT(*) AS total_rows_to_process " + sql_2
     result = ActiveRecord::Base.connection.exec_query(sql)
@@ -95,6 +102,10 @@ class Report::Query < ApplicationRecord
     end
   end
 
+  def select_section_with_aggregates
+    select_section
+  end
+
   private
   def set_defaults
     self.status = 'pending' if self.status.blank?
@@ -113,8 +124,8 @@ class Report::Query < ApplicationRecord
     self.delay.process if self.status.blank? || self.status == 'pending'
   end
 
-  def remove_select_section_blank
-    if select_section.first == ''
+  def remove_select_section_bad_data
+    if select_section.first == '' || select_section.first == 'Select section*'
       updated_select_section = select_section
       updated_select_section.shift
       self.select_section = updated_select_section

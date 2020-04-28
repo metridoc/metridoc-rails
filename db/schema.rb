@@ -791,9 +791,6 @@ ActiveRecord::Schema.define(version: 2020_04_22_135949) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
-  add_foreign_key "data_source_source_steps", "data_source_sources"
-  add_foreign_key "data_source_sources", "data_source_templates"
-  add_foreign_key "data_source_template_steps", "data_source_templates"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
