@@ -56,6 +56,9 @@ function refreshProgressBar() {
     html += '<div style="width:500px;border:1px solid black;height: 25px;" id=progress-bar >' +
               '<div style="height:100%;width: ' + completed_perc + '%;background-color:lightblue;text-align:center;vertical-align:middle;font-weight:bold;" ></div>' +
             '</div>';
+    if (status == 'in-progress') {
+      html += '<a href="/admin/tools_file_upload_imports/' + id + '/cancel" onclick="return confirm(\'Are you sure you want to cancel this upload?\');" >Cancel Upload</a>';
+    }
     div.html(html);
   }).then(function() {
     if (progressing) {

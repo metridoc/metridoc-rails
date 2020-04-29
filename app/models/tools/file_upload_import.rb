@@ -23,7 +23,7 @@ class Tools::FileUploadImport < ApplicationRecord
   validates :uploaded_file, attached: true
 
   def process
-    # return unless self.status.blank?
+    return unless self.status.blank? || self.status == 'pending'
 
     csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
 
@@ -36,7 +36,7 @@ class Tools::FileUploadImport < ApplicationRecord
     self.update_columns(last_attempted_at: Time.now, status: "in-progress")
     FileUploadImportMailer.with(file_upload_import: self).started_notice.deliver_now
 
-    self.update_columns(status: import(csv_file_path, target_class) ? "success" : "failed")
+    import(csv_file_path, target_class)
     log "Finished processing."
     FileUploadImportMailer.with(file_upload_import: self).finished_notice.deliver_now
   end
@@ -116,12 +116,13 @@ class Tools::FileUploadImport < ApplicationRecord
             update_progress(n_inserted)
           end
           records = []
-          sleep(3)
+          sleep(1) #TODO For testing
         end
 
+        break if cancelled?
       end
 
-      if records.size > 0
+      if records.size > 0 && !cancelled?
         return_val = import_records(target_class, records)
         if return_val[:status] == 'failed'
           n_errors += return_val[:n_errors]
@@ -132,10 +133,16 @@ class Tools::FileUploadImport < ApplicationRecord
         records = []
       end
 
+      if cancelled?
+        log "Upload has been cancelled."
+        log "Rolling back the upload."
+        raise ActiveRecord::Rollback, "Rolling back the upload."
+      end
+
       if n_errors > 0
         log "#{n_errors} errors encountered."
-        log "Rolling back the load."
-        raise ActiveRecord::Rollback, "Rolling back the load."
+        log "Rolling back the upload."
+        raise ActiveRecord::Rollback, "Rolling back the upload."
       else
         log "#{n_inserted} rows inserted successfully."
         log "Finished importing #{target_model_name}."
@@ -143,9 +150,17 @@ class Tools::FileUploadImport < ApplicationRecord
 
     end #transaction
 
-    save!
+    self.update_columns(status: n_errors <= 0 ? "success" : "failed") unless cancelled?
 
-    return n_errors <= 0
+    save!
+  end
+
+  def cancel
+    Tools::FileUploadImport.find(id).update_columns(status: 'cancelled', total_rows_to_process: nil, n_rows_processed: nil)
+  end
+
+  def cancelled?
+    return Tools::FileUploadImport.find(id).status == 'cancelled'
   end
 
   def update_progress(n_rows_processed)

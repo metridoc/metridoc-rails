@@ -131,6 +131,7 @@ en:
         in-progress: "In Progress"
         success: "Success"
         failed:  "Failed"
+        cancelled: "Cancelled"
     report_query:
       statuses:
         pending: "Pending"

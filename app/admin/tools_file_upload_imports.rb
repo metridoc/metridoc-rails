@@ -37,7 +37,7 @@ ActiveAdmin.register Tools::FileUploadImport do
           I18n.l(file_upload_import.uploaded_at)
         end
         row :uploaded_file do
-          link_to file_upload_import.uploaded_file.filename, url_for(file_upload_import.uploaded_file), target: '_blank'
+          link_to file_upload_import.uploaded_file.filename, url_for(file_upload_import.uploaded_file), target: '_blank' if file_upload_import.status == 'success'
         end
         row :status do
           file_upload_import.status.blank? ? I18n.t("phrases.file_upload_import.statuses.pending") : I18n.t("phrases.file_upload_import.statuses.#{file_upload_import.status}")
@@ -58,6 +58,11 @@ ActiveAdmin.register Tools::FileUploadImport do
   filter :comments
 
   scope("Your Uploads", default: true) { |scope| scope.where(uploaded_by_id: current_admin_user.id) }
+
+  member_action :cancel, method: :get do
+    resource.cancel
+    redirect_to resource_path, notice: "Upload has been cancelled."
+  end
 
   index do
     column :target_model do |file_upload_import|
