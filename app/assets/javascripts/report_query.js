@@ -389,7 +389,11 @@ $(document).ready(function() {
       html += n_rows_processed + ' of ' + total_rows_to_process + ' rows exported';
       html += '<div style="width:500px;border:1px solid black;height: 25px;" id=progress-bar >' +
                 '<div style="height:100%;width: ' + completed_perc + '%;background-color:lightblue;text-align:center;vertical-align:middle;font-weight:bold;" ></div>' +
-              '</div>';
+              '</div>'
+      ;
+      if (status == 'in-progress') {
+        html += '<a href="/admin/report_queries/' + id + '/cancel" onclick="return confirm(\'Are you sure you want to cancel this export?\');" >Cancel Export</a>';
+      }
       div.html(html);
     }).then(function() {
       if (progressing) {

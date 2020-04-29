@@ -24,7 +24,7 @@ class Report::Query < ApplicationRecord
 
     sleep(5) # give a quick brake to make sure both emails go out even if it is a fast process
 
-    self.update_columns(status: export ? "success" : "failed")
+    export
     ReportQueryMailer.with(report_query: self).finished_notice.deliver_now
   end
 
@@ -57,21 +57,31 @@ class Report::Query < ApplicationRecord
         update_column(:n_rows_processed, n_rows_processed) if n_rows_processed == 1 || (n_rows_processed % 10 == 0)
         csv << row
         sleep(1) if (n_rows_processed % 10 == 0) # TODO testing
+        puts "self.status=[#{self.status}]"
+        if Report::Query.find(self.id).status == 'cancelled'
+          cancel
+          return false
+        end
       end
     end
     update_column(:n_rows_processed, n_rows_processed)
 
     self.last_error_message = nil
+    self.status = "success"
     save!
-
     return true
 
     rescue => ex
       puts "Error while exporting records => #{ex.message}"
       self.output_file_name = nil
       self.last_error_message = ex.message
+      self.status = "failed"
       save!
       return false
+  end
+
+  def cancel
+    update_columns(status: 'cancelled', output_file_name: nil, total_rows_to_process: nil, n_rows_processed: nil)
   end
 
   def re_process

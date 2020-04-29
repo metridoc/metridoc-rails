@@ -137,6 +137,7 @@ en:
         in-progress: "In Progress"
         success: "Success"
         failed:  "Failed"
+        cancelled: "Cancelled"
 
   pages:
     homepage_heading: "Welcome to MetriDoc"

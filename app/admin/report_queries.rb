@@ -45,7 +45,7 @@ ActiveAdmin.register Report::Query do
 
   action_item I18n.t("phrases.process"),
               only: :show,
-              if: proc{ resource.status.in?(['success', 'failure']) && current_admin_user.authorized?('read-write', Report) } do
+              if: proc{ resource.status.in?(['success', 'failure', 'cancelled']) && current_admin_user.authorized?('read-write', Report) } do
     link_to I18n.t("phrases.process"), re_process_admin_report_query_path(report_query)
   end
 
@@ -65,7 +65,12 @@ ActiveAdmin.register Report::Query do
 
   member_action :re_process, method: :get do
     resource.re_process
-    redirect_to resource_path, notice: "Your file is in queue."
+    redirect_to resource_path, notice: "Your export is in queue."
+  end
+
+  member_action :cancel, method: :get do
+    resource.cancel
+    redirect_to resource_path, notice: "Export has been cancelled."
   end
 
   scope("Your Queries", default: true) { |scope| scope.where(owner_id: current_admin_user.id) }
