@@ -41,7 +41,7 @@ class Report::Query < ApplicationRecord
     sql = "SELECT COUNT(*) AS total_rows_to_process " + sql_2
     result = ActiveRecord::Base.connection.exec_query(sql)
     total_rows_to_process = result.rows.first[0]
-    update_column(:total_rows_to_process, total_rows_to_process)
+    update_columns(n_rows_processed: 0, total_rows_to_process: total_rows_to_process)
 
     sql = "SELECT #{self.select_section.blank? ? "*" : self.select_section.join(",")} " + sql_2
     result = ActiveRecord::Base.connection.exec_query(sql)
@@ -54,7 +54,7 @@ class Report::Query < ApplicationRecord
     CSV.open("tmp/" + self.output_file_name, 'w', write_headers: true, headers: headers) do |csv|
       result.rows.each do |row|
         n_rows_processed = n_rows_processed + 1
-        update_column(:n_rows_processed, n_rows_processed) if n_rows_processed == 1 || (n_rows_processed % 10 == 0)
+        update_column(:n_rows_processed, n_rows_processed) if n_rows_processed % 10 == 0
         csv << row
         sleep(1) if (n_rows_processed % 10 == 0) # TODO testing
         puts "self.status=[#{self.status}]"
