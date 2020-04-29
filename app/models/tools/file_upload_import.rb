@@ -38,7 +38,7 @@ class Tools::FileUploadImport < ApplicationRecord
 
     import(csv_file_path, target_class)
     log "Finished processing."
-    FileUploadImportMailer.with(file_upload_import: self).finished_notice.deliver_now
+    FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
   end
 
   def import(csv_file_path, target_class)
