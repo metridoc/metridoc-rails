@@ -103,6 +103,15 @@ class Report::Query < ApplicationRecord
     end
   end
 
+  def radio_options_for_group_by_section
+    full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
+      values.map{|value|"#{key}.#{value}"}
+    end.flatten
+    full_field_names.map do |attribute_name|
+      [attribute_name, attribute_name, {checked: group_by_section.include?(attribute_name)}]
+    end
+  end
+
   def radio_options_for_order_section
     full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
       values.map{|value|"#{key}.#{value}"}
