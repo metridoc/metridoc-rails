@@ -2,11 +2,11 @@ require 'csv'
 class Report::Query < ApplicationRecord
   serialize :select_section, Array
   serialize :group_by_section, Array
-  serialize :order_section, Array
   attr_accessor :select_section_with_aggregates
   self.table_name = "report_queries"
 
   before_save :remove_select_section_bad_data
+  before_save :remove_group_by_section_bad_data
 
   belongs_to :owner, class_name: "AdminUser"
   belongs_to :report_template, class_name: "Report::Template", optional: true
@@ -144,10 +144,18 @@ class Report::Query < ApplicationRecord
   end
 
   def remove_select_section_bad_data
-    if select_section.first == '' || select_section.first == 'Select section*'
+    if select_section.first == '' || select_section.first == 'Select Section*'
       updated_select_section = select_section
       updated_select_section.shift
       self.select_section = updated_select_section
+    end
+  end
+
+  def remove_group_by_section_bad_data
+    if group_by_section.first == ''
+      updated_group_by_section = group_by_section
+      updated_group_by_section.shift
+      self.group_by_section = updated_group_by_section
     end
   end
 

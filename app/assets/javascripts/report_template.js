@@ -1,6 +1,7 @@
 $(document).ready(function() {
   if (userOnTemplatesNewOrEditPage()) {
     loadAggregateSelectSelections();
+    updateGroupByFromEnabledSelectSection();
 
     $("#report_template_from_section").on("change", scanFromSectionChanges);
     $("#report_template_join_section_input textarea").on("input", scanJoinSectionChanges);
@@ -27,6 +28,22 @@ $(document).ready(function() {
       var selectSectionOption = $(liParent).find("input[type='checkbox']");
       addAggregateToSelectValue(selectSectionOption, liParent);
     });
+
+    // all 3 below check for possible change to enabled select section options
+    // called on document change due to elements being dyanamically added
+    $(document).on("change","#report_template_select_section_input input[type='checkbox']", updateGroupByFromEnabledSelectSection);
+    $("#report_template_from_section").on("change", updateGroupByFromEnabledSelectSection);
+    $("#report_template_join_section_input textarea").on("input", updateGroupByFromEnabledSelectSection);
+
+    // called on document change due to elements being dyanamically added
+    $(document).on("mouseup","#report_template_order_section_input input[type='radio']", function(event) {
+      var orderOption = event.target;
+      if ($(orderOption).is(":checked")) {
+        setTimeout(function(){$(orderOption).prop("checked", false);},0);
+      } else {
+        $(orderOption).prop("checked", true);
+      };
+    });
   };
 
   function userOnTemplatesNewOrEditPage() {
@@ -38,7 +55,6 @@ $(document).ready(function() {
   function scanFromSectionChanges() {
     var fromTable = $("#report_template_from_section option").filter(":selected").val();
     if (fromTable != "") {
-      // enableAllFields();
       retrieveTableAttributes(fromTable);
     } else {
       resetToFromInput();
@@ -87,7 +103,6 @@ $(document).ready(function() {
       url: "/admin/report_attributes?table_names="+tableNames,
       success: function(data) {
         populateSelectOptions(data);
-        populateGroupByOptions(data);
         populateOrderOptions(data);
       },
       error: function(e) {
@@ -106,7 +121,7 @@ $(document).ready(function() {
       var attributes = tableAttributes[table]
       $.each(attributes, function(index, attribute) {
         tableAttribute = table + "." + attribute
-        $("#report_template_select_section_input ol.choices-group").append("<li class='choice'><label for='report_template_select_section'><input type='checkbox' name='report_template[select_section][]' id='report_template_select_section' value="+tableAttribute+"></input>"+tableAttribute+"</label></li>");
+        $("#report_template_select_section_input ol.choices-group").append("<li class='choice'><label for='report_template_select_section_" + tableAttribute + "'><input type='checkbox' name='report_template[select_section][]' id='report_template_select_section_" + tableAttribute + "' value=" + tableAttribute + "></input>" + tableAttribute + "</label></li>");
       });
     });
 
@@ -125,14 +140,14 @@ $(document).ready(function() {
 
   function resetSelectOptions() {
     $("#report_template_select_section_input ol.choices-group").empty();
-    $("#report_template_select_section_input ol.choices-group").append("<li class='choice'><label for='report_template_select_section'><input type='checkbox' name='report_template[select_section][]' id='report_template_select_section' value='*'></input>*</label></li>");
+    $("#report_template_select_section_input ol.choices-group").append("<li class='choice'><label for='report_template_select_section_*'><input type='checkbox' name='report_template[select_section][]' id='report_template_select_section_*' value='*'></input>*</label></li>");
   };
 
   function enablePreviouslyCheckedSelectOptions(selectedOptionValues) {
     if (selectedOptionValues) {
       $.each(selectedOptionValues, function(index, selectedOptionValue) {
-        if (IsAnAggregate(selectedOptionValue)) {
-          var preAggregateSelectSectionOption = identifyAggregatedSelectOption(selectedOptionValue);
+        if (isAnAggregate(selectedOptionValue)) {
+          var preAggregateSelectSectionOption = identifyPreAggregatedSelectOption(selectedOptionValue);
           var selectSectionOptionValue =$(preAggregateSelectSectionOption).val();
           var aggregateFunction = identifyAggregateFunction(selectedOptionValue);
           checkSelectSectionOption(preAggregateSelectSectionOption);
@@ -152,16 +167,15 @@ $(document).ready(function() {
 
     var tableAttributes = orderOptions["table_attributes"];
     var tables = Object.keys(tableAttributes);
-    $("#report_template_order_section_input ol.choices-group").append("<li class='choice'><label for='report_template_order_section'><input type='radio' name='report_template[order_section][]' id='report_template_order_section' value=nil></input>ignore</label></li>");
     $.each(tables, function(index, table) {
       var attributes = tableAttributes[table]
       $.each(attributes, function(index, attribute) {
         tableAttribute = table + "." + attribute
-        $("#report_template_order_section_input ol.choices-group").append("<li class='choice'><label for='report_template_order_section'><input type='radio' name='report_template[order_section][]' id='report_template_order_section' value="+tableAttribute+"></input>"+tableAttribute+"</label></li>");
+        $("#report_template_order_section_input ol.choices-group").append("<li class='choice'><label for='report_template_order_section_" + tableAttribute + "'><input type='radio' name='report_template[order_section]' id='report_template_order_section_" + tableAttribute + "' value="+tableAttribute+"></input>"+tableAttribute+"</label></li>");
       });
     });
 
-    enablePreviouslyCheckedOrderOptions(selectedOptionValue);
+    enablePreviouslyCheckedOrderOption(selectedOptionValue);
   };
 
   function listCheckedOrderOption() {
@@ -176,37 +190,19 @@ $(document).ready(function() {
     $("#report_template_order_section_input ol.choices-group").empty();
   };
 
-  function enablePreviouslyCheckedOrderOptions(selectedOptionValue) {
+  function enablePreviouslyCheckedOrderOption(selectedOptionValue) {
     if (selectedOptionValue) {
       $("#report_template_order_section_input li.choice input[value='"+selectedOptionValue+"']").prop("checked", true);
-    } else {
-      $("#report_template_order_section_input li.choice input[value=nil]").prop("checked", true);
     };
   };
 
-  function populateGroupByOptions(GroupByOptions) {
-    var selectedOptionValue = listCheckedGroupByOption();
-    resetGroupByOptions();
-
-    var tableAttributes = GroupByOptions["table_attributes"];
-    var tables = Object.keys(tableAttributes);
-    $("#report_template_group_by_section_input ol.choices-group").append("<li class='choice'><label for='report_template_group_by_section'><input type='radio' name='report_template[group_by_section][]' id='report_template_group_by_section' value=nil>ignore</input></label></li>");
-    $.each(tables, function(index, table) {
-      var attributes = tableAttributes[table]
-      $.each(attributes, function(index, attribute) {
-        tableAttribute = table + "." + attribute
-        $("#report_template_group_by_section_input ol.choices-group").append("<li class='choice'><label for='report_template_group_by_section'><input type='radio' name='report_template[group_by_section][]' id='report_template_group_by_section' value="+tableAttribute+"></input>"+tableAttribute+"</label></li>");
+  function listCheckedGroupByOptions() {
+    var selectedOptions = $("#report_template_group_by_section_input li.choice input[type='checkbox']:checked");
+    if (selectedOptions.length > 0) {
+      var selectedOptionValues = $.map(selectedOptions, function(selectedOption) {
+        return selectedOption.value;
       });
-    });
-
-    enablePreviouslyCheckedGroupByOptions(selectedOptionValue);
-  };
-
-  function listCheckedGroupByOption() {
-    var selectedOption = $("#report_template_group_by_section_input li.choice input[type='radio']:checked");
-    if (selectedOption.length > 0) {
-      var selectedOptionValue = selectedOption[0].value;
-      return selectedOptionValue;
+      return selectedOptionValues;
     };
   };
 
@@ -214,11 +210,11 @@ $(document).ready(function() {
     $("#report_template_group_by_section_input ol.choices-group").empty();
   };
 
-  function enablePreviouslyCheckedGroupByOptions(selectedOptionValue) {
-    if (selectedOptionValue) {
-      $("#report_template_group_by_section_input li.choice input[value='"+selectedOptionValue+"']").prop("checked", true);
-    } else {
-      $("#report_template_group_by_section_input li.choice input[value=nil]").prop("checked", true);
+  function enablePreviouslyCheckedGroupByOptions(selectedOptionValues) {
+    if (selectedOptionValues) {
+      $.each(selectedOptionValues, function(index, selectedOptionValue) {
+        $("#report_template_group_by_section_input li.choice input[value='"+selectedOptionValue+"']").prop("checked", true);
+      });
     };
   };
 
@@ -226,14 +222,7 @@ $(document).ready(function() {
     resetSelectOptions();
     resetGroupByOptions();
     resetOrderOptions();
-    // $("#report_template_join_section_input textarea").prop("disabled", true);
     $("#report_template_join_section_input textarea").val("");
-    // $("#report_template_where_section_input textarea").prop("disabled", true);
-    // $("#report_template_group_by_section_input").prop("disabled", true);
-    $('#report_template_group_by_section_input input[type="radio"]').prop('checked', false);
-    // $("#report_template_order_section_input").prop("disabled", true);
-    $('#report_template_order_section_input input[type="radio"]').prop('checked', false);
-    // $("#report_template_order_direction_section").prop("disabled", true);
   };
 
   function unselectNonAsteriskOptions() {
@@ -301,8 +290,8 @@ $(document).ready(function() {
     var arrayLength = savedSelectSelectionsWithAggregates.length;
     for (var i = 0; i < arrayLength; i++) {
       var selectedOptionValue = savedSelectSelectionsWithAggregates[i];
-      if (IsAnAggregate(selectedOptionValue)) {
-        var preAggregateSelectSectionOption = identifyAggregatedSelectOption(selectedOptionValue);
+      if (isAnAggregate(selectedOptionValue)) {
+        var preAggregateSelectSectionOption = identifyPreAggregatedSelectOption(selectedOptionValue);
         var selectSectionOptionValue =$(preAggregateSelectSectionOption).val();
         var aggregateFunction = identifyAggregateFunction(selectedOptionValue);
         checkSelectSectionOption(preAggregateSelectSectionOption);
@@ -314,14 +303,19 @@ $(document).ready(function() {
     };
   };
 
-  function IsAnAggregate(selectedAttribute) {
+  function isAnAggregate(selectedAttribute) {
     return (selectedAttribute.indexOf("(") >= 0 && selectedAttribute.indexOf(")") >= 0)
   };
 
-  function identifyAggregatedSelectOption(selectedAttribute) {
+  function identifyPreAggregatedSelectOption(selectedAttribute) {
     var regExp = /\(([^)]+)\)/;
     var selectedSelectSection = regExp.exec(selectedAttribute)[1];
     return $("#report_template_select_section_input input[value='" + selectedSelectSection + "']");
+  };
+
+  function identifyPreAggregatedSelectOptionValue(selectedAttribute) {
+    var regExp = /\(([^)]+)\)/;
+    return regExp.exec(selectedAttribute)[1];
   };
 
   function identifyAggregateFunction(selectedAttribute) {
@@ -335,5 +329,38 @@ $(document).ready(function() {
   function selectAggregate(selectSectionOption, aggregateFunction) {
     aggregateDropdown = $(selectSectionOption).parent().parent().find('select')[0];
     $(aggregateDropdown).val(aggregateFunction);
+  };
+
+  function updateGroupByFromEnabledSelectSection() {
+    var selectedSelectOptionValues = listCheckedSelectOptions();
+    var selectedGroupByOptionValues = listCheckedGroupByOptions();
+    var selectedSelectOptionBaseValues = $.map(selectedSelectOptionValues, function (selectedSelectOptionValue) {
+      if (isAnAggregate(selectedSelectOptionValue)) {
+        selectedSelectOptionValue = identifyPreAggregatedSelectOptionValue(selectedSelectOptionValue);
+      };
+      return selectedSelectOptionValue;
+    });
+    resetGroupByOptions();
+    if (selectedSelectOptionBaseValues[0] == "*") {
+      var selectOptionBaseValues = allSelectOptionBaseValues();
+      $.each(selectOptionBaseValues, function (index, selectOptionBaseValue) {
+        if (selectOptionBaseValue != "*") {
+          $("#report_template_group_by_section_input ol.choices-group").append("<li class='choice'><label for='report_template_group_by_section_" + selectOptionBaseValue + "'><input type='checkbox' name='report_template[group_by_section][]' id='report_template_group_by_section_" + selectOptionBaseValue + "' value=" + selectOptionBaseValue + "></input>" + selectOptionBaseValue + "</label></li>");
+        };
+      });
+    } else {
+      $.each(selectedSelectOptionBaseValues, function (index, selectedSelectOptionBaseValue) {
+            $("#report_template_group_by_section_input ol.choices-group").append("<li class='choice'><label for='report_template_group_by_section_" + selectedSelectOptionBaseValue + "'><input type='checkbox' name='report_template[group_by_section][]' id='report_template_group_by_section_" + selectedSelectOptionBaseValue + "' value=" + selectedSelectOptionBaseValue + "></input>" + selectedSelectOptionBaseValue + "</label></li>");
+      });
+    };
+    enablePreviouslyCheckedGroupByOptions(selectedGroupByOptionValues);
+  };
+
+  function allSelectOptionBaseValues() {
+    var selectOptionLabels = $("#report_template_select_section_input li.choice label");
+    var selectOptionBaseValues = $.map(selectOptionLabels, function (selectOptionLabel) {
+      return $(selectOptionLabel).text();
+    });
+    return selectOptionBaseValues;
   };
 });

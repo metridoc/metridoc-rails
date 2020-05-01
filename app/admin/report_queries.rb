@@ -11,9 +11,9 @@ ActiveAdmin.register Report::Query do
                 :join_section,
                 :where_section,
                 :order_direction_section,
+                :order_section,
                 select_section: [],
-                group_by_section: [],
-                order_section: []
+                group_by_section: []
 
   form partial:'form'
 
@@ -79,6 +79,20 @@ ActiveAdmin.register Report::Query do
     def new
       import_params_from_template if template_requested?
       new!
+    end
+
+    def update
+      resource_params = updated_resource_params
+      update!
+    end
+
+    private
+
+    def updated_resource_params
+      updated_params = resource_params.first
+      order_section = updated_params[:order_section]
+      updated_params[:order_section] = nil unless order_section
+      [updated_params]
     end
 
     def template_requested?
