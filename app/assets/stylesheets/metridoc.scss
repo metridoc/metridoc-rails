@@ -111,7 +111,41 @@ body.active_admin {
     list-style-type:none;
   }
 
-  .select-aggregate {
-    margin-left: 5px;
+  #report-query,
+  #report-template {
+    .aggregate.select {
+      display: inline-block;
+      margin: 0 8px;
+      padding: 0;
+    }
+
+    .aggregate.select select {
+      height: 20px;
+      line-height: 0;
+      padding: 0 16px 0 7px;
+    }
+
+    #join-section {
+      margin: 16px 0 16px 0;
+      padding: 0px 16px;
+    }
+
+    #join-section > legend {
+      padding: 0;
+      margin-bottom: 8px;
+    }
+
+    #join-section > legend > span {
+      font-size: 12px;
+    }
+
+    #join-section a {
+      margin-left: 8px;
+    }
+
+    .report_query_join_clauses > fieldset.inputs,
+    .report_template_join_clauses > fieldset.inputs {
+      margin: 0;
+    }
   }
 }

@@ -2,12 +2,17 @@ class Report::Template < ApplicationRecord
   serialize :select_section, Array
   serialize :group_by_section, Array
   attr_accessor :select_section_with_aggregates
+  attr_reader :join_section
   self.table_name = "report_templates"
 
   before_save :remove_select_section_bad_data
   before_save :remove_group_by_section_bad_data
 
-  validates_presence_of :name
+  validates_presence_of :name, uniqueness: true
+
+  has_many :report_template_join_clauses, foreign_key: "report_template_id", class_name: "Report::TemplateJoinClause", dependent: :destroy, inverse_of: :report_template
+  accepts_nested_attributes_for :report_template_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
+  alias join_clauses report_template_join_clauses
 
   def remove_select_section_bad_data
     if select_section.first == '' || select_section.first == 'Select Section*'
@@ -29,27 +34,37 @@ class Report::Template < ApplicationRecord
     full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
       values.map{|value|"#{key}.#{value}"}
     end.flatten
-    fields = ["*"] + full_field_names
-    fields.map do |attribute_name|
-      [attribute_name, attribute_name, {checked: select_section.include?(attribute_name)}]
+    if full_field_names.blank?
+      []
+    else
+      fields = ["*"] + full_field_names
+      fields.map do |attribute_name|
+        [attribute_name, attribute_name, {checked: select_section.include?(attribute_name)}]
+      end
     end
   end
 
   def radio_options_for_group_by_section
-    full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
-      values.map{|value|"#{key}.#{value}"}
-    end.flatten
-    full_field_names.map do |attribute_name|
-      [attribute_name, attribute_name, {checked: group_by_section.include?(attribute_name)}]
+    if group_by_section.any?
+      full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
+        values.map{|value|"#{key}.#{value}"}
+      end.flatten
+      full_field_names.map do |attribute_name|
+        [attribute_name, attribute_name, {checked: group_by_section.include?(attribute_name)}]
+      end
     end
   end
 
   def radio_options_for_order_section
-    full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
-      values.map{|value|"#{key}.#{value}"}
-    end.flatten
-    full_field_names.map do |attribute_name|
-      [attribute_name, attribute_name, {checked: order_section.include?(attribute_name)}]
+    if order_section.blank?
+      []
+    else
+      full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
+        values.map{|value|"#{key}.#{value}"}
+      end.flatten
+      full_field_names.map do |attribute_name|
+        [attribute_name, attribute_name, {checked: order_section.include?(attribute_name)}]
+      end
     end
   end
 
@@ -57,24 +72,22 @@ class Report::Template < ApplicationRecord
     select_section
   end
 
+  def join_section
+    join_statement = ""
+    join_clauses.each do |join_clause|
+      join_statement += "#{join_clause.keyword} #{join_clause.table} ON #{join_clause.on_keys} "
+    end
+    join_statement.strip
+  end
+
   private
   def table_names
     tables = []
     tables << from_section
-    if join_section
-      join_section_tables = match_join_section_to_table_names
+    if join_clauses.any?
+      join_section_tables = join_clauses.pluck(:table)
       tables << join_section_tables
     end
     tables.compact.uniq.join(",")
-  end
-
-  def match_join_section_to_table_names
-    # join_section.split(/.* join (.*) on[^,]+/i, '\1')
-    table_names = TableRetrieval.all_tables
-    possible_table_names = join_section.split(" ")
-    join_table_names = possible_table_names.select do |possible_table_name|
-      table_names.include?(possible_table_name)
-    end
-    return join_table_names
   end
 end

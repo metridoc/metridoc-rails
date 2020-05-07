@@ -3,6 +3,8 @@ class Report::Query < ApplicationRecord
   serialize :select_section, Array
   serialize :group_by_section, Array
   attr_accessor :select_section_with_aggregates
+  attr_accessor :raw_join_clauses
+  attr_reader :join_section
   self.table_name = "report_queries"
 
   before_save :remove_select_section_bad_data
@@ -14,7 +16,11 @@ class Report::Query < ApplicationRecord
   before_validation :set_defaults
   after_create  :queue_process
 
-  validates_presence_of :name, :from_section
+  validates_presence_of :name, uniqueness: true
+
+  has_many :report_query_join_clauses, foreign_key: "report_query_id", class_name: "Report::QueryJoinClause", dependent: :destroy, inverse_of: :report_query
+  accepts_nested_attributes_for :report_query_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
+  alias join_clauses report_query_join_clauses
 
   def process
     return unless self.status.blank? || self.status == 'pending'
@@ -29,13 +35,14 @@ class Report::Query < ApplicationRecord
   end
 
   def export
-    sql_2 =         " FROM #{self.from_section}"
-    sql_2 = sql_2 + " WHERE #{self.where_section} " if self.where_section.present?
-    sql_2 = sql_2 + " GROUP BY #{self.group_by_section} " if self.group_by_section.present?
+    sql_2 =           " FROM #{self.from_section}"
+    sql_2 =   sql_2 + " #{join_section}" if self.join_section.present?
+    sql_2 =   sql_2 + " WHERE #{self.where_section} " if self.where_section.present?
+    sql_2 =   sql_2 + " GROUP BY #{self.group_by_section.join(",")} " if self.group_by_section.present?
     if self.order_section.present? && self.order_direction_section.present?
-      sql_2 = sql_2 + " ORDER BY #{self.order_section.first} #{self.order_direction_section} "
+      sql_2 = sql_2 + " ORDER BY #{self.order_section} #{self.order_direction_section} "
     elsif self.order_section.present?
-      sql_2 = sql_2 + " ORDER BY #{self.order_section.first} "
+      sql_2 = sql_2 + " ORDER BY #{self.order_section} "
     end
 
     sql = "SELECT COUNT(*) AS total_rows_to_process " + sql_2
@@ -43,7 +50,7 @@ class Report::Query < ApplicationRecord
     total_rows_to_process = result.rows.first[0]
     update_columns(n_rows_processed: 0, total_rows_to_process: total_rows_to_process)
 
-    sql = "SELECT #{self.select_section.blank? ? "*" : self.select_section.join(",")} " + sql_2
+    sql = "SELECT #{self.select_section.join(",")} " + sql_2
     result = ActiveRecord::Base.connection.exec_query(sql)
 
     self.output_file_name = "#{self.name.parameterize.underscore}_#{self.id}.csv"
@@ -97,32 +104,54 @@ class Report::Query < ApplicationRecord
     full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
       values.map{|value|"#{key}.#{value}"}
     end.flatten
-    fields = ["*"] + full_field_names
-    fields.map do |attribute_name|
-      [attribute_name, attribute_name, {checked: select_section.include?(attribute_name)}]
+    if full_field_names.blank?
+      []
+    else
+      fields = ["*"] + full_field_names
+      fields.map do |attribute_name|
+        [attribute_name, attribute_name, {checked: select_section.include?(attribute_name)}]
+      end
     end
   end
 
   def radio_options_for_group_by_section
-    full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
-      values.map{|value|"#{key}.#{value}"}
-    end.flatten
-    full_field_names.map do |attribute_name|
-      [attribute_name, attribute_name, {checked: group_by_section.include?(attribute_name)}]
+    if group_by_section.any?
+      full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
+        values.map{|value|"#{key}.#{value}"}
+      end.flatten
+      full_field_names.map do |attribute_name|
+        [attribute_name, attribute_name, {checked: group_by_section.include?(attribute_name)}]
+      end
     end
   end
 
   def radio_options_for_order_section
-    full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
-      values.map{|value|"#{key}.#{value}"}
-    end.flatten
-    full_field_names.map do |attribute_name|
-      [attribute_name, attribute_name, {checked: order_section.include?(attribute_name)}]
+    if order_section.blank?
+      []
+    else
+      full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
+        values.map{|value|"#{key}.#{value}"}
+      end.flatten
+      full_field_names.map do |attribute_name|
+        [attribute_name, attribute_name, {checked: order_section.include?(attribute_name)}]
+      end
     end
   end
 
   def select_section_with_aggregates
     select_section
+  end
+
+  def raw_join_clauses=(raw_join_clauses)
+    @raw_join_clauses = raw_join_clauses
+  end
+
+  def join_section
+    join_statement = ""
+    join_clauses.each do |join_clause|
+      join_statement += "#{join_clause.keyword} #{join_clause.table} ON #{join_clause.on_keys} "
+    end
+    join_statement.strip
   end
 
   private
@@ -162,8 +191,8 @@ class Report::Query < ApplicationRecord
   def table_names
     tables = []
     tables << from_section
-    if join_section
-      join_section_tables = match_join_section_to_table_names
+    if join_clauses.any?
+      join_section_tables = join_clauses.pluck(:table)
       tables << join_section_tables
     end
     tables.compact.uniq.join(",")

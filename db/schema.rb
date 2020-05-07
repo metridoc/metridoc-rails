@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_22_135949) do
+ActiveRecord::Schema.define(version: 2020_05_05_153231) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -736,7 +736,6 @@ ActiveRecord::Schema.define(version: 2020_04_22_135949) do
     t.string "comments"
     t.text "select_section"
     t.string "from_section"
-    t.string "join_section"
     t.string "where_section"
     t.string "group_by_section"
     t.text "order_section"
@@ -752,12 +751,31 @@ ActiveRecord::Schema.define(version: 2020_04_22_135949) do
     t.index ["report_template_id"], name: "index_report_queries_on_report_template_id"
   end
 
+  create_table "report_query_join_clauses", force: :cascade do |t|
+    t.string "keyword"
+    t.string "table"
+    t.string "on_keys"
+    t.bigint "report_query_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["report_query_id"], name: "index_report_query_join_clauses_on_report_query_id"
+  end
+
+  create_table "report_template_join_clauses", force: :cascade do |t|
+    t.string "keyword"
+    t.string "table"
+    t.string "on_keys"
+    t.bigint "report_template_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["report_template_id"], name: "index_report_template_join_clauses_on_report_template_id"
+  end
+
   create_table "report_templates", force: :cascade do |t|
     t.string "name", null: false
     t.string "comments"
     t.text "select_section"
     t.string "from_section"
-    t.string "join_section"
     t.string "where_section"
     t.string "group_by_section"
     t.text "order_section"
