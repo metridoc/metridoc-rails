@@ -69,6 +69,8 @@ en:
     documentation: "Documentation"
     marc_data: "MARC data"
     gate_counts: "Gate counts"
+    alma:
+      alma_menu: "Alma"
     borrowdirect:
       borrowdirect_menu: "BorrowDirect"
       columns_heading: "Example data visualizations"
