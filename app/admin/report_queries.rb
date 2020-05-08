@@ -1,5 +1,6 @@
 ActiveAdmin.register Report::Query do
   actions :all
+  skip_before_action :restrict_format_access!, only: [:show]
 
   menu if: proc{ authorized?(:read, Report::Query) }, parent: I18n.t("phrases.reports")
 
