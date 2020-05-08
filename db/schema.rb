@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_05_153231) do
+ActiveRecord::Schema.define(version: 2020_05_08_021907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,7 +66,7 @@ ActiveRecord::Schema.define(version: 2020_05_05_153231) do
     t.index ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true
   end
 
-  create_table "alma_circulations", force: :cascade do |t|
+  create_table "alma_circ_records", force: :cascade do |t|
     t.string "policy_name"
     t.string "barcode"
     t.string "item_id"
@@ -95,7 +95,7 @@ ActiveRecord::Schema.define(version: 2020_05_05_153231) do
     t.string "oclc_control_number_019"
     t.string "oclc_control_number_035a"
     t.string "oclc_control_number_035z"
-    t.string "oclc_control_number_035az"
+    t.string "oclc_control_number_035a_z"
     t.string "library_name"
     t.string "location_name"
     t.string "resource_sharing_library"
@@ -105,17 +105,13 @@ ActiveRecord::Schema.define(version: 2020_05_05_153231) do
     t.string "statistical_category_3"
     t.string "statistical_category_4"
     t.string "statistical_category_5"
-    t.string "loan_year"
+    t.integer "loan_year"
     t.string "loan_fiscal_year"
-    t.datetime "loan_date"
-    t.datetime "due_date"
-    t.datetime "original_due_date"
-
-  create_table "andyrid_instructions", force: :cascade do |t|
-    t.datetime "submitted"
-    t.string "consultation_or_instruction"
-    t.string "staff_member_name"
-    t.text "description"
+    t.date "loan_date"
+    t.date "due_date"
+    t.string "original_due_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "bookkeeping_data_loads", force: :cascade do |t|

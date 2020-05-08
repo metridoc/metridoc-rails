@@ -211,6 +211,9 @@ en:
       report/template:
         one: "Report Template"
         other: "Report Templates"
+      alma/circ_record:
+        one: "Alma Circ Record"
+        other: "Alma Circ Records"
     attributes:
       report/query:
         owner_id: "Owner"

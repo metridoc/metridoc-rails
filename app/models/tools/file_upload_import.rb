@@ -6,7 +6,8 @@ class Tools::FileUploadImport < ApplicationRecord
   before_create :set_defaults
   after_create  :queue_process
 
-  UPLOADABLE_MODELS = [ Misc::ConsultationData,
+  UPLOADABLE_MODELS = [ Alma::CircRecord,
+                        Misc::ConsultationData,
                         Keyserver::StatusTerm,
                         Keyserver::PlatformTerm,
                         Keyserver::ReasonTerm,
@@ -45,11 +46,11 @@ class Tools::FileUploadImport < ApplicationRecord
     batch_size = 100
     csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
 
-    headers = csv.first.map{|c| c.strip.underscore.gsub(/[\s\/]+/, '_').downcase }
+    headers = csv.first.map{|c| c.gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/\s+/, '_').downcase }
 
     headers.each do |column_name|
       if target_class.columns_hash[column_name].blank?
-        headers[headers.index(column_name)] = column_name.split(/[\_\(\-]+/).first
+        headers[headers.index(column_name)] = column_name.split(/\_+/).first
       end
     end
 
