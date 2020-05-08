@@ -48,7 +48,7 @@ ActiveAdmin.register Report::Query do
 
   action_item I18n.t("phrases.process"),
               only: :show,
-              if: proc{ resource.status.in?(['success', 'failure', 'cancelled']) && current_admin_user.authorized?('read-write', Report) } do
+              if: proc{ resource.status.in?(['success', 'failed', 'cancelled']) && current_admin_user.authorized?('read-write', Report) } do
     link_to I18n.t("phrases.process"), re_process_admin_report_query_path(report_query)
   end
 

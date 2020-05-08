@@ -22,6 +22,8 @@ class Report::Query < ApplicationRecord
   accepts_nested_attributes_for :report_query_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
   alias join_clauses report_query_join_clauses
 
+  RECORDS_PER_PAGE = 10
+
   def process
     return unless self.status.blank? || self.status == 'pending'
 
@@ -50,7 +52,7 @@ class Report::Query < ApplicationRecord
     total_rows_to_process = result.rows.first[0]
     update_columns(n_rows_processed: 0, total_rows_to_process: total_rows_to_process)
 
-    sql = "SELECT #{self.select_section.join(",")} " + sql_2
+    sql = "SELECT #{self.select_section.join(",")} " + sql_2 + " LIMIT 1 "
     result = ActiveRecord::Base.connection.exec_query(sql)
 
     self.output_file_name = "#{self.name.parameterize.underscore}_#{self.id}.csv"
@@ -59,16 +61,22 @@ class Report::Query < ApplicationRecord
 
     n_rows_processed = 0
     CSV.open("tmp/" + self.output_file_name, 'w', write_headers: true, headers: headers) do |csv|
-      result.rows.each do |row|
-        n_rows_processed = n_rows_processed + 1
-        update_column(:n_rows_processed, n_rows_processed) if n_rows_processed % 10 == 0
-        csv << row
-        sleep(1) if (n_rows_processed % 10 == 0) # TODO testing
-        puts "self.status=[#{self.status}]"
-        if Report::Query.find(self.id).status == 'cancelled'
-          cancel
-          return false
+      offset = 0
+      while result.rows.size > 0 do
+        sql = "SELECT #{self.select_section.join(",")} " + sql_2 + " OFFSET #{offset} LIMIT #{RECORDS_PER_PAGE} "
+        result = ActiveRecord::Base.connection.exec_query(sql)
+        result.rows.each do |row|
+          n_rows_processed = n_rows_processed + 1
+          update_column(:n_rows_processed, n_rows_processed) if n_rows_processed % 10 == 0
+          csv << row
+          sleep(1) if (n_rows_processed % 10 == 0) # TODO testing
+          puts "self.status=[#{self.status}]"
+          if Report::Query.find(self.id).status == 'cancelled'
+            cancel
+            return false
+          end
         end
+        offset = offset + RECORDS_PER_PAGE
       end
     end
     update_column(:n_rows_processed, n_rows_processed)
