@@ -727,6 +727,7 @@ ActiveRecord::Schema.define(version: 2020_05_05_153231) do
     t.string "ip"
     t.string "refer"
     t.string "browser"
+    t.string "staff_penn_key"
   end
 
   create_table "report_queries", force: :cascade do |t|

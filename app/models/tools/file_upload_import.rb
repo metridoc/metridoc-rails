@@ -47,6 +47,12 @@ class Tools::FileUploadImport < ApplicationRecord
 
     headers = csv.first.map{|c| c.strip.underscore.gsub(/[\s\/]+/, '_').downcase }
 
+    headers.each do |column_name|
+      if target_class.columns_hash[column_name].blank?
+        headers[headers.index(column_name)] = column_name.split(/[\_\(\-]+/).first
+      end
+    end
+
     unmatched_columns = headers.select { |column_name| target_class.columns_hash[column_name].blank? }
     if unmatched_columns.present?
       log "!!WARNING!!: These columns are not processed: [#{unmatched_columns.join(", ")}]"
