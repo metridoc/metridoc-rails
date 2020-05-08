@@ -36,7 +36,7 @@ class Report::Query < ApplicationRecord
     ReportQueryMailer.with(report_query: self).finished_notice.deliver_now
   end
 
-  def export
+  def build_query
     sql_2 =           " FROM #{self.from_section}"
     sql_2 =   sql_2 + " #{join_section}" if self.join_section.present?
     sql_2 =   sql_2 + " WHERE #{self.where_section} " if self.where_section.present?
@@ -46,8 +46,12 @@ class Report::Query < ApplicationRecord
     elsif self.order_section.present?
       sql_2 = sql_2 + " ORDER BY #{self.order_section} "
     end
+  end
 
-    sql = "SELECT COUNT(*) AS total_rows_to_process " + sql_2
+  def export
+    sql_2 = build_query
+
+    sql = "SELECT COUNT(*) AS total_rows_to_process FROM ( SELECT * " + sql_2 + " ) AS T"
     result = ActiveRecord::Base.connection.exec_query(sql)
     total_rows_to_process = result.rows.first[0]
     update_columns(n_rows_processed: 0, total_rows_to_process: total_rows_to_process)
