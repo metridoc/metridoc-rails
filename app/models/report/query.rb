@@ -49,13 +49,15 @@ class Report::Query < ApplicationRecord
     sql
   end
 
+  def calculate_rows_to_process
+    result = ActiveRecord::Base.connection.exec_query("SELECT COUNT(*) AS total_rows_to_process FROM ( " + build_query + " ) AS T")
+    return result.rows.first[0]
+  end
+
   def export
     query = build_query
 
-    sql = "SELECT COUNT(*) AS total_rows_to_process FROM ( " + query + " ) AS T"
-    result = ActiveRecord::Base.connection.exec_query(sql)
-    total_rows_to_process = result.rows.first[0]
-    update_columns(n_rows_processed: 0, total_rows_to_process: total_rows_to_process)
+    update_columns(n_rows_processed: 0, total_rows_to_process: calculate_rows_to_process)
 
     sql = query + " LIMIT 1 "
     result = ActiveRecord::Base.connection.exec_query(sql)
@@ -74,8 +76,6 @@ class Report::Query < ApplicationRecord
           n_rows_processed = n_rows_processed + 1
           update_column(:n_rows_processed, n_rows_processed) if n_rows_processed % 10 == 0
           csv << row
-          sleep(1) if (n_rows_processed % 10 == 0) # TODO testing
-          puts "self.status=[#{self.status}]"
           if Report::Query.find(self.id).status == 'cancelled'
             cancel
             return false
@@ -182,7 +182,9 @@ class Report::Query < ApplicationRecord
   end
 
   def queue_process
-    self.delay.process if self.status.blank? || self.status == 'pending'
+    return unless self.status.blank? || self.status == 'pending'
+    n = calculate_rows_to_process
+    self.delay(queue: "#{n > 5000 ? "large" : "default"}").process
   end
 
   def remove_select_section_bad_data

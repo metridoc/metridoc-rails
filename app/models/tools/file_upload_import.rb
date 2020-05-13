@@ -43,6 +43,12 @@ class Tools::FileUploadImport < ApplicationRecord
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
   end
 
+  def calculate_rows_to_process
+    csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
+    csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+    return csv.size-1
+  end
+
   def import(csv_file_path, target_class)
     batch_size = 250
     csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
@@ -252,7 +258,9 @@ class Tools::FileUploadImport < ApplicationRecord
   end
 
   def queue_process
-    self.delay.process if self.status.blank? || self.status == 'pending'
+    return unless self.status.blank? || self.status == 'pending'
+    n = calculate_rows_to_process
+    self.delay(queue: "#{n > 5000 ? "large" : "default"}").process
   end
 
 end
