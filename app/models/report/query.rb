@@ -37,26 +37,27 @@ class Report::Query < ApplicationRecord
   end
 
   def build_query
-    sql_2 =           " FROM #{self.from_section}"
-    sql_2 =   sql_2 + " #{join_section}" if self.join_section.present?
-    sql_2 =   sql_2 + " WHERE #{self.where_section} " if self.where_section.present?
-    sql_2 =   sql_2 + " GROUP BY #{self.group_by_section.join(",")} " if self.group_by_section.present?
-    if self.order_section.present? && self.order_direction_section.present?
-      sql_2 = sql_2 + " ORDER BY #{self.order_section} #{self.order_direction_section} "
-    elsif self.order_section.present?
-      sql_2 = sql_2 + " ORDER BY #{self.order_section} "
+    sql =       " SELECT #{self.select_section.join(",")} "
+    sql = sql + " FROM #{self.from_section}"
+    sql = sql + " #{join_section}" if self.join_section.present?
+    sql = sql + " WHERE #{self.where_section} " if self.where_section.present?
+    sql = sql + " GROUP BY #{self.group_by_section.join(",")} " if self.group_by_section.present?
+    if self.order_section.present?
+      sql = sql + " ORDER BY #{self.order_section} "
+      sql = sql + " #{self.order_direction_section} " if self.order_direction_section.present?
     end
+    sql
   end
 
   def export
-    sql_2 = build_query
+    query = build_query
 
-    sql = "SELECT COUNT(*) AS total_rows_to_process FROM ( SELECT * " + sql_2 + " ) AS T"
+    sql = "SELECT COUNT(*) AS total_rows_to_process FROM ( " + query + " ) AS T"
     result = ActiveRecord::Base.connection.exec_query(sql)
     total_rows_to_process = result.rows.first[0]
     update_columns(n_rows_processed: 0, total_rows_to_process: total_rows_to_process)
 
-    sql = "SELECT #{self.select_section.join(",")} " + sql_2 + " LIMIT 1 "
+    sql = query + " LIMIT 1 "
     result = ActiveRecord::Base.connection.exec_query(sql)
 
     self.output_file_name = "#{self.name.parameterize.underscore}_#{self.id}.csv"
@@ -67,7 +68,7 @@ class Report::Query < ApplicationRecord
     CSV.open("tmp/" + self.output_file_name, 'w', write_headers: true, headers: headers) do |csv|
       offset = 0
       while result.rows.size > 0 do
-        sql = "SELECT #{self.select_section.join(",")} " + sql_2 + " OFFSET #{offset} LIMIT #{RECORDS_PER_PAGE} "
+        sql = query + " OFFSET #{offset} LIMIT #{RECORDS_PER_PAGE} "
         result = ActiveRecord::Base.connection.exec_query(sql)
         result.rows.each do |row|
           n_rows_processed = n_rows_processed + 1
