@@ -71,6 +71,8 @@ en:
     gate_counts: "Gate counts"
     alma:
       alma_menu: "Alma"
+    ares:
+      ares_menu: "Ares"
     borrowdirect:
       borrowdirect_menu: "BorrowDirect"
       columns_heading: "Example data visualizations"
@@ -216,7 +218,15 @@ en:
       alma/circ_record:
         one: "Alma Circ Record"
         other: "Alma Circ Records"
+      ares/item_usage:
+        one: "Ares Item Usage"
+        other: "Ares Item Usage"
     attributes:
+      tools/file_upload_import:
+        target_model: "Target Model"
+        uploaded_file: "Upload File"
+        post_sql_to_execute: "Post SQL To Execute"
+        comments: "Comments"
       report/query:
         owner_id: "Owner"
         name: "Name"
@@ -230,5 +240,17 @@ en:
         last_run_at: "Last Run At"
         last_error_message: "Last Error Message"
         output_file_name: "Output File"
-
-
+      ares/item_usage:
+        semester: "Semester"
+        item_id: "Item ID"
+        date_time: "Date/Time"
+        document_type: "Document Type"
+        item_format: "Item Format"
+        course_id: "Course ID"
+        digital_item: "Digital Item"
+        course_number: "Course Number"
+        department: "Department"
+        date_time_year: "Date/Time Year"
+        date_time_month: "Date/Time Month"
+        date_time_day: "Date/Time Day"
+        date_time_hour: "Date/Time Hour"

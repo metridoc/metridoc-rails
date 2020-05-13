@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_13_013442) do
+ActiveRecord::Schema.define(version: 2020_05_13_023343) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -112,6 +112,22 @@ ActiveRecord::Schema.define(version: 2020_05_13_013442) do
     t.string "original_due_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "ares_item_usages", force: :cascade do |t|
+    t.string "semester"
+    t.string "item_id"
+    t.datetime "date_time"
+    t.string "document_type"
+    t.string "item_format"
+    t.string "course_id"
+    t.integer "digital_item"
+    t.string "course_number"
+    t.string "department"
+    t.integer "date_time_year"
+    t.integer "date_time_month"
+    t.integer "date_time_day"
+    t.integer "date_time_hour"
   end
 
   create_table "bookkeeping_data_loads", force: :cascade do |t|
@@ -354,6 +370,7 @@ ActiveRecord::Schema.define(version: 2020_05_13_013442) do
     t.datetime "updated_at", null: false
     t.integer "total_rows_to_process"
     t.integer "n_rows_processed"
+    t.string "post_sql_to_execute"
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|

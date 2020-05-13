@@ -5,6 +5,7 @@ ActiveAdmin.register Tools::FileUploadImport do
 
   permit_params :target_model,
                 :uploaded_file,
+                :post_sql_to_execute,
                 :comments
 
   controller do
@@ -16,9 +17,6 @@ ActiveAdmin.register Tools::FileUploadImport do
         flash[:notice] = t("flash.actions.create.notice", resource_name: @file_import.model_name.human)
       end
 
-      respond_to do |format|
-        format.js
-      end
     end
   end
 
@@ -38,6 +36,9 @@ ActiveAdmin.register Tools::FileUploadImport do
         end
         row :uploaded_file do
           link_to file_upload_import.uploaded_file.filename, url_for(file_upload_import.uploaded_file), target: '_blank' if file_upload_import.status == 'success'
+        end
+        row :post_sql_to_execute do
+          simple_format(file_upload_import.post_sql_to_execute)
         end
         row :status do
           file_upload_import.status.blank? ? I18n.t("phrases.file_upload_import.statuses.pending") : I18n.t("phrases.file_upload_import.statuses.#{file_upload_import.status}")

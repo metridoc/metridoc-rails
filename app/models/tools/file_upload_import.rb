@@ -7,6 +7,7 @@ class Tools::FileUploadImport < ApplicationRecord
   after_create  :queue_process
 
   UPLOADABLE_MODELS = [ Alma::CircRecord,
+                        Ares::ItemUsage,
                         Misc::ConsultationData,
                         Keyserver::StatusTerm,
                         Keyserver::PlatformTerm,
@@ -43,10 +44,10 @@ class Tools::FileUploadImport < ApplicationRecord
   end
 
   def import(csv_file_path, target_class)
-    batch_size = 100
+    batch_size = 250
     csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
 
-    headers = csv.first.map{|c| c.gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/\s+/, '_').downcase }
+    headers = csv.first.map{|c| c.underscore.gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase }
 
     headers.each do |column_name|
       if target_class.columns_hash[column_name].blank?
@@ -64,6 +65,7 @@ class Tools::FileUploadImport < ApplicationRecord
 
     update_columns(total_rows_to_process: (csv.size-1), n_rows_processed: 0)
 
+    success = true
     Tools::FileUploadImport.transaction do
 
       records = []
@@ -115,6 +117,7 @@ class Tools::FileUploadImport < ApplicationRecord
         records << target_class.new(attributes)
 
         if records.size >= batch_size
+          break if cancelled?
           return_val = import_records(target_class, records)
           if return_val[:status] == 'failed'
             n_errors += return_val[:n_errors]
@@ -123,10 +126,8 @@ class Tools::FileUploadImport < ApplicationRecord
             update_progress(n_inserted)
           end
           records = []
-          sleep(1) #TODO For testing
         end
 
-        break if cancelled?
       end
 
       if records.size > 0 && !cancelled?
@@ -149,15 +150,29 @@ class Tools::FileUploadImport < ApplicationRecord
       if n_errors > 0
         log "#{n_errors} errors encountered."
         log "Rolling back the upload."
+        success = false
         raise ActiveRecord::Rollback, "Rolling back the upload."
       else
         log "#{n_inserted} rows inserted successfully."
         log "Finished importing #{target_model_name}."
       end
 
+      if n_errors <= 0 && self.post_sql_to_execute.present?
+        log "Executing Post Sql."
+        log self.post_sql_to_execute
+        begin
+          ActiveRecord::Base.connection.execute(self.post_sql_to_execute)
+        rescue => ex
+          log "Error while executing sql => #{ex.message}"
+          success = false
+          raise ActiveRecord::Rollback, "Rolling back the upload."
+        end
+        log "Finished executing Post Sql."
+      end
+
     end #transaction
 
-    self.update_columns(status: n_errors <= 0 ? "success" : "failed") unless cancelled?
+    self.update_columns(status: success ? "success" : "failed") unless cancelled?
 
     save!
   end
