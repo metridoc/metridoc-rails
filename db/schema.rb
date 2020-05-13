@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_08_021907) do
+ActiveRecord::Schema.define(version: 2020_05_13_013442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -724,6 +724,11 @@ ActiveRecord::Schema.define(version: 2020_05_08_021907) do
     t.string "refer"
     t.string "browser"
     t.string "staff_penn_key"
+    t.string "rtg"
+    t.string "mba_type"
+    t.string "campus"
+    t.string "patron_name"
+    t.integer "graduation_year"
   end
 
   create_table "report_queries", force: :cascade do |t|
