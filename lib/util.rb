@@ -21,5 +21,9 @@ module Util
       return nil
     end
 
+    def column_to_attribute(column)
+      column.underscore.gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase
+    end
+
   end
 end

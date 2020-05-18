@@ -1,0 +1,9 @@
+one:
+  id: 1
+  key: 'misc_consultation_data.csv'
+  filename: 'misc_consultation_data.csv'
+  content_type: 'text/csv'
+  metadata: nil
+  byte_size: 2000
+  checksum: "123456789012345678901234"
+  created_at: <%= Time.now %>

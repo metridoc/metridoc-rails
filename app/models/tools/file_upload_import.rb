@@ -1,3 +1,4 @@
+require 'csv'
 class Tools::FileUploadImport < ApplicationRecord
   has_one_attached :uploaded_file
   belongs_to :uploaded_by, class_name: "AdminUser"
@@ -27,10 +28,6 @@ class Tools::FileUploadImport < ApplicationRecord
   def process
     return unless self.status.blank? || self.status == 'pending'
 
-    csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
-
-    target_class = self.target_model.constantize
-
     file_upload_import_logs.destroy_all
     file_upload_import_logs.reload
 
@@ -38,7 +35,7 @@ class Tools::FileUploadImport < ApplicationRecord
     self.update_columns(last_attempted_at: Time.now, status: "in-progress")
     FileUploadImportMailer.with(file_upload_import: self).started_notice.deliver_now
 
-    import(csv_file_path, target_class)
+    import
     log "Finished processing."
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
   end
@@ -49,17 +46,31 @@ class Tools::FileUploadImport < ApplicationRecord
     return csv.size-1
   end
 
-  def import(csv_file_path, target_class)
-    batch_size = 250
+  def csv_file_path
+    decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
+  end
+
+  def target_class
+    self.target_model.constantize
+  end
+
+  def get_headers
+    csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
     csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
-
-    headers = csv.first.map{|c| c.underscore.gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase }
-
+    headers = csv.first.map{|c| Util.column_to_attribute(c) }
     headers.each do |column_name|
       if target_class.columns_hash[column_name].blank?
         headers[headers.index(column_name)] = column_name.split(/\_+/).first
       end
     end
+    headers
+  end
+
+  def import
+    batch_size = 250
+    csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+
+    headers = get_headers
 
     unmatched_columns = headers.select { |column_name| target_class.columns_hash[column_name].blank? }
     if unmatched_columns.present?
