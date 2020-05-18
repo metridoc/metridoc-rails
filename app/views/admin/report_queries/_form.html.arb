@@ -15,7 +15,9 @@ active_admin_form_for [:admin, resource] do |f|
       end
     end
     f.input :where_section, label: "Where Section", input_html: {placeholder: "users.user_type = 'admin'"}
+    f.hidden_field :raw_group_by_section, as: :text, disabled: true
     f.input :group_by_section, label: "Group By Section", as: :check_boxes, :collection => f.object.radio_options_for_group_by_section
+    f.hidden_field :raw_order_section, as: :text, disabled: true
     f.input :order_section, label: "Order By Section", as: :radio, :collection => f.object.radio_options_for_order_section
     f.input :order_direction_section, label: "Order By Direction", as: :select, :collection => ["ASC", "DESC"], selected: f.object.order_direction_section, include_blank: true
 

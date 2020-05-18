@@ -49,7 +49,8 @@ $(document).ready(function() {
 
   function userOnQueriesNewOrEditPage() {
     var pathName = window.location.pathname;
-    return (pathName.indexOf('report_queries') >= 0) && ((pathName.indexOf('new') >= 0) || (pathName.indexOf('edit') >= 0));
+    var pageTitle = $("#page_title").text();
+    return (pathName.indexOf('report_queries') >= 0) && (pageTitle == "New Report Query" || pageTitle == "Edit Report Query");
   };
 
   function userLoadedFromTemplate() {
@@ -132,7 +133,9 @@ $(document).ready(function() {
       success: function(data) {
         populateSelectOptionsAfterTemplateLoad(data);
         populateOrderOptions(data);
+        selectOrderFromLoadedTemplate();
         updateGroupByFromEnabledSelectSection();
+        selectGroupByFromLoadedTemplate();
       },
       error: function(e) {
         console.log(e.message);
@@ -297,17 +300,18 @@ $(document).ready(function() {
 
   function reloadOnTemplateSelection() {
     $("#report_query_report_template_id").on("change", function() {
-      if (document.location.href.indexOf('?') >= 0) {
-        var url = document.location.href + "&template_id=" + this.value;
+      if (this.value == "") {
+        var url = document.location.href.split("?")[0];
       } else {
-        var url = document.location.href + "?template_id=" + this.value;
+        var baseUrl = document.location.href.split("?")[0];
+        var url = baseUrl + "?template_id=" + this.value;
       };
       var queryName = $("#report_query_name").val();
-      if (queryName != '') {
+      if (queryName != "") {
         url = url + "&name=" + queryName;
       };
       var queryComments = $("#report_query_comments").val();
-      if (queryComments != '') {
+      if (queryComments != "") {
         url = url + "&comments=" + queryComments;
       };
       document.location = url;
@@ -440,6 +444,18 @@ $(document).ready(function() {
 
   function resetJoinSectionOptions() {
     $("#join-section .report_template_join_clauses > fieldset").remove()
+  };
+
+  function selectOrderFromLoadedTemplate() {
+    var enabledOrderOption = JSON.parse($("#report_query_raw_order_section").val());
+    $("#report_query_order_section_input input[value='" + enabledOrderOption + "']").prop("checked", true);
+  };
+
+  function selectGroupByFromLoadedTemplate() {
+    var enabledTemplateGroupByOptions = JSON.parse($("#report_query_raw_group_by_section").val());
+    $.each(enabledTemplateGroupByOptions, function (index, groupByValue) {
+      $("#report_query_group_by_section_input input[value='" + groupByValue + "']").prop("checked", true);
+    });
   };
 
   if (userOnReportQeuryPage()) {

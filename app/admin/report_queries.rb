@@ -117,7 +117,9 @@ ActiveAdmin.register Report::Query do
         from_section: template.from_section,
         raw_join_clauses: template.join_clauses.to_json,
         where_section: template.where_section,
+        raw_group_by_section: template.group_by_section.to_json,
         group_by_section: template.group_by_section,
+        raw_order_section: template.order_section.to_json,
         order_section: template.order_section,
         order_direction_section: template.order_direction_section
       )

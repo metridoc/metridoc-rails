@@ -2,8 +2,7 @@ require 'csv'
 class Report::Query < ApplicationRecord
   serialize :select_section, Array
   serialize :group_by_section, Array
-  attr_accessor :select_section_with_aggregates
-  attr_accessor :raw_join_clauses
+  attr_accessor :select_section_with_aggregates, :raw_join_clauses, :raw_group_by_section, :raw_order_section
   attr_reader :join_section
   self.table_name = "report_queries"
 
@@ -56,7 +55,6 @@ class Report::Query < ApplicationRecord
 
   def export
     query = build_query
-
     update_columns(n_rows_processed: 0, total_rows_to_process: calculate_rows_to_process)
 
     sql = query + " LIMIT 1 "
@@ -157,6 +155,14 @@ class Report::Query < ApplicationRecord
 
   def raw_join_clauses=(raw_join_clauses)
     @raw_join_clauses = raw_join_clauses
+  end
+
+  def raw_group_by_section=(raw_group_by_section)
+    @raw_group_by_section = raw_group_by_section
+  end
+
+  def raw_order_section=(raw_order_section)
+    @raw_order_section = raw_order_section
   end
 
   def join_section

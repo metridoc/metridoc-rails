@@ -42,7 +42,8 @@ $(document).ready(function() {
 
   function userOnTemplatesNewOrEditPage() {
     var pathName = window.location.pathname;
-    return (pathName.indexOf('report_templates') >= 0) && ((pathName.indexOf('new') >= 0) || (pathName.indexOf('edit') >= 0))
+    var pageTitle = $("#page_title").text();
+    return (pathName.indexOf('report_templates') >= 0) && ((pageTitle == "New Template Query" || pageTitle == "Edit Template Query"));
   };
 
   // removes disabled attr from "Select" section once "From" section has a valid model name
