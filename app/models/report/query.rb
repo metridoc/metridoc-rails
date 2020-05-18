@@ -16,7 +16,7 @@ class Report::Query < ApplicationRecord
   before_validation :set_defaults
   after_create  :queue_process
 
-  validates_presence_of :name, uniqueness: true
+  validates :name, presence: true, uniqueness: true
 
   has_many :report_query_join_clauses, foreign_key: "report_query_id", class_name: "Report::QueryJoinClause", dependent: :destroy, inverse_of: :report_query
   accepts_nested_attributes_for :report_query_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
@@ -38,8 +38,8 @@ class Report::Query < ApplicationRecord
 
   def build_query
     sql =       " SELECT #{self.select_section.join(",")} "
-    sql = sql + " FROM #{self.from_section}"
-    sql = sql + " #{join_section}" if self.join_section.present?
+    sql = sql + " FROM #{self.from_section} "
+    sql = sql + " #{join_section} " if self.join_section.present?
     sql = sql + " WHERE #{self.where_section} " if self.where_section.present?
     sql = sql + " GROUP BY #{self.group_by_section.join(",")} " if self.group_by_section.present?
     if self.order_section.present?
@@ -122,7 +122,7 @@ class Report::Query < ApplicationRecord
     else
       fields = ["*"] + full_field_names
       fields.map do |attribute_name|
-        [attribute_name, attribute_name, {checked: select_section.include?(attribute_name)}]
+        [attribute_name, attribute_name, {checked: select_section && select_section.include?(attribute_name)}]
       end
     end
   end
@@ -133,20 +133,20 @@ class Report::Query < ApplicationRecord
         values.map{|value|"#{key}.#{value}"}
       end.flatten
       full_field_names.map do |attribute_name|
-        [attribute_name, attribute_name, {checked: group_by_section.include?(attribute_name)}]
+        [attribute_name, attribute_name, {checked: group_by_section && group_by_section.include?(attribute_name)}]
       end
     end
   end
 
   def radio_options_for_order_section
-    if order_section.blank?
+    if id.nil?
       []
     else
       full_field_names = TableRetrieval.attributes(table_names)[:table_attributes].map do |key,values|
         values.map{|value|"#{key}.#{value}"}
       end.flatten
       full_field_names.map do |attribute_name|
-        [attribute_name, attribute_name, {checked: order_section.include?(attribute_name)}]
+        [attribute_name, attribute_name, {checked: order_section && order_section.include?(attribute_name)}]
       end
     end
   end
@@ -188,7 +188,7 @@ class Report::Query < ApplicationRecord
   end
 
   def remove_select_section_bad_data
-    if select_section.first == '' || select_section.first == 'Select Section*'
+    if select_section.first.blank? || select_section.first.include?('Select Section')
       updated_select_section = select_section
       updated_select_section.shift
       self.select_section = updated_select_section

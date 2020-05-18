@@ -43,18 +43,18 @@ ActiveAdmin.register Report::Template do
 
   controller do
     def update
-      permitted_params = updated_permitted_params
+      # required because the radio button can be unselected
+      resource_params = updated_resource_params
       update!
     end
 
     private
 
-    # required because the radio button can be unselected
-    def updated_permitted_params
-      updated_params = permitted_params
+    def updated_resource_params
+      updated_params = resource_params.first
       order_section = updated_params[:order_section]
       updated_params[:order_section] = nil unless order_section
-      updated_params
+      [updated_params]
     end
   end
 

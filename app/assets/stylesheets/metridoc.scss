@@ -124,8 +124,12 @@ body.active_admin {
 
     .aggregate.select select {
       height: 20px;
-      line-height: 0;
+      line-height: 15px;
       padding: 0 16px 0 7px;
+    }
+
+    li.choice {
+      line-height: 24px;
     }
 
     #join-section {
