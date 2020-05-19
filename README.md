@@ -140,3 +140,34 @@ The following ENV variables need to be set for actionmailer to work:
     MAILER_DOMAIN='...'
     MAILER_DEFAULT_FROM='...'
 
+
+### Setting up a new table for CSV upload
+
+Metridoc supports uploading csv's into existing tables in the schema. The following steps will allow to create a brand new table and get it to be available for importing as csv:
+
+  1. Create a db migration to create the table in the schema, such as:
+
+    `create_table :ares_item_usages do |t|
+      t.string   :semester
+      t.string   :item_id
+      t.datetime :date_time
+      t.string   :document_type
+      t.string   :item_format
+      t.string   :course_id
+      t.integer  :digital_item
+      t.string   :course_number
+      t.string   :department
+      t.integer  :date_time_year
+      t.integer  :date_time_month
+      t.integer  :date_time_day
+      t.integer  :date_time_hour
+    end`
+
+  1. Run the DB migration with `rake db:migrate`
+
+  1. Update **Tools::FileUploadImport** UPLOADABLE_MODELS list with the name of the new table such as:
+    `[
+       ...
+       Ares::ItemUsage,
+       ...
+    ]`
