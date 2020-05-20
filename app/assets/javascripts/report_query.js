@@ -150,7 +150,7 @@ $(document).ready(function() {
     var tableAttributes = selectSectionOptions["table_attributes"];
     var tables = Object.keys(tableAttributes);
     if (tables) {
-      $("#report_query_select_section_input ol.choices-group").append("<li class='choice'><label for='report_template_select_section_*'><input type='checkbox' name='report_template[select_section][]' id='report_template_select_section_*' value='*'></input>*</label></li>");
+      $("#report_query_select_section_input ol.choices-group").append("<li class='choice'><label for='report_query_select_section_*'><input type='checkbox' name='report_query[select_section][]' id='report_query_select_section_*' value='*'></input>*</label></li>");
     };
     $.each(tables, function(index, table) {
       var attributes = tableAttributes[table]
@@ -170,7 +170,7 @@ $(document).ready(function() {
     var tableAttributes = selectSectionOptions["table_attributes"];
     var tables = Object.keys(tableAttributes);
     if (tables) {
-      $("#report_query_select_section_input ol.choices-group").append("<li class='choice'><label for='report_template_select_section_*'><input type='checkbox' name='report_template[select_section][]' id='report_template_select_section_*' value='*'></input>*</label></li>");
+      $("#report_query_select_section_input ol.choices-group").append("<li class='choice'><label for='report_query_select_section_*'><input type='checkbox' name='report_query[select_section][]' id='report_query_select_section_*' value='*'></input>*</label></li>");
     };
     $.each(tables, function(index, table) {
       var attributes = tableAttributes[table]
@@ -443,7 +443,7 @@ $(document).ready(function() {
   };
 
   function resetJoinSectionOptions() {
-    $("#join-section .report_template_join_clauses > fieldset").remove()
+    $("#join-section .report_query_join_clauses > fieldset").remove()
   };
 
   function selectOrderFromLoadedTemplate() {
