@@ -31,7 +31,8 @@ RUN gem install bundler && \
 
 COPY --chown=app:app . .
 
-RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
+RUN mv config/database.yml.example config/database.yml && \
+    RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
 
