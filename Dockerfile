@@ -25,7 +25,9 @@ USER app
 WORKDIR /home/app/webapp
 
 COPY --chown=app:app Gemfile* ./
-RUN bundle install
+
+RUN gem install bundler && \
+    bundle install
 
 COPY --chown=app:app . .
 
