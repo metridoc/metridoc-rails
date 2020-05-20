@@ -15,7 +15,7 @@ class Report::Query < ApplicationRecord
   before_validation :set_defaults
   after_create  :queue_process
 
-  validates :name, presence: true, uniqueness: true
+  validates :name, presence: true
 
   has_many :report_query_join_clauses, foreign_key: "report_query_id", class_name: "Report::QueryJoinClause", dependent: :destroy, inverse_of: :report_query
   accepts_nested_attributes_for :report_query_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
