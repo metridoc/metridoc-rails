@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby25:0.9.35
+FROM phusion/passenger-ruby25:1.0.9
 
 RUN apt-get update && apt-get install -qq -y --no-install-recommends \
   wget \
