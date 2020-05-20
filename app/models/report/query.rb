@@ -191,6 +191,10 @@ class Report::Query < ApplicationRecord
     return unless self.status.blank? || self.status == 'pending'
     n = calculate_rows_to_process
     self.delay(queue: "#{n > 5000 ? "large" : "default"}").process
+    rescue => ex
+      puts "Error while queuein process => #{ex.message}"
+      errors.add(:base, 'Unable to queue the export.')
+      raise ActiveRecord::Rollback
   end
 
   def remove_select_section_bad_data
