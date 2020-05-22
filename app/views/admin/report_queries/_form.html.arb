@@ -3,6 +3,7 @@ active_admin_form_for [:admin, resource] do |f|
   f.inputs id: 'report-query' do
     f.input :name
     f.input :comments
+    f.input :full_sql, as: :text, rows: 4
     f.input :report_template_id, label: "Report Template", as: :select, collection: Report::Template.all.collect{|t| [t.name, t.id]}, include_blank: I18n.t("phrases.please_select")
     f.hidden_field :select_section_with_aggregates, as: :text, disabled: true
     f.input :select_section, label: "Select Section", as: :check_boxes, :collection => f.object.checkbox_options_for_select_section

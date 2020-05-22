@@ -5,6 +5,7 @@ ActiveAdmin.register Report::Query do
   menu if: proc{ authorized?(:read, Report::Query) }, parent: I18n.t("phrases.reports")
 
   permit_params :name,
+                :full_sql,
                 :report_template_id,
                 :owner_id,
                 :comments,

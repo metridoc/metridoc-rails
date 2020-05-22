@@ -36,6 +36,8 @@ class Report::Query < ApplicationRecord
   end
 
   def build_query
+    return full_sql if full_sql.present?
+
     sql =       " SELECT #{self.select_section.join(",")} "
     sql = sql + " FROM #{self.from_section} "
     sql = sql + " #{join_section} " if self.join_section.present?

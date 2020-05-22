@@ -228,6 +228,7 @@ en:
         post_sql_to_execute: "Post SQL To Execute"
         comments: "Comments"
       report/query:
+        full_sql: "Full SQL to execute (other fields will be ignored)"
         owner_id: "Owner"
         name: "Name"
         comments: "Comments"
