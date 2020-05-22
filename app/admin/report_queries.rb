@@ -26,11 +26,14 @@ ActiveAdmin.register Report::Query do
       attributes_table do
         row :name
         row :comments
+        row :full_sql do
+          simple_format(report_query.full_sql) if report_query.full_sql.present?
+        end
         row :report_template_id do
-          report_query.report_template_id.present? ? report_query.report_template.name : "-"
+          report_query.report_template.name if report_query.report_template_id.present?
         end
         row :owner do
-          report_query.owner ? report_query.owner.full_name : "-"
+          report_query.owner.full_name if report_query.owner.present?
         end
         row :output_file_name do
           report_query.output_file_name.present? ? link_to(I18n.t("phrases.download"), download_admin_report_query_path(report_query), target: '_blank') : "-"
@@ -112,6 +115,7 @@ ActiveAdmin.register Report::Query do
       @report_query = Report::Query.new(
         name: carryover_name,
         comments: carryover_comments,
+        full_sql: template.full_sql,
         report_template_id: template.id,
         select_section_with_aggregates: template.select_section,
         select_section: template.select_section,

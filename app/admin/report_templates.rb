@@ -5,6 +5,7 @@ ActiveAdmin.register Report::Template do
 
   permit_params :name,
                 :comments,
+                :full_sql,
                 :from_section,
                 :where_section,
                 :order_direction_section,
@@ -28,6 +29,9 @@ ActiveAdmin.register Report::Template do
     attributes_table do
       row :name
       row :comments
+      row :full_sql do |report_template|
+        simple_format(report_template.full_sql) if report_template.full_sql.present?
+      end
       row :select_section
       row :from_section
       row :join_section

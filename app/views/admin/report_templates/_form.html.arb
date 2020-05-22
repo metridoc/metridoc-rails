@@ -2,6 +2,7 @@ active_admin_form_for [:admin, resource] do |f|
   f.inputs id: 'report-template' do
     f.input :name
     f.input :comments
+    f.input :full_sql, as: :text, rows: 4
     f.hidden_field :select_section_with_aggregates, as: :text, disabled: true
     f.input :select_section, label: "Select Section", as: :check_boxes, :collection => f.object.checkbox_options_for_select_section
     f.input :from_section, label: "From Section", as: :select, :collection => TableRetrieval.all_tables, include_blank: I18n.t('phrases.please_select')
