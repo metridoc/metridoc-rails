@@ -177,10 +177,11 @@ module Import
         csv.close
 
         table_name = class_name.table_name
-        password = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['password']
-        username = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['username']
-        host = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['host']
-        cmd = "PGPASSWORD='#{password}' psql -U#{username} -h #{host} -c \
+        db_config = YAML.load_file(Rails.root + "config" + "database.yml")[Rails.env]
+        password = db_config["password"]
+        username = db_config["username"]
+        host = db_config["makara"]["connections"].select{|item| item["role"] == "master"}.first["host"]
+        cmd = "PGPASSWORD='#{password}' psql -U #{username} -h #{host} -c \
               \"\\copy #{table_name}(#{headers}) FROM '#{csv_file_path}' WITH DELIMITER ',' HEADER CSV\""
 
         system(cmd)
