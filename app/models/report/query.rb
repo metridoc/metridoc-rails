@@ -21,7 +21,7 @@ class Report::Query < ApplicationRecord
   accepts_nested_attributes_for :report_query_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
   alias join_clauses report_query_join_clauses
 
-  RECORDS_PER_PAGE = 1000
+  RECORDS_PER_PAGE = 2500
 
   def process
     return unless self.status.blank? || self.status == 'pending'
@@ -74,7 +74,6 @@ class Report::Query < ApplicationRecord
         result = ActiveRecord::Base.connection.exec_query(sql)
         result.rows.each do |row|
           n_rows_processed = n_rows_processed + 1
-          update_column(:n_rows_processed, n_rows_processed) if n_rows_processed % 10 == 0
           csv << row
           if Report::Query.find(self.id).status == 'cancelled'
             cancel
@@ -82,6 +81,7 @@ class Report::Query < ApplicationRecord
           end
         end
         offset = offset + RECORDS_PER_PAGE
+        update_column(:n_rows_processed, n_rows_processed)
       end
     end
     update_column(:n_rows_processed, n_rows_processed)
@@ -105,7 +105,7 @@ class Report::Query < ApplicationRecord
   end
 
   def re_process
-    update_columns(last_run_at: nil, status: nil, output_file_name: nil, total_rows_to_process: nil, n_rows_processed: nil)
+    update_columns(last_run_at: nil, status: nil, output_file_name: nil, total_rows_to_process: nil, n_rows_processed: nil, last_error_message: nil)
     queue_process
   end
 

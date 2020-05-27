@@ -460,7 +460,7 @@ $(document).ready(function() {
 
   if (userOnReportQeuryPage()) {
     if ($("div[_report_query_id]").length) {
-      if ($(".row-status > td").text().toLowerCase() != 'success') {
+      if ($(".row-status > td").text().toLowerCase() != 'success' && $(".row-status > td").text().toLowerCase() != 'failed') {
         reportquery_refreshProgressBar();
       }
     }
@@ -484,10 +484,12 @@ $(document).ready(function() {
       if (!total_rows_to_process && status != 'failed') return;
 
       var completed_perc = parseInt((n_rows_processed / total_rows_to_process) * 100);
-      if (completed_perc >= 100) progressing = false;
+      if (completed_perc >= 100 || status == 'failed') progressing = false;
 
       var html = "";
-      html += n_rows_processed + ' of ' + total_rows_to_process + ' rows exported';
+      if (total_rows_to_process) {
+        html += n_rows_processed + ' of ' + total_rows_to_process + ' rows exported';
+      }
       html += '<div style="width:500px;border:1px solid black;height: 25px;" id=progress-bar >' +
                 '<div style="height:100%;width: ' + completed_perc + '%;background-color:lightblue;text-align:center;vertical-align:middle;font-weight:bold;" ></div>' +
               '</div>'
