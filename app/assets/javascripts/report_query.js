@@ -481,7 +481,7 @@ $(document).ready(function() {
       var n_rows_processed = data.n_rows_processed;
       var status = data.status;
 
-      if (!total_rows_to_process) return;
+      if (!total_rows_to_process && status != 'failed') return;
 
       var completed_perc = parseInt((n_rows_processed / total_rows_to_process) * 100);
       if (completed_perc >= 100) progressing = false;
