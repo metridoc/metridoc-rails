@@ -189,13 +189,24 @@ class Report::Query < ApplicationRecord
 
   end
 
-  def queue_process
+  def process_in_right_queue
     return unless self.status.blank? || self.status == 'pending'
     n = calculate_rows_to_process
     self.delay(queue: "#{n > 5000 ? "large" : "default"}").process
     rescue => ex
       puts "Error while queuein process => #{ex.message}"
-      errors.add(:base, 'Unable to queue the export.')
+      self.output_file_name = nil
+      self.last_error_message = ex.message
+      self.status = "failed"
+      save!
+  end
+
+  def queue_process
+    return unless self.status.blank? || self.status == 'pending'
+    self.delay.process_in_right_queue
+    rescue => ex
+      puts "Error while queuein process => #{ex.message}"
+      errors.add(:base, "Unable to queue the export. => [#{ex.message}]")
       raise ActiveRecord::Rollback
   end
 
