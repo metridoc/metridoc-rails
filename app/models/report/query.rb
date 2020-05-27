@@ -21,7 +21,7 @@ class Report::Query < ApplicationRecord
   accepts_nested_attributes_for :report_query_join_clauses, allow_destroy: true, reject_if: proc {|attributes| attributes['keyword'].blank? || attributes['table'].blank? || attributes['on_keys'].blank? }
   alias join_clauses report_query_join_clauses
 
-  RECORDS_PER_PAGE = 10
+  RECORDS_PER_PAGE = 1000
 
   def process
     return unless self.status.blank? || self.status == 'pending'

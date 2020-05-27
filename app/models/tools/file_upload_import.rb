@@ -67,7 +67,7 @@ class Tools::FileUploadImport < ApplicationRecord
   end
 
   def import
-    batch_size = 250
+    batch_size = 1000
     csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
 
     headers = get_headers
