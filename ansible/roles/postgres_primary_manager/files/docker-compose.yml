@@ -7,6 +7,8 @@ services:
       postgres
         -c hba_file=/var/lib/postgresql/pg_hba.conf
         -c log_min_error_statement=log
+        -c max_wal_size=4GB
+        -c wal_keep_segments=80
     configs:
       - source: postgres_primary_pg_hba_conf
         target: /var/lib/postgresql/pg_hba.conf
