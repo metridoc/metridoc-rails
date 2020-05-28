@@ -199,17 +199,9 @@ module Preprocess
         temp_file = Tempfile.new("#{import_file_name}.tmp")
         temp_csv = CSV.open(temp_file, 'wb')
 
+        # TODO: Check headers for names with spaces and handle accordingly
         headers = csv.shift
-        # assume there's a BOM that's prefixed to the first header field
-        headers[0].gsub!(/^\p{C}/, "")
-
-        # TODO: change to how output_headers is set is specifically to deal w/
-        # TODO: Alma csv. figure out whether this breaks other csv.
-        output_headers = []
-        headers.each do |h|
-          output_headers << task_config['column_mappings'][h]
-        end
-
+        output_headers = headers.clone
         output_headers.unshift("institution_id") if has_institution_id?
         output_headers << 'created_at' if has_created_at?
         output_headers << 'updated_at' if has_updated_at?
@@ -217,6 +209,7 @@ module Preprocess
         temp_csv << output_headers
         timestamp = DateTime.now.to_s
         n_errors = 0
+
         csv.each do |row|
           if n_errors >= 100
             log "Too many errors #{n_errors}, exiting!"
@@ -224,9 +217,7 @@ module Preprocess
           end
 
           cols = {}
-          #TODO: below might be redundant?
           headers.each_with_index do |k,i|
-            k = k.gsub(" ", "_").delete("()+")
             cols[k.to_s.strip.underscore.to_sym] = row[i]
           end
 
