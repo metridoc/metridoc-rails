@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_22_182825) do
+ActiveRecord::Schema.define(version: 2020_06_01_034142) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 2020_05_22_182825) do
   end
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
-    t.string "request_number", limit: 12
+    t.text "request_number"
     t.string "patron_type", limit: 1
     t.string "author", limit: 300
     t.string "title", limit: 400
@@ -159,6 +159,11 @@ ActiveRecord::Schema.define(version: 2020_05_22_182825) do
     t.string "oclc_text", limit: 25
     t.string "local_item_found", limit: 1
     t.boolean "is_legacy", default: false, null: false
+    t.index ["borrower", "lender", "request_number", "patron_type"], name: "borrowdirect_bibliographies_composite_idx"
+    t.index ["borrower"], name: "index_borrowdirect_bibliographies_on_borrower"
+    t.index ["lender"], name: "index_borrowdirect_bibliographies_on_lender"
+    t.index ["patron_type"], name: "index_borrowdirect_bibliographies_on_patron_type"
+    t.index ["request_number"], name: "index_borrowdirect_bibliographies_on_request_number"
   end
 
   create_table "borrowdirect_call_numbers", force: :cascade do |t|
@@ -174,6 +179,7 @@ ActiveRecord::Schema.define(version: 2020_05_22_182825) do
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
     t.boolean "is_legacy", default: false, null: false
+    t.index ["exception_code"], name: "index_borrowdirect_exception_codes_on_exception_code"
   end
 
   create_table "borrowdirect_institutions", force: :cascade do |t|
@@ -182,18 +188,21 @@ ActiveRecord::Schema.define(version: 2020_05_22_182825) do
     t.string "institution_name", limit: 100
     t.string "prime_post_zipcode", limit: 16
     t.decimal "weighting_factor", precision: 5, scale: 2
+    t.index ["library_id"], name: "index_borrowdirect_institutions_on_library_id"
   end
 
   create_table "borrowdirect_min_ship_dates", force: :cascade do |t|
     t.string "request_number", limit: 12, null: false
     t.datetime "min_ship_date", null: false
     t.boolean "is_legacy", default: false, null: false
+    t.index ["request_number"], name: "index_borrowdirect_min_ship_dates_on_request_number"
   end
 
   create_table "borrowdirect_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 50
     t.boolean "is_legacy", default: false, null: false
+    t.index ["patron_type"], name: "index_borrowdirect_patron_types_on_patron_type"
   end
 
   create_table "borrowdirect_print_dates", force: :cascade do |t|
@@ -203,15 +212,19 @@ ActiveRecord::Schema.define(version: 2020_05_22_182825) do
     t.datetime "process_date"
     t.integer "library_id"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["request_number"], name: "index_borrowdirect_print_dates_on_request_number"
   end
 
   create_table "borrowdirect_ship_dates", force: :cascade do |t|
-    t.string "request_number", limit: 12
+    t.text "request_number"
     t.datetime "ship_date", null: false
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
   end
+  t.index ["exception_code"], name: "index_borrowdirect_ship_dates_on_exception_code"
+  t.index ["request_number", "exception_code"], name: "borrowdirect_ship_dates_composite_idx"
+  t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
 
   create_table "consultation_interactions", force: :cascade do |t|
     t.datetime "submitted"
