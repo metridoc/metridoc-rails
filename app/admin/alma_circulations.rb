@@ -1,4 +1,4 @@
-ActiveAdmin.register Alma::CircRecord do
+ActiveAdmin.register Alma::Circulation do
   menu false
   actions :all, :except => [:new, :edit, :update, :destroy]
 

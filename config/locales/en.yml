@@ -215,9 +215,9 @@ en:
       report/template:
         one: "Report Template"
         other: "Report Templates"
-      alma/circ_record:
-        one: "Alma Circ Record"
-        other: "Alma Circ Records"
+      alma/circulation:
+        one: "Alma Circulation"
+        other: "Alma Circulations"
       ares/item_usage:
         one: "Ares Item Usage"
         other: "Ares Item Usage"

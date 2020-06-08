@@ -7,7 +7,7 @@ class Tools::FileUploadImport < ApplicationRecord
   before_create :set_defaults
   after_create  :queue_process
 
-  UPLOADABLE_MODELS = [ Alma::CircRecord,
+  UPLOADABLE_MODELS = [ Alma::Circulation,
                         Ares::ItemUsage,
                         Misc::ConsultationData,
                         Keyserver::StatusTerm,
