@@ -17,7 +17,7 @@ commands:
           working_directory: ansible/roles/<< parameters.role >>
 
 jobs:
-  deploy:
+  deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     steps:
@@ -33,7 +33,29 @@ jobs:
           working_directory: ~/project/ansible
           command: |
             ansible-playbook \
-              -i inventories/$ANSIBLE_ENVIRONMENT \
+              -i inventories/production \
+              -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
+              -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
+              -u deploy \
+              --vault-id vault_password.py \
+              metridoc.yml
+  deploy-staging:
+    docker:
+      - image: quay.io/upennlibraries/ansible:2.8
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - ba:9a:a2:2e:b8:da:75:a7:94:d4:fc:42:4f:48:d5:9d
+      - run:
+          command: |
+            echo "$SSH_BASTION_KNOWN_HOST" >> ~/.ssh/known_hosts
+            echo "$DEPLOY_TARGET_KNOWN_HOST_STAGING" >> ~/.ssh/known_hosts
+      - run:
+          working_directory: ~/project/ansible
+          command: |
+            ansible-playbook \
+              -i inventories/staging \
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
@@ -86,19 +108,7 @@ workflows:
           role: postgres_replica_manager
           requires:
             - gitleaks/check_local
-      - deploy:
-          context: metridoc-staging
-          filters:
-            branches:
-              only: staging
-          requires:
-            - docker-publish/publish
-            - test_jenkins_manager_role
-            - test_metridoc_manager_role
-            - test_postgres_primary_manager_role
-            - test_postgres_replica_manager_role
-      - deploy:
-          context: metridoc-production
+      - deploy-production:
           filters:
             branches:
               only: master
@@ -108,3 +118,13 @@ workflows:
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role
             - test_postgres_replica_manager_role
+      - deploy-staging:
+        filters:
+          branches:
+            only: staging
+        requires:
+          - docker-publish/publish
+          - test_jenkins_manager_role
+          - test_metridoc_manager_role
+          - test_postgres_primary_manager_role
+          - test_postgres_replica_manager_role
