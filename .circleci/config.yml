@@ -18,10 +18,6 @@ commands:
 
 jobs:
   deploy:
-    parameters:
-      environment:
-        description: Environment to deploy
-        type: string
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     steps:
@@ -37,7 +33,7 @@ jobs:
           working_directory: ~/project/ansible
           command: |
             ansible-playbook \
-              -i inventories/<< parameters.environment >> \
+              -i inventories/$ANSIBLE_ENVIRONMENT \
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
@@ -91,10 +87,10 @@ workflows:
           requires:
             - gitleaks/check_local
       - deploy:
+          context: metridoc-staging
           filters:
             branches:
               only: staging
-          environment: staging
           requires:
             - docker-publish/publish
             - test_jenkins_manager_role
@@ -102,10 +98,10 @@ workflows:
             - test_postgres_primary_manager_role
             - test_postgres_replica_manager_role
       - deploy:
+          context: metridoc-production
           filters:
             branches:
               only: master
-          environment: production
           requires:
             - docker-publish/publish
             - test_jenkins_manager_role
