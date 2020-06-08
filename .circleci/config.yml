@@ -119,12 +119,12 @@ workflows:
             - test_postgres_primary_manager_role
             - test_postgres_replica_manager_role
       - deploy-staging:
-        filters:
-          branches:
-            only: staging
-        requires:
-          - docker-publish/publish
-          - test_jenkins_manager_role
-          - test_metridoc_manager_role
-          - test_postgres_primary_manager_role
-          - test_postgres_replica_manager_role
+          filters:
+            branches:
+              only: staging
+          requires:
+            - docker-publish/publish
+            - test_jenkins_manager_role
+            - test_metridoc_manager_role
+            - test_postgres_primary_manager_role
+            - test_postgres_replica_manager_role
