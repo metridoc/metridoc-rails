@@ -480,11 +480,12 @@ $(document).ready(function() {
       var total_rows_to_process = data.total_rows_to_process;
       var n_rows_processed = data.n_rows_processed;
       var status = data.status;
-
-      if (!total_rows_to_process && status != 'failed') return;
+      if (total_rows_to_process == null && status != 'failed') return;
 
       var completed_perc = parseInt((n_rows_processed / total_rows_to_process) * 100);
-      if (completed_perc >= 100 || status == 'failed') progressing = false;
+      if (total_rows_to_process == 0 || completed_perc >= 100 || status == 'failed') {
+        progressing = false;
+      };
 
       var html = "";
       if (total_rows_to_process) {
