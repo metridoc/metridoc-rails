@@ -50,6 +50,7 @@ docker_stack_env:
   DATABASE_SUBNET: '{{ database_subnet }}'
   GF_SERVER_ROOT_URL: http://localhost:3000
   GF_SMTP_HOST: localhost:25
+  JENKINS_IMAGE_TAG: lts-alpine
   METRIDOC_IMAGE_TAG: local
   METRIDOC_REPLICAS: 1
   MONITORING_SUBNET: '{{ monitoring_subnet }}'
