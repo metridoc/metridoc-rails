@@ -75,13 +75,13 @@ class Report::Query < ApplicationRecord
         result.rows.each do |row|
           n_rows_processed = n_rows_processed + 1
           csv << row
-          if Report::Query.find(self.id).status == 'cancelled'
-            cancel
-            return false
-          end
         end
         offset = offset + RECORDS_PER_PAGE
         update_column(:n_rows_processed, n_rows_processed)
+        if Report::Query.find(self.id).status == 'cancelled'
+          cancel
+          return false
+        end
       end
     end
     update_column(:n_rows_processed, n_rows_processed)
