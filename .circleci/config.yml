@@ -60,7 +60,7 @@ jobs:
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
               --vault-id vault_password.py \
-              metridoc.yml
+              site.yml
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
