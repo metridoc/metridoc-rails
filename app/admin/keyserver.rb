@@ -1,7 +1,7 @@
 ActiveAdmin.register_page "Keyserver" do
-  menu false
+  menu if: proc{ authorized?(:read, "Keyserver") }, label: I18n.t("active_admin.keyserver.keyserver_menu"), parent: I18n.t("active_admin.resource_sharing")
 
-  content do
+  content title: I18n.t("active_admin.keyserver.keyserver_menu") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
     resources = resources.select{|r| /^Keyserver::/.match(r.resource_name.name) }

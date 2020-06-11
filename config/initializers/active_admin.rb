@@ -62,7 +62,7 @@ ActiveAdmin.setup do |config|
   # method in a before filter of all controller actions to
   # ensure that there is a user with proper rights. You can use
   # CanCanAdapter or make your own. Please refer to documentation.
-  # config.authorization_adapter = ActiveAdmin::CanCanAdapter
+  config.authorization_adapter = "ActiveAdminAuthorization"
 
   # In case you prefer Pundit over other solutions you can here pass
   # the name of default policy class. This policy will be used in every
@@ -199,7 +199,8 @@ ActiveAdmin.setup do |config|
   #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
   #
   # To load a javascript file:
-  #   config.register_javascript 'my_javascript.js'
+    config.register_javascript 'report_template.js'
+    config.register_javascript 'report_query.js'
 
   # == CSV options
   #
@@ -293,30 +294,18 @@ ActiveAdmin.setup do |config|
 
   config.namespace :admin do |admin|
 
+    admin.build_menu :utility_navigation do |menu|
+      user_menu = menu.add  label: proc { current_admin_user.full_name },
+                            url: proc { edit_profile_admin_admin_users_url },
+                            id: 'current_user',
+                            if:  proc { current_active_admin_user } # Check the permissions here
+      admin.add_logout_button_to_menu user_menu, 100
+    end
+
     admin.build_menu do |menu|
       menu.add label: I18n.t("active_admin.resource_sharing"), priority: 1 do |sites|
-        sites.add label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"),
-                  url: :admin_borrowdirect_path
-        sites.add label: I18n.t("active_admin.ezborrow.ezborrow_menu"),
-                  url: :admin_ezborrow_path
-        sites.add label: I18n.t("active_admin.illiad.illiad_menu"),
-                  url: :admin_illiad_path
-        sites.add label:  I18n.t("active_admin.keyserver.keyserver_menu"),
-                  url: :admin_keyserver_path
-        sites.add label: I18n.t("active_admin.gate_counts"),
-                  url: :admin_gatecount_path
-        sites.add label: I18n.t("active_admin.marc_data"),
-                  url: :admin_marcdata_path
-        sites.add label: I18n.t("active_admin.misc"),
-                  url: :admin_misc_path
         sites.add label: I18n.t("active_admin.comments_heading"),
                   url: :admin_comments_path
-        sites.add label: I18n.t("active_admin.logs"),
-                  url: :admin_log_job_executions_path
-        sites.add label: I18n.t("active_admin.library_profiles_heading"),
-                  url: :admin_libraryprofile_path
-        sites.add label: I18n.t("active_admin.consultation.consultation_menu"),
-                  url: :admin_consultation_path
       end
     end
 
@@ -332,6 +321,7 @@ ActiveAdmin.setup do |config|
                   url: :admin_tutorials_path
       end
     end
+
   end
 
   # == Sorting

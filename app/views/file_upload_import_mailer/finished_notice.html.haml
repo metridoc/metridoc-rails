@@ -1,0 +1,16 @@
+We have finished processing your File Upload #{@file_upload_import.uploaded_file.filename} - #{@file_upload_import.target_model_name}.
+%br
+Status: 
+- if @file_upload_import.status == 'failed'
+  %span{style: "color: red; font-weight:bold;"}
+    = I18n.t("phrases.file_upload_import.statuses.#{@file_upload_import.status}")
+- else
+  =  @file_upload_import.status.blank? ? I18n.t("phrases.file_upload_import.statuses.pending") : I18n.t("phrases.file_upload_import.statuses.#{@file_upload_import.status}")
+%br
+Last attempted at: #{@file_upload_import.last_attempted_at.blank? ? "-" : I18n.l(@file_upload_import.last_attempted_at)}
+%br
+%hr
+%b Logs:
+%br
+= @file_upload_import.file_upload_import_logs.map{|log| "#{log.sequence}. #{log.log_datetime.strftime("%m/%d/%Y %H:%M:%S")} - #{log.log_text}" }.join("<br>").html_safe
+%hr

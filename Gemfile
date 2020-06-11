@@ -1,10 +1,8 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.1'
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.1.0'
+gem 'rails', '~> 5.2.0'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use Puma as the app server
@@ -36,6 +34,7 @@ gem 'mysql2'
 gem 'makara', '~> 0.4.1'
 
 gem 'activerecord-import'
+gem 'active_storage_validations'
 
 gem 'devise'
 gem 'activeadmin'
@@ -50,10 +49,14 @@ gem 'groupdate'
 
 gem 'chronic'
 
+gem 'delayed_job_active_record'
+gem 'daemons'
+
 gem 'dotenv-rails'
 group :development, :test do
+  gem 'rb-readline'
   gem 'pry'
-  gem 'pry-rails'
+  # gem 'pry-rails'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
@@ -71,8 +74,9 @@ group :development do
 
   #tiny_tds and activerecord-sqlserver-adapter gems are needed by only import_helper.rb, which is not really part of the app, it is more for diagnosing/troubleshooting sql server sources
   gem 'tiny_tds', '~> 2.1.0'
-  gem 'activerecord-sqlserver-adapter', '~> 5.1.0'
+  gem 'activerecord-sqlserver-adapter', '~> 5.2.0'
   gem 'rails_db'
+  gem "letter_opener"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

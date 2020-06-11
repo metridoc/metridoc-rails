@@ -1,5 +1,6 @@
 ActiveAdmin.register_page "LibraryProfile" do
-  menu false
+  menu if: proc{ authorized?(:read, "LibraryProfile") }, label: I18n.t("active_admin.library_profiles_heading"), parent: I18n.t("active_admin.resource_sharing")
+
   content title: proc{ I18n.t("active_admin.library_profiles_heading") } do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }

@@ -1,4 +1,5 @@
 class AdminUser < ApplicationRecord
+  belongs_to :user_role, class_name: "Security::UserRole", optional: true
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, 
@@ -13,5 +14,29 @@ class AdminUser < ApplicationRecord
       xml.tag!(:updated_at, updated_at)
     end
   end
+
+  def authorized?(action, subject)
+    return true if self.super_admin?
+
+    # check for edit_profile
+    return true if subject == self
+
+    return !Security::UserRole.subject_secured?(subject) if self.user_role.blank?
+
+    return self.user_role.authorized?(action, subject)
+  end
+
+  def full_name
+    self.first_name.blank? && self.last_name.blank? ? "#{self.email}" : [self.first_name, self.last_name].join(" ")
+  end
+
+  def can_edit_system_admin_attribute?(admin_user)
+    return system_admin? && admin_user != self
+  end
+
+  protected 
+  def password_required? 
+    self.encrypted_password.blank?
+  end 
 
 end

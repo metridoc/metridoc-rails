@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20200316193520) do
+ActiveRecord::Schema.define(version: 2020_06_08_041347) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,12 +110,22 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "loan_date"
     t.datetime "due_date"
     t.datetime "original_due_date"
+  end
 
-  create_table "andyrid_instructions", force: :cascade do |t|
-    t.datetime "submitted"
-    t.string "consultation_or_instruction"
-    t.string "staff_member_name"
-    t.text "description"
+  create_table "ares_item_usages", force: :cascade do |t|
+    t.string "semester"
+    t.string "item_id"
+    t.datetime "date_time"
+    t.string "document_type"
+    t.string "item_format"
+    t.string "course_id"
+    t.integer "digital_item"
+    t.string "course_number"
+    t.string "department"
+    t.integer "date_time_year"
+    t.integer "date_time_month"
+    t.integer "date_time_day"
+    t.integer "date_time_hour"
   end
 
   create_table "bookkeeping_data_loads", force: :cascade do |t|
@@ -125,7 +135,7 @@ ActiveRecord::Schema.define(version: 20200316193520) do
   end
 
   create_table "borrowdirect_bibliographies", force: :cascade do |t|
-    t.string "request_number", limit: 12
+    t.text "request_number"
     t.string "patron_type", limit: 1
     t.string "author", limit: 300
     t.string "title", limit: 400
@@ -147,6 +157,11 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "oclc_text", limit: 25
     t.string "local_item_found", limit: 1
     t.boolean "is_legacy", default: false, null: false
+    t.index ["borrower", "lender", "request_number", "patron_type"], name: "borrowdirect_bibliographies_composite_idx"
+    t.index ["borrower"], name: "index_borrowdirect_bibliographies_on_borrower"
+    t.index ["lender"], name: "index_borrowdirect_bibliographies_on_lender"
+    t.index ["patron_type"], name: "index_borrowdirect_bibliographies_on_patron_type"
+    t.index ["request_number"], name: "index_borrowdirect_bibliographies_on_request_number"
   end
 
   create_table "borrowdirect_call_numbers", force: :cascade do |t|
@@ -162,6 +177,7 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "exception_code", limit: 3, null: false
     t.string "exception_code_desc", limit: 64
     t.boolean "is_legacy", default: false, null: false
+    t.index ["exception_code"], name: "index_borrowdirect_exception_codes_on_exception_code"
   end
 
   create_table "borrowdirect_institutions", force: :cascade do |t|
@@ -170,18 +186,21 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "institution_name", limit: 100
     t.string "prime_post_zipcode", limit: 16
     t.decimal "weighting_factor", precision: 5, scale: 2
+    t.index ["library_id"], name: "index_borrowdirect_institutions_on_library_id"
   end
 
   create_table "borrowdirect_min_ship_dates", force: :cascade do |t|
     t.string "request_number", limit: 12, null: false
     t.datetime "min_ship_date", null: false
     t.boolean "is_legacy", default: false, null: false
+    t.index ["request_number"], name: "index_borrowdirect_min_ship_dates_on_request_number"
   end
 
   create_table "borrowdirect_patron_types", force: :cascade do |t|
     t.string "patron_type", limit: 1, null: false
     t.string "patron_type_desc", limit: 50
     t.boolean "is_legacy", default: false, null: false
+    t.index ["patron_type"], name: "index_borrowdirect_patron_types_on_patron_type"
   end
 
   create_table "borrowdirect_print_dates", force: :cascade do |t|
@@ -191,14 +210,18 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "process_date"
     t.integer "library_id"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["request_number"], name: "index_borrowdirect_print_dates_on_request_number"
   end
 
   create_table "borrowdirect_ship_dates", force: :cascade do |t|
-    t.string "request_number", limit: 12
+    t.text "request_number"
     t.datetime "ship_date", null: false
     t.string "exception_code", limit: 3
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["exception_code"], name: "index_borrowdirect_ship_dates_on_exception_code"
+    t.index ["request_number", "exception_code"], name: "borrowdirect_ship_dates_composite_idx"
+    t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
   end
 
   create_table "consultation_interactions", force: :cascade do |t|
@@ -237,76 +260,13 @@ ActiveRecord::Schema.define(version: 20200316193520) do
   create_table "consultation_tables", force: :cascade do |t|
   end
 
-  create_table "data_source_source_steps", force: :cascade do |t|
-    t.bigint "data_source_source_id", null: false
-    t.integer "load_sequence", null: false
-    t.string "name", null: false
-    t.string "select_distinct"
-    t.string "source_table"
-    t.string "column_mappings"
-    t.string "filter_raw"
-    t.string "export_file_name"
-    t.string "export_filter_date_sql"
-    t.string "export_filter_date_range_sql"
-    t.string "sqls"
-    t.string "file_name"
-    t.string "target_adapter"
-    t.string "truncate_before_load"
-    t.string "target_model"
-    t.string "transformations"
-    t.string "legacy_filter_date_field"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["data_source_source_id"], name: "index_data_source_source_steps_on_data_source_source_id"
-  end
-
-  create_table "data_source_sources", force: :cascade do |t|
-    t.string "name", null: false
-    t.bigint "data_source_template_id"
-    t.string "institution_code"
-    t.string "source_adapter"
-    t.string "host"
-    t.string "port"
-    t.string "database"
-    t.string "username"
-    t.string "password"
-    t.string "export_folder"
-    t.string "import_folder"
-    t.integer "batch_size"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["data_source_template_id"], name: "index_data_source_sources_on_data_source_template_id"
-  end
-
-  create_table "data_source_template_steps", force: :cascade do |t|
-    t.bigint "data_source_template_id", null: false
-    t.integer "load_sequence", null: false
-    t.string "name", null: false
-    t.string "select_distinct"
-    t.string "source_table"
-    t.string "column_mappings"
-    t.string "filter_raw"
-    t.string "export_file_name"
-    t.string "export_filter_date_sql"
-    t.string "export_filter_date_range_sql"
-    t.string "sqls"
-    t.string "file_name"
-    t.string "target_adapter"
-    t.string "truncate_before_load"
-    t.string "target_model"
-    t.string "transformations"
-    t.string "legacy_filter_date_field"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["data_source_template_id"], name: "index_data_source_template_steps_on_data_source_template_id"
-  end
-
-  create_table "data_source_templates", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "source_adapter"
-    t.integer "batch_size"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "computer_divisions", force: :cascade do |t|
+    t.string "division_id"
+    t.string "division_server_id"
+    t.string "division_name"
+    t.string "division_section_id"
+    t.string "division_notes"
+    t.string "division_flags"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -402,6 +362,14 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.boolean "is_legacy", default: false, null: false
   end
 
+  create_table "file_upload_import_logs", force: :cascade do |t|
+    t.bigint "file_upload_import_id", null: false
+    t.datetime "log_datetime", null: false
+    t.string "log_text"
+    t.integer "sequence", null: false
+    t.index ["file_upload_import_id"], name: "index_file_upload_import_logs_on_file_upload_import_id"
+  end
+
   create_table "file_upload_imports", force: :cascade do |t|
     t.string "target_model", null: false
     t.string "comments"
@@ -409,9 +377,11 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "uploaded_at", null: false
     t.string "status"
     t.datetime "last_attempted_at"
-    t.string "last_error"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_rows_to_process"
+    t.integer "n_rows_processed"
+    t.string "post_sql_to_execute"
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
@@ -563,14 +533,14 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "loan_edition", limit: 255
     t.string "loan_location", limit: 255
     t.string "loan_publisher", limit: 255
-    t.string "loan_title", limit: 500
+    t.string "loan_title", limit: 255
     t.string "location", limit: 255
     t.string "photo_article_author", limit: 255
-    t.string "photo_article_title", limit: 500
+    t.string "photo_article_title", limit: 255
     t.string "photo_journal_inclusive_pages", limit: 255
     t.string "photo_journal_issue", limit: 255
     t.string "photo_journal_month", limit: 255
-    t.string "photo_journal_title", limit: 500
+    t.string "photo_journal_title", limit: 255
     t.string "photo_journal_volume", limit: 255
     t.string "photo_journal_year", limit: 255
     t.string "process_type", limit: 255
@@ -737,6 +707,7 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "language"
     t.string "physical_description_form"
     t.string "physical_description_extent"
+    t.string "notes", limit: 1000
     t.string "subject"
     t.string "classification"
     t.string "related_item_title"
@@ -780,6 +751,69 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.string "ip"
     t.string "refer"
     t.string "browser"
+    t.string "staff_penn_key"
+    t.string "rtg"
+    t.string "mba_type"
+    t.string "campus"
+    t.string "patron_name"
+    t.integer "graduation_year"
+  end
+
+  create_table "report_queries", force: :cascade do |t|
+    t.bigint "report_template_id"
+    t.integer "owner_id", null: false
+    t.string "name", null: false
+    t.string "comments"
+    t.text "select_section"
+    t.string "from_section"
+    t.string "where_section"
+    t.string "group_by_section"
+    t.text "order_section"
+    t.string "order_direction_section"
+    t.string "status"
+    t.datetime "last_run_at"
+    t.string "last_error_message"
+    t.string "output_file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "total_rows_to_process"
+    t.integer "n_rows_processed"
+    t.string "full_sql"
+    t.index ["report_template_id"], name: "index_report_queries_on_report_template_id"
+  end
+
+  create_table "report_query_join_clauses", force: :cascade do |t|
+    t.string "keyword"
+    t.string "table"
+    t.string "on_keys"
+    t.bigint "report_query_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["report_query_id"], name: "index_report_query_join_clauses_on_report_query_id"
+  end
+
+  create_table "report_template_join_clauses", force: :cascade do |t|
+    t.string "keyword"
+    t.string "table"
+    t.string "on_keys"
+    t.bigint "report_template_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["report_template_id"], name: "index_report_template_join_clauses_on_report_template_id"
+  end
+
+  create_table "report_templates", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "comments"
+    t.text "select_section"
+    t.string "from_section"
+    t.string "where_section"
+    t.string "group_by_section"
+    t.text "order_section"
+    t.string "order_direction_section"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "full_sql"
   end
 
   create_table "ups_zones", force: :cascade do |t|
@@ -790,13 +824,13 @@ ActiveRecord::Schema.define(version: 20200316193520) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "user_role_access_definitions", force: :cascade do |t|
+  create_table "user_role_sections", force: :cascade do |t|
     t.bigint "user_role_id", null: false
-    t.string "element", null: false
+    t.string "section", null: false
     t.string "access_level", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_role_id"], name: "index_user_role_access_definitions_on_user_role_id"
+    t.index ["user_role_id"], name: "index_user_role_sections_on_user_role_id"
   end
 
   create_table "user_roles", force: :cascade do |t|
@@ -807,8 +841,6 @@ ActiveRecord::Schema.define(version: 20200316193520) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
-  add_foreign_key "data_source_source_steps", "data_source_sources"
-  add_foreign_key "data_source_sources", "data_source_templates"
-  add_foreign_key "data_source_template_steps", "data_source_templates"
-  add_foreign_key "user_role_access_definitions", "user_roles"
+  add_foreign_key "file_upload_import_logs", "file_upload_imports"
+  add_foreign_key "user_role_sections", "user_roles"
 end

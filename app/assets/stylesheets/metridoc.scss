@@ -1,5 +1,9 @@
 body.active_admin {
 
+  #active_admin_content #sidebar select {
+    max-width: 100%;
+  }
+
   #active_admin_content.left_sidebar #main_content_wrapper {
     margin-left: 20px;
   }
@@ -24,7 +28,6 @@ body.active_admin {
         width: auto !important;
       }
     }
-
 
     .col-actions {
       width: 100px;
@@ -64,6 +67,13 @@ body.active_admin {
     #right-col-tut {
       float: right;
     }
+
+    .actions {
+      #upload-status {
+        font-weight: bold;
+        padding-left: 10px;
+      }
+    }
   }
 
   #filters_sidebar_section {
@@ -100,4 +110,49 @@ body.active_admin {
     }
   }
 
+  .choices-group li {
+    list-style-type:none;
+  }
+
+  #report-query,
+  #report-template {
+    .aggregate.select {
+      display: inline-block;
+      margin: 0 8px;
+      padding: 0;
+    }
+
+    .aggregate.select select {
+      height: 20px;
+      line-height: 15px;
+      padding: 0 16px 0 7px;
+    }
+
+    li.choice {
+      line-height: 24px;
+    }
+
+    #join-section {
+      margin: 16px 0 16px 0;
+      padding: 0px 16px;
+    }
+
+    #join-section > legend {
+      padding: 0;
+      margin-bottom: 8px;
+    }
+
+    #join-section > legend > span {
+      font-size: 12px;
+    }
+
+    #join-section a {
+      margin-left: 8px;
+    }
+
+    .report_query_join_clauses > fieldset.inputs,
+    .report_template_join_clauses > fieldset.inputs {
+      margin: 0;
+    }
+  }
 }

@@ -1,0 +1,6 @@
+one:
+  name: 'uploaded_file'
+  record_type: 'Tools::FileUploadImport'
+  record_id: <%= ActiveRecord::FixtureSet.identify(:misc_consultation_data) %>
+  blob_id: 1
+  created_at: <%= Time.now %>
