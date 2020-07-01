@@ -102,6 +102,8 @@ services:
         uid: '${APP_USER_UID}'
         gid: '${APP_USER_GID}'
         mode: 0440
+    volumes:
+      - metridoc_data:/home/app/webapp
 
 networks:
   app:
@@ -119,3 +121,6 @@ secrets:
   metridoc_rails_secrets_config:
     external: true
     name: metridoc_rails_secrets_config_${RAILS_SECRETS_CONFIG_VERSION}
+
+volumes:
+  metridoc_data:
