@@ -11,6 +11,11 @@ services:
       update_config:
         parallelism: 1
     environment:
+      MAILER_DEFAULT_FROM:
+      MAILER_DOMAIN:
+      MAILER_HOST:
+      MAILER_PWD:
+      MAILER_USR:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
 
