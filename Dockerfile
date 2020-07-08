@@ -1,22 +1,22 @@
 FROM phusion/passenger-ruby25:1.0.9
 
 RUN apt-get update && apt-get install -qq -y --no-install-recommends \
-  wget \
-  build-essential \
-  libc6-dev \
-  net-tools \
-  postgresql-client \
-  xsltproc \
-  yarn
+        wget \
+        build-essential \
+        libc6-dev \
+        net-tools \
+        postgresql-client \
+        xsltproc \
+        yarn
 
 RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
-  tar -xzf freetds-1.00.27.tar.gz
+    tar -xzf freetds-1.00.27.tar.gz
 
 WORKDIR /freetds-1.00.27
 
 RUN ./configure --prefix=/usr/local --with-tdsver=7.3 && \
-  make && \
-  make install
+    make && \
+    make install
 
 RUN rm -f /etc/service/nginx/down /etc/nginx/sites-enabled/default
 
