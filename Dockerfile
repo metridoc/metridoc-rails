@@ -1,5 +1,7 @@
 FROM phusion/passenger-ruby25:1.0.9
 
+COPY delayed-job-log-forwarder.sh /etc/service/delayed-job-log-forwarder/run
+
 RUN apt-get update && apt-get install -qq -y --no-install-recommends \
         wget \
         build-essential \
@@ -7,7 +9,8 @@ RUN apt-get update && apt-get install -qq -y --no-install-recommends \
         net-tools \
         postgresql-client \
         xsltproc \
-        yarn
+        yarn && \
+    chmod +x /etc/service/delayed-job-log-forwarder/run
 
 RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
     tar -xzf freetds-1.00.27.tar.gz
