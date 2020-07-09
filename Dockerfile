@@ -1,7 +1,11 @@
 FROM phusion/passenger-ruby25:1.0.9
 
 COPY delayed-job-log-forwarder.sh /etc/service/delayed-job-log-forwarder/run
+COPY webapp.conf /etc/nginx/sites-enabled/webapp
+COPY --chown=app:app Gemfile* /home/app/webapp/
+COPY --chown=app:app . /tmp/app
 
+# Install deps
 RUN apt-get update && apt-get install -qq -y --no-install-recommends \
         wget \
         build-essential \
@@ -10,34 +14,28 @@ RUN apt-get update && apt-get install -qq -y --no-install-recommends \
         postgresql-client \
         xsltproc \
         yarn && \
-    chmod +x /etc/service/delayed-job-log-forwarder/run
+    chmod +x /etc/service/delayed-job-log-forwarder/run && \
+    rm -f /etc/service/nginx/down /etc/nginx/sites-enabled/default
 
-RUN wget ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz && \
-    tar -xzf freetds-1.00.27.tar.gz
+WORKDIR /tmp/freetds
 
-WORKDIR /freetds-1.00.27
+# Download and install FreeTDS
+RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz | tar --strip-components=1 -zxf - && \
+    ./configure --prefix=/usr/local --with-tdsver=7.3 && \
+    make && make install
 
-RUN ./configure --prefix=/usr/local --with-tdsver=7.3 && \
-    make && \
-    make install
-
-RUN rm -f /etc/service/nginx/down /etc/nginx/sites-enabled/default
-
-COPY webapp.conf /etc/nginx/sites-enabled/webapp
-
-USER app
 WORKDIR /home/app/webapp
 
-COPY --chown=app:app Gemfile* ./
+USER app
 
+# Install gems, add application files, and precompile assets
 RUN gem install bundler && \
-    bundle install
-
-COPY --chown=app:app . .
-
-RUN mv config/database.yml.example config/database.yml && \
+    bundle install && \
+    mv /tmp/app/* . && \
+    mv config/database.yml.example config/database.yml && \
     RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
 
+# Clean up
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
