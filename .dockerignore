@@ -6,6 +6,7 @@ Dockerfile
 docker-compose.yml
 local.sh
 local_docker_init.sh
+local_docker_job_init.sh
 *.md
 
 ansible/
