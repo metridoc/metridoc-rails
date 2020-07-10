@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_08_041347) do
+ActiveRecord::Schema.define(version: 2020_07_10_161413) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -258,15 +258,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_041347) do
   end
 
   create_table "consultation_tables", force: :cascade do |t|
-  end
-
-  create_table "computer_divisions", force: :cascade do |t|
-    t.string "division_id"
-    t.string "division_server_id"
-    t.string "division_name"
-    t.string "division_section_id"
-    t.string "division_notes"
-    t.string "division_flags"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -533,14 +524,14 @@ ActiveRecord::Schema.define(version: 2020_06_08_041347) do
     t.string "loan_edition", limit: 255
     t.string "loan_location", limit: 255
     t.string "loan_publisher", limit: 255
-    t.string "loan_title", limit: 255
+    t.string "loan_title", limit: 500
     t.string "location", limit: 255
     t.string "photo_article_author", limit: 255
-    t.string "photo_article_title", limit: 255
+    t.string "photo_article_title", limit: 500
     t.string "photo_journal_inclusive_pages", limit: 255
     t.string "photo_journal_issue", limit: 255
     t.string "photo_journal_month", limit: 255
-    t.string "photo_journal_title", limit: 255
+    t.string "photo_journal_title", limit: 500
     t.string "photo_journal_volume", limit: 255
     t.string "photo_journal_year", limit: 255
     t.string "process_type", limit: 255
@@ -707,7 +698,6 @@ ActiveRecord::Schema.define(version: 2020_06_08_041347) do
     t.string "language"
     t.string "physical_description_form"
     t.string "physical_description_extent"
-    t.string "notes", limit: 1000
     t.string "subject"
     t.string "classification"
     t.string "related_item_title"
@@ -757,6 +747,8 @@ ActiveRecord::Schema.define(version: 2020_06_08_041347) do
     t.string "campus"
     t.string "patron_name"
     t.integer "graduation_year"
+    t.integer "number_of_registrations"
+    t.string "referral_method"
   end
 
   create_table "report_queries", force: :cascade do |t|
