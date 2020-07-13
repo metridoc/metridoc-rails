@@ -4,7 +4,7 @@ set -e
 
 # Fix app user UID/GID to match mounted volume UID/GID
 usermod -u $APP_USER_UID app
-if [ ! $(getent group $APP_USER_UID) ]; then
+if [ ! $(getent group $APP_USER_GID) ]; then
   groupmod -g $APP_USER_GID app
 fi
 usermod -g $APP_USER_GID app
