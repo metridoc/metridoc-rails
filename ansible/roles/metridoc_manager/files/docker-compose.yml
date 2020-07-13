@@ -22,8 +22,6 @@ services:
       MAILER_DEFAULT_FROM:
       MAILER_DOMAIN:
       MAILER_HOST:
-      MAILER_PWD:
-      MAILER_USR:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
 
@@ -129,8 +127,6 @@ services:
       MAILER_DEFAULT_FROM:
       MAILER_DOMAIN:
       MAILER_HOST:
-      MAILER_PWD:
-      MAILER_USR:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
     healthcheck:
