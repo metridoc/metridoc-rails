@@ -117,7 +117,7 @@ services:
         gid: '${APP_USER_GID}'
         mode: 0440
     volumes:
-      - metridoc_data:/home/app/webapp
+      - metridoc_tmp_data:/home/app/webapp/tmp
   delayed_jobs:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
@@ -155,7 +155,7 @@ services:
         gid: '${APP_USER_GID}'
         mode: 0440
     volumes:
-      - metridoc_data:/home/app/webapp
+      - metridoc_tmp_data:/home/app/webapp/tmp
     working_dir: /home/app/webapp
 
 networks:
@@ -176,4 +176,4 @@ secrets:
     name: metridoc_rails_secrets_config_${RAILS_SECRETS_CONFIG_VERSION}
 
 volumes:
-  metridoc_data:
+  metridoc_tmp_data:
