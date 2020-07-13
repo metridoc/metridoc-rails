@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -qq -y --no-install-recommends \
         yarn && \
     chmod +x /etc/service/delayed-job-log-forwarder/run && \
     rm -f /etc/service/nginx/down /etc/nginx/sites-enabled/default && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* 
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp/freetds
 
