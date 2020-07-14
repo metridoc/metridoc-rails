@@ -49,7 +49,7 @@ jobs:
               --vault-id vault_password.py \
               metridoc.yml
       - run:
-          command: apk update && apk add bash
+          command: apk update && apk add --no-cache bash curl
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
@@ -74,7 +74,7 @@ jobs:
               --vault-id vault_password.py \
               site.yml
       - run:
-          command: apk update && apk add bash
+          command: apk update && apk add --no-cache bash curl
       - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
