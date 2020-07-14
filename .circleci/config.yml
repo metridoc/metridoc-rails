@@ -53,7 +53,8 @@ jobs:
       - run:
           command: |
             apk add --update-cache --upgrade bash curl
-            export GIT_COMMIT_DESC=$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> /etc/profile
+            source /etc/profile
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
@@ -82,7 +83,8 @@ jobs:
       - run:
           command: |
             apk add --update-cache --upgrade bash curl
-            export GIT_COMMIT_DESC=$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> /etc/profile
+            source /etc/profile
       - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
