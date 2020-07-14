@@ -1,5 +1,13 @@
 version: 2.1
 
+# Default slack config
+default-slack-config:
+  &default-slack-config
+  channel: metridoc-notification
+  failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
+  success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
+  webhook: ${SLACK_WEBHOOK}
+
 orbs:
   docker-publish: upenn-libraries/docker-publish@0.1.0
   gitleaks: upenn-libraries/gitleaks@0.1.1
@@ -40,6 +48,9 @@ jobs:
               -u deploy \
               --vault-id vault_password.py \
               metridoc.yml
+      - run:
+          command: apk update && apk add bash
+      - slack/status: *default-slack-config
   deploy-staging:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
@@ -62,12 +73,9 @@ jobs:
               -u deploy \
               --vault-id vault_password.py \
               site.yml
-      - slack/status:
-          channel: metridoc-notification
-          failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
-          only_for_branches: ",staging,master"
-          success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
-          webhook: ${SLACK_WEBHOOK}
+      - run:
+          command: apk update && apk add bash
+      - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
