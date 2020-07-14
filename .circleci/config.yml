@@ -30,7 +30,6 @@ jobs:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     environment:
-      GIT_COMMIT_DESC: $(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
     steps:
       - checkout
@@ -52,13 +51,14 @@ jobs:
               --vault-id vault_password.py \
               metridoc.yml
       - run:
-          command: apk add --update-cache --upgrade bash curl
+          command: |
+            apk add --update-cache --upgrade bash curl
+            export GIT_COMMIT_DESC=$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     environment:
-      GIT_COMMIT_DESC: $(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
     steps:
       - checkout
@@ -80,7 +80,9 @@ jobs:
               --vault-id vault_password.py \
               site.yml
       - run:
-          command: apk add --update-cache --upgrade bash curl
+          command: |
+            apk add --update-cache --upgrade bash curl
+            export GIT_COMMIT_DESC=$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
       - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
