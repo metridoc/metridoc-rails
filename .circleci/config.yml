@@ -64,8 +64,8 @@ jobs:
               site.yml
       - slack/status:
           channel: metridoc-notification
-          failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
-          success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
+          failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}, Message: ${GIT_COMMIT_DESC}"
+          success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}, Message: ${GIT_COMMIT_DESC}"
           webhook: ${SLACK_WEBHOOK}
   test_role:
     description: Test an Ansible role using Molecule
