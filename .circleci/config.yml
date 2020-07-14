@@ -4,8 +4,8 @@ version: 2.1
 default-slack-config:
   &default-slack-config
   channel: metridoc-notification
-  failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
-  success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<CIRCLE_BUILD_URL|${CIRCLE_JOB}>) for ${CIRCLE_PROJECT_REPONAME}:${CIRCLE_BRANCH}, Message: ${GIT_COMMIT_DESC}"
+  failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<${CIRCLE_BUILD_URL}|${CIRCLE_JOB}>) in <${GIT_URL}|${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}>, Message: ${GIT_COMMIT_DESC}"
+  success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<${CIRCLE_BUILD_URL}|${CIRCLE_JOB}>) in <${GIT_URL}|${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}>, Message: ${GIT_COMMIT_DESC}"
   webhook: ${SLACK_WEBHOOK}
 
 orbs:
@@ -29,6 +29,9 @@ jobs:
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
+    environment:
+      GIT_COMMIT_DESC: $(git log --format=%B -n 1 $CIRCLE_SHA1)
+      GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
     steps:
       - checkout
       - add_ssh_keys:
@@ -49,11 +52,14 @@ jobs:
               --vault-id vault_password.py \
               metridoc.yml
       - run:
-          command: apk update && apk add --no-cache bash curl
+          command: apk add --update-cache --upgrade bash curl
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
+    environment:
+      GIT_COMMIT_DESC: $(git log --format=%B -n 1 $CIRCLE_SHA1)
+      GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
     steps:
       - checkout
       - add_ssh_keys:
@@ -74,7 +80,7 @@ jobs:
               --vault-id vault_password.py \
               site.yml
       - run:
-          command: apk update && apk add --no-cache bash curl
+          command: apk add --update-cache --upgrade bash curl
       - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
