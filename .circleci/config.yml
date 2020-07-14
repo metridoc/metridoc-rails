@@ -30,7 +30,7 @@ jobs:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     environment:
-      GIT_COMMIT_DESC: git log --format=%B -n 1 $CIRCLE_SHA1
+      GIT_COMMIT_DESC: $(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
     steps:
       - checkout
@@ -58,7 +58,7 @@ jobs:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     environment:
-      GIT_COMMIT_DESC: git log --format=%B -n 1 $CIRCLE_SHA1
+      GIT_COMMIT_DESC: $(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
     steps:
       - checkout
