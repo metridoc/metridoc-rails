@@ -31,6 +31,8 @@ jobs:
       - image: quay.io/upennlibraries/ansible:2.8
     environment:
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
+      BASH_ENV: /etc/profile
+    shell: /bin/sh -leo pipefail
     steps:
       - checkout
       - add_ssh_keys:
@@ -53,14 +55,16 @@ jobs:
       - run:
           command: |
             apk add --update-cache --upgrade bash curl
-            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> /etc/profile
-            source /etc/profile
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
+            source $BASH_ENV
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
     environment:
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
+      BASH_ENV: /etc/profile
+    shell: /bin/sh -leo pipefail
     steps:
       - checkout
       - add_ssh_keys:
@@ -83,8 +87,8 @@ jobs:
       - run:
           command: |
             apk add --update-cache --upgrade bash curl
-            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> /etc/profile
-            source /etc/profile
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
+            source $BASH_ENV
       - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
