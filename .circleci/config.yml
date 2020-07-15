@@ -89,6 +89,7 @@ jobs:
             apk add --update-cache --upgrade bash curl
             echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
             source $BASH_ENV
+            exit 1
       - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
