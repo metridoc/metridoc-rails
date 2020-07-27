@@ -1,12 +1,11 @@
-version: '3.7'
+version: "3.7"
 
 # Default logging
-x-logging:
-  &default-logging
+x-logging: &default-logging
   driver: json-file
   options:
-    max-file: '3'
-    max-size: '10m'
+    max-file: "3"
+    max-size: "10m"
 
 services:
   app:
@@ -102,17 +101,17 @@ services:
       - app
       - database
     ports:
-      - '80:80'
+      - "80:80"
     secrets:
       - source: metridoc_rails_database_config
         target: /home/app/webapp/config/database.yml
-        uid: '${APP_USER_UID}'
-        gid: '${APP_USER_GID}'
+        uid: "${APP_USER_UID}"
+        gid: "${APP_USER_GID}"
         mode: 0440
       - source: metridoc_rails_secrets_config
         target: /home/app/webapp/config/secrets.yml
-        uid: '${APP_USER_UID}'
-        gid: '${APP_USER_GID}'
+        uid: "${APP_USER_UID}"
+        gid: "${APP_USER_GID}"
         mode: 0440
     volumes:
       - metridoc_tmp_data:/home/app/webapp/tmp
@@ -120,9 +119,7 @@ services:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
     deploy:
-      replicas: 4
-      update_config:
-        parallelism: 2
+      replicas: 1
     environment:
       MAILER_DEFAULT_FROM:
       MAILER_DOMAIN:
@@ -130,7 +127,11 @@ services:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
     healthcheck:
-      test: ["CMD-SHELL", "ps aux | grep -m 1 -c 'bundle exec rails jobs:work' || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "ps aux | grep -m 1 -c 'bundle exec rails jobs:work' || exit 1",
+        ]
       interval: 30s
       timeout: 15s
       retries: 3
@@ -142,13 +143,13 @@ services:
     secrets:
       - source: metridoc_rails_database_config
         target: /home/app/webapp/config/database.yml
-        uid: '${APP_USER_UID}'
-        gid: '${APP_USER_GID}'
+        uid: "${APP_USER_UID}"
+        gid: "${APP_USER_GID}"
         mode: 0440
       - source: metridoc_rails_secrets_config
         target: /home/app/webapp/config/secrets.yml
-        uid: '${APP_USER_UID}'
-        gid: '${APP_USER_GID}'
+        uid: "${APP_USER_UID}"
+        gid: "${APP_USER_GID}"
         mode: 0440
     volumes:
       - metridoc_tmp_data:/home/app/webapp/tmp
