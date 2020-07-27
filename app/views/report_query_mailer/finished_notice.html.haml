@@ -1,0 +1,11 @@
+We have finished processing your File Export #{@report_query.name}
+%br
+Status: 
+- if @report_query.status == 'failed'
+  %span{style: "color: red; font-weight:bold;"}
+    = I18n.t("phrases.report_query.statuses.#{@report_query.status}")
+- else
+  =  @report_query.status.blank? ? I18n.t("phrases.report_query.statuses.pending") : I18n.t("phrases.report_query.statuses.#{@report_query.status}")
+%br
+Last run at: #{@report_query.last_run_at.blank? ? "-" : I18n.l(@report_query.last_run_at)}
+%br

@@ -1,5 +1,13 @@
 version: '3.7'
 
+# Default logging
+x-logging:
+  &default-logging
+  driver: json-file
+  options:
+    max-file: '3'
+    max-size: '10m'
+
 services:
   app:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
@@ -11,6 +19,9 @@ services:
       update_config:
         parallelism: 1
     environment:
+      MAILER_DEFAULT_FROM:
+      MAILER_DOMAIN:
+      MAILER_HOST:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
 
@@ -86,6 +97,7 @@ services:
       timeout: 15s
       retries: 3
       start_period: 1m30s
+    logging: *default-logging
     networks:
       - app
       - database
@@ -102,6 +114,45 @@ services:
         uid: '${APP_USER_UID}'
         gid: '${APP_USER_GID}'
         mode: 0440
+    volumes:
+      - metridoc_tmp_data:/home/app/webapp/tmp
+  delayed_jobs:
+    image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
+    command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
+    deploy:
+      replicas: 4
+      update_config:
+        parallelism: 2
+    environment:
+      MAILER_DEFAULT_FROM:
+      MAILER_DOMAIN:
+      MAILER_HOST:
+      PASSENGER_APP_ENV: ${RAILS_ENV}
+      RAILS_ENV:
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep -m 1 -c 'bundle exec rails jobs:work' || exit 1"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 2m
+    logging: *default-logging
+    networks:
+      - app
+      - database
+    secrets:
+      - source: metridoc_rails_database_config
+        target: /home/app/webapp/config/database.yml
+        uid: '${APP_USER_UID}'
+        gid: '${APP_USER_GID}'
+        mode: 0440
+      - source: metridoc_rails_secrets_config
+        target: /home/app/webapp/config/secrets.yml
+        uid: '${APP_USER_UID}'
+        gid: '${APP_USER_GID}'
+        mode: 0440
+    volumes:
+      - metridoc_tmp_data:/home/app/webapp/tmp
+    working_dir: /home/app/webapp
 
 networks:
   app:
@@ -119,3 +170,6 @@ secrets:
   metridoc_rails_secrets_config:
     external: true
     name: metridoc_rails_secrets_config_${RAILS_SECRETS_CONFIG_VERSION}
+
+volumes:
+  metridoc_tmp_data:

@@ -1,5 +1,13 @@
 version: '3.7'
 
+# Default logging
+x-logging:
+  &default-logging
+  driver: json-file
+  options:
+    max-file: '3'
+    max-size: '10m'
+
 services:
   primary-db:
     image: postgres:11.3-alpine
@@ -22,6 +30,7 @@ services:
       replicas: 1
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_database_password
+    logging: *default-logging
     networks:
       - database
     secrets:

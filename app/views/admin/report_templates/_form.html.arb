@@ -1,0 +1,23 @@
+active_admin_form_for [:admin, resource] do |f|
+  f.inputs id: 'report-template' do
+    f.input :name
+    f.input :comments
+    f.input :full_sql, as: :text, rows: 4
+    f.hidden_field :select_section_with_aggregates, as: :text, disabled: true
+    f.input :select_section, label: "Select Section", as: :check_boxes, :collection => f.object.checkbox_options_for_select_section
+    f.input :from_section, label: "From Section", as: :select, :collection => TableRetrieval.all_tables, include_blank: I18n.t('phrases.please_select')
+    f.inputs "Join Section", id: 'join-section' do
+      f.has_many :report_template_join_clauses, heading: nil, allow_destroy: true, new_record: "Add" do |ff|
+        ff.input :keyword, label: "Type", as: :select, :collection => ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN"], include_blank: I18n.t('phrases.please_select')
+        ff.input :table, as: :select, :collection => TableRetrieval.all_tables, include_blank: I18n.t('phrases.please_select'), input_html: {class: "table-select"}
+        ff.input :on_keys, label: "On", input_html: {placeholder: "users.user_type_id = user_types.id"}
+      end
+    end
+    f.input :where_section, label: "Where Section", input_html: {placeholder: "users.user_type = 'admin'"}
+    f.input :group_by_section, label: "Group By Section", as: :check_boxes, :collection => f.object.radio_options_for_group_by_section
+    f.input :order_section, label: "Order By Section", as: :radio, :collection => f.object.radio_options_for_order_section
+    f.input :order_direction_section, label: "Order By Direction", as: :select, :collection => ["ASC", "DESC"], selected: f.object.order_direction_section, include_blank: true
+
+    f.actions
+  end
+end

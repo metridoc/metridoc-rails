@@ -1,8 +1,17 @@
 version: 2.1
 
+# Default slack config
+default-slack-config:
+  &default-slack-config
+  channel: metridoc-notification
+  failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<${CIRCLE_BUILD_URL}|${CIRCLE_JOB}>) in <${GIT_URL}|${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}>, Message: ${GIT_COMMIT_DESC}"
+  success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<${CIRCLE_BUILD_URL}|${CIRCLE_JOB}>) in <${GIT_URL}|${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}>, Message: ${GIT_COMMIT_DESC}"
+  webhook: ${SLACK_WEBHOOK}
+
 orbs:
   docker-publish: upenn-libraries/docker-publish@0.1.0
   gitleaks: upenn-libraries/gitleaks@0.1.1
+  slack: circleci/slack@3.4.2
 
 commands:
   molecule_test:
@@ -20,6 +29,10 @@ jobs:
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
+    environment:
+      GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
+      BASH_ENV: /etc/profile
+    shell: /bin/sh -leo pipefail
     steps:
       - checkout
       - add_ssh_keys:
@@ -39,9 +52,19 @@ jobs:
               -u deploy \
               --vault-id vault_password.py \
               metridoc.yml
+      - run:
+          command: |
+            apk add --update-cache --upgrade bash curl
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
+            source $BASH_ENV
+      - slack/status: *default-slack-config
   deploy-staging:
     docker:
       - image: quay.io/upennlibraries/ansible:2.8
+    environment:
+      GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
+      BASH_ENV: /etc/profile
+    shell: /bin/sh -leo pipefail
     steps:
       - checkout
       - add_ssh_keys:
@@ -60,7 +83,13 @@ jobs:
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
               --vault-id vault_password.py \
-              metridoc.yml
+              site.yml
+      - run:
+          command: |
+            apk add --update-cache --upgrade bash curl
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
+            source $BASH_ENV
+      - slack/status: *default-slack-config
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
