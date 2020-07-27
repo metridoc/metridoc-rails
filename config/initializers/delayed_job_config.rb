@@ -4,3 +4,4 @@ Delayed::Worker.queue_attributes = {
   large:   { priority: 10  }
 }
 Delayed::Worker.max_run_time = 24.hours
+Delayed::Worker.destroy_failed_jobs = false
