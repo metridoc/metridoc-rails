@@ -5,6 +5,8 @@ module Import
 
     class Task
 
+      HEADER_CONVERTER = ->(header) { Util.column_to_attribute(header).to_sym }
+
       def initialize(main_driver, task_file, test_mode = false)
         @main_driver, @task_file, @test_mode = main_driver, task_file, test_mode
       end
@@ -169,8 +171,11 @@ module Import
         task_config["import_file_name"] || task_config["export_file_name"] || task_config["file_name"]
       end
 
+      def csv_file_path
+        @csv_file_path ||= File.join(@main_driver.import_folder, import_file_name)
+      end
+
       def get_headers
-        csv_file_path = File.join(@main_driver.import_folder, import_file_name)
         csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
         columns = csv.readline
         csv.close
@@ -184,6 +189,8 @@ module Import
       end
 
       def import_csv
+        Util.convert_to_utf8(csv_file_path)
+
         headers = get_headers
 
         unmatched_columns = headers.select { |column_name| class_name.columns_hash[column_name].blank? }
@@ -196,10 +203,10 @@ module Import
         ActiveRecord::Base.transaction do
           truncate if truncate_before_load?
 
-          csv_file_path = File.join(@main_driver.import_folder, import_file_name)
-          csv = CSV.open(csv_file_path, "r:ISO-8859-1:UTF-8")
-          csv.shift # header row
           records = []
+
+          csv = CSV.open(csv_file_path, headers: true,  header_converters: HEADER_CONVERTER)
+
           loop do
             begin
               if n_errors >= max_errors
@@ -210,34 +217,29 @@ module Import
               end
 
               row = csv.shift
-              break unless row 
-
-              cols = {}
-              headers.each_with_index do |k,i|
-                cols[k.to_sym] = row[i]
-              end
+              break unless row
 
               row_error = false
               attributes = {}
               headers.each do |column_name|
-                val = cols[column_name.to_sym]
-
                 next if class_name.columns_hash[column_name].blank?
 
+                val = row[column_name.to_sym]
+
                 if class_name.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
-                  log "Invalid integer [#{val}] in column: #{column_name} row: #{row.join(",")}"
+                  log "Invalid integer [#{val}] in column: #{column_name} row: #{row.to_h}"
                   n_errors = n_errors + 1
                   row_error = true
                   next
                 end
                 if class_name.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
-                  log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.join(",")}"
+                  log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.to_h}"
                   n_errors = n_errors + 1
                   row_error = true
                   next
                 end
                 if class_name.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
-                  log "Invalid date [#{val}] in column: #{column_name} row: #{row.join(",")}"
+                  log "Invalid date [#{val}] in column: #{column_name} row: #{row.to_h}"
                   n_errors = n_errors + 1
                   row_error = true
                   next
@@ -259,11 +261,12 @@ module Import
                 records = []
               end
 
-            rescue CSV::MalformedCSVError
+            rescue CSV::MalformedCSVError => e
               n_errors = n_errors + 1
-              log "skipping bad row - MalformedCSVError"
+              log "skipping bad row - MalformedCSVError: #{e.message}"
             end
           end # loop
+
           csv.close
 
           if records.size > 0
@@ -289,14 +292,10 @@ module Import
       def import_records(records)
         begin
           result = class_name.import records
-          if failed_instances.size <= 0
-            log "Imported #{records.size} records."
-            return 0
-          else
-            log "Some records failed to import, will try to load these #{result.failed_instances.size} records individually."
-            return save_records_individually(result.failed_instances)
-          end
-        rescue => ex
+          log "Imported #{result.ids.size} records."
+          log_validation_errors(result.failed_instances)
+          return result.failed_instances.size
+        rescue
           log "Error on import. Query too large to display."
           return save_records_individually(records)
         end
@@ -308,7 +307,7 @@ module Import
         records.each do |record|
           begin
             unless record.save
-              log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+              log "Failed saving #{record.inspect} error: #{record.errors.full_messages.join(", ")}"
               n_errors += 1
             end
           rescue => ex
@@ -369,6 +368,12 @@ module Import
         log "Finished importing XML #{import_file_name}."
 
         return true
+      end
+
+      def log_validation_errors(records)
+        records.each do |r|
+          log "Failed saving #{r.inspect} error: #{r.errors.full_messages.join(", ")}"
+        end
       end
 
       def log(m)
