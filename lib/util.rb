@@ -22,6 +22,7 @@ module Util
     end
 
     def convert_to_utf8(file_path)
+      FileUtils.cp(file_path, "#{file_path}.original")
       file_name = File.basename(file_path, File.extname(file_path))
       temp_file = Tempfile.new(file_name)
       `iconv -f iso-8859-1 -t utf-8 #{file_path} > #{temp_file.path}`
