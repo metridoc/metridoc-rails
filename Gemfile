@@ -53,6 +53,7 @@ gem 'delayed_job_active_record'
 gem 'daemons'
 
 gem 'dotenv-rails'
+
 group :development, :test do
   gem 'rb-readline'
   gem 'pry'
