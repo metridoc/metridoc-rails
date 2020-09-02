@@ -116,6 +116,16 @@ module Import
         task_config["legacy_filter_date_field"]
       end
 
+      # An array of columns (unique index must exist in db) to check against for a duplicate
+      def upsert_conflict_targets
+        task_config["upsert_conflict_targets"] || []
+      end
+
+      # An array of fields to update if a duplicate record is found
+      def upsert_columns_to_update
+        task_config["upsert_columns_to_update"] || []
+      end
+
       def truncate
         filters = {}
         filters.merge!(institution_id: institution_id) if has_institution_id?
@@ -205,9 +215,8 @@ module Import
 
           records = []
 
-          csv = CSV.open(csv_file_path, headers: true,  header_converters: HEADER_CONVERTER)
-
-          loop do
+          # Loop through all unique rows in the csv, create an object for each entry, and add to a records array
+          CSV.read(csv_file_path, :headers => true, :header_converters => HEADER_CONVERTER).uniq { |att| att[0..(att.count - 1)] }.each do |row|
             begin
               if n_errors >= max_errors
                 log "Too many errors #{n_errors}, exiting!"
@@ -216,7 +225,6 @@ module Import
                 break
               end
 
-              row = csv.shift
               break unless row
 
               row_error = false
@@ -267,8 +275,6 @@ module Import
             end
           end # loop
 
-          csv.close
-
           if records.size > 0
             n_errors += import_records(records)
             records = []
@@ -291,7 +297,10 @@ module Import
 
       def import_records(records)
         begin
-          result = class_name.import records
+          result = class_name.import(records, on_duplicate_key_update: {
+            conflict_target: upsert_conflict_targets,
+            columns: upsert_columns_to_update
+          })
           log "Imported #{result.ids.size} records."
           log_validation_errors(result.failed_instances)
           return result.failed_instances.size
