@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>MetriDoc</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   <%= favicon_link_tag(asset_path('favicon.ico')) %>
 </head>
@@ -20,11 +20,16 @@
   <div id="main_content_wrapper">
     <div id="main_content">
       <div id="dashboard_default_message">
-        <h1><%= I18n.t('pages.homepage_heading') %></h1>
-        <p><%= I18n.t('pages.homepage_text') %></p>
-      </div>
+        <h1>Report Gallery</h1>
+        <ul>
+          <li><a href="/report_gallery/pcc">Where in the World Do Penn Scholars Have Co-Authors?</a></li>
+          <li><a href="/report_gallery/wpp">Where in the World Are Penn Scholars Published?</a></li>
+          <li><a href="/report_gallery/wwp">Where in the World Are Journals Published?</a></li>
+        </ul>
       </div>
     </div>
   </div>
+</div>
+
 </body>
 </html>
