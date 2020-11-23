@@ -1,0 +1,11 @@
+---
+- name: create nfs volume for /home/app/webapp/tmp
+  docker_volume:
+    name: metridoc_tmp_data
+    driver: local
+    driver_options:
+      type: nfs
+      o: "{{ 'addr=' ~ nfs_metridoc_tmp_address ~ ',rw' }}"
+      device: ":{{ nfs_metridoc_tmp_device }}"
+    state: present
+  tags: nfs_mount

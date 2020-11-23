@@ -1,4 +1,9 @@
 ---
+- hosts: swarm_workers
+  become: yes
+  tasks:
+    - include: "roles/metridoc_manager/tasks/nfs_volume.yml"
+
 - hosts: swarm_managers
   become: yes
   roles:
