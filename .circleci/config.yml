@@ -42,6 +42,7 @@ jobs:
           command: |
             echo "$SSH_BASTION_KNOWN_HOST" >> ~/.ssh/known_hosts
             echo "$DEPLOY_TARGET_KNOWN_HOST" >> ~/.ssh/known_hosts
+            echo "$DEPLOY_TARGET_KNOWN_HOST_2" >> ~/.ssh/known_hosts
       - run:
           working_directory: ~/project/ansible
           command: |
