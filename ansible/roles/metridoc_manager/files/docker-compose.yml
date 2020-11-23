@@ -174,3 +174,4 @@ secrets:
 
 volumes:
   metridoc_tmp_data:
+    external: true
