@@ -1,0 +1,18 @@
+%ul
+  - resources.each do |resource|
+    %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+
+#data-viz
+  %h2= t 'active_admin.google_analytics.columns_heading'
+  .container
+    #left-col
+      %h3= t 'active_admin.google_analytics.left_column_heading'
+      = pie_chart(GoogleAnalytics::Referral.all.map{|item| [item.source, item.users] }.to_h, {legend: "right" } )
+    #right-col
+      %h3= t 'active_admin.gatecount.right_column_heading', date_range: "#{10.weeks.ago.midnight.strftime("%m/%d/%Y")} to #{6.weeks.ago.midnight.strftime("%m/%d/%Y")}"
+  .container
+    #left-col
+      %h3= t 'active_admin.google_analytics.left_column_heading'
+      = pie_chart(GoogleAnalytics::Referral.all.map{|item| [item.source, item.users] }.to_h, {legend: "right" } )
+    #right-col
+      %h3= t 'active_admin.gatecount.right_column_heading', date_range: "#{10.weeks.ago.midnight.strftime("%m/%d/%Y")} to #{6.weeks.ago.midnight.strftime("%m/%d/%Y")}"

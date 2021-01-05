@@ -67,8 +67,9 @@ en:
       title_content: "Comments"
     resource_sharing: "Resource sharing data"
     documentation: "Documentation"
+    google_analytic: "Google Analytics"
     marc_data: "MARC data"
-    gate_counts: "Gate counts"
+    gate_counts: "Gate Counts"
     alma:
       alma_menu: "Alma"
     ares:
@@ -93,6 +94,9 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Card swipe by frequency"
       right_column_heading: "Card swipe transactions, %{date_range}"
+    google_analytics:
+      googleanalytics_menu: "Google Analytics"
+      left_column_heading: "Referrer"
     keyserver:
       keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"

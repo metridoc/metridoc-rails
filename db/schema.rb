@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_10_161413) do
+ActiveRecord::Schema.define(version: 2020_12_15_180912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -389,6 +389,24 @@ ActiveRecord::Schema.define(version: 2020_07_10_161413) do
     t.string "zip_code"
     t.string "latitude"
     t.string "longitude"
+  end
+
+  create_table "google_analytics_events", force: :cascade do |t|
+    t.string "category"
+    t.string "action"
+    t.string "label"
+    t.integer "total"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "google_analytics_referrals", force: :cascade do |t|
+    t.string "source"
+    t.integer "users"
+    t.integer "new_users"
+    t.integer "sessions"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "illiad_borrowings", force: :cascade do |t|
