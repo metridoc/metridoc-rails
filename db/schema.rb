@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_15_180912) do
+ActiveRecord::Schema.define(version: 2021_01_05_161135) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -222,6 +222,15 @@ ActiveRecord::Schema.define(version: 2020_12_15_180912) do
     t.index ["exception_code"], name: "index_borrowdirect_ship_dates_on_exception_code"
     t.index ["request_number", "exception_code"], name: "borrowdirect_ship_dates_composite_idx"
     t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
+  end
+
+  create_table "circulation_pick_up_requests", force: :cascade do |t|
+    t.string "location"
+    t.integer "received"
+    t.integer "local_processed"
+    t.integer "offsite_processed"
+    t.integer "abandoned"
+    t.datetime "date"
   end
 
   create_table "consultation_interactions", force: :cascade do |t|
