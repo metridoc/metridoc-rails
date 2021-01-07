@@ -9,6 +9,14 @@
     src: docker-compose.yml
     dest: '{{ config_dir }}/metridoc/docker-compose.yml'
 
+- name: label metridoc swarm node
+  docker_node:
+    hostname: '{{ metridoc_swarm_node }}'
+    labels:
+      metridoc: 'true'
+  tags:
+    - docker
+
 - name: create docker secrets for rails configs
   docker_secret:
     name: metridoc_rails_{{ item }}_config_{{ lookup('vars', 'rails_' + item + '_config_version') }}
