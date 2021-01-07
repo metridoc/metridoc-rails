@@ -11,6 +11,9 @@ services:
   app:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     deploy:
+      placement:
+        constraints:
+          - node.labels.metridoc == true
       replicas: ${METRIDOC_REPLICAS}
       resources:
         limits:
