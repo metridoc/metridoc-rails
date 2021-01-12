@@ -245,6 +245,15 @@ module Import
                   next
                 end
 
+                unless val.nil?
+                  if class_name.columns_hash[column_name].type == :string && val.length > class_name.columns_hash[column_name].sql_type_metadata.limit
+                    log "Length of value [#{val}] exceeds maximum for column #{column_name} row: #{row.to_h}"
+                    n_errors = n_errors + 1
+                    row_error = true
+                    next
+                  end
+                end
+
                 val = Util.parse_datetime(val) if class_name.columns_hash[column_name].type == :datetime
 
                 attributes[column_name] = val
