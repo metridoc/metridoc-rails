@@ -195,18 +195,49 @@ module BorrowdirectHelper
     # Set up the base restrictions
     query = base_query(query, **options)
     query = query.joins("INNER JOIN
-      borrowdirect_min_ship_dates ON
-      borrowdirect_bibliographies.request_number = borrowdirect_min_ship_dates.request_number")
+      borrowdirect_min_ship_dates AS ship
+      ON borrowdirect_bibliographies.request_number = ship.request_number")
 
-    # Stupidly have to query three separate times?
-    # Can potentially make a single query where I rename all things (i.e. AS req_to_rec)
-    # Then create a hash by hand with a loop over query.all.each of
-    # hash[row["borrower"]] = row["req_to_rec"] ???
-    req_to_rec = query.average("EXTRACT (epoch FROM process_date - request_date)")
-    req_to_shp = query.average(
-      "EXTRACT (epoch FROM borrowdirect_min_ship_dates.min_ship_date - request_date)")
-    shp_to_rec = query.average(
-      "EXTRACT (epoch FROM process_date - borrowdirect_min_ship_dates.min_ship_date)")
+    # Extract booleans from options
+    get_borrowing = options.fetch(:get_borrowing, false)
+    get_summary = options.fetch(:get_summary, false)
+
+    # Add the borrower or lender column to the output
+    if not get_summary
+      if get_borrowing
+        query = query.select("lender")
+      else
+        query = query.select("borrower")
+      end
+    end
+
+    # Create the average of the difference in the timestamps
+    query = query.select(
+      "AVG(EXTRACT (epoch FROM process_date - request_date)) as req_to_rec,
+      AVG(EXTRACT (epoch FROM ship.min_ship_date - request_date)) as req_to_shp,
+      AVG(EXTRACT (epoch FROM process_date - ship.min_ship_date)) as shp_to_rec
+      ")
+
+    # Empty hashes to fill
+    req_to_rec = {}
+    req_to_shp = {}
+    shp_to_rec = {}
+
+    # Fill hashes from all rows
+    query.all.each do |row|
+      library_id = -1
+      if not get_summary
+        if get_borrowing
+          library_id = row["lender"]
+        else
+          library_id = row["borrower"]
+        end
+      end
+
+      req_to_rec[library_id] = row["req_to_rec"]
+      req_to_shp[library_id] = row["req_to_shp"]
+      shp_to_rec[library_id] = row["shp_to_rec"]
+    end
 
     return req_to_rec, req_to_shp, shp_to_rec
   end
@@ -219,9 +250,9 @@ module BorrowdirectHelper
       **options.merge(:get_summary => true))
 
     # Add the all library counts to the hash
-    by_library_req_to_rec[-1] = all_libraries_req_to_rec
-    by_library_req_to_shp[-1] = all_libraries_req_to_shp
-    by_library_shp_to_rec[-1] = all_libraries_shp_to_rec
+    by_library_req_to_rec.merge!(all_libraries_req_to_rec)
+    by_library_req_to_shp.merge!(all_libraries_req_to_shp)
+    by_library_shp_to_rec.merge!(all_libraries_shp_to_rec)
 
     return by_library_req_to_rec, by_library_req_to_shp, by_library_shp_to_rec
   end
