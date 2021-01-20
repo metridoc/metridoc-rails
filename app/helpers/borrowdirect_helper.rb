@@ -127,31 +127,31 @@ module BorrowdirectHelper
   # Function to combine the results of the queries for item counts
   def count_items_bd(options = {})
 
-    # Get all libraries information
-    # Returns a single number
-    this_all_libraries, last_all_libraries = count_library_items_bd(
-      **options.merge(:get_summary => true))
-
     # Returns a hash of library id to number
     this_by_library, last_by_library = count_library_items_bd(
       **options.merge(:get_summary => false))
 
-    # Special key construction for monthly totals
-    if this_all_libraries.respond_to?(:each)
-      this_all_libraries.each do |month, total|
-        this_by_library[[-1, month]] = total
-      end
-      last_all_libraries.each do |month, total|
-        last_by_library[[-1, month]] = total
+    # Get the grand total for all libraries
+    # This is faster than doing yet another SQL call
+    # For some silly reason RUBY doesn't do SQL rollup
+    get_monthly = options.fetch(:get_monthly, false)
+    if get_monthly
+      # Accumulate on entries
+      (1..12).each do |month|
+        this_by_library[[-1, month]] = this_by_library.sum {
+          |k, v| k.last == month ? v : 0
+        }
+        last_by_library[[-1, month]] = last_by_library.sum {
+          |k, v| k.last == month ? v : 0
+        }
       end
     else
-      # Assume yearly summary
-      this_by_library[-1] = this_all_libraries
-      last_by_library[-1] = last_all_libraries
+      # Accumulation entries
+      this_by_library[-1] = this_by_library.sum { |k, v| v }
+      last_by_library[-1] = last_by_library.sum { |k, v| v }
     end
 
     return this_by_library, last_by_library
-
   end
 
   def get_fill_rate_bd(options={})
@@ -168,27 +168,19 @@ module BorrowdirectHelper
     all_requests = base_query(query,
       **options.merge(:get_successful => false)).count
 
-    # Returns integers
-    # Construct successful requests query
-    successful_request_summary = base_query(query,
-      **options.merge({:get_successful => true, :get_summary => true})).count
-    # Construct all requests query
-    all_request_summary = base_query(query,
-      **options.merge({:get_successful => false, :get_summary => true})).count
+    # Find the grand total, faster than another SQL query
+    # Ruby on Rails doesn't have SQL rollup
+    successful_requests[-1] = successful_requests.sum { |k, v| v }
+    all_requests[-1] = all_requests.sum { |k, v| v }
 
     # Fill an output hash with the fill rate
     fill_rate = {}
-    fill_rate[-1] = all_request_summary != 0 ?
-      successful_request_summary / all_request_summary.to_f : -1
 
     all_requests.each do |library_id, count|
       successful_count = successful_requests.fetch(library_id, 0)
-      fill_rate[library_id] = count != 0 ?
+      rate = count != 0 ?
         successful_count.to_f / count : -1
-    end
-
-    # Reformat the output to 0.00
-    fill_rate.each do |library_id, rate|
+      # Reformat the output to 0.00
       fill_rate[library_id] = sprintf('%.2f', rate)
     end
 
