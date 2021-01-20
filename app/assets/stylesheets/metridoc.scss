@@ -29,6 +29,32 @@ body.active_admin {
       }
     }
 
+    .statistics_summary {
+      table-layout: auto !important;
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 5px;
+      width: 100%;
+      th {
+        border: 1px solid black;
+        text-align: center;
+        background-color: #011F5B25;
+        padding: 5px;
+      }
+      td {
+        border: 1px solid black;
+        padding: 5px;
+        text-align: right
+      }
+      td:first-child {
+        text-align: left;
+      }
+      tfoot {
+        font-weight: bold;
+        background-color:    #011F5B50
+      }
+    }
+
     .col-actions {
       width: 100px;
     }
