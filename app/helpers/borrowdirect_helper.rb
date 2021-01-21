@@ -15,6 +15,17 @@ module BorrowdirectHelper
   # Note: you have to restart the server to get access
   # to any changes in the helper methods!
 
+  def get_library_name(library_id)
+    if library_id.to_i < 0 or library_id.nil?
+      return "All Libraries"
+    end
+
+    return Borrowdirect::Institution.find_by(library_id: library_id).nil? ?
+      "Not supplied" :
+      "#{Borrowdirect::Institution.find_by(library_id: library_id)
+        .institution_name}"
+  end
+
   # Create an array of arrays that map the library symbol to the library id
   def library_map_bd()
     library_map = []
@@ -234,9 +245,15 @@ module BorrowdirectHelper
         end
       end
 
-      req_to_rec[library_id] = row["req_to_rec"]
-      req_to_shp[library_id] = row["req_to_shp"]
-      shp_to_rec[library_id] = row["shp_to_rec"]
+      if row["req_to_rec"].present?
+        req_to_rec[library_id] = row["req_to_rec"]
+      end
+      if row["req_to_shp"].present?
+        req_to_shp[library_id] = row["req_to_shp"]
+      end
+      if row["shp_to_rec"].present?
+        shp_to_rec[library_id] = row["shp_to_rec"]
+      end
     end
 
     return req_to_rec, req_to_shp, shp_to_rec
@@ -317,7 +334,7 @@ module BorrowdirectHelper
 
     library_map.each do |library_symbol, library_id|
       # Get the library_name and library_id
-      output_row = [library_symbol, library_id]
+      output_row = [library_symbol]
       output_row << format_into_days(req_to_rec, library_id)
       output_row << format_into_days(req_to_shp, library_id)
       output_row << format_into_days(shp_to_rec, library_id)
