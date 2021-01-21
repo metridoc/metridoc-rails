@@ -12,7 +12,7 @@ and the summary of all library borrowing and lending. |
 -# Find today's fiscal year
 - max_fiscal_year = today.mon > 6 ? today.year + 1 : today.year
 -# Build the selection of possible fiscal years
-- years = max_fiscal_year.downto(2014).to_a.map {|year| [year.to_s, year]}
+- years = max_fiscal_year.downto(2010).to_a.map {|year| [year.to_s, year]}
 
 -# Get the list of libraries
 - libraries = [["All Libraries", -1]] + library_map_bd()
