@@ -1,23 +1,25 @@
 = javascript_include_tag 'application'
 
-<!-- TODO: Make this a form option for the year -->
-- fiscal_year = 2021
-<!-- TODO: Make this an optional form option for library id input -->
-- library_id = nil
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2021 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
 
-<!-- Get the lending table -->
+-# Get the lending table
 - lending_table, display_months = prepare_summary_table(fiscal_year, library_id, false)
 
-<!-- Number of columns to reserve for the months -->
+-# Number of columns to reserve for the months
 - n_month_columns = display_months.size * 2
 
+%h2= "Displaying BorrowDirect summary for the #{fiscal_year} fiscal year and #{get_library_name(library_id)}"
+
 <!-- Build the table -->
-%h2= "Items by Lending Institution"
+%h3= "Items by Lending Institution"
 %table.statistics_summary
   %thead
     %tr
       %th{:rowspan => 3} Lending Institution
-      %th{:rowspan => 3}  Library ID
       %th{:colspan => 3, :rowspan => 2} Turnaround Time (days)
       %th{:colspan => 3, :rowspan => 2} Year
       %th{:colspan => n_month_columns} Filled Items Per Month
@@ -37,19 +39,18 @@
   %tbody
     - lending_table.each do |row|
       %tr
-      - row.each do |cell|
-        %td= cell
+        - row.each do |cell|
+          %td= cell
 
 <!-- Get the borrowing table -->
 - borrowing_table, display_months = prepare_summary_table(fiscal_year, library_id, true)
 
 <!-- Build the table -->
-%h2= "Items by Borrowing Institution"
+%h3= "Items by Borrowing Institution"
 %table.statistics_summary
   %thead
     %tr
       %th{:rowspan => 3} Borrowing Institution
-      %th{:rowspan => 3}  Library ID
       %th{:colspan => 3, :rowspan => 2} Turnaround Time (days)
       %th{:colspan => 3, :rowspan => 2} Year
       %th{:colspan => n_month_columns} Filled Items Per Month
@@ -69,5 +70,5 @@
   %tbody
     - borrowing_table.each do |row|
       %tr
-      - row.each do |cell|
-        %td= cell
+        - row.each do |cell|
+          %td= cell
