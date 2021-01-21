@@ -41,6 +41,11 @@ body.active_admin {
         background-color: #011F5B25;
         padding: 5px;
       }
+      tbody {
+        tr:nth-child(even) {
+          background-color: #99000025;
+        }
+      }
       td {
         border: 1px solid black;
         padding: 5px;
@@ -51,7 +56,7 @@ body.active_admin {
       }
       tfoot {
         font-weight: bold;
-        background-color:    #011F5B50
+        background-color: #011F5B50;
       }
     }
 
