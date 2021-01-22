@@ -1,8 +1,7 @@
 = javascript_include_tag 'application'
 
-%h2= link_to "Current BorrowDirect Statistics for All Libraries", "/admin/borrowdirect_dashboard"
-
-%h2= "Statistical Fiscal Year Summary Instructions"
+%h2 BorrowDirect Fiscal Year Statistical Summary
+%h3= "Instructions"
 %p To get the summary for any year or library, select the fiscal year |
 and the library name of interest. The default is set to the current year |
 and the summary of all library borrowing and lending. |
@@ -12,7 +11,7 @@ and the summary of all library borrowing and lending. |
 -# Find today's fiscal year
 - max_fiscal_year = today.mon > 6 ? today.year + 1 : today.year
 -# Build the selection of possible fiscal years
-- years = max_fiscal_year.downto(2010).to_a.map {|year| [year.to_s, year]}
+- years = max_fiscal_year.downto(2014).to_a.map {|year| [year.to_s, year]}
 
 -# Get the list of libraries
 - libraries = [["All Libraries", -1]] + library_map_bd()
@@ -24,7 +23,7 @@ and the summary of all library borrowing and lending. |
     {:method => :post}) do
   %table
     %tr
-      %td Select fiscal year*
+      %td Select fiscal year
       %td= select_tag "fiscal_year", options_for_select(years)
       %td{:rowspan => 2}= submit_tag "Submit"
     %tr
@@ -32,7 +31,3 @@ and the summary of all library borrowing and lending. |
       %td= select_tag "library_id", options_for_select(libraries)
 
 %br
-
-*The fiscal years run from the current year down to 2010, the first year |
- Metridoc has coverage of BorrowDirect.  However, |
- years beyond 2014 may not be accurate. |
