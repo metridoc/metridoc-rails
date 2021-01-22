@@ -4,7 +4,7 @@ module BorrowdirectHelper
     render_ids = []
     institution_ids.each do |id, amount|
       render_ids << [Borrowdirect::Institution.find_by(library_id: id).nil? ?
-        "Not supplied" :
+        "Unfilled" :
         "#{Borrowdirect::Institution.find_by(library_id: id)
           .institution_name} (#{id})",
           amount]
@@ -33,6 +33,8 @@ module BorrowdirectHelper
     Borrowdirect::Institution.all.each do |lib|
       # Skip the "Default" case
       next if lib.library_id == 0
+      # Skip the CRL, OCLC, OORII, and RapidILL cases
+      next if [10000010, 9999997, 9999996, 9999995].include? lib.library_id
       library_map << [lib.library_symbol, lib.library_id]
     end
     # Return a sorted map
