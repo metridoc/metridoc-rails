@@ -8,8 +8,7 @@
 %hr
 
 %h2 BorrowDirect Fiscal Year Statistical Summary
-%h3 Instructions
-To get the summary for any year or library, select the fiscal year |
+To get the summary statistics for any year or library, select the fiscal year |
 and the library name of interest. The default is set to the current year |
 and the summary of all library borrowing and lending. |
 
@@ -23,17 +22,18 @@ and the summary of all library borrowing and lending. |
 -# Get the list of libraries
 - libraries = [["All Libraries", -1]] + library_map_bd()
 
-= form_tag({:controller => admin_borrowdirect_path,
-    :action => "statistics"},
-    {:method => :post}) do
-  %table
-    %tr
-      %td Select fiscal year
-      %td= select_tag "fiscal_year", options_for_select(years)
-      %td{:rowspan => 2}= submit_tag "Submit"
-    %tr
-      %td Select Institution
-      %td= select_tag "library_id", options_for_select(libraries)
+%center
+  = form_tag({:controller => admin_borrowdirect_path,
+      :action => "statistics"},
+      {:method => :post}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select fiscal year
+        %td= select_tag "fiscal_year", options_for_select(years)
+        %td{:rowspan => 2}= submit_tag "Submit"
+      %tr
+        %td Select Institution
+        %td= select_tag "library_id", options_for_select(libraries)
 %br
 
 %hr
