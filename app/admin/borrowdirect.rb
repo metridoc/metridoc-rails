@@ -3,7 +3,7 @@ ActiveAdmin.register_page "Borrowdirect" do
 
   # Action need to get the redirect with parameters
   page_action :statistics, method: :post do
-    redirect_to admin_borrowdirect_dashboard_path(
+    redirect_to admin_borrowdirect_statistics_path(
       fiscal_year: params["fiscal_year"],
       library_id: params["library_id"]
     )

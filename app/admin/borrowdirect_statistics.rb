@@ -1,4 +1,4 @@
-ActiveAdmin.register_page "Borrowdirect Dashboard" do
+ActiveAdmin.register_page "Borrowdirect Statistics" do
 
   breadcrumb do
     # Custom breadcrumb links
@@ -9,11 +9,11 @@ ActiveAdmin.register_page "Borrowdirect Dashboard" do
   menu false
 
   # General title for the page
-  content title: "Dashboard" do
+  content title: "BorrowDirect Statistics" do
     # This is a sub div to the main_content div?? May not need
-    div id: "borrowdirect_dashboard" do
+    div id: "borrowdirect_statistics" do
       # Direct path to dashboard template
-      render partial: 'admin/borrowdirect/dashboard'
+      render partial: 'admin/borrowdirect/statistics'
     end
   end
 end
