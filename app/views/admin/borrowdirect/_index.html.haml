@@ -24,9 +24,8 @@ the database is being queried. |
 - libraries = [["All Libraries", -1]] + library_map_bd()
 
 %center
-  = form_tag({:controller => admin_borrowdirect_path,
-      :action => "statistics"},
-      {:method => :post}) do
+  = form_tag(admin_borrowdirect_path,
+      method: :post) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select fiscal year
