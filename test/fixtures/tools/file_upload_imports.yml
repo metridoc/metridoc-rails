@@ -1,0 +1,6 @@
+misc_consultation_data:
+  target_model: 'Misc::ConsultationData'
+  status: 'pending'
+  created_at: <%= Time.now %>
+  updated_at: <%= Time.now %>
+  uploaded_at: <%= Time.now %>

@@ -1,5 +1,9 @@
 body.active_admin {
 
+  #active_admin_content #sidebar select {
+    max-width: 100%;
+  }
+
   #active_admin_content.left_sidebar #main_content_wrapper {
     margin-left: 20px;
   }
@@ -25,6 +29,79 @@ body.active_admin {
       }
     }
 
+    /* Construct table style for statistics tables */
+    .statistics_summary {
+      table-layout: auto !important;
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 5px;
+      width: 100%;
+      th {
+        border: 1px solid black;
+        text-align: center;
+        background-color: #011F5B25;
+        padding: 5px;
+      }
+      tbody {
+        tr:nth-child(even) {
+          background-color: #99000025;
+        }
+      }
+      td {
+        border: 1px solid black;
+        padding: 5px;
+        text-align: right
+      }
+      td:first-child {
+        text-align: left;
+      }
+      tfoot {
+        font-weight: bold;
+        background-color: #011F5B50;
+      }
+    }
+
+    /* Construct a method for hover text */
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black;
+    }
+
+    /* Tooltip text */
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 6px;
+
+      /* Position the tooltip text */
+      position: absolute;
+      z-index: 1;
+      bottom: 100%;
+      left: 50%;
+      margin-left: -100px;
+    }
+
+    /* Show the tooltip text when you mouse over the tooltip container */
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+
+    /* Add an arrow to the tool tip */
+    .tooltip .tooltiptext::after {
+      content: " ";
+      position: absolute;
+      top: 100%; /* At the bottom of the tooltip */
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: black transparent transparent transparent;
+    }
 
     .col-actions {
       width: 100px;
@@ -64,6 +141,13 @@ body.active_admin {
     #right-col-tut {
       float: right;
     }
+
+    .actions {
+      #upload-status {
+        font-weight: bold;
+        padding-left: 10px;
+      }
+    }
   }
 
   #filters_sidebar_section {
@@ -100,4 +184,49 @@ body.active_admin {
     }
   }
 
+  .choices-group li {
+    list-style-type:none;
+  }
+
+  #report-query,
+  #report-template {
+    .aggregate.select {
+      display: inline-block;
+      margin: 0 8px;
+      padding: 0;
+    }
+
+    .aggregate.select select {
+      height: 20px;
+      line-height: 15px;
+      padding: 0 16px 0 7px;
+    }
+
+    li.choice {
+      line-height: 24px;
+    }
+
+    #join-section {
+      margin: 16px 0 16px 0;
+      padding: 0px 16px;
+    }
+
+    #join-section > legend {
+      padding: 0;
+      margin-bottom: 8px;
+    }
+
+    #join-section > legend > span {
+      font-size: 12px;
+    }
+
+    #join-section a {
+      margin-left: 8px;
+    }
+
+    .report_query_join_clauses > fieldset.inputs,
+    .report_template_join_clauses > fieldset.inputs {
+      margin: 0;
+    }
+  }
 }

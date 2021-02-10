@@ -15,6 +15,7 @@ rails_app_user_uid: 9999
 alertmanager_1_swarm_node: metridoc01
 alertmanager_2_swarm_node: metridoc02
 jenkins_swarm_node: metridoc01
+metridoc_swarm_node: metridoc01
 postgres_primary_swarm_node: metridoc01
 postgres_replica_swarm_node: metridoc02
 
@@ -50,6 +51,10 @@ docker_stack_env:
   DATABASE_SUBNET: '{{ database_subnet }}'
   GF_SERVER_ROOT_URL: http://metridoc01.library.upenn.int:3000
   GF_SMTP_HOST: '{{ vault_grafana_smtp_host }}'
+  JENKINS_IMAGE_TAG: lts
+  MAILER_DEFAULT_FROM: '{{ vault_mailer_default_from }}'
+  MAILER_DOMAIN: '{{ vault_mailer_domain }}'
+  MAILER_HOST: '{{ vault_mailer_host }}'
   METRIDOC_IMAGE_TAG: '{{ metridoc_image_tag }}'
   METRIDOC_REPLICAS: 2
   MONITORING_SUBNET: '{{ monitoring_subnet }}'

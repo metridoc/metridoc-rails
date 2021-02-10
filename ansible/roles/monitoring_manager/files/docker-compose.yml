@@ -1,5 +1,13 @@
 version: '3.7'
 
+# Default logging
+x-logging:
+  &default-logging
+  driver: json-file
+  options:
+    max-file: '3'
+    max-size: '10m'
+
 services:
   alertmanager-1:
     image: prom/alertmanager:v0.17.0
@@ -17,6 +25,7 @@ services:
         constraints:
           - node.labels.alertmanager-1 == true
       replicas: 1
+    logging: *default-logging
     networks:
       - monitoring
     ports:
@@ -43,6 +52,7 @@ services:
         constraints:
           - node.labels.alertmanager-2 == true
       replicas: 1
+    logging: *default-logging
     networks:
       - monitoring
     ports:
@@ -76,6 +86,7 @@ services:
       GF_SMTP_ENABLED: 'true'
       GF_SMTP_FROM_ADDRESS: grafana@metridoc.library.upenn.edu
       GF_SMTP_HOST:
+    logging: *default-logging
     networks:
       - monitoring
     ports:
@@ -106,6 +117,7 @@ services:
       POSTGRES_DB: grafana
       POSTGRES_PASSWORD_FILE: /run/secrets/grafana_database_password
       POSTGRES_USER: grafana
+    logging: *default-logging
     networks:
       - monitoring
     secrets:
@@ -130,6 +142,7 @@ services:
     environment:
       NODE_ID: '{{.Node.ID}}'
       NODE_NAME: '{{.Node.Hostname}}'
+    logging: *default-logging
     networks:
       - monitoring
     volumes:
@@ -147,6 +160,7 @@ services:
     deploy:
       mode: replicated
       replicas: 2
+    logging: *default-logging
     networks:
       - monitoring
     ports:
@@ -164,6 +178,7 @@ services:
       DATA_SOURCE_USER: monitoring
       DATA_SOURCE_URI: primary-db:5432/postgres?sslmode=disable
       PG_EXPORTER_EXTEND_QUERY_PATH: /queries.yml
+    logging: *default-logging
     networks:
       - database
       - monitoring

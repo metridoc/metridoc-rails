@@ -15,6 +15,7 @@ rails_app_user_uid: 9999
 alertmanager_1_swarm_node: '{{ local_swarm_node }}'
 alertmanager_2_swarm_node: '{{ local_swarm_node }}'
 jenkins_swarm_node: '{{ local_swarm_node }}'
+metridoc_swarm_node: '{{ local_swarm_node }}'
 postgres_primary_swarm_node: '{{ local_swarm_node }}'
 postgres_replica_swarm_node: '{{ local_swarm_node }}'
 
@@ -50,6 +51,7 @@ docker_stack_env:
   DATABASE_SUBNET: '{{ database_subnet }}'
   GF_SERVER_ROOT_URL: http://localhost:3000
   GF_SMTP_HOST: localhost:25
+  JENKINS_IMAGE_TAG: lts-alpine
   METRIDOC_IMAGE_TAG: local
   METRIDOC_REPLICAS: 1
   MONITORING_SUBNET: '{{ monitoring_subnet }}'

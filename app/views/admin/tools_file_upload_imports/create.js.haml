@@ -1,0 +1,4 @@
+- if @file_import.errors.any?
+  $('#main_content').html('#{ j render partial: 'form', locals: { resource: @file_import } }');
+- else
+  window.location = "#{admin_tools_file_upload_import_path(@file_import)}";

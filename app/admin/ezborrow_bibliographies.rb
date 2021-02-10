@@ -22,8 +22,8 @@ ActiveAdmin.register Ezborrow::Bibliography do
   filter :request_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :process_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :pickup_location, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-  filter :borrower, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-  filter :lender, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+  filter :borrower, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals], :input_html => { :maxlength => 8 }
+  filter :lender, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals], :input_html => { :maxlength => 8 }
   filter :supplier_code, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :call_number, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :load_time, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]

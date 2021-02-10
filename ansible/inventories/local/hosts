@@ -1,2 +1,5 @@
 [swarm_managers]
 localhost
+
+[swarm_workers]
+localhost

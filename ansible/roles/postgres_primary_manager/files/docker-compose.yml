@@ -1,5 +1,13 @@
 version: '3.7'
 
+# Default logging
+x-logging:
+  &default-logging
+  driver: json-file
+  options:
+    max-file: '3'
+    max-size: '10m'
+
 services:
   primary-db:
     image: postgres:11.3-alpine
@@ -7,6 +15,8 @@ services:
       postgres
         -c hba_file=/var/lib/postgresql/pg_hba.conf
         -c log_min_error_statement=log
+        -c max_wal_size=4GB
+        -c wal_keep_segments=80
     configs:
       - source: postgres_primary_pg_hba_conf
         target: /var/lib/postgresql/pg_hba.conf
@@ -20,6 +30,7 @@ services:
       replicas: 1
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_database_password
+    logging: *default-logging
     networks:
       - database
     secrets:
@@ -28,6 +39,10 @@ services:
         target: /docker-entrypoint-initdb.d/00_init_primary.sql
     volumes:
       - postgres_primary_data:/var/lib/postgresql/data
+      - type: tmpfs
+        target: /dev/shm
+        tmpfs:
+          size: 1073741824
 
 configs:
   postgres_primary_pg_hba_conf:

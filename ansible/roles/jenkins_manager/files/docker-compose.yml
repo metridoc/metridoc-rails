@@ -1,12 +1,21 @@
 version: '3.7'
 
+# Default logging
+x-logging:
+  &default-logging
+  driver: json-file
+  options:
+    max-file: '3'
+    max-size: '10m'
+
 services:
   jenkins:
-    image: quay.io/upennlibraries/jenkins_docker_client:lts
+    image: quay.io/upennlibraries/jenkins_docker_client:${JENKINS_IMAGE_TAG}
     deploy:
       placement:
         constraints:
           - node.labels.jenkins == true
+    logging: *default-logging
     networks:
       - jenkins
     ports:

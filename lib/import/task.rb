@@ -5,6 +5,8 @@ module Import
 
     class Task
 
+      HEADER_CONVERTER = ->(header) { Util.column_to_attribute(header).to_sym }
+
       def initialize(main_driver, task_file, test_mode = false)
         @main_driver, @task_file, @test_mode = main_driver, task_file, test_mode
       end
@@ -64,7 +66,7 @@ module Import
 
         return_value = false
         if target_adapter == "csv"
-          return_value = import
+          return_value = import_csv
         elsif target_adapter == "xml"
           return_value = import_xml
         elsif target_adapter == "native_sql"
@@ -91,6 +93,10 @@ module Import
 
       def batch_size
         @test_mode ? 100 : task_config["batch_size"] || 10000
+      end
+
+      def max_errors
+        2000
       end
 
       def class_name
@@ -165,46 +171,152 @@ module Import
         task_config["import_file_name"] || task_config["export_file_name"] || task_config["file_name"]
       end
 
-      def import
-        log "Starting to import #{import_file_name}"
+      def csv_file_path
+        @csv_file_path ||= File.join(@main_driver.import_folder, import_file_name)
+      end
 
-        csv_file_path = File.join(@main_driver.import_folder, import_file_name)
-
-        truncate if truncate_before_load?
-
+      def get_headers
         csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
-        headers = csv.readline.join(',')
+        columns = csv.readline
         csv.close
+        headers = columns.map{|c| Util.column_to_attribute(c) }
+        headers.each do |column_name|
+          if class_name.columns_hash[column_name].blank?
+            headers[headers.index(column_name)] = column_name.split(/\_+/).first
+          end
+        end
+        headers
+      end
 
-        table_name = class_name.table_name
-        password = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['password']
-        username = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['username']
-        host = YAML.parse_file(Rails.root + "config" + "database.yml").to_ruby[Rails.env]['host']
-        cmd = "PGPASSWORD='#{password}' psql -U#{username} -h #{host} -c \
-              \"\\copy #{table_name}(#{headers}) FROM '#{csv_file_path}' WITH DELIMITER ',' HEADER CSV\""
+      def import_csv
+        Util.convert_to_utf8(csv_file_path)
 
-        system(cmd)
+        headers = get_headers
 
-        log "Finished importing #{import_file_name}."
+        unmatched_columns = headers.select { |column_name| class_name.columns_hash[column_name].blank? }
+        if unmatched_columns.present?
+          log "!!WARNING!!: These columns are not processed: [#{unmatched_columns.join(", ")}]"
+        end
 
-        return true
+        n_errors = 0
+        success = true
+        ActiveRecord::Base.transaction do
+          truncate if truncate_before_load?
+
+          records = []
+
+          csv = CSV.open(csv_file_path, headers: true,  header_converters: HEADER_CONVERTER)
+
+          loop do
+            begin
+              if n_errors >= max_errors
+                log "Too many errors #{n_errors}, exiting!"
+                records = []
+                success = false
+                break
+              end
+
+              row = csv.shift
+              break unless row
+
+              row_error = false
+              attributes = {}
+              headers.each do |column_name|
+                next if class_name.columns_hash[column_name].blank?
+
+                val = row[column_name.to_sym]
+
+                if class_name.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
+                  log "Invalid integer [#{val}] in column: #{column_name} row: #{row.to_h}"
+                  n_errors = n_errors + 1
+                  row_error = true
+                  next
+                end
+                if class_name.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
+                  log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.to_h}"
+                  n_errors = n_errors + 1
+                  row_error = true
+                  next
+                end
+                if class_name.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
+                  log "Invalid date [#{val}] in column: #{column_name} row: #{row.to_h}"
+                  n_errors = n_errors + 1
+                  row_error = true
+                  next
+                end
+
+                unless val.nil?
+                  if class_name.columns_hash[column_name].type == :string && val.length > class_name.columns_hash[column_name].sql_type_metadata.limit
+                    log "Length of value [#{val}] exceeds maximum for column #{column_name} row: #{row.to_h}"
+                    n_errors = n_errors + 1
+                    row_error = true
+                    next
+                  end
+                end
+
+                val = Util.parse_datetime(val) if class_name.columns_hash[column_name].type == :datetime
+
+                attributes[column_name] = val
+              end
+
+              next if row_error
+
+              # puts "attributes=#{attributes.inspect}"
+              attributes.merge!(institution_id: institution_id) if has_institution_id?
+              records << class_name.new(attributes)
+
+              if records.size >= batch_size
+                n_errors += import_records(records)
+                records = []
+              end
+
+            rescue CSV::MalformedCSVError => e
+              n_errors = n_errors + 1
+              log "skipping bad row - MalformedCSVError: #{e.message}"
+            end
+          end # loop
+
+          csv.close
+
+          if records.size > 0
+            n_errors += import_records(records)
+            records = []
+          end
+
+          if n_errors >= max_errors
+            log "Too many errors #{n_errors}."
+            success = false
+          else
+            log "Finished importing #{class_name.model_name.human}."
+          end
+
+          unless success
+            raise ActiveRecord::Rollback, "Rolling back the upload."
+          end
+        end # ActiveRecord::Base.transaction
+
+        return success
       end
 
       def import_records(records)
         begin
-          class_name.import records
-          log "Imported #{records.size} records."
-          return 0
-        rescue => ex
+          result = class_name.import records
+          log "Imported #{result.ids.size} records."
+          log_validation_errors(result.failed_instances)
+          return result.failed_instances.size
+        rescue
           log "Error on import. Query too large to display."
+          return save_records_individually(records)
         end
+      end
 
+      def save_records_individually(records)
         n_errors = 0
         log "Switching to individual mode"
         records.each do |record|
           begin
             unless record.save
-              log "Failed saving #{record.inspect} error: #{records.errors.full_messages.join(", ")}"
+              log "Failed saving #{record.inspect} error: #{record.errors.full_messages.join(", ")}"
               n_errors += 1
             end
           rescue => ex
@@ -265,6 +377,12 @@ module Import
         log "Finished importing XML #{import_file_name}."
 
         return true
+      end
+
+      def log_validation_errors(records)
+        records.each do |r|
+          log "Failed saving #{r.inspect} error: #{r.errors.full_messages.join(", ")}"
+        end
       end
 
       def log(m)

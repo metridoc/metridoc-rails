@@ -35,20 +35,15 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
+    misc: "Miscellaneous"
+    edit_resource: "Edit %{resource}"
+    delete_resource: "Delete %{resource}"
+    supplemental_data: "Supplemental Data"
+    bookkeeping: "Bookkeeping"
+    has_many_delete: "Remove"
+    new_link: "New %{model}"
     dashboard_heading: "Welcome to MetriDoc"
-    dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>
-                        <ul>
-                          <li>IvyPlus</li>
-                            <ul>
-                              <li><a href=\"/admin/borrowdirect\">BorrowDirect</a></li>
-                              <li><a href=\"/admin/ezborrow\">E-Z Borrow</a></li>
-                              <li><a href=\"/admin/illiad\">ILLiad</a></li>
-                            </ul>
-                            <li><a href=\"/admin/keyserver\">Keyserver</a></li>
-                            <li><a href=\"/admin/gatecount\">Gate counts</a></li>
-                            <li><a href=\"/admin/marcdata\">Marc data</a></li>
-                            <li><a href=\"/admin/misc\">Supplemental data</a></li>
-                          </ul>"
+    dashboard_text_html: "<p>MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools.</p>"
     about: "About MetriDoc"
     about_text_html: "<p>Libraries plan and operate services in an environment dense with useful management data but poor in business intelligence.  Every user interaction with the library, and many outcomes of that interaction, leave measurable, informative traces in the IT and human systems that deliver service.  The challenge libraries face is to gather and transform the wealth of systems data into information.  MetriDoc is a solution to that challenge.</p>
 
@@ -74,6 +69,10 @@ en:
     documentation: "Documentation"
     marc_data: "MARC data"
     gate_counts: "Gate counts"
+    alma:
+      alma_menu: "Alma"
+    ares:
+      ares_menu: "Ares"
     borrowdirect:
       borrowdirect_menu: "BorrowDirect"
       columns_heading: "Example data visualizations"
@@ -99,13 +98,52 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
-    misc: "Supplemental Data"
-    misc_heading: "Supplemental Data"
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
+  phrases:
+    process: "Process"
+    download: "Download"
+    reports: "Reports"
+    tools: "Tools"
+    security: "Security"
+    please_select: "Please Select..."
+    access_levels:
+      read-only: "Read Only"
+      read-write: "Read/Write"
+    user_role_sections:
+      borrowdirect: "Borrow Direct"
+      ezborrow: "E-Z Borrow"
+      gatecount: "Gate Counts"
+      illiad: "Illiad"
+      keyserver: "Key Server"
+      marc: "MARC Data"
+      tools: "Tools"
+      libraryprofile: "Participating Libraries"
+      supplementaldata: "Supplemental Data"
+      log: "Log"
+      bookkeeping: "Bookkeeping"
+      security: "Security"
+      misc: "Miscellaneous"
+      report: "Reports"
+    are_you_sure: "Are you sure?"
+    file_upload_import:
+      statuses:
+        pending: "Pending"
+        in-progress: "In Progress"
+        success: "Success"
+        failed:  "Failed"
+        cancelled: "Cancelled"
+    report_query:
+      statuses:
+        pending: "Pending"
+        in-progress: "In Progress"
+        success: "Success"
+        failed:  "Failed"
+        cancelled: "Cancelled"
+
   pages:
     homepage_heading: "Welcome to MetriDoc"
     homepage_text: "MetriDoc is an extendable platform to view and maintain library statistics and reports.  Providing tools for data collection from heterogeneous sources, MetriDoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools."
@@ -114,10 +152,108 @@ en:
       log/job_execution:
         one: "Log"
         other: "Logs"
-      log/job_execution_step: 
+      log/job_execution_step:
         one: "Job Execution Step"
         other: "Job Execution Steps"
       marc/book_mod:
         one: "Book Mod"
         other: "Book Mods"
-
+      admin_user:
+        one: "Admin User"
+        other: "Admin Users"
+      security/user_role:
+        one: "User Role"
+        other: "User Roles"
+      security/user_role_section:
+        one: "User Role Section"
+        other: "User Role Sections"
+      admin_user:
+        one: "Admin User"
+        other: "Admin Users"
+      misc/consultation_data:
+        one: "Consultation Data"
+        other: "Consultation Data"
+      tools/file_upload_import:
+        one: "File Upload Import"
+        other: "File Upload Imports"
+      keyserver/usage:
+        one: "Keyserver Usage"
+        other: "Keyserver Usages"
+      keyserver/status_term:
+        one: "Keyserver Status Term"
+        other: "Keyserver Status Terms"
+      keyserver/platform_term:
+        one: "Keyserver Platform Term"
+        other: "Keyserver Platform Terms"
+      keyserver/reason_term:
+        one: "Keyserver Reason Term"
+        other: "Keyserver Reason Terms"
+      keyserver/program:
+        one: "Keyserver Program"
+        other: "Keyserver Programs"
+      keyserver/event_term:
+        one: "Keyserver Event Term"
+        other: "Keyserver Event Terms"
+      keyserver/division:
+        one: "Keyserver Division"
+        other: "Keyserver Divisions"
+      keyserver/computer:
+        one: "Keyserver Computer"
+        other: "Keyserver Computers"
+      keyserver/cpu_type_term:
+        one: "Keyserver CPU Type Term"
+        other: "Keyserver CPU Type Terms"
+      keyserver/usage:
+        one: "Keyserver Usage"
+        other: "Keyserver Usages"
+      gate_count/card_swipe:
+        one: "Gate Count Card Swipe"
+        other: "Gate Count Card Swipes"
+      report/query:
+        one: "Report Query"
+        other: "Report Queries"
+      report/template:
+        one: "Report Template"
+        other: "Report Templates"
+      alma/circulation:
+        one: "Alma Circulation"
+        other: "Alma Circulations"
+      ares/item_usage:
+        one: "Ares Item Usage"
+        other: "Ares Item Usage"
+    attributes:
+      tools/file_upload_import:
+        target_model: "Target Model"
+        uploaded_file: "Upload File"
+        post_sql_to_execute: "Post SQL To Execute"
+        comments: "Comments"
+      report/template:
+        full_sql: "Full SQL to execute (other fields will be ignored)"
+      report/query:
+        full_sql: "Full SQL to execute (other fields will be ignored)"
+        owner_id: "Owner"
+        name: "Name"
+        comments: "Comments"
+        select_section: "Select Section"
+        from_section: "From Section"
+        where_section: "Where Section"
+        group_by_section: "Group By Section"
+        order_section: "Order Section"
+        status: "Status"
+        last_run_at: "Last Run At"
+        last_error_message: "Last Error Message"
+        output_file_name: "Output File"
+      ares/item_usage:
+        semester: "Semester"
+        item_id: "Item ID"
+        date_time: "Date/Time"
+        document_type: "Document Type"
+        item_format: "Item Format"
+        course_id: "Course ID"
+        digital_item: "Digital Item"
+        course_number: "Course Number"
+        department: "Department"
+        date_time_year: "Date/Time Year"
+        date_time_month: "Date/Time Month"
+        date_time_day: "Date/Time Day"
+        date_time_hour: "Date/Time Hour"
