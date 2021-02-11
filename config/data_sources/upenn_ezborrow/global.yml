@@ -8,4 +8,3 @@ password:         '<%= ENV["UPENN_EZBORROW_MSSQL_PWD"] %>'
 pool:             5
 timeout:          5000
 export_folder:    '/tmp/upenn_ezborrow/'
-import_folder:    '/Users/jkiser/Desktop/tmp/upenn_ezborrow'
