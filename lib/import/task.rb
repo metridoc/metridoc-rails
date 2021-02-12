@@ -189,8 +189,6 @@ module Import
       end
 
       def import_csv
-        Util.convert_to_utf8(csv_file_path)
-
         headers = get_headers
 
         unmatched_columns = headers.select { |column_name| class_name.columns_hash[column_name].blank? }
