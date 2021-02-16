@@ -183,6 +183,7 @@ module Preprocess
         _output_headers.unshift("institution_id") if has_institution_id?
         _output_headers << 'created_at' if has_created_at?
         _output_headers << 'updated_at' if has_updated_at?
+        _output_headers
       end
 
       def preprocess
