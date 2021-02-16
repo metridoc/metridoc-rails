@@ -3,7 +3,6 @@ load_sequence:         2
 # Source Config
 source_adapter:        mssql
 select_distinct:       true
-source_adapter:        mssql
 source_table:          "GroupsLink"
 column_mappings:
   GroupNumber:  group_no
