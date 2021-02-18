@@ -1,5 +1,5 @@
 ActiveAdmin.register Misc::ConsultationData do
-  menu if: proc{ authorized?(:read, Misc::ConsultationData) }, parent: I18n.t("active_admin.misc")
+  menu if: proc{ authorized?(:read, Misc::ConsultationData) }, parent: I18n.t("active_admin.resource_sharing")
 
   permit_params :submitted,
                 :consultation_or_instruction,
