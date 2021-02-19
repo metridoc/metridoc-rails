@@ -38,7 +38,7 @@ en:
     misc: "Miscellaneous"
     edit_resource: "Edit %{resource}"
     delete_resource: "Delete %{resource}"
-    supplemental_data: "Supplemental Data"
+    supplemental_data: "RSAT Supplemental Data"
     bookkeeping: "Bookkeeping"
     has_many_delete: "Remove"
     new_link: "New %{model}"
