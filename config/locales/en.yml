@@ -122,7 +122,7 @@ en:
       marc: "MARC Data"
       tools: "Tools"
       libraryprofile: "Participating Libraries"
-      supplementaldata: "Supplemental Data"
+      supplementaldata: "RSAT Supplemental Data"
       log: "Log"
       bookkeeping: "Bookkeeping"
       security: "Security"
