@@ -107,6 +107,7 @@ module IlliadHelper
     library_id = options.fetch(:library_id, 2)
     process_type = options.fetch(:process_type, "Borrowing")
     request_type = options.fetch(:request_type, "Loan")
+    get_monthly = options.fetch(:get_monthly, false)
 
     # Find distinct transactions
     query = Illiad::Transaction.select(
@@ -119,23 +120,6 @@ module IlliadHelper
       query,
       **options.merge(:only_filled => true)
     ).average("EXTRACT (epoch FROM transaction_date - creation_date)")
-
-    # Join transactions to the trackings table on successful requests
-    # To find the turnaround statistics
-    # illiad_trackings is only for borrowing not for lending or doc del!
-    #turnaround_query = base_query(
-    #  query,
-    #  **options.merge(:only_filled => true)
-    #).joins(
-    #  "LEFT JOIN illiad_trackings
-    #  ON illiad_trackings.transaction_number = illiad_transactions.transaction_number
-    #  AND illiad_trackings.institution_id = illiad_transactions.institution_id"
-    #)
-
-    # Get the average turnaround times
-    #req_rec = turnaround_query.average(:turnaround_req_rec)
-    #req_shp = turnaround_query.average(:turnaround_req_shp)
-    #shp_rec = turnaround_query.average(:turnaround_shp_rec)
 
     # Find the number of successful requests
     successful_requests = base_query(
@@ -170,6 +154,37 @@ module IlliadHelper
     else
       billing = 0
     end
+
+
+    # Return a hash for the monthly calls
+    if get_monthly
+
+      months = display_months(year)
+      output = {}
+
+      months.each do |month|
+
+        monthly_total = total_requests.fetch(month.to_i, 0)
+        monthly_success = successful_requests.fetch(month.to_i, 0)
+        monthly_fail = failed_requests.fetch(month.to_i, 0)
+        monthly_turnaround = turnaround.fetch(month.to_i, 0)
+        monthly_billing = billing.fetch(month.to_i, 0)
+
+        output[month] = [
+          format_big_number(monthly_total),
+          format_big_number(monthly_success),
+          format_percent(monthly_success.fdiv(monthly_total)),
+          format_big_number(monthly_fail),
+          format_percent(monthly_fail.fdiv(monthly_total)),
+          format_big_number(monthly_total - monthly_success - monthly_fail),
+          format_into_days(monthly_turnaround),
+          format_currency(monthly_billing)
+        ]
+      end
+      puts output
+      return output
+    end
+
 
     # Return everything in one huge list!
     return [
@@ -280,6 +295,40 @@ module IlliadHelper
       end
     end
     return output_table
+  end
+
+
+  def build_monthly_table(fiscal_year, library_id, process_type)
+    this_year, last_year = fiscal_year_ranges(fiscal_year)
+
+    options = {
+      :library_id => library_id,
+      :process_type => process_type,
+      :get_monthly => true
+    }
+
+    # Construct an output hash for the table
+    output_table = {}
+
+    # Loop through all requests and years
+    request_types.keys.each do |request|
+      # Convert key type to string
+      request = request.to_s
+      if not output_table.has_key?(request)
+        output_table[request] = []
+      end
+      output_table[request].append(
+        query_statistics(this_year,
+          **options.merge(
+            {
+              :request_type => request
+            }
+          )
+        )
+      )
+    end
+
+    return output_table, display_months(this_year)
   end
 
 end

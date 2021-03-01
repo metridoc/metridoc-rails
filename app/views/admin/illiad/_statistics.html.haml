@@ -8,6 +8,12 @@
 
 - table = build_summary_table(fiscal_year, library_id)
 
+-# Monthly statistics path
+- monthly_path = "/admin/illiad_monthly_statistics?"
+
+-# Initial Query params
+- query_params = "fiscal_year=#{fiscal_year}&library_id=#{library_id}&"
+
 %h2= "Displaying ILLiad summary for the #{fiscal_year} fiscal year and U Penn"
 
 <!-- Build the table -->
@@ -33,6 +39,10 @@
           %tr
             - row.each do |cell|
               %td= cell
+
     %br
+  %div{:style => "text-align: center;color: blue;text-decoration: underline;"}
+    = link_to "Monthly Breakdown", monthly_path + query_params + "process_type=#{p_k}"
+  %br
 
 %hr

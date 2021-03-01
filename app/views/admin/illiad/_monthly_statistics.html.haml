@@ -1,0 +1,40 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2021 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
+-# Access form option for borrowing type
+- process_type = params[:process_type].nil? ? "Borrowing" :  params[:process_type]
+
+- table, display_months = build_monthly_table(fiscal_year, library_id, process_type)
+
+%h2= "Displaying ILLiad Monthly Summary for the #{fiscal_year} fiscal year at U Penn"
+
+%h2{:style => "font-weight:bold;color:#011F5B"}= process_types[process_type.to_sym]
+
+<!-- Build the table -->
+- request_types.each do |r_k, r_v|
+  %h3{:style => "color:#990000;text-align:center;font-weight:bold"}= r_v
+  %table.statistics_summary
+    %thead
+      %tr
+        %th Fiscal Year
+        %th Total Requests
+        %th Successful Requests
+        %th Successful Rate
+        %th Failed Requests
+        %th Failure Rate
+        %th In Progress
+        %th Turnaround (days)
+        %th Billing
+    %tbody
+      - display_months.each do |m|
+        %tr
+          %td= Date::MONTHNAMES[m]
+          - table[r_k.to_s][0][m].each do |cell|
+            %td= cell
+  %br
+
+%hr
