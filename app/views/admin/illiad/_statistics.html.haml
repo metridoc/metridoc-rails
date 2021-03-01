@@ -1,0 +1,38 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2021 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
+
+- table = build_summary_table(fiscal_year, library_id)
+
+%h2= "Displaying ILLiad summary for the #{fiscal_year} fiscal year and U Penn"
+
+<!-- Build the table -->
+- process_types.each do |p_k, p_v|
+  %hr
+  %h2{:style => "font-weight:bold;color:#011F5B"}= p_v
+  - request_types.each do |r_k, r_v|
+    %h3{:style => "color:#990000;text-align:center;font-weight:bold"}= r_v
+    %table.statistics_summary
+      %thead
+        %tr
+          %th Fiscal Year
+          %th Total Requests
+          %th Successful Requests
+          %th Successful Rate
+          %th Failed Requests
+          %th Failure Rate
+          %th In Progress
+          %th Turnaround (days)
+          %th Billing
+      %tbody
+        - table[p_k.to_s][r_k.to_s].each do |row|
+          %tr
+            - row.each do |cell|
+              %td= cell
+    %br
+
+%hr

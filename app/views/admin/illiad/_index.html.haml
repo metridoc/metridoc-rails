@@ -4,6 +4,44 @@
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
 
+%hr
+
+%h2 ILLiad Fiscal Year Statistical Summary
+To get the summary statistics for any year or library, select the fiscal year |
+and the library name of interest. The default is set to the current year |
+and the summary of all library borrowing and lending. Please be patient while |
+the database is being queried. |
+
+%center
+
+-# Calculate today's date
+- today = Date.today()
+-# Find today's fiscal year
+- max_fiscal_year = today.mon > 6 ? today.year + 1 : today.year
+-# Build the selection of possible fiscal years
+- years = max_fiscal_year.downto(2014).to_a.map {|year| [year.to_s, year]}
+
+-# Get the list of libraries (eventually)
+- libraries = {"University of Pennsylvania" => 2}
+
+%center
+  = form_tag({:controller => admin_illiad_path,
+      :action => "statistics"},
+      {:method => :post}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select fiscal year
+        %td= select_tag "fiscal_year", options_for_select(years)
+        %td{:rowspan => 2}= submit_tag "Submit"
+      %tr
+        %td Select Institution
+        %td= select_tag "library_id", options_for_select(libraries)
+%br
+
+%hr
+
+%hr
+
 #data-viz
   %h2= t 'active_admin.illiad.columns_heading'
   #left-col
