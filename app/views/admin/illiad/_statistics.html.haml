@@ -12,9 +12,12 @@
 - monthly_path = "/admin/illiad_monthly_statistics?"
 
 -# Initial Query params
-- query_params = "fiscal_year=#{fiscal_year}&library_id=#{library_id}&"
+- query_params = "fiscal_year=#{fiscal_year}&library_id=#{library_id}"
 
 %h2= "Displaying ILLiad summary for the #{fiscal_year} fiscal year and U Penn"
+
+%div{:style => "text-align: center;color: blue;text-decoration: underline;"}
+  = link_to "Monthly Breakdown", monthly_path + query_params
 
 <!-- Build the table -->
 - process_types.each do |p_k, p_v|
@@ -35,14 +38,11 @@
           %th Turnaround (days)
           %th Billing
       %tbody
-        - table[p_k.to_s][r_k.to_s].each do |row|
+        - table[[p_k.to_s,r_k.to_s]].each do |row|
           %tr
             - row.each do |cell|
               %td= cell
 
-    %br
-  %div{:style => "text-align: center;color: blue;text-decoration: underline;"}
-    = link_to "Monthly Breakdown", monthly_path + query_params + "process_type=#{p_k}"
   %br
 
 %hr

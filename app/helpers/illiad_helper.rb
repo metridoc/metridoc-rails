@@ -60,8 +60,6 @@ module IlliadHelper
 
     # Set up the default conditions
     library_id = options.fetch(:library_id, 2)
-    process_type = options.fetch(:process_type, "Borrowing")
-    request_type = options.fetch(:request_type, "Loan")
 
     # Group by months
     get_monthly = options.fetch(:get_monthly, false)
@@ -72,18 +70,40 @@ module IlliadHelper
 
     # Find Penn only transactions
     output_query = input_query.where(institution_id: library_id)
-    # Define the process type:
+
+    # Group the result by the request and process types
+    # Group by the process type:
     # Borrowing, Lending, or Doc Del (internal)
-    output_query = output_query.where(process_type: process_type)
-    # Define the request type:
+    output_query = output_query.group(:process_type)
+    # Group by the request type:
     # Article or Loan (book)
-    output_query = output_query.where(request_type: request_type)
+    output_query = output_query.group(:request_type)
 
     # Select only successfully completed records
-    output_query = only_filled ?
-    output_query.where(
-      transaction_status: COMPLETED_STATUS[process_type][request_type]
-      ) : output_query
+    if only_filled
+      # Complicated CASE statement needed to be able
+      # to group by process_type and request_type
+      case_statement = "CASE "
+      # Loop through process types
+      process_types.each do |p_k, p_v|
+        # Loop through request types
+        request_types.each do |r_k, r_v|
+          case_statement = (
+            case_statement +
+            "WHEN process_type = '" + p_k.to_s + "'" +
+            " AND request_type = '" + r_k.to_s + "'" +
+            " THEN transaction_status IN (" +
+            # Hacky way to get 'value', 'value',...
+            "'#{COMPLETED_STATUS[p_k.to_s][r_k.to_s].join("', '")}'" + ") "
+          )
+        end
+      end
+      case_statement = case_statement + " END"
+
+      output_query = output_query.where(
+        case_statement
+      )
+    end
 
     # Select only exhausted (permantently unfilled) records
     output_query = only_exhausted ?
@@ -104,9 +124,6 @@ module IlliadHelper
   def query_statistics(year, options = {})
 
     # Set up the default conditions
-    library_id = options.fetch(:library_id, 2)
-    process_type = options.fetch(:process_type, "Borrowing")
-    request_type = options.fetch(:request_type, "Loan")
     get_monthly = options.fetch(:get_monthly, false)
 
     # Find distinct transactions
@@ -138,67 +155,63 @@ module IlliadHelper
 
     # Find the total number of requests
     total_requests = query.count
-
+    puts total_requests
     # Calculate the billed amount
-    billing = 0
     # UPenn uses ifm cost for internal lending
-    # Other instituions may use billing_amount
-    if process_type == "Borrowing" or process_type == "Doc Del"
-      billing = query.sum(
-        "CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION)"
-      )
-    elsif process_type == "Lending"
-      billing = query.sum(
-        "CAST (billing_amount AS DOUBLE PRECISION)"
-      )
-    else
-      billing = 0
-    end
+    # Other institutions may use billing_amount
+    # Complicated CASE statement needed to be able
+    # to group by process_type
+    case_statement = (
+      "CASE " +
+      "WHEN process_type = 'Borrowing' " +
+      "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
+      "WHEN process_type = 'Doc Del' " +
+      "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
+      "WHEN process_type = 'Lending' " +
+      "THEN CAST (billing_amount AS DOUBLE PRECISION) " +
+      "END"
+    )
+    billing = query.sum(case_statement)
 
+    # Product will combine lists
+    output_keys = process_types.keys.map{ |k| k.to_s }.product(
+      request_types.keys.map{ |k| k.to_s }
+    )
 
-    # Return a hash for the monthly calls
+    # Build keys for the monthly situation
     if get_monthly
-
       months = display_months(year)
-      output = {}
-
-      months.each do |month|
-
-        monthly_total = total_requests.fetch(month.to_i, 0)
-        monthly_success = successful_requests.fetch(month.to_i, 0)
-        monthly_fail = failed_requests.fetch(month.to_i, 0)
-        monthly_turnaround = turnaround.fetch(month.to_i, 0)
-        monthly_billing = billing.fetch(month.to_i, 0)
-
-        output[month] = [
-          format_big_number(monthly_total),
-          format_big_number(monthly_success),
-          format_percent(monthly_success.fdiv(monthly_total)),
-          format_big_number(monthly_fail),
-          format_percent(monthly_fail.fdiv(monthly_total)),
-          format_big_number(monthly_total - monthly_success - monthly_fail),
-          format_into_days(monthly_turnaround),
-          format_currency(monthly_billing)
-        ]
-      end
-      puts output
-      return output
+      output_keys = process_types.keys.map{ |k| k.to_s }.product(
+        request_types.keys.map{ |k| k.to_s },
+        months
+      )
     end
 
+    # Return a hash of the request_type and process_type
+    # as keys to the related row.
+    output = {}
+    # Loop through the output keys
+    output_keys.each do |key|
+      total = total_requests.fetch(key, 0)
+      successful = successful_requests.fetch(key, 0)
+      failed = failed_requests.fetch(key, 0)
+      output[key] = [
+        format_big_number(total),
+        format_big_number(successful),
+        format_percent(successful.fdiv(total)),
+        format_big_number(failed),
+        format_percent(failed.fdiv(total)),
+        format_big_number(total - successful - failed),
+        format_into_days(turnaround.fetch(key, 0)),
+        format_currency(billing.fetch(key, 0))
+      ]
+    end
 
-    # Return everything in one huge list!
-    return [
-      format_big_number(total_requests),
-      format_big_number(successful_requests),
-      format_percent(successful_requests.fdiv(total_requests)),
-      format_big_number(failed_requests),
-      format_percent(failed_requests.fdiv(total_requests)),
-      format_big_number(total_requests - successful_requests - failed_requests),
-      format_into_days(turnaround),
-      format_currency(billing)
-    ]
+    puts output
+    return output
   end
 
+  # Turn a time difference in seconds into days
   def format_into_days(input)
     output = "---"
     if input and input != 0 and not input.to_f.nan?
@@ -256,6 +269,7 @@ module IlliadHelper
     return output
   end
 
+  # Method to build the overall statistical summary table
   def build_summary_table(fiscal_year, library_id)
     years = fiscal_year_ranges(fiscal_year)
 
@@ -263,70 +277,39 @@ module IlliadHelper
       :library_id => library_id
     }
 
-    # Construct an output hash for the table
     output_table = {}
 
-    # Loop through all processes and requests and years
-    process_types.keys.each do |process|
-      # Convert key type to string
-      process = process.to_s
-      if not output_table.has_key?(process)
-        output_table[process] = {}
-      end
-      request_types.keys.each do |request|
-        # Convert key type to string
-        request = request.to_s
-        if not output_table[process].has_key?(request)
-          output_table[process][request] = []
-        end
-        years.each do |year|
-          output_table[process][request].append(
-            ["FY" + (year.min.year + 1).to_s] +
-            (query_statistics(year,
-              **options.merge(
-                {
-                  :process_type => process,
-                  :request_type => request
-                }
-              ))
-            )
+    # Construct the output hash for the table
+    years.each do |year|
+      year_table = query_statistics(year, **options)
+      year_table.each do |k, v|
+        # If the key exists, append to the end
+        if output_table.key?(k)
+          output_table[k] = output_table[k].append(
+            ["FY" + (year.min.year + 1).to_s] + v
           )
+        # if the key doesn't exist, make a list of lists
+        else
+          output_table[k] = [["FY" + (year.min.year + 1).to_s] + v]
         end
       end
     end
+
     return output_table
   end
 
 
-  def build_monthly_table(fiscal_year, library_id, process_type)
+  # Method to build the monthly breakdown table
+  def build_monthly_table(fiscal_year, library_id)
     this_year, last_year = fiscal_year_ranges(fiscal_year)
 
     options = {
       :library_id => library_id,
-      :process_type => process_type,
       :get_monthly => true
     }
 
     # Construct an output hash for the table
-    output_table = {}
-
-    # Loop through all requests and years
-    request_types.keys.each do |request|
-      # Convert key type to string
-      request = request.to_s
-      if not output_table.has_key?(request)
-        output_table[request] = []
-      end
-      output_table[request].append(
-        query_statistics(this_year,
-          **options.merge(
-            {
-              :request_type => request
-            }
-          )
-        )
-      )
-    end
+    output_table = query_statistics(this_year, **options)
 
     return output_table, display_months(this_year)
   end
