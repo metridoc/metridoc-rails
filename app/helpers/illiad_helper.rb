@@ -155,7 +155,7 @@ module IlliadHelper
 
     # Find the total number of requests
     total_requests = query.count
-    puts total_requests
+    
     # Calculate the billed amount
     # UPenn uses ifm cost for internal lending
     # Other institutions may use billing_amount
@@ -207,7 +207,6 @@ module IlliadHelper
       ]
     end
 
-    puts output
     return output
   end
 
