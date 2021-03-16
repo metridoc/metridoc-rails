@@ -19,35 +19,48 @@ module IlliadHelper
     "Borrowing" =>
     {
       "Article" => [
+        # Available to user to retrieve?
         "Delivered to Web",
-        "Request Finished",
-        "Request Sent"
+        # A 30 day padding to the end of the request
+        "Request Finished"
       ],
       "Loan" => [
         "Delivered to Web",
+        # Loan has been returned lending institution
         "Request Finished",
+        # Loan has been received by Penn
         "Awaiting Post Receipt Processing",
+        # Customer has Loan
         "Checked Out to Customer"
       ]
     },
     "Lending" =>
     {
+      # Penn provides request to online portal
       "Article" => ["Request Finished"],
       "Loan" => [
+        # Loan returned to Penn
         "Request Finished",
+        # Loan set out from Penn
         "Item Shipped"
       ]
     },
     "Doc Del" =>
     {
       "Article" => [
+        # Available to user
         "Delivered to Web",
+        # With a 30 day padding to mark as complete
         "Request Finished"
       ],
       "Loan" => [
+        # Item found then taken to pick up location
         "Item Found",
+        # Request completed and picked up or shipped
         "Request Finished",
-        "Reqeust Sent"
+        # Loans rerouted from DocDel to Borrowing
+        # Do not have "Item Found" in History
+        "Request Sent"
       ]
     }
   }
