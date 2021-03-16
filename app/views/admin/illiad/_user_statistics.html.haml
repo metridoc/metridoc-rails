@@ -1,0 +1,9 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2021 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
+
+%h2= "Displaying ILLiad User Group Summary for the #{fiscal_year} fiscal year at the University of Pennsylvania"

@@ -155,23 +155,23 @@ module IlliadHelper
 
     # Find the total number of requests
     total_requests = query.count
-    
+
     # Calculate the billed amount
     # UPenn uses ifm cost for internal lending
     # Other institutions may use billing_amount
     # Complicated CASE statement needed to be able
     # to group by process_type
-    case_statement = (
-      "CASE " +
-      "WHEN process_type = 'Borrowing' " +
-      "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
-      "WHEN process_type = 'Doc Del' " +
-      "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
-      "WHEN process_type = 'Lending' " +
-      "THEN CAST (billing_amount AS DOUBLE PRECISION) " +
-      "END"
-    )
-    billing = query.sum(case_statement)
+    # case_statement = (
+    #   "CASE " +
+    #   "WHEN process_type = 'Borrowing' " +
+    #   "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
+    #   "WHEN process_type = 'Doc Del' " +
+    #   "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
+    #   "WHEN process_type = 'Lending' " +
+    #   "THEN CAST (billing_amount AS DOUBLE PRECISION) " +
+    #   "END"
+    # )
+    # billing = query.sum(case_statement)
 
     # Product will combine lists
     output_keys = process_types.keys.map{ |k| k.to_s }.product(
@@ -203,7 +203,7 @@ module IlliadHelper
         format_percent(failed.fdiv(total)),
         format_big_number(total - successful - failed),
         format_into_days(turnaround.fetch(key, 0)),
-        format_currency(billing.fetch(key, 0))
+        #format_currency(billing.fetch(key, 0))
       ]
     end
 
