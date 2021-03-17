@@ -77,6 +77,9 @@ module IlliadHelper
     # Group by months
     get_monthly = options.fetch(:get_monthly, false)
 
+    # Group by lender groups
+    group_by_user = options.fetch(:group_by_user, false)
+
     # Filter only filled or exhausted records
     only_filled = options.fetch(:only_filled, false)
     only_exhausted = options.fetch(:only_exhausted, false)
@@ -130,6 +133,35 @@ module IlliadHelper
       "CAST(EXTRACT (MONTH FROM creation_date) AS int)"
       ) : output_query
 
+    # Sample SQL:
+    # SELECT lending_library, transaction_number, transaction_status,
+    # COALESCE(illiad_lender_groups.lender_code, 'OTHER') AS lender,
+    # COALESCE(illiad_lender_groups.group_no, '-2') AS group_no,
+    # COALESCE(illiad_groups.group_name, 'OtHeR') AS group_name
+    # FROM illiad_transactions
+    # LEFT JOIN illiad_lender_groups
+    #  ON illiad_transactions.lending_library = illiad_lender_groups.lender_code
+    #  AND illiad_transactions.institution_id = illiad_lender_groups.institution_id
+    # LEFT JOIN illiad_groups
+    #  ON illiad_lender_groups.group_no = illiad_groups.group_no
+    #  AND illiad_groups.institution_id = illiad_transactions.institution_id
+    # WHERE illiad_transactions.institution_id = 2
+    # AND illiad_transactions.process_type = 'Lending'
+    # AND illiad_transactions.request_type = 'Loan';
+
+    # Group by lender groups
+    if group_by_user
+      output_query = output_query.joins(
+        "LEFT JOIN illiad_lender_groups " +
+        "ON illiad_transactions.lending_library = illiad_lender_groups.lender_code " +
+        "AND illiad_transactions.institution_id = illiad_lender_groups.institution_id"
+      ).joins(
+        "LEFT JOIN illiad_groups " +
+        "ON illiad_lender_groups.group_no = illiad_groups.group_no " +
+        "AND illiad_lender_groups.institution_id = illiad_groups.institution_id"
+      ).group("illiad_groups.group_name")
+    end
+
     return output_query
   end
 
@@ -137,7 +169,13 @@ module IlliadHelper
   def query_statistics(year, options = {})
 
     # Set up the default conditions
+    library_id = options.fetch(:library_id, 2)
+
+    # Set up the default conditions
     get_monthly = options.fetch(:get_monthly, false)
+
+    # Group by lender groups
+    group_by_user = options.fetch(:group_by_user, false)
 
     # Find distinct transactions
     query = Illiad::Transaction.select(
@@ -200,6 +238,17 @@ module IlliadHelper
       )
     end
 
+    # Build keys for grouping by user
+    if group_by_user
+      # Find distinct transactions
+      groups = lender_groups(library_id)
+
+      output_keys = process_types.keys.map{ |k| k.to_s }.product(
+        request_types.keys.map{ |k| k.to_s },
+        groups
+      )
+    end
+
     # Return a hash of the request_type and process_type
     # as keys to the related row.
     output = {}
@@ -221,6 +270,22 @@ module IlliadHelper
     end
 
     return output
+  end
+
+  # Returns an array of possible groups
+  def lender_groups(library_id)
+    # Find distinct transactions
+    all_groups = Illiad::Group.select(
+      :group_name
+    ).distinct.where(
+      institution_id: library_id
+    )
+    groups = []
+    all_groups.each do |group|
+      groups.append(group.group_name)
+    end
+    # Adding special case for group by to nil
+    return groups.sort.append(nil)
   end
 
   # Turn a time difference in seconds into days
@@ -310,7 +375,6 @@ module IlliadHelper
     return output_table
   end
 
-
   # Method to build the monthly breakdown table
   def build_monthly_table(fiscal_year, library_id)
     this_year, last_year = fiscal_year_ranges(fiscal_year)
@@ -324,6 +388,21 @@ module IlliadHelper
     output_table = query_statistics(this_year, **options)
 
     return output_table, display_months(this_year)
+  end
+
+  # Method to access user groups
+  def build_user_table(fiscal_year, library_id)
+    this_year, last_year = fiscal_year_ranges(fiscal_year)
+
+    options = {
+      :library_id => library_id,
+      :group_by_user => true
+    }
+
+    # Construct an output hash for the table
+    output_table = query_statistics(this_year, **options)
+
+    return output_table, lender_groups(library_id)
   end
 
 end
