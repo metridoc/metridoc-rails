@@ -8,8 +8,101 @@ module IlliadHelper
     return render_ids
   end
 
+  # Define what the turnaround status is for all types
+  TURNAROUND_STATUS =
+  {
+    "Borrowing" =>
+    {
+      "Article" => "Delivered to Web",
+      "Loan" => "Awaiting Post Receipt Processing"
+    },
+    "Lending" =>
+    {
+      # Penn provides request to online portal
+      "Article" => "Request Finished",
+      "Loan" => "Item Shipped"
+    },
+    "Doc Del" =>
+    {
+      "Article" => "Delivered to Web",
+      "Loan" => "Item Found"
+    }
+  }
+
+  # Define what a successful status is for all types
+  TURNAROUND_STATUS_TABLES =
+  {
+    "Borrowing" => "illiad_borrowings.transaction_status",
+    "Lending" => "illiad_lendings.status",
+    # Doc Del doesn't have tracking information stored in metridoc
+    # TODO: Add Doc Del tracking table
+    "Doc Del" => "illiad_transactions.transaction_status"
+  }
+
+  # Define what a successful status is for all types
+  TURNAROUND_DATE_TABLES =
+  {
+    "Borrowing" => "illiad_borrowings.transaction_date",
+    "Lending" => "illiad_lendings.transaction_date",
+    "Doc Del" => "illiad_transactions.transaction_date"
+  }
+
   # Calculate the turnaround times
-  def turnaround()
+  def find_turnaround(query, options = {})
+    # Example Query:
+    # SELECT
+    #  AVG(EXTRACT(epoch FROM illiad_lendings.transaction_date - illiad_transactions.creation_date))
+    # FROM illiad_transactions
+    # LEFT JOIN illiad_lendings
+    #  ON illiad_transactions.transaction_number = illiad_lendings.transaction_number
+    #  AND illiad_transactions.institution_id = illiad_lendings.institution_id
+    # WHERE illiad_transactions.institution_id = 2
+    #  AND illiad_lendings.status = 'Item Shipped';
+
+    filter_statement = "CASE "
+    turnaround_calculation = "CASE "
+    # Loop through process types
+    process_types.each do |p_k, p_v|
+      # Loop through request types
+      request_types.each do |r_k, r_v|
+        prefix = ("WHEN illiad_transactions.process_type = '" + p_k.to_s + "'" +
+          " AND illiad_transactions.request_type = '" + r_k.to_s + "'"
+        )
+
+        filter_statement = (
+          filter_statement + prefix +
+          " THEN " + TURNAROUND_STATUS_TABLES[p_k.to_s] + " = '" + TURNAROUND_STATUS[p_k.to_s][r_k.to_s] + "' "
+        )
+
+        turnaround_calculation = (
+          turnaround_calculation + prefix +
+          " THEN EXTRACT (epoch FROM " + TURNAROUND_DATE_TABLES[p_k.to_s] + " - illiad_transactions.creation_date) "
+        )
+
+      end
+    end
+
+    filter_statement = filter_statement + " END"
+    turnaround_calculation = turnaround_calculation + " END"
+
+    turnaround = base_query(
+      query,
+      **options.merge(:only_filled => true)
+    ).joins(
+      "LEFT JOIN illiad_lendings " +
+      "ON illiad_transactions.transaction_number = illiad_lendings.transaction_number " +
+      "AND illiad_transactions.institution_id = illiad_lendings.institution_id"
+    ).joins(
+      "LEFT JOIN illiad_borrowings " +
+      "ON illiad_transactions.transaction_number = illiad_borrowings.transaction_number " +
+      "AND illiad_transactions.institution_id = illiad_borrowings.institution_id"
+    ).where(
+      filter_statement
+    ).average(
+      turnaround_calculation
+    )
+
+    return turnaround
 
   end
 
@@ -106,9 +199,9 @@ module IlliadHelper
         request_types.each do |r_k, r_v|
           case_statement = (
             case_statement +
-            "WHEN process_type = '" + p_k.to_s + "'" +
-            " AND request_type = '" + r_k.to_s + "'" +
-            " THEN transaction_status IN (" +
+            "WHEN illiad_transactions.process_type = '" + p_k.to_s + "'" +
+            " AND illiad_transactions.request_type = '" + r_k.to_s + "'" +
+            " THEN illiad_transactions.transaction_status IN (" +
             # Hacky way to get 'value', 'value',...
             "'#{COMPLETED_STATUS[p_k.to_s][r_k.to_s].join("', '")}'" + ") "
           )
@@ -121,7 +214,7 @@ module IlliadHelper
       )
     end
 
-    # Select only exhausted (permantently unfilled) records
+    # Select only exhausted (permanently unfilled) records
     output_query = only_exhausted ?
     output_query.where(
       transaction_status: FAILED_STATUS
@@ -132,22 +225,6 @@ module IlliadHelper
     output_query.group(
       "CAST(EXTRACT (MONTH FROM creation_date) AS int)"
       ) : output_query
-
-    # Sample SQL:
-    # SELECT lending_library, transaction_number, transaction_status,
-    # COALESCE(illiad_lender_groups.lender_code, 'OTHER') AS lender,
-    # COALESCE(illiad_lender_groups.group_no, '-2') AS group_no,
-    # COALESCE(illiad_groups.group_name, 'OtHeR') AS group_name
-    # FROM illiad_transactions
-    # LEFT JOIN illiad_lender_groups
-    #  ON illiad_transactions.lending_library = illiad_lender_groups.lender_code
-    #  AND illiad_transactions.institution_id = illiad_lender_groups.institution_id
-    # LEFT JOIN illiad_groups
-    #  ON illiad_lender_groups.group_no = illiad_groups.group_no
-    #  AND illiad_groups.institution_id = illiad_transactions.institution_id
-    # WHERE illiad_transactions.institution_id = 2
-    # AND illiad_transactions.process_type = 'Lending'
-    # AND illiad_transactions.request_type = 'Loan';
 
     # Group by lender groups
     if group_by_user
@@ -184,10 +261,10 @@ module IlliadHelper
     # Restrict to this year
     query = query.where(creation_date: year)
 
-    turnaround = base_query(
+    turnaround = find_turnaround(
       query,
       **options.merge(:only_filled => true)
-    ).average("EXTRACT (epoch FROM transaction_date - creation_date)")
+    )
 
     # Find the number of successful requests
     successful_requests = base_query(
