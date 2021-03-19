@@ -24,8 +24,10 @@ module IlliadHelper
     },
     "Doc Del" =>
     {
-      "Article" => "Delivered to Web",
-      "Loan" => "Item Found"
+      # Should be Delivered to Web if a Doc Del tracking table is created
+      "Article" => "Request Finished",
+       # Should be Item Found, if a Doc Del tracking table is created
+      "Loan" => "Request Finished"
     }
   }
 
