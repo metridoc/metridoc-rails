@@ -16,7 +16,6 @@ from_raw: |
                           FROM Transactions t1
                           INNER JOIN Tracking t2 ON t2.TransactionNumber = t1.TransactionNumber
                           WHERE t1.ProcessType = 'Borrowing' 
-                            AND t1.TransactionStatus in ('Request Finished','Request Conditionalized','Cancelled by ILL Staff')
                             AND t2.ChangedTo in ('Awaiting Copyright Clearance','Awaiting Request Processing','Request Sent','Awaiting Post Receipt Processing','Delivered to Web')
                           GROUP BY t2.TransactionNumber, t1.RequestType, t2.ChangedTo
                           UNION
@@ -27,7 +26,6 @@ from_raw: |
                           FROM Transactions t
                           INNER JOIN History h ON h.TransactionNumber = t.TransactionNumber
                           where t.ProcessType = 'Borrowing' 
-                            AND t.TransactionStatus in ('Request Finished','Request Conditionalized','Cancelled by ILL Staff')
                             AND h.UserName = 'System'
                             AND CHARINDEX('shipped', entry) > 0
                           GROUP BY h.TransactionNumber, t.RequestType ) AS S
