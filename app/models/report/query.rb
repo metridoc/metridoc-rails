@@ -24,15 +24,24 @@ class Report::Query < ApplicationRecord
   RECORDS_PER_PAGE = 2500
 
   def process
-    return unless self.status.blank? || self.status == 'pending'
+    processable = with_lock do
+      if self.status.blank? || ['pending', 'failed'].include?(self.status)
+        self.update_columns(last_run_at: Time.now, status: "in-progress", total_rows_to_process: nil, n_rows_processed: nil, last_error_message: nil)
+      end
+    end
 
-    self.update_columns(last_run_at: Time.now, status: "in-progress", total_rows_to_process: nil, n_rows_processed: nil)
+    return unless processable
+
     ReportQueryMailer.with(report_query: self).started_notice.deliver_now
 
     sleep(5) # give a quick brake to make sure both emails go out even if it is a fast process
 
     export
     ReportQueryMailer.with(report_query: self).finished_notice.deliver_now
+    rescue SignalException => se
+      puts "Process terminated => #{se.message}"
+      update_columns(output_file_name: nil, last_error_message: se.message, status: 'failed')
+      raise se
   end
 
   def build_query
@@ -105,8 +114,13 @@ class Report::Query < ApplicationRecord
   end
 
   def re_process
-    update_columns(last_run_at: nil, status: nil, output_file_name: nil, total_rows_to_process: nil, n_rows_processed: nil, last_error_message: nil)
-    queue_process
+    processable = with_lock do
+      if ['success', 'failed', 'cancelled'].include? self.status
+        update_columns(last_run_at: nil, status: nil, output_file_name: nil, total_rows_to_process: nil, n_rows_processed: nil, last_error_message: nil)
+      end
+    end
+
+    queue_process if processable
   end
 
   def progress_text
@@ -194,18 +208,15 @@ class Report::Query < ApplicationRecord
     n = calculate_rows_to_process
     self.delay(queue: "#{n > 5000 ? "large" : "default"}").process
     rescue => ex
-      puts "Error while queuein process => #{ex.message}"
-      self.output_file_name = nil
-      self.last_error_message = ex.message
-      self.status = "failed"
-      save!
+      puts "Error while queueing process => #{ex.message}"
+      update_columns(output_file_name: nil, last_error_message: ex.message, status: 'failed')
   end
 
   def queue_process
     return unless self.status.blank? || self.status == 'pending'
     self.delay.process_in_right_queue
     rescue => ex
-      puts "Error while queuein process => #{ex.message}"
+      puts "Error while queueing process => #{ex.message}"
       errors.add(:base, "Unable to queue the export. => [#{ex.message}]")
       raise ActiveRecord::Rollback
   end
