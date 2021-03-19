@@ -68,7 +68,8 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def import
     batch_size = 1000
-    csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+    Util.convert_to_utf8(csv_file_path)
+    csv = CSV.read(csv_file_path)
 
     headers = get_headers
 
@@ -87,64 +88,69 @@ class Tools::FileUploadImport < ApplicationRecord
 
       records = []
       csv.drop(1).each_with_index do |row, n|
-        if n_errors >= 100
-          log "Too many errors #{n_errors}, exiting!"
-          records = []
-          break
-        end
-
-        cols = {}
-        headers.each_with_index do |k,i|
-          cols[k.to_sym] = row[i]
-        end
-
-        row_error = false
-        attributes = {}
-        headers.each do |column_name|
-          val = cols[column_name.to_sym]
-
-          next if target_class.columns_hash[column_name].blank?
-
-          if target_class.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
-            log "Invalid integer [#{val}] in column: #{column_name} row: #{row.join(",")}"
-            n_errors = n_errors + 1
-            row_error = true
-            next
-          end
-          if target_class.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
-            log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.join(",")}"
-            n_errors = n_errors + 1
-            row_error = true
-            next
-          end
-          if target_class.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
-            log "Invalid date [#{val}] in column: #{column_name} row: #{row.join(",")}"
-            n_errors = n_errors + 1
-            row_error = true
-            next
+        begin
+          if n_errors >= 100
+            log "Too many errors #{n_errors}, exiting!"
+            records = []
+            break
           end
 
-          val = Util.parse_datetime(val) if target_class.columns_hash[column_name].type == :datetime
-
-          attributes[column_name] = val
-        end
-
-        next if row_error
-
-        records << target_class.new(attributes)
-
-        if records.size >= batch_size
-          break if cancelled?
-          return_val = import_records(target_class, records)
-          if return_val[:status] == 'failed'
-            n_errors += return_val[:n_errors]
-          else
-            n_inserted += return_val[:n_inserted]
-            update_progress(n_inserted)
+          cols = {}
+          headers.each_with_index do |k,i|
+            cols[k.to_sym] = row[i]
           end
-          records = []
-        end
 
+          row_error = false
+          attributes = {}
+          headers.each do |column_name|
+            val = cols[column_name.to_sym]
+
+            next if target_class.columns_hash[column_name].blank?
+
+            if target_class.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
+              log "Invalid integer [#{val}] in column: #{column_name} row: #{row.join(",")}"
+              n_errors = n_errors + 1
+              row_error = true
+              next
+            end
+            if target_class.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
+              log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.join(",")}"
+              n_errors = n_errors + 1
+              row_error = true
+              next
+            end
+            if target_class.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
+              log "Invalid date [#{val}] in column: #{column_name} row: #{row.join(",")}"
+              n_errors = n_errors + 1
+              row_error = true
+              next
+            end
+
+            val = Util.parse_datetime(val) if target_class.columns_hash[column_name].type == :datetime
+
+            attributes[column_name] = val
+          end
+
+          next if row_error
+
+          records << target_class.new(attributes)
+
+          if records.size >= batch_size
+            break if cancelled?
+            return_val = import_records(target_class, records)
+            if return_val[:status] == 'failed'
+              n_errors += return_val[:n_errors]
+            else
+              n_inserted += return_val[:n_inserted]
+              update_progress(n_inserted)
+            end
+            records = []
+          end
+
+        rescue CSV::MalformedCSVError => e
+          n_errors = n_errors + 1
+          log "skipping bad row - MalformedCSVError: #{e.message}"
+        end
       end
 
       if records.size > 0 && !cancelled?
