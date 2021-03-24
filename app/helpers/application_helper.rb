@@ -15,4 +15,24 @@ module ApplicationHelper
     end
   end
 
+  # Function to calculate the fiscal year ranges for
+  # both the requested year and the previous year
+  def fiscal_year_ranges(fiscal_year)
+    start_date = Date.new(fiscal_year - 1, 7, 1)
+    end_date = [Date.today, Date.new(fiscal_year, 6, 30)].min
+    this_year = start_date..end_date
+    last_year = (start_date - 1.year)..(end_date - 1.year)
+    return this_year, last_year
+  end
+
+  # Function to specify the months to display
+  def display_months(this_year)
+    # Calculate what the last month is
+    last_month = this_year.last.month
+    # Return an ordered array of the past months of the fiscal year
+    return last_month >= 7 ?
+      last_month.downto(7).to_a :
+      last_month.downto(1).to_a + 12.downto(7).to_a
+  end
+
 end
