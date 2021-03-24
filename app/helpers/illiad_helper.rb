@@ -403,7 +403,7 @@ module IlliadHelper
     {
       "Borrowing": "Borrowing",
       "Lending": "Lending",
-      "Doc Del": "Internal"
+      "Doc Del": "Doc Del"
     }
   end
 
