@@ -35,14 +35,32 @@
     %table.statistics_summary
       %thead
         %tr
-          %th Fiscal Year
-          %th Total Requests
-          %th Successful Requests
+          %th
+            %div.tooltip
+              Fiscal Year
+              %span.tooltiptext Fiscal year runs to July 1
+          %th
+            %div.tooltip
+              Total Requests
+              %span.tooltiptext Count of unique transaction numbers requested in the fiscal year
+          %th
+            %div.tooltip
+              Successful Requests
+              %span.tooltiptext Requests where the user has received access to item
           %th Successful Rate
-          %th Failed Requests
+          %th
+            %div.tooltip
+              Failed Requests
+              %span.tooltiptext Requests cancelled by ILL staff
           %th Failure Rate
-          %th In Progress
-          %th Turnaround (days)
+          %th
+            %div.tooltip
+              In Progress
+              %span.tooltiptext Outstanding requests that have not reached a final state
+          %th
+            %div.tooltip
+              Turnaround (days)
+              %span.tooltiptext Details at bottom of page
       %tbody
         - table[[p_k.to_s,r_k.to_s]].each do |row|
           %tr
@@ -52,3 +70,18 @@
   %br
 
 %hr
+
+%h2 Turnaround times
+For Borrowing items, the turnaround time is defined as the difference in days |
+between the request's creation date and either the "Delivered to Web" status |
+for Articles, or "Awaiting Post Receipt Processing" for Books, indicating that |
+the borrowing institution has the item.
+%p
+For Lending items, the turnaround time is defined as the difference in days |
+between the request's creation date and either the "Request Finished" status |
+for Articles, or "Item Shipped" for Books, indicating that |
+the lending institution has fulfilled the item.
+%p
+For Doc Del items, the turnaround time is defined as the difference in days |
+between the request's creation date and the "Request Finished" status.  There |
+is a 30 day padding that is added to Articles.
