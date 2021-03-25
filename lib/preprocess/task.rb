@@ -142,7 +142,7 @@ module Preprocess
       end
 
       def execute_native_query
-        truncate if truncate_before_load?
+        purge_legacy_data if purge_legacy_data_before_load
 
         sqls.each do |sql|
           sql = sql % {institution_id: institution_id}

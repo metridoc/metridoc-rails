@@ -1,7 +1,7 @@
 load_sequence:         14
 target_adapter:        'native_sql'
 target_model:          "Illiad::Tracking"
-truncate_before_load:  "no"
+purge_legacy_data_before_load:  "no"
 sql: |
                         UPDATE illiad_trackings
                         SET turnaround_req_rec = DATE_PART('day', receive_date - request_date) ,

@@ -6,7 +6,7 @@ import_file_name:      "books_mods.xml"
 # Target Config
 target_adapter:        xml
 target_model:          "Marc::BookMod"
-truncate_before_load:  "no"
+purge_legacy_data_before_load:  "no"
 iterator_path:         "/modsCollection/mods"
 target_mappings:
   title: "concat(normalize-space(titleInfo/nonSort/text()), ' ', normalize-space(titleInfo/title/text()))"

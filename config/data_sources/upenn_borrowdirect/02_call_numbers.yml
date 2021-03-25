@@ -20,5 +20,5 @@ export_filter_date_range_sql: "d.date_processed > ? AND d.date_processed < ?"
 # Target Config
 target_adapter:        csv
 target_model:          "Borrowdirect::CallNumber"
-truncate_before_load:  "yes"
+purge_legacy_data_before_load:  "yes"
 legacy_filter_date_field: "process_date"

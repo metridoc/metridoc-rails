@@ -1,5 +1,5 @@
 load_sequence:         1
 target_model:          "Consultation::Interaction"
 target_adapter:        "csv"
-truncate_before_load:  "no"
+purge_legacy_data_before_load:  "no"
 file_name:             "interactions.csv"

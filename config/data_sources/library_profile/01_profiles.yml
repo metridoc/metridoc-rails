@@ -1,5 +1,5 @@
 load_sequence:         1
 target_model:          "LibraryProfile::Profile"
 target_adapter:        "csv"
-truncate_before_load:  "yes"
+purge_legacy_data_before_load:  "yes"
 file_name:             "profile.csv"

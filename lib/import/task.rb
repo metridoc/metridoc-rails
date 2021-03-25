@@ -1,3 +1,4 @@
+require 'pry-byebug'
 require "csv"
 require 'chronic'
 
@@ -34,8 +35,8 @@ module Import
         @main_driver.institution_id
       end
 
-      def truncate_before_load?
-        task_config["truncate_before_load"] == "yes"
+      def purge_legacy_data_before_load
+        task_config["purge_legacy_data_before_load"] == "yes"
       end
 
       def target_mappings(headers = nil)
@@ -116,21 +117,28 @@ module Import
         task_config["legacy_filter_date_field"]
       end
 
-      def truncate
+      def update_legacy_data
+        # is_legacy flag used to decide whether to purge data older than a year
+        # note: for now it's assumed that any table where is_legacy appears also
+        # has legacy_filter_date_field.present? as true.
+        filters = {is_legacy: false}
+        filters.merge!(institution_id: institution_id) if has_institution_id?
+        log "Setting Legacy Flag for #{class_name.name} records older than 1 year."
+        class_name.where(filters).where(class_name.arel_table[legacy_filter_date_field].lt(1.year.ago)).update_all(is_legacy: true)
+      end
+
+      def purge_legacy_data
         filters = {}
         filters.merge!(institution_id: institution_id) if has_institution_id?
-
-        if has_legacy_flag? && task_config["truncate_legacy_data"] != "yes"
-          filters.merge!(is_legacy: false)
-          # mark records older than 1 year old as legacy
-          if legacy_filter_date_field.present?
-            log "Setting Legacy Flag for #{class_name.name} records older than 1 year."
-            class_name.where(filters).where(class_name.arel_table[legacy_filter_date_field].lt(1.year.ago)).update_all(is_legacy: true)
-          end
+        if legacy_filter_date_field.present?
+          update_legacy_data
         end
-
-
-        class_name.where(filters).delete_all
+        if has_legacy_flag?
+          # note that there are cases where we'll purge data but won't have is_legacy flag
+          filters.merge!(is_legacy: true)
+        end
+        deleted = class_name.where(filters).delete_all
+        log "Deleted #{deleted} #{class_name.name} records matching filters #{filters}."
       end
 
       def sqls
@@ -156,7 +164,7 @@ module Import
       end
 
       def execute_native_query
-        truncate if truncate_before_load?
+        purge_legacy_data if purge_legacy_data_before_load
 
         sqls.each do |sql|
           sql = sql % {institution_id: institution_id}
@@ -199,7 +207,7 @@ module Import
         n_errors = 0
         success = true
         ActiveRecord::Base.transaction do
-          truncate if truncate_before_load?
+          purge_legacy_data if purge_legacy_data_before_load
 
           records = []
 
@@ -223,6 +231,7 @@ module Import
                 next if class_name.columns_hash[column_name].blank?
 
                 val = row[column_name.to_sym]
+                val.strip! unless val.nil?
 
                 if class_name.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
                   log "Invalid integer [#{val}] in column: #{column_name} row: #{row.to_h}"
@@ -264,7 +273,6 @@ module Import
 
               next if row_error
 
-              # puts "attributes=#{attributes.inspect}"
               attributes.merge!(institution_id: institution_id) if has_institution_id?
               records << class_name.new(attributes)
 
@@ -343,7 +351,7 @@ module Import
 
         xml_file_path = File.join(@main_driver.import_folder, import_file_name)
 
-        truncate if truncate_before_load?
+        purge_legacy_data if purge_legacy_data_before_load
 
         doc = Nokogiri::XML( File.open(xml_file_path) )
         doc.remove_namespaces!

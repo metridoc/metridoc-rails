@@ -1,4 +1,4 @@
 load_sequence:         5.1
 target_model:          "Keyserver::Usage"
-truncate_before_load:  "yes"
+purge_legacy_data_before_load:  "yes"
 file_name:             "Usage.csv"

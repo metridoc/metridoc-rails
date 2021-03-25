@@ -1,7 +1,7 @@
 load_sequence:         10
 target_adapter:        'native_sql'
 target_model:          "Illiad::Tracking"
-truncate_before_load:  "yes"
+purge_legacy_data_before_load:  "yes"
 sqls:
   - |
                         INSERT INTO illiad_trackings (

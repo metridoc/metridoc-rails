@@ -1,7 +1,7 @@
 load_sequence:         12
 target_adapter:        'native_sql'
 target_model:          "Illiad::Group"
-truncate_before_load:  "no"
+purge_legacy_data_before_load:  "no"
 sqls:
   - |
                         INSERT INTO illiad_groups (

@@ -1,7 +1,7 @@
 load_sequence:         13
 target_adapter:        'native_sql'
 target_model:          "Illiad::Transaction"
-truncate_before_load:  "no"
+purge_legacy_data_before_load:  "no"
 sqls:
   - |
                         UPDATE illiad_transactions
