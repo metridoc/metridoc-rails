@@ -189,8 +189,6 @@ module Import
       end
 
       def import_csv
-        Util.convert_to_utf8(csv_file_path)
-
         headers = get_headers
 
         unmatched_columns = headers.select { |column_name| class_name.columns_hash[column_name].blank? }
@@ -246,11 +244,16 @@ module Import
                 end
 
                 unless val.nil?
-                  if class_name.columns_hash[column_name].type == :string && val.length > class_name.columns_hash[column_name].sql_type_metadata.limit
-                    log "Length of value [#{val}] exceeds maximum for column #{column_name} row: #{row.to_h}"
-                    n_errors = n_errors + 1
-                    row_error = true
-                    next
+                  if class_name.columns_hash[column_name].type == :string
+                    # if there isn't a length limit on the field, then keep going
+                    unless class_name.columns_hash[column_name].sql_type_metadata.limit.nil?
+                      if val.length > class_name.columns_hash[column_name].sql_type_metadata.limit
+                        log "Length of value [#{val}] exceeds maximum for column #{column_name} row: #{row.to_h}"
+                        n_errors = n_errors + 1
+                        row_error = true
+                        next
+                      end
+                    end
                   end
                 end
 

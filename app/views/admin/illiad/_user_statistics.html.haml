@@ -1,0 +1,72 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2021 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
+
+%h2= "Displaying ILLiad User Group Summary for the #{fiscal_year} fiscal year at the University of Pennsylvania"
+
+- table, groups = build_user_table(fiscal_year, library_id)
+
+<!-- Build the table -->
+- process_types.each do |p_k, p_v|
+  %hr
+  %h2{:style => "font-weight:bold;color:#011F5B"}= p_v
+  - request_types.each do |r_k, r_v|
+    %h3{:style => "color:#990000;text-align:center;font-weight:bold"}= r_v
+    %table.statistics_summary
+      %thead
+        %tr
+          %th
+            %div.tooltip
+              Group
+              %span.tooltiptext Group names as defined in the institution's ILLiad::Groups table.
+          %th
+            %div.tooltip
+              Total Requests
+              %span.tooltiptext Count of unique transaction numbers requested in the fiscal year
+          %th
+            %div.tooltip
+              Successful Requests
+              %span.tooltiptext Requests where the user has received access to item
+          %th Successful Rate
+          %th
+            %div.tooltip
+              Failed Requests
+              %span.tooltiptext Requests cancelled by ILL staff
+          %th Failure Rate
+          %th
+            %div.tooltip
+              In Progress
+              %span.tooltiptext Outstanding requests that have not reached a final state
+          %th
+            %div.tooltip
+              Turnaround (days)
+              %span.tooltiptext Details at bottom of page
+      %tbody
+        - groups.each do |group|
+          %tr
+            %td= group.nil? ? "Unknown" : group
+            - table[[p_k.to_s, r_k.to_s, group]].each do |cell|
+              %td= cell
+
+  %br
+
+%hr
+
+%h2 Turnaround times
+For Borrowing items, the turnaround time is defined as the difference in days |
+between the request's creation date and either the "Delivered to Web" status |
+for Articles, or "Awaiting Post Receipt Processing" for Books, indicating that |
+the borrowing institution has the item.
+%p
+For Lending items, the turnaround time is defined as the difference in days |
+between the request's creation date and either the "Request Finished" status |
+for Articles, or "Item Shipped" for Books, indicating that |
+the lending institution has fulfilled the item.
+%p
+For Doc Del items, the turnaround time is defined as the difference in days |
+between the request's creation date and the "Request Finished" status.  There |
+is a 30 day padding that is added to Articles.

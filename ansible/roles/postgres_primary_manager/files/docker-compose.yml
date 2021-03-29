@@ -39,6 +39,10 @@ services:
         target: /docker-entrypoint-initdb.d/00_init_primary.sql
     volumes:
       - postgres_primary_data:/var/lib/postgresql/data
+      - type: tmpfs
+        target: /dev/shm
+        tmpfs:
+          size: 1073741824
 
 configs:
   postgres_primary_pg_hba_conf:

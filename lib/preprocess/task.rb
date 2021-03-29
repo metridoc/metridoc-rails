@@ -36,10 +36,6 @@ module Preprocess
         task_config["do_validations"] == "yes"
       end
 
-      def truncate_before_load?
-        task_config["truncate_before_load"] == "yes"
-      end
-
       def target_mappings(headers = nil)
         return @target_mappings if @target_mappings.present?
 
@@ -123,23 +119,6 @@ module Preprocess
         task_config["legacy_filter_date_field"]
       end
 
-      def truncate
-        filters = {}
-        filters.merge!(institution_id: institution_id) if has_institution_id?
-
-        if has_legacy_flag? && task_config["truncate_legacy_data"] != "yes"
-          filters.merge!(is_legacy: false)
-          # mark records older than 1 year old as legacy
-          if legacy_filter_date_field.present?
-            log "Setting Legacy Flag for #{class_name.name} records older than 1 year."
-            class_name.where(filters).where(class_name.arel_table[legacy_filter_date_field].lt(1.year.ago)).update_all(is_legacy: true)
-          end
-        end
-
-
-        class_name.where(filters).delete_all
-      end
-
       def sqls
         return @sqls if @sqls.present?
         @sqls = task_config["sqls"].present? ? task_config["sqls"] : [task_config["sql"]]
@@ -182,10 +161,34 @@ module Preprocess
         task_config["transformations"] || {}
       end
 
+      def csv_file_path
+        @csv_file_path ||= File.join(@main_driver.import_folder, import_file_name)
+      end
+
+      def get_headers
+        csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        columns = csv.readline
+        csv.close
+        headers = columns.map{|c| Util.column_to_attribute(c) }
+        headers.each do |column_name|
+          if class_name.columns_hash[column_name].blank?
+            headers[headers.index(column_name)] = column_name.split(/_+/).first
+          end
+        end
+        headers
+      end
+
+      def output_headers(headers)
+        _output_headers = target_mappings(headers).keys
+        _output_headers.unshift("institution_id") if has_institution_id?
+        _output_headers << 'created_at' if has_created_at?
+        _output_headers << 'updated_at' if has_updated_at?
+        _output_headers
+      end
+
       def preprocess
         log "Starting to preprocess #{import_file_name}"
 
-        csv_file_path = File.join(@main_driver.import_folder, import_file_name)
         transformations.each do |column, rules|
           transformations[column]["engine"] = lambda do |v|
             rules.each do |rule, val|
@@ -195,22 +198,23 @@ module Preprocess
           end
         end
 
-        csv = CSV.read(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        Util.convert_to_utf8(csv_file_path)
+
+        csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
         temp_file = Tempfile.new("#{import_file_name}.tmp")
         temp_csv = CSV.open(temp_file, 'wb')
 
-        # TODO: Check headers for names with spaces and handle accordingly
-        headers = csv.shift
-        output_headers = headers.clone
-        output_headers.unshift("institution_id") if has_institution_id?
-        output_headers << 'created_at' if has_created_at?
-        output_headers << 'updated_at' if has_updated_at?
-
-        temp_csv << output_headers
         timestamp = DateTime.now.to_s
         n_errors = 0
+        headers = []
 
         csv.each do |row|
+          if csv.lineno == 1
+            # header line
+            headers = row
+            temp_csv << output_headers(headers)
+            next
+          end
           if n_errors >= 100
             log "Too many errors #{n_errors}, exiting!"
             break
