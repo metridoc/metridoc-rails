@@ -54,6 +54,8 @@ gem 'daemons'
 
 gem 'dotenv-rails'
 
+gem 'net-sftp'
+
 group :development, :test do
   gem 'rb-readline'
   gem 'pry'

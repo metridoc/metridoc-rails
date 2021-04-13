@@ -1,3 +1,7 @@
 ---
-target_adapter:   'csv'
+host:             '<%= ENV["UPENN_GATECOUNT_SFTP_HOST"]  %>'
+username:         '<%= ENV["UPENN_GATECOUNT_SFTP_USER"]  %>'
+password:         '<%= ENV["UPENN_GATECOUNT_SFTP_PWD"]   %>'
+source_adapter:   'sftp'
+source_path:      "/BuildingAccessRecords/Swipe_History_Monthly.csv"
 import_folder:    '/tmp/gate_count'
