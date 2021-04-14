@@ -38,9 +38,8 @@ docker exec -it $(docker ps -q -f name=metridoc_app) /bin/bash
 ## Load a DB snapshot to staging
 
 The staging DB is also being used by the prototype Production environment, and privileges need to be reestablished after each load:
-    cd ~/application/current/ && RAILS_ENV=staging rake db:environment:set db:drop db:create
-    # update this next line with your snapshot timestamp
-    time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postgres psql metridoc_staging
+cd ~/application/current/ && RAILS_ENV=staging rake db:environment:set db:drop db:create # update this next line with your snapshot timestamp
+time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postgres psql metridoc_staging
 
     # This should work but doesn't. Not sure why: echo "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO serano;" | sudo -u postgres psql
     # So we do this instead
@@ -140,34 +139,59 @@ The following ENV variables need to be set for actionmailer to work:
     MAILER_DOMAIN='...'
     MAILER_DEFAULT_FROM='...'
 
-
 ### Setting up a new table for CSV upload
 
 Metridoc supports uploading csv's into existing tables in the schema. The following steps will allow to create a brand new table and get it to be available for importing as csv:
 
-  1. Create a db migration to create the table in the schema, such as:
+1. Create a db migration to create the table in the schema, such as:
 
-    `create_table :ares_item_usages do |t|
-      t.string   :semester
-      t.string   :item_id
-      t.datetime :date_time
-      t.string   :document_type
-      t.string   :item_format
-      t.string   :course_id
-      t.integer  :digital_item
-      t.string   :course_number
-      t.string   :department
-      t.integer  :date_time_year
-      t.integer  :date_time_month
-      t.integer  :date_time_day
-      t.integer  :date_time_hour
-    end`
+   `create_table :ares_item_usages do |t| t.string :semester t.string :item_id t.datetime :date_time t.string :document_type t.string :item_format t.string :course_id t.integer :digital_item t.string :course_number t.string :department t.integer :date_time_year t.integer :date_time_month t.integer :date_time_day t.integer :date_time_hour end`
 
-  1. Run the DB migration with `rake db:migrate`
+1. Run the DB migration with `rake db:migrate`
 
-  1. Update **Tools::FileUploadImport** UPLOADABLE_MODELS list with the name of the new table such as:
-    `[
-       ...
-       Ares::ItemUsage,
-       ...
-    ]`
+1. Update **Tools::FileUploadImport** UPLOADABLE_MODELS list with the name of the new table such as:
+   `[ ... Ares::ItemUsage, ... ]`
+
+### Vagrant
+
+> Caveat: the vagrant development environment has only been tested in Linux.
+
+In order to use the integrated development environment you will need to install [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html), [VirtualBox](https://www.virtualbox.org/wiki/Linux_Downloads), [Vagrant](https://www.vagrantup.com/docs/installation), and the following Vagrant plugins: vagrant-env, vagrant-vbguest, vagrant-hostsupdater, and vagrant-disksize:
+
+```
+vagrant plugin install vagrant-env vagrant-vbguest vagrant-hostsupdater vagrant-disksize
+```
+
+#### Starting
+
+From the `vagrant` directory run:
+
+```
+vagrant up --provision
+```
+
+This will run the [vagrant/Vagrantfile](vagrant/Vagrantfile) which will bring up an Ubuntu VM and run the Ansible script which will provision a single node Docker Swarm. Your hosts file will be modified; the domain `metridoc-dev.library.upenn.edu` will be added and mapped to the Ubuntu VM. Once the Ansible script has completed and the Docker Swarm is deployed you can access the application by navigating to [http://metridoc-dev.library.upenn.edu](http://metridoc-dev.library.upenn.edu).
+
+#### Stopping
+
+To stop the development environment, from the `vagrant` directory run:
+
+```
+vagrant halt
+```
+
+#### Destroying
+
+To destroy the development environment, from the `vagrant` directory run:
+
+```
+vagrant destroy -f
+```
+
+#### SSH
+
+You may ssh into the Vagrant VM by running:
+
+```
+ssh -i ~/.vagrant.d/insecure_private_key vagrant@metridoc-manager
+```
