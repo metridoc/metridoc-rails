@@ -51,8 +51,6 @@
             docker service update
               --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
               --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
-              --env-add PASSENGER_DISABLE_SECURITY_UPDATE_CHECK=true
-              --env-add RAILS_ENV=development
               --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
               --args /home/app/webapp/local_docker_init.sh
               metridoc_app
