@@ -1,8 +1,7 @@
 version: 2.1
 
 # Default slack config
-default-slack-config:
-  &default-slack-config
+default-slack-config: &default-slack-config
   channel: metridoc-notification
   failure_message: ":red_circle: Failure! ${CIRCLE_USERNAME}'s workflow (<${CIRCLE_BUILD_URL}|${CIRCLE_JOB}>) in <${GIT_URL}|${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}>, Message: ${GIT_COMMIT_DESC}"
   success_message: ":tada: Success! ${CIRCLE_USERNAME}'s workflow (<${CIRCLE_BUILD_URL}|${CIRCLE_JOB}>) in <${GIT_URL}|${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}>, Message: ${GIT_COMMIT_DESC}"
@@ -112,9 +111,19 @@ workflows:
           image: quay.io/upennlibraries/gitleaks:v2.0.0
           options: --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
       - docker-publish/publish:
+          name: publish_metridoc
           context: quay.io
           registry: quay.io
           image: upennlibraries/metridoc
+          label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
+      - docker-publish/publish:
+          name: publish_metridoc_python_jobs
+          context: quay.io
+          registry: quay.io
+          image: upennlibraries/metridoc-python-jobs
+          path: ${CIRCLE_WORKING_DIRECTORY}/ansible/roles/python_jobs_manager/files/src
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
@@ -143,7 +152,8 @@ workflows:
             branches:
               only: master
           requires:
-            - docker-publish/publish
+            - publish_metridoc
+            - publish_metridoc_python_jobs
             - test_jenkins_manager_role
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role
@@ -153,7 +163,8 @@ workflows:
             branches:
               only: staging
           requires:
-            - docker-publish/publish
+            - publish_metridoc
+            - publish_metridoc_python_jobs
             - test_jenkins_manager_role
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role

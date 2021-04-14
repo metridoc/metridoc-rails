@@ -1,0 +1,5 @@
+---
+- hosts: swarm_managers
+  become: yes
+  roles:
+    - python_jobs_manager
