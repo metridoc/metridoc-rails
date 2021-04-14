@@ -6,18 +6,19 @@ This configuration is used to run the newer Metridoc Rails application rather th
 
 ## Table of Contents
 
-* [Ansible](#ansible)
-* [Directory Layout](#directory-layout)
-* [Installation](#installation)
-* [Commands](#commands)
-* [Playbooks](#playbooks)
-* [Adding Credentials for New Data Sources](#adding-credentials-for-new-data-sources)
-* [Testing](#testing)
-* [Deployment](#deployment)
+- [Ansible](#ansible)
+- [Directory Layout](#directory-layout)
+- [Installation](#installation)
+- [Commands](#commands)
+- [Playbooks](#playbooks)
+- [Adding Credentials for New Data Sources](#adding-credentials-for-new-data-sources)
+- [Testing](#testing)
+- [Deployment](#deployment)
 
 ## Ansible
 
 We use Ansible mainly to:
+
 - do host configuration for Docker swarm
 - deploy updates to Docker services
 - encrypt / decrypt secrets with Vault to be stored in version control
@@ -87,7 +88,9 @@ ansible-playbook -i inventories/production jenkins.yml
   - `jenkins.yml` - deploys the Jenkins server used for job management.
   - `metridoc.yml` - deploys containers for the Metridoc Rails application.
   - `monitoring.yml` - deploys containers for the monitoring and alerting stack.
+  - `python_jobs.yml` - deploys a container to run python scripts
 - `local.yml` - deploy the `local` inventory locally. This is intended for developing the Metridoc application and supporting services locally. Does not deploy Jenkins, monitoring services, or the replica database. The `local.sh` script in the repository root can be used to run this playbook via Docker container and perform additional local configuration.
+- `vagrant.yml` - deploys the `vagrant` development playbook. This is intended for developing the Metridoc application and supporting services locally and is not meant to be manually [see Vagrant](../README.md#vagrant).
 
 ## Adding Credentials for New Data Sources
 
@@ -98,10 +101,13 @@ All user, host, password, IP, and other access information provided by other ins
 To add credentials for a new data source:
 
 1. Go to the Ansible directory.
+
 ```#bash
 cd ansible
 ```
+
 2. Add the new environment variables to the `docker_stack_env` dictionary. They should reference the Vault-encrypted variables that you will add next:
+
 ```#yaml
 #...
 docker_stack_env:
@@ -112,8 +118,9 @@ docker_stack_env:
   INSTITUTION_SERVICE_MSSQL_UID: '{{ vault_institution_service_mssql_uid }}'
 #...
 ```
-3.
-Add the new environment variables to the `app` service in the [`metridoc_manager` Docker Compose file](roles/metridoc_manager/files/docker-compose.yml).
+
+3.  Add the new environment variables to the `app` service in the [`metridoc_manager` Docker Compose file](roles/metridoc_manager/files/docker-compose.yml).
+
 ```#yaml
 #...
 environment:
@@ -124,11 +131,15 @@ environment:
   INSTITUTION_SERVICE_MSSQL_UID:
 #...
 ```
+
 4. Open the [Vault-encrypted production variables file](inventories/production/group_vars/swarm_managers/vault.yml) with local Vault credentials:
+
 ```#bash
 ansible-vault edit inventories/production/group_vars/swarm_managers/vault.yml
 ```
+
 5. Add the secret variables corresponding to the earlier environment variables to the Vault-encrypted file:
+
 ```#yaml
 #...
 vault_institution_service_mssql_db: 'x'
@@ -138,7 +149,9 @@ vault_institution_service_mssql_pwd: 'x'
 vault_institution_service_mssql_uid: 'x'
 #...
 ```
+
 6. Save the file, commit it, and push it:
+
 ```#bash
 git add ansible/inventories/production/group_vars/swarm_managers
 git commit
@@ -161,8 +174,8 @@ docker run \
 
 ## Deployment
 
-New features are deployed by merging to the `master` branch of this repository.  If all CircleCI tests pass and images build on [quay.io](https://quay.io/repository/upennlibraries/metridoc-rails).
+New features are deployed by merging to the `master` branch of this repository. If all CircleCI tests pass and images build on [quay.io](https://quay.io/repository/upennlibraries/metridoc-rails).
 
-To redeploy the application without releasing any new PRs to the master branch, navigate to `Settings/Webhooks` on the repository in GitHub, navigate to the CircleCI hook (labeled `https://circleci.com/hooks/github`) and click the `Edit` button.  
+To redeploy the application without releasing any new PRs to the master branch, navigate to `Settings/Webhooks` on the repository in GitHub, navigate to the CircleCI hook (labeled `https://circleci.com/hooks/github`) and click the `Edit` button.
 
-Navigate to the `Recent Deliveries` section and click the `...` icon to the right of the most recent delivery, at the top of the list.  Click `Redeliver` to trigger a redeployment of the current version of the application without any new features.
+Navigate to the `Recent Deliveries` section and click the `...` icon to the right of the most recent delivery, at the top of the list. Click `Redeliver` to trigger a redeployment of the current version of the application without any new features.

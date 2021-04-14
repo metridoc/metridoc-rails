@@ -1,0 +1,4 @@
+---
+roles:
+  - name: atosatto.docker-swarm
+    version: v2.2.0

@@ -1,0 +1,73 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Arrange nodes in reverse order so the manager is the last vm to be provisioned
+cluster = {
+  "metridoc-manager" => { :ip => "10.10.3.201", :cpus => 1, :mem => 4096, :port => 2020 }
+}
+
+Vagrant.configure("2") do |config|
+  config.vagrant.plugins = ["vagrant-env", "vagrant-vbguest", "vagrant-hostsupdater", "vagrant-disksize"]
+
+  cluster.each_with_index do |(hostname, info), index|
+    config.vm.box = "ubuntu/bionic64"
+
+    # Use the default insecure key as this is only used for development
+    config.ssh.insert_key = false
+
+    config.vm.define hostname do |cfg|
+      cfg.vm.provider :virtualbox do |vb, override|
+        override.vm.network :private_network, ip: "#{info[:ip]}"
+        override.vm.network :forwarded_port, id: "ssh", host: info[:port], guest: 22
+        override.vm.hostname = hostname
+        vb.name = hostname
+        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on"]
+        # push the first interface far out enough to minimize potential conflict with docker swarm
+        # which defaults to 10.0.0.0/8 for networks/containers
+        vb.customize ["modifyvm", :id, "--natnet1", "10.252/16"]
+      end
+
+      # Update and install packages
+      cfg.vm.provision "shell" do |s|
+        s.inline = <<-SHELL
+          sudo apt-get update && sudo apt-get -y install python3-pip
+        SHELL
+      end
+
+      # Run the ansible playbook after the manager vm has been provisioned
+      if hostname == "metridoc-manager"
+        # only if you need to expose on your local network; usually not necessary
+        # cfg.vm.provider :virtualbox do |vb, override|
+        #   override.vm.network :forwarded_port, id: "http", host: 8080, guest: 80
+        # end
+
+        cfg.disksize.size = '30GB'
+
+        cfg.vm.provision :ansible do |ansible|
+          ansible.ask_vault_pass = true
+          ansible.inventory_path = "../ansible/inventories/vagrant"
+          ansible.galaxy_role_file = "../ansible/roles/requirements.yml"
+          ansible.galaxy_roles_path = "../ansible/roles"
+          ansible.galaxy_command = "ansible-galaxy install -g -f -r %{role_file} -p %{roles_path}"
+          ansible.limit = "all"
+          ansible.playbook = "../ansible/vagrant.yml"
+          ansible.verbose = false
+        end
+      end
+    end
+
+    # Add volumes for development
+    config.vm.synced_folder "../", "/metridoc"
+
+    # TODO: will be needed when testing process for Windows users
+    # https://github.com/npm/npm/issues/992#issuecomment-289935776
+    # vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/Folder_Name", "1"]
+
+    # Add domains to hosts file
+    config.hostsupdater.aliases = {
+      "10.10.3.201" => [
+        "metridoc-dev.library.upenn.edu"
+      ]
+    }
+  end
+end

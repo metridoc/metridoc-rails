@@ -1,0 +1,19 @@
+[development]
+swarm-01 ansible_host=10.10.3.201
+
+[docker_engine:children]
+development
+
+[docker_engine:vars]
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_user=vagrant
+ansible_ssh_private_key_file='~/.vagrant.d/insecure_private_key'
+
+[docker_swarm_manager]
+swarm-01 swarm_labels='["alertmanager-1" ,"alertmanager-2", "jenkins", "metridoc", "postgres-primary", "postgres-replica"]'
+
+[swarm_managers]
+swarm-01
+
+[swarm_workers]
+swarm-01
