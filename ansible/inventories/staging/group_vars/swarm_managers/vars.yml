@@ -7,7 +7,7 @@ grafana_database_password: "{{ vault_grafana_database_password }}"
 libwizard_client_id: "{{ vault_libwizard_client_id }}"
 libwizard_client_secret: "{{ vault_libwizard_client_secret }}"
 libwizard_base_url: "{{ vault_libwizard_base_url }}"
-monitoring_subnet: 10.0.3.0/24
+monitoring_subnet: 10.0.10.0/24
 postgres_database_password: "{{ vault_postgres_database_password }}"
 postgres_monitoring_password: "{{ vault_postgres_monitoring_password }}"
 postgres_replication_password: "{{ vault_postgres_replication_password }}"
