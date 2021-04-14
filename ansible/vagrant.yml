@@ -13,8 +13,6 @@
           - passlib
           - pyyaml
       tags: deps
-    # - name: Restart docker to ensure our daemon config values are in use
-    #   notify: restart docker
     - name: Create metridoc docker image
       docker_image:
         build:
