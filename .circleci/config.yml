@@ -123,7 +123,7 @@ workflows:
           context: quay.io
           registry: quay.io
           image: upennlibraries/metridoc-python-jobs
-          path: ${CIRCLE_WORKING_DIRECTORY}/ansible/roles/python_jobs_manager/files/src
+          path: ${CIRCLE_WORKING_DIRECTORY}/ansible/roles/python_jobs_manager/files/src/
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
