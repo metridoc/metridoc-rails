@@ -72,6 +72,9 @@ ansible-playbook -i inventories/production site.yml
 # Deploy only the Metridoc application to production
 ansible-playbook -i inventories/production metridoc.yml
 
+# Deploy the Metridoc application and python scripts container to production
+ansible-playbook -i inventories/production production.yml
+
 # Deploy primary and replica databases to production
 ansible-playbook -i inventories/production databases.yml
 
@@ -88,6 +91,7 @@ ansible-playbook -i inventories/production jenkins.yml
   - `jenkins.yml` - deploys the Jenkins server used for job management.
   - `metridoc.yml` - deploys containers for the Metridoc Rails application.
   - `monitoring.yml` - deploys containers for the monitoring and alerting stack.
+  - `production.yml` - deploys containers for the Metridoc Rails application and python scripts.
   - `python_jobs.yml` - deploys a container to run python scripts
 - `local.yml` - deploy the `local` inventory locally. This is intended for developing the Metridoc application and supporting services locally. Does not deploy Jenkins, monitoring services, or the replica database. The `local.sh` script in the repository root can be used to run this playbook via Docker container and perform additional local configuration.
 - `vagrant.yml` - deploys the `vagrant` development playbook. This is intended for developing the Metridoc application and supporting services locally and is not meant to be manually [see Vagrant](../README.md#vagrant).
