@@ -258,6 +258,7 @@ module Import
                 end
 
                 val = Util.parse_datetime(val) if class_name.columns_hash[column_name].type == :datetime
+                val = Util.parse_datetime(val) if class_name.columns_hash[column_name].type == :date
 
                 attributes[column_name] = val
               end
