@@ -117,8 +117,6 @@ class RailsDbConfigurator(SourceTargetConfigurator):
     def configure(self):
         with open(self.path) as config_file:
             self._config = load(config_file, Loader=Loader)
-        if self.rails_env == 'production':
-            self._config[self.rails_env]['password'] = os.environ.get('DATABASE_PASSWORD')
         if 'port' not in self._config[self.rails_env]:
             self._config[self.rails_env]['port'] = '5432'
 
