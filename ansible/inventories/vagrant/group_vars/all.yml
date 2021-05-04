@@ -1,0 +1,10 @@
+---
+# Docker swarm setup vars
+skip_repo: false
+skip_containerd: false
+skip_engine: false
+skip_cli: false
+skip_swarm: false
+skip_group: false
+skip_docker_py: false
+skip_docker_compose: false

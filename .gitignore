@@ -42,8 +42,15 @@
 # Ignore Mac directory meta files
 .DS_Store
 
+# Ignore ansible galaxy roles
+/ansible/roles/atosatto.docker-swarm
+
 # Ignore local secrets.yml file
 /config/secrets.yml
 
 # Ignore local database.yml file
 /config/database.yml
+
+# Ignore everything in the vagrant dir except the Vagrantfile
+/vagrant/*
+!/vagrant/Vagrantfile

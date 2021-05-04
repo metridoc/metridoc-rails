@@ -12,15 +12,15 @@ postgres_database_password: "{{ vault_postgres_database_password }}"
 postgres_monitoring_password: "{{ vault_postgres_monitoring_password }}"
 postgres_replication_password: "{{ vault_postgres_replication_password }}"
 rails_secret_key_base: "{{ vault_rails_secret_key_base }}"
-rails_app_user_gid: 9999
-rails_app_user_uid: 9999
+rails_app_user_gid: 1000
+rails_app_user_uid: 1000
 
-alertmanager_1_swarm_node: mdoc-dev
-alertmanager_2_swarm_node: mdoc-dev
-jenkins_swarm_node: mdoc-dev
-metridoc_swarm_node: mdoc-dev
-postgres_primary_swarm_node: mdoc-dev
-postgres_replica_swarm_node: mdoc-dev
+alertmanager_1_swarm_node: metridoc-manager
+alertmanager_2_swarm_node: metridoc-manager
+jenkins_swarm_node: metridoc-manager
+metridoc_swarm_node: metridoc-manager
+postgres_primary_swarm_node: metridoc-manager
+postgres_replica_swarm_node: metridoc-manager
 
 # Docker config / secret versions
 alertmanager_config_version: v1
@@ -60,12 +60,12 @@ docker_stack_env:
   MAILER_DEFAULT_FROM: "{{ vault_mailer_default_from }}"
   MAILER_DOMAIN: "{{ vault_mailer_domain }}"
   MAILER_HOST: "{{ vault_mailer_host }}"
-  METRIDOC_IMAGE_TAG: "{{ metridoc_image_tag }}"
-  METRIDOC_REPLICAS: 2
+  METRIDOC_IMAGE_TAG: "local"
+  METRIDOC_REPLICAS: 1
   MONITORING_SUBNET: "{{ monitoring_subnet }}"
-  PYTHON_JOBS_IMAGE_TAG: "{{ metridoc_image_tag }}"
+  PYTHON_JOBS_IMAGE_TAG: "local"
   PYTHON_JOBS_REPLICAS: 1
-  RAILS_ENV: production
+  RAILS_ENV: development
 
   ALERTMANAGER_CONFIG_VERSION: "{{ alertmanager_config_version }}"
   ALERTMANAGER_TEMPLATES_VERSION: "{{ alertmanager_templates_version }}"

@@ -1,0 +1,88 @@
+---
+- name: "Provision Docker Swarm Cluster"
+  become: yes
+  hosts: docker_swarm_manager
+  gather_facts: true
+  roles:
+    - { role: atosatto.docker-swarm }
+  tasks:
+    - name: Install deps
+      pip:
+        name:
+          - jsondiff
+          - passlib
+          - pyyaml
+      tags: deps
+    - name: Create metridoc docker image
+      docker_image:
+        build:
+          path: "/metridoc/"
+          pull: yes
+        force_tag: yes
+        force_source: yes
+        name: "quay.io/upennlibraries/metridoc:local"
+        source: build
+        state: present
+    - name: Create python jobs docker image
+      docker_image:
+        build:
+          path: "/metridoc/ansible/roles/python_jobs_manager/files/src/"
+          pull: yes
+        force_tag: yes
+        force_source: yes
+        name: "quay.io/upennlibraries/metridoc-python-jobs:local"
+        source: build
+        state: present
+    - import_role:
+        name: postgres_primary_manager
+    - import_role:
+        name: postgres_replica_manager
+    - import_role:
+        name: metridoc_manager
+    - name: Update permissions and mounts for dev env
+      block:
+        - name: Scale down metridoc_app metridoc_delayed_jobs services
+          command: docker service scale metridoc_app=0 metridoc_delayed_jobs=0
+        - getent:
+            database: passwd
+            key: vagrant
+        - name: update UID and GID and mount folders in metridoc_app containers
+          command: >
+            docker service update
+              --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
+              --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
+              --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
+              --args /home/app/webapp/local_docker_init.sh
+              metridoc_app
+        - name: update UID and GID and mount folders in delayed_job containers
+          command: >
+            docker service update
+              --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
+              --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
+              --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
+              --args /home/app/webapp/local_docker_job_init.sh
+              metridoc_delayed_jobs
+        - name: Scale up metridoc_app metridoc_delayed_jobs services
+          command: docker service scale metridoc_app={{ docker_stack_env.METRIDOC_REPLICAS }} metridoc_delayed_jobs=1
+    - import_role:
+        name: python_jobs_manager
+    - name: Update permissions and mounts for dev env
+      block:
+        - name: Scale down metridoc_python_jobs service
+          command: docker service scale metridoc_python_jobs=0
+        - getent:
+            database: passwd
+            key: vagrant
+        - name: update UID and GID and mount folders in metridoc_python_jobs container
+          command: >
+            docker service update
+              --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
+              --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
+              --mount-add type=bind,source=/metridoc/ansible/roles/python_jobs_manager/files/src/,target=/home/app/
+              metridoc_python_jobs
+        - name: Scale up metridoc_python_jobs service
+          command: docker service scale metridoc_python_jobs=1
+    - import_role:
+        name: jenkins_manager
+    - import_role:
+        name: monitoring_manager
