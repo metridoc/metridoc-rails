@@ -1,8 +1,6 @@
 require "csv"
 require 'chronic'
 
-require 'pry-byebug'
-
 module Preprocess
 
   class Task
