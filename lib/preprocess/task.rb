@@ -188,6 +188,20 @@ module Preprocess
       _output_headers
     end
 
+    def gate_count_hack(val, is_time=false)
+      # this deals with a formatting error that has recently shown up in
+      # gate count data, where date & time fields contain the values of
+      # both (i.e., the date and the time), rather than each.
+      begin
+        if is_time
+          v = Chronic.parse(val).strftime('%I:%M:%S %p')
+        else
+          v = Chronic.parse(val).to_date
+        end
+      rescue
+        puts "caught exception: val: #{val}"
+      end
+    end
     def preprocess
       log "Starting to preprocess #{import_file_name}"
 
@@ -230,6 +244,16 @@ module Preprocess
           else
             val = target_column % cols
           end
+
+          # Hack! Corrects a recent issue w/ formatting of gate count data
+          # that should be temporary
+          if column_name == 'swipe_date'
+            val = gate_count_hack(val)
+          end
+          if column_name == 'swipe_time'
+            val = gate_count_hack(val, true)
+          end
+          # Hack!
 
           val = transformations[column_name]["engine"].call(val) if transformations[column_name].present?
 
