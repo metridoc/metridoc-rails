@@ -4,10 +4,10 @@ module BorrowdirectHelper
     render_ids = []
     institution_ids.each do |id, amount|
       render_ids << [Borrowdirect::Institution.find_by(library_id: id).nil? ?
-        "Unfilled" :
-        "#{Borrowdirect::Institution.find_by(library_id: id)
-          .institution_name} (#{id})",
-          amount]
+                       "Unfilled" :
+                       "#{Borrowdirect::Institution.find_by(library_id: id)
+                                                   .institution_name} (#{id})",
+                     amount]
     end
     return render_ids
   end
@@ -21,9 +21,9 @@ module BorrowdirectHelper
     end
 
     return Borrowdirect::Institution.find_by(library_id: library_id).nil? ?
-      "Not supplied" :
-      "#{Borrowdirect::Institution.find_by(library_id: library_id)
-        .institution_name}"
+             "Not supplied" :
+             "#{Borrowdirect::Institution.find_by(library_id: library_id)
+                                         .institution_name}"
   end
 
   # Create an array of arrays that map the library symbol to the library id
@@ -57,14 +57,14 @@ module BorrowdirectHelper
     last_month = this_year.last.month
     # Return an ordered array of the past months of the fiscal year
     return last_month >= 7 ?
-      last_month.downto(7).to_a :
-      last_month.downto(1).to_a + 12.downto(7).to_a
+             last_month.downto(7).to_a :
+             last_month.downto(1).to_a + 12.downto(7).to_a
   end
 
   # Method to construct the standard query to be used across all queries
   # Options for the initial query, the library_id (if given),
   # if the request is for borrowing or for the all libraries summary.
-  def base_query(input_query, options = {})
+  def base_query_bd(input_query, options = {})
 
     # Set up the default conditions
     library_id = options.fetch(:library_id, nil)
@@ -87,21 +87,21 @@ module BorrowdirectHelper
     # Specify a particular lender or borrower if provided
     if not library_id.nil?
       output_query = get_borrowing ?
-        output_query.where(borrower: library_id) :
-        output_query.where(lender: library_id)
+                       output_query.where(borrower: library_id) :
+                       output_query.where(lender: library_id)
     end
 
     # No default rollup function available in ActiveRecord
     if not get_summary
       # Group by borrower or lender based on input
       output_query = get_borrowing ?
-        output_query.group(:lender) : output_query.group(:borrower)
+                       output_query.group(:lender) : output_query.group(:borrower)
     end
 
     # Group by month when requested
     output_query = get_monthly ?
-      output_query.group("CAST(EXTRACT (MONTH FROM request_date) AS int)") :
-      output_query
+                     output_query.group("CAST(EXTRACT (MONTH FROM request_date) AS int)") :
+                     output_query
 
     return output_query
   end
@@ -115,7 +115,7 @@ module BorrowdirectHelper
   # get_borrowing: Boolean to query for borrowing versus lending
   # get_summary: Boolean to query for the summary of all libraries
   def count_library_items_bd(this_year:, last_year:, library_id:, get_monthly:,
-    get_borrowing:, get_summary:)
+                             get_borrowing:, get_summary:)
 
     # Distinct request numbers in bibliography
     query = Borrowdirect::Bibliography.select(:request_number).distinct
@@ -128,7 +128,7 @@ module BorrowdirectHelper
     }
 
     # Construct standard query
-    query = base_query(query, **options)
+    query = base_query_bd(query, **options)
 
     # Count all unique requests from this year and last year
     this_query = query.where(request_date: this_year).count
@@ -167,7 +167,7 @@ module BorrowdirectHelper
     return this_by_library, last_by_library
   end
 
-  def get_fill_rate_bd(options={})
+  def get_fill_rate_bd(options = {})
     # Distinct request numbers in bibliography
     query = Borrowdirect::Bibliography.select(:request_number).distinct
     # Only want to know about the current year
@@ -175,11 +175,11 @@ module BorrowdirectHelper
 
     # Returns a hash of library_id to number
     # Construct successful requests query
-    successful_requests = base_query(query,
-      **options.merge(:get_successful => true)).count
+    successful_requests = base_query_bd(query,
+                                     **options.merge(:get_successful => true)).count
     # Construct all requests query
-    all_requests = base_query(query,
-      **options.merge(:get_successful => false)).count
+    all_requests = base_query_bd(query,
+                              **options.merge(:get_successful => false)).count
 
     # Find the grand total, faster than another SQL query
     # Ruby on Rails doesn't have SQL rollup
@@ -192,7 +192,7 @@ module BorrowdirectHelper
     all_requests.each do |library_id, count|
       successful_count = successful_requests.fetch(library_id, 0)
       rate = count != 0 ?
-        successful_count.to_f / count : -1
+               successful_count.to_f / count : -1
       # Reformat the output to 0.00
       fill_rate[library_id] = sprintf('%.2f', rate)
     end
@@ -200,13 +200,13 @@ module BorrowdirectHelper
     return fill_rate
   end
 
-  def get_library_turnaround_time(options={})
+  def get_library_turnaround_time(options = {})
     # Distinct request numbers in bibliography
     query = Borrowdirect::Bibliography
     # Only want to know about the current year
     query = query.where(request_date: options[:this_year])
     # Set up the base restrictions
-    query = base_query(query, **options)
+    query = base_query_bd(query, **options)
     query = query.joins("INNER JOIN
       borrowdirect_min_ship_dates AS ship
       ON borrowdirect_bibliographies.request_number = ship.request_number")
@@ -216,7 +216,7 @@ module BorrowdirectHelper
     get_summary = options.fetch(:get_summary, false)
 
     # Add the borrower or lender column to the output
-    if not get_summary
+    unless get_summary
       if get_borrowing
         query = query.select("lender")
       else
@@ -262,7 +262,7 @@ module BorrowdirectHelper
   end
 
   # Method to build the turnaround portion of the table
-  def get_turnaround_time(options={})
+  def get_turnaround_time(options = {})
     by_library_req_to_rec, by_library_req_to_shp, by_library_shp_to_rec = get_library_turnaround_time(
       **options.merge(:get_summary => false))
     all_libraries_req_to_rec, all_libraries_req_to_shp, all_libraries_shp_to_rec = get_library_turnaround_time(
@@ -278,7 +278,7 @@ module BorrowdirectHelper
 
   # Method to check for a key and format the number appropriately
   # This will be used for big integers (> 1000)
-  def format_into_days(input_hash, test_key)
+  def format_into_days_bd(input_hash, test_key)
     output = "---"
     if input_hash.key?(test_key)
       output = sprintf('%.2f', input_hash[test_key] / 60 / 60 / 24)
@@ -288,7 +288,7 @@ module BorrowdirectHelper
 
   # Method to check for a key and format the number appropriately
   # This will be used for big integers (> 1000)
-  def format_big_number(input_hash, test_key)
+  def format_big_number_bd(input_hash, test_key)
     output = "---"
     if input_hash.key?(test_key)
       output = ActiveSupport::NumberHelper.number_to_delimited(input_hash[test_key])
@@ -299,8 +299,7 @@ module BorrowdirectHelper
   # Method to prepare the full summary table.
   # Takes inputs of library_id (default is nil)
   # and fiscal_year (default is 2021)
-  def prepare_summary_table(fiscal_year = 2021, library_id = nil,
-    get_borrowing = false)
+  def prepare_summary_table(fiscal_year = 2021, library_id = nil, get_borrowing = false)
 
     this_year, last_year = fiscal_year_ranges_bd(fiscal_year)
 
@@ -337,20 +336,20 @@ module BorrowdirectHelper
     library_map.each do |library_symbol, library_id|
       # Get the library_name and library_id
       output_row = [library_symbol]
-      output_row << format_into_days(req_to_rec, library_id)
-      output_row << format_into_days(req_to_shp, library_id)
-      output_row << format_into_days(shp_to_rec, library_id)
-      output_row << format_big_number(current_items, library_id)
+      output_row << format_into_days_bd(req_to_rec, library_id)
+      output_row << format_into_days_bd(req_to_shp, library_id)
+      output_row << format_into_days_bd(shp_to_rec, library_id)
+      output_row << format_big_number_bd(current_items, library_id)
       output_row << (fill_rate.key?(library_id) ?
-        fill_rate[library_id] : "---")
-      output_row << format_big_number(previous_items, library_id)
+                       fill_rate[library_id] : "---")
+      output_row << format_big_number_bd(previous_items, library_id)
 
       # Loop through the monthly information
       display_months.each do |month|
-        output_row << format_big_number(current_monthly_items,
-          [library_id, month])
-        output_row << format_big_number(previous_monthly_items,
-          [library_id, month])
+        output_row << format_big_number_bd(current_monthly_items,
+                                        [library_id, month])
+        output_row << format_big_number_bd(previous_monthly_items,
+                                        [library_id, month])
       end
 
       # Append this row to the output table
