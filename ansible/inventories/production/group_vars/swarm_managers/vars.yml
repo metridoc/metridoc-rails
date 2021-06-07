@@ -146,6 +146,10 @@ docker_stack_env:
   UPENN_EZBORROW_MSSQL_PWD: "{{ vault_upenn_ezborrow_mssql_pwd }}"
   UPENN_EZBORROW_MSSQL_UID: "{{ vault_upenn_ezborrow_mssql_uid }}"
 
+  UPENN_GATECOUNT_SFTP_HOST: "{{ vault_upenn_gatecount_sftp_host }}"
+  UPENN_GATECOUNT_SFTP_PWD: "{{ vault_upenn_gatecount_sftp_pwd }}"
+  UPENN_GATECOUNT_SFTP_USER: "{{ vault_upenn_gatecount_sftp_user }}"
+
   UPENN_ILLIAD_MSSQL_DB: "{{ vault_upenn_illiad_mssql_db }}"
   UPENN_ILLIAD_MSSQL_HOST: "{{ vault_upenn_illiad_mssql_host }}"
   UPENN_ILLIAD_MSSQL_PORT: "{{ vault_upenn_illiad_mssql_port }}"
