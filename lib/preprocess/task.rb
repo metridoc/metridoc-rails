@@ -188,7 +188,7 @@ module Preprocess
       _output_headers
     end
 
-    def gate_count_hack(val, is_time=false)
+    def gate_count_hack(val, is_time = false)
       # this deals with a formatting error that has recently shown up in
       # gate count data, where date & time fields contain the values of
       # both (i.e., the date and the time), rather than each.
@@ -202,6 +202,7 @@ module Preprocess
         puts "caught exception: val: #{val}"
       end
     end
+
     def preprocess
       log "Starting to preprocess #{import_file_name}"
 
@@ -214,7 +215,7 @@ module Preprocess
         end
       end
 
-      header_converter = lambda { |header| header.downcase }
+      header_converter = lambda { |header| header.downcase.sub(/\-/, '_') }
       csv = CSV.parse(File.read(csv_file_path, encoding: 'bom|utf-8'), headers: true, header_converters: header_converter)
       temp_file = Tempfile.new("#{import_file_name}.tmp")
       temp_csv = CSV.open(temp_file, 'wb')
