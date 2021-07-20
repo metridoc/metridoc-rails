@@ -1,7 +1,7 @@
 ---
 - name: create config directories
   file:
-    path: '{{ config_dir }}/postgres/monitoring/{{ item }}'
+    path: "{{ config_dir }}/postgres/monitoring/{{ item }}"
     state: directory
   loop:
     - alertmanager
@@ -13,8 +13,8 @@
 
 - name: copy configs
   copy:
-    src: '{{ item }}'
-    dest: '{{ config_dir }}/postgres/monitoring/{{ item }}'
+    src: "{{ item }}"
+    dest: "{{ config_dir }}/postgres/monitoring/{{ item }}"
   loop:
     - docker-compose.yml
     - alertmanager/templates.tmpl
@@ -30,7 +30,7 @@
 - name: create grafana database pg_hba config file
   template:
     src: grafana_db/pg_hba.conf.j2
-    dest: '{{ config_dir }}/postgres/monitoring/grafana_db/pg_hba.conf'
+    dest: "{{ config_dir }}/postgres/monitoring/grafana_db/pg_hba.conf"
 
 - name: create docker secrets
   docker_secret:
@@ -56,22 +56,22 @@
 
 - name: label alertmanager-1 swarm node
   docker_node:
-    hostname: '{{ alertmanager_1_swarm_node }}'
+    hostname: "{{ alertmanager_1_swarm_node }}"
     labels:
-      alertmanager-1: 'true'
+      alertmanager-1: "true"
   tags:
     - docker
 
 - name: label alertmanager-2 swarm node
   docker_node:
-    hostname: '{{ alertmanager_2_swarm_node }}'
+    hostname: "{{ alertmanager_2_swarm_node }}"
     labels:
-      alertmanager-2: 'true'
+      alertmanager-2: "true"
   tags:
     - docker
 
 - name: start docker services
-  environment: '{{ docker_stack_env }}'
+  environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/postgres/monitoring/docker-compose.yml metridoc
   changed_when: false
   tags:

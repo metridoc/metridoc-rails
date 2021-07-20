@@ -63,6 +63,7 @@ docker_stack_env:
   METRIDOC_IMAGE_TAG: "{{ metridoc_image_tag }}"
   METRIDOC_REPLICAS: 2
   MONITORING_SUBNET: "{{ monitoring_subnet }}"
+  PROMETHEUS_REPLICAS: 1
   PYTHON_JOBS_IMAGE_TAG: "{{ metridoc_image_tag }}"
   PYTHON_JOBS_REPLICAS: 1
   RAILS_ENV: production

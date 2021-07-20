@@ -1,6 +1,6 @@
 ---
-config_dir: /root/deployments/metridoc
-alertmanager_slack_api_url: "{{ vault_alertmanager_slack_api_url }}"
+config_dir: /opt/metridoc
+alertmanager_slack_api_url: "http://localhost"
 database_subnet: 10.0.2.0/24
 grafana_admin_password: "{{ vault_grafana_admin_password }}"
 grafana_database_password: "{{ vault_grafana_database_password }}"
@@ -62,6 +62,7 @@ docker_stack_env:
   MAILER_HOST: "{{ vault_mailer_host }}"
   METRIDOC_IMAGE_TAG: "local"
   METRIDOC_REPLICAS: 1
+  PROMETHEUS_REPLICAS: 1
   MONITORING_SUBNET: "{{ monitoring_subnet }}"
   PYTHON_JOBS_IMAGE_TAG: "local"
   PYTHON_JOBS_REPLICAS: 1
