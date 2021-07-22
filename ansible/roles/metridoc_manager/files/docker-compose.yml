@@ -122,6 +122,7 @@ services:
         mode: 0440
     volumes:
       - metridoc_tmp_data:/home/app/webapp/tmp
+      - ezpaarse_output:/tmp/upenn_ezproxy
   delayed_jobs:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
@@ -181,4 +182,6 @@ secrets:
 
 volumes:
   metridoc_tmp_data:
+    external: true
+  ezpaarse_output:
     external: true

@@ -128,6 +128,26 @@ workflows:
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
+      - docker-publish/publish:
+          name: publish_metridoc_ezpaarse
+          context: quay.io
+          registry: quay.io
+          image: upennlibraries/metridoc-ezpaarse
+          dockerfile: ./ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile
+          path: ./ansible/roles/ezpaarse_manager/files/ezpaarse
+          label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
+      - docker-publish/publish:
+          name: publish_metridoc_ezpaarse_mongodb
+          context: quay.io
+          registry: quay.io
+          image: upennlibraries/metridoc-ezpaarse-mongodb
+          dockerfile: ./ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile
+          path: ./ansible/roles/ezpaarse_manager/files/mongodb
+          label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
       - test_role:
           name: test_jenkins_manager_role
           role: jenkins_manager
@@ -155,6 +175,8 @@ workflows:
           requires:
             - publish_metridoc
             - publish_metridoc_python_jobs
+            - publish_metridoc_ezpaarse
+            - publish_metridoc_ezpaarse_mongodb
             - test_jenkins_manager_role
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role
@@ -166,6 +188,8 @@ workflows:
           requires:
             - publish_metridoc
             - publish_metridoc_python_jobs
+            - publish_metridoc_ezpaarse
+            - publish_metridoc_ezpaarse_mongodb
             - test_jenkins_manager_role
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role
