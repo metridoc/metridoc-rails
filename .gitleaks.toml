@@ -37,7 +37,7 @@ regex = '''xox[baprs]-.*'''
 description = "Strip API Key"
 regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 
-[allowlist]
+[whitelist]
 commits = [
   # Keys revoked
   'a3c3d0692d2b4d6ce86a74d322971ed73a4fc352',
@@ -99,5 +99,5 @@ regexes = [
   '''# config.secret_key =''',
   # AWS Secrets Manager resource for vault password
   '''AnsibleVaultPassword''',
-  '''(?i).*password\:\s*\"x''',
+  '''(?i)ezpaarse''',
 ]
