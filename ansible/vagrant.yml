@@ -33,16 +33,42 @@
         name: "quay.io/upennlibraries/metridoc-python-jobs:local"
         source: build
         state: present
+    - name: Create ezpaarse docker image
+      docker_image:
+        build:
+          dockerfile: "/metridoc/ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile"
+          path: "/metridoc/ansible/roles/ezpaarse_manager/files/ezpaarse/"
+          pull: yes
+        force_tag: yes
+        force_source: yes
+        name: "quay.io/upennlibraries/metridoc-ezpaarse:local"
+        source: build
+        state: present
+    - name: Create ezpaarse mongodb docker image
+      docker_image:
+        build:
+          dockerfile: "/metridoc/ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile"
+          path: "/metridoc/ansible/roles/ezpaarse_manager/files/mongodb/"
+          pull: yes
+        force_tag: yes
+        force_source: yes
+        name: "quay.io/upennlibraries/metridoc-ezpaarse-mongodb:local"
+        source: build
+        state: present
     - import_role:
         name: postgres_primary_manager
     - import_role:
         name: postgres_replica_manager
+    - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_input_volume.yml"
+    - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_output_volume.yml"
     - import_role:
         name: metridoc_manager
+    - import_role:
+        name: ezpaarse_manager
     - name: Update permissions and mounts for dev env
       block:
-        - name: Scale down metridoc_app metridoc_delayed_jobs services
-          command: docker service scale metridoc_app=0 metridoc_delayed_jobs=0
+        - name: Scale down metridoc_app, metridoc_delayed_jobs, and metridoc_replica-db services
+          command: docker service scale metridoc_app=0 metridoc_delayed_jobs=0 metridoc_replica-db=0
         - getent:
             database: passwd
             key: vagrant
@@ -54,6 +80,8 @@
               --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
               --args /home/app/webapp/local_docker_init.sh
               metridoc_app
+        - name: Scale up metridoc_app
+          command: docker service scale metridoc_app={{ docker_stack_env.METRIDOC_REPLICAS }}
         - name: update UID and GID and mount folders in delayed_job containers
           command: >
             docker service update
@@ -62,8 +90,8 @@
               --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
               --args /home/app/webapp/local_docker_job_init.sh
               metridoc_delayed_jobs
-        - name: Scale up metridoc_app metridoc_delayed_jobs services
-          command: docker service scale metridoc_app={{ docker_stack_env.METRIDOC_REPLICAS }} metridoc_delayed_jobs=1
+        - name: Scale up metridoc_delayed_jobs and metridoc_replica-db
+          command: docker service scale metridoc_delayed_jobs=1 metridoc_replica-db=1
     - import_role:
         name: python_jobs_manager
     - name: Update permissions and mounts for dev env
