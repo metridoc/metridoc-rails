@@ -11,5 +11,9 @@ class EnvService
   def self.saml_last_name_attribute
     ENV['SAML_LAST_NAME_ATTRIBUTE']
   end
+
+  def self.saml_logout_url
+    ENV['SAML_LOGOUT_URL']
+  end
   
 end
