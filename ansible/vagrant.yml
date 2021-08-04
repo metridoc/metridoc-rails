@@ -1,4 +1,61 @@
 ---
+- name: "Set up nginx reverse proxy with ssl termination to mimic a reverse-proxy/loadbalancer"
+  become: true
+  hosts: docker_swarm_manager
+  collections:
+    - nginxinc.nginx_core
+  pre_tasks:
+    - name: Create a self-signed cert for nginx
+      command: >
+        openssl req -x509 -nodes -subj '/CN={{ shibboleth['templates']['configs']['shib2']['values']['fqdn'] }}' -days 365
+        -newkey rsa:4096 -sha256 -keyout {{ proxy.ssl.key.location }} -out {{ proxy.ssl.crt.location }}
+        creates={{ proxy.ssl.crt.location }}
+  roles:
+    - role: nginx
+    - role: nginx_config
+      vars:
+        nginx_config_http_template_enable: true
+        nginx_config_http_template:
+          app:
+            template_file: http/default.conf.j2
+            conf_file_name: default.conf
+            conf_file_location: /etc/nginx/conf.d/
+            servers:
+              main:
+                listen:
+                  listen_public:
+                    ip: 0.0.0.0
+                    port: 443
+                    ssl: true
+                server_name: "{{ shibboleth['templates']['configs']['shib2']['values']['fqdn'] }}"
+                ssl:
+                  cert: "{{ proxy.ssl.crt.location }}"
+                  key: "{{ proxy.ssl.key.location }}"
+                access_log:
+                  - name: main
+                    location: /var/log/nginx/access.log
+                error_log:
+                  location: /var/log/nginx/error.log
+                  level: warn
+                reverse_proxy:
+                  locations:
+                    main:
+                      location: /
+                      proxy_pass: "http://127.0.0.1:80"
+                      proxy_set_header:
+                        header_host:
+                          name: Host
+                          value: $host
+                        header_x_real_ip:
+                          name: X-Real-IP
+                          value: $remote_addr
+                        header_x_forwarded_for:
+                          name: X-Forwarded-For
+                          value: $proxy_add_x_forwarded_for
+                        header_x_forwarded_proto:
+                          name: X-Forwarded-Proto
+                          value: $scheme
+
 - name: "Provision Docker Swarm Cluster"
   become: yes
   hosts: docker_swarm_manager
@@ -61,6 +118,7 @@
         name: postgres_replica_manager
     - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_input_volume.yml"
     - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_output_volume.yml"
+    - import_tasks: "roles/shibboleth_sp/tasks/create_docker_network.yml"
     - import_role:
         name: metridoc_manager
     - import_role:
@@ -91,7 +149,8 @@
               --args /home/app/webapp/local_docker_job_init.sh
               metridoc_delayed_jobs
         - name: Scale up metridoc_delayed_jobs and metridoc_replica-db
-          command: docker service scale metridoc_delayed_jobs=1 metridoc_replica-db=1
+          # command: docker service scale metridoc_delayed_jobs=1 metridoc_replica-db=1
+          command: docker service scale metridoc_delayed_jobs=1
     - import_role:
         name: python_jobs_manager
     - name: Update permissions and mounts for dev env
@@ -114,3 +173,5 @@
         name: jenkins_manager
     - import_role:
         name: monitoring_manager
+    - import_role:
+        name: shibboleth_sp

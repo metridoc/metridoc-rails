@@ -42,8 +42,12 @@
 # Ignore Mac directory meta files
 .DS_Store
 
+# exclude ansible collections
+/ansible/collections
+
 # Ignore ansible galaxy roles
 /ansible/roles/atosatto.docker-swarm
+/ansible/roles/shibboleth_sp
 
 # Ignore local secrets.yml file
 /config/secrets.yml

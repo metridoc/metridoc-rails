@@ -107,8 +107,7 @@ services:
     networks:
       - app
       - database
-    ports:
-      - "80:80"
+      - shibboleth
     secrets:
       - source: metridoc_rails_database_config
         target: /home/app/webapp/config/database.yml
@@ -171,6 +170,8 @@ networks:
     ipam:
       config:
         - subnet: ${DATABASE_SUBNET}
+  shibboleth:
+    external: true
 
 secrets:
   metridoc_rails_database_config:
