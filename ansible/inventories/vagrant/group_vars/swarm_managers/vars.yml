@@ -29,6 +29,13 @@ metridoc_swarm_node: metridoc-manager
 postgres_primary_swarm_node: metridoc-manager
 postgres_replica_swarm_node: metridoc-manager
 
+proxy:
+  ssl:
+    crt:
+      location: "/etc/ssl/proxy.crt"
+    key:
+      location: "/etc/ssl/proxy.key"
+
 # Docker config / secret versions
 alertmanager_config_version: v1
 alertmanager_templates_version: v1

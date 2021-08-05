@@ -45,6 +45,10 @@ jobs:
       - run:
           working_directory: ~/project/ansible
           command: |
+            ansible-galaxy install -p roles -r roles/requirements.yml
+      - run:
+          working_directory: ~/project/ansible
+          command: |
             ansible-playbook \
               -i inventories/production \
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
@@ -74,6 +78,10 @@ jobs:
           command: |
             echo "$SSH_BASTION_KNOWN_HOST" >> ~/.ssh/known_hosts
             echo "$DEPLOY_TARGET_KNOWN_HOST_STAGING" >> ~/.ssh/known_hosts
+      - run:
+          working_directory: ~/project/ansible
+          command: |
+            ansible-galaxy install -p roles -r roles/requirements.yml
       - run:
           working_directory: ~/project/ansible
           command: |

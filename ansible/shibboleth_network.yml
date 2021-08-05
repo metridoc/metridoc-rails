@@ -1,0 +1,5 @@
+---
+- hosts: swarm_managers
+  become: yes
+  tasks:
+    - include: "roles/shibboleth_sp/tasks/create_docker_network.yml"

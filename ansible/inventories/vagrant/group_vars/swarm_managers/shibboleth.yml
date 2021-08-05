@@ -1,0 +1,49 @@
+---
+shibboleth:
+  image:
+    name: "shibboleth_dev"
+    tag: "latest"
+  is_development: true
+  swarm_node_constraint: "metridoc"
+  templates:
+    configs:
+      shib2:
+        path: "shibboleth/apache/shib2.conf.j2"
+        values:
+          admin_email: "{{ vault_shib2_admin_email }}"
+          fqdn: "{{ vault_shib2_fqdn }}"
+        version: 1
+    secrets:
+      attribute_map:
+        path: "shibboleth/shibboleth/attribute_map.xml.j2"
+        version: 1
+      metadata:
+        path: "shibboleth/metadata.xml.j2"
+        value: "{{ vault_metadata_value }}"
+        version: 1
+      shibboleth2:
+        path: "shibboleth/shibboleth2.xml.j2"
+        values:
+          sp_entityID: "{{ vault_shibboleth2_sp_entityID }}"
+          idp_entityID: "{{ vault_shibboleth2_idp_entityID }}"
+        version: 1
+      sp_encrypt_cert:
+        path: "shibboleth/sp_encrypt_cert.pem.j2"
+        values:
+          sp_cert_pem: "{{ vault_sp_encrypt_cert_pem }}"
+        version: 1
+      sp_encrypt_key:
+        path: "shibboleth/sp_encrypt_key.pem.j2"
+        values:
+          sp_key_pem: "{{ vault_sp_encrypt_key_pem }}"
+        version: 1
+      sp_signing_cert:
+        path: "shibboleth/sp_signing_cert.pem.j2"
+        values:
+          sp_cert_pem: "{{ vault_sp_signing_cert_pem }}"
+        version: 1
+      sp_signing_key:
+        path: "shibboleth/sp_signing_key.pem.j2"
+        values:
+          sp_key_pem: "{{ vault_sp_signing_key_pem }}"
+        version: 1

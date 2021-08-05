@@ -1,0 +1,11 @@
+---
+collections:
+  - name: nginxinc.nginx_core
+    version: 0.3.0
+
+roles:
+  - name: atosatto.docker-swarm
+    version: v2.2.0
+
+  - src: https://gitlab.library.upenn.edu/devops/ansible/shibboleth_sp.git
+    scm: git
