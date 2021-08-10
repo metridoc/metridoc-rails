@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_10_161413) do
+ActiveRecord::Schema.define(version: 2021_07_16_155543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -119,7 +119,7 @@ ActiveRecord::Schema.define(version: 2020_07_10_161413) do
     t.string "document_type"
     t.string "item_format"
     t.string "course_id"
-    t.integer "digital_item"
+    t.boolean "digital_item"
     t.string "course_number"
     t.string "department"
     t.integer "date_time_year"
@@ -741,14 +741,14 @@ ActiveRecord::Schema.define(version: 2020_07_10_161413) do
     t.string "ip"
     t.string "refer"
     t.string "browser"
-    t.string "staff_penn_key"
+    t.integer "number_of_registrations"
+    t.string "referral_method"
     t.string "rtg"
     t.string "mba_type"
     t.string "campus"
     t.string "patron_name"
     t.integer "graduation_year"
-    t.integer "number_of_registrations"
-    t.string "referral_method"
+    t.string "staff_penn_key"
   end
 
   create_table "report_queries", force: :cascade do |t|
@@ -806,6 +806,58 @@ ActiveRecord::Schema.define(version: 2020_07_10_161413) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "full_sql"
+  end
+
+  create_table "upenn_alma_demographics", force: :cascade do |t|
+    t.string "identifier_value", limit: 8
+    t.boolean "status"
+    t.date "status_date"
+    t.string "statistical_category_1"
+    t.string "statistical_category_2"
+    t.string "statistical_category_3"
+    t.string "statistical_category_4"
+    t.string "statistical_category_5"
+    t.index ["statistical_category_1"], name: "index_upenn_alma_demographics_on_statistical_category_1"
+    t.index ["statistical_category_2"], name: "index_upenn_alma_demographics_on_statistical_category_2"
+    t.index ["statistical_category_3"], name: "index_upenn_alma_demographics_on_statistical_category_3"
+    t.index ["statistical_category_4"], name: "index_upenn_alma_demographics_on_statistical_category_4"
+    t.index ["statistical_category_5"], name: "index_upenn_alma_demographics_on_statistical_category_5"
+  end
+
+  create_table "upenn_ezproxy_ezpaarse_jobs", force: :cascade do |t|
+    t.datetime "datetime"
+    t.string "login"
+    t.string "platform"
+    t.string "platform_name"
+    t.string "rtype"
+    t.string "mime"
+    t.string "print_identifier"
+    t.string "online_identifier"
+    t.string "title_id"
+    t.string "doi"
+    t.string "publication_title"
+    t.date "publication_date"
+    t.string "unitid"
+    t.string "domain"
+    t.boolean "on_campus"
+    t.string "geoip_country", limit: 4
+    t.string "geoip_region", limit: 4
+    t.string "geoip_city"
+    t.float "geoip_latitude"
+    t.float "geoip_longitude"
+    t.string "host"
+    t.string "method", limit: 8
+    t.string "url"
+    t.string "status", limit: 3
+    t.integer "size"
+    t.string "referer"
+    t.string "session_id"
+    t.string "resource_name"
+    t.index ["host"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_host"
+    t.index ["mime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_mime"
+    t.index ["platform"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform"
+    t.index ["platform_name"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform_name"
+    t.index ["rtype"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_rtype"
   end
 
   create_table "ups_zones", force: :cascade do |t|
