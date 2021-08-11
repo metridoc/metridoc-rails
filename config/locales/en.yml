@@ -143,6 +143,16 @@ en:
         success: "Success"
         failed:  "Failed"
         cancelled: "Cancelled"
+    sso_home:
+      title: 'Part of University of Pennsylvania?'
+      sso_option:
+        text: |
+          University of Pennsylvania uses your network credentials to login to MetriDoc. Continue to login to MetriDoc through your network. 
+        button: 'Continue'
+      non-penn:
+        text: |
+          If you are not a part of University of Pennsylvania, continue to log in with your MetriDoc account. 
+        button: 'Not a part of University of Pennslyvania'
 
   pages:
     homepage_heading: "Welcome to MetriDoc"

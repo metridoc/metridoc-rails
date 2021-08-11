@@ -1,0 +1,16 @@
+.home-header
+  = image_tag 'upenn_logo_transparent_bg.png'
+
+.sso-container
+  %h1
+    = t('phrases.sso_home.title')
+  .options-container
+    .sso-option
+      %p
+        = t('phrases.sso_home.sso_option.text')
+      = link_to t('phrases.sso_home.sso_option.button'), shib_path
+    .options-separator
+    .non-penn
+      %p
+        = t('phrases.sso_home.non-penn.text')
+      = link_to t('phrases.sso_home.non-penn.button'), new_admin_user_session_path
