@@ -230,3 +230,108 @@ body.active_admin {
     }
   }
 }
+
+// home
+.home-header {
+  background-color: #0061D5;
+  border-bottom-color: #0050b1;
+  line-height: 66px;
+  height: 66px;
+  padding: 0 50px;
+  
+  img {
+    vertical-align: middle;
+    border: 0;
+  }
+}
+
+.sso-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 40px 0;
+  min-width: 300px;
+  margin: 80px auto;
+  max-width: 760px;
+
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24px;
+    margin: 10px auto 0;
+    text-align: center;
+    padding: 0 40px;
+  }
+  
+  .options-container {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 13px;
+    letter-spacing: .01em;
+    line-height: 20px;
+    font-weight: 400;
+
+    p {
+      min-height: 50%;
+      margin: 0 0 20px;
+    }
+
+    .sso-option {
+      flex: 1;
+      text-align: center;
+      padding: 24px 40px 0;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+            
+      a { 
+        min-width: 220px;
+        max-width: 300px;
+        white-space: normal;
+        line-height: 20px;
+        border-radius: 4px;
+        padding: 6px 16px;
+        background-image: linear-gradient(to bottom, #0061D5 0%, #005cca 100%);
+        border: 1px solid #0050b1;
+        color: #FFFFFF;
+      }
+      a:hover {
+        color: #FFFFFF;
+      }
+    }
+  
+    .options-separator {
+      margin-top: 24px;
+      background-color: #e8e8e8;
+      width: 1px;
+    }
+  
+    .non-penn {
+      flex: 1;
+      text-align: center;
+      padding: 24px 40px 0;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      
+      a {
+        min-width: 220px;
+        max-width: 300px;
+        white-space: normal;
+        line-height: 20px;
+        border-radius: 4px;
+        padding: 6px 16px;
+        background-color: #ebebeb;
+        border-color: #bdc3c7;
+        outline: 0;
+        margin: 0;
+        width: 100%;
+        border: 1px solid #bdc3c7;
+      }
+      a:hover {
+        color: #000000;
+      }
+    }
+  }
+}
+
+

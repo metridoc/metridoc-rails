@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
   get 'shib', to: 'single_sign_on#shib'
   get 'logout', to: 'single_sign_on#logout'
+  get 'sso', to: 'single_sign_on#home'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

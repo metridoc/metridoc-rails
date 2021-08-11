@@ -1,5 +1,8 @@
 class SingleSignOnController < ApplicationController
 
+  def sso
+  end
+
   def shib
     admin_user = SingleSignOnService.get_or_create_user(request)
     sign_in(admin_user)
