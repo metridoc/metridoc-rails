@@ -100,4 +100,5 @@ regexes = [
   # AWS Secrets Manager resource for vault password
   '''AnsibleVaultPassword''',
   '''(?i)ezpaarse''',
+  '''(?i)SecureRandom.hex''',
 ]
