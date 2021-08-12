@@ -20,6 +20,10 @@ postgres_replication_password: "{{ vault_postgres_replication_password }}"
 rails_secret_key_base: "{{ vault_rails_secret_key_base }}"
 rails_app_user_gid: 1000
 rails_app_user_uid: 1000
+saml_email_attribute: "{{ vault_saml_email_attribute }}"
+saml_first_name_attribute: "{{ vault_saml_first_name_attribute }}"
+saml_last_name_attribute: "{{ vault_saml_last_name_attribute }}"
+saml_logout_url: "{{ vault_saml_logout_url }}"
 
 alertmanager_1_swarm_node: metridoc-manager
 alertmanager_2_swarm_node: metridoc-manager
@@ -118,6 +122,10 @@ docker_stack_env:
   PYTHON_JOBS_LIBWIZARD_SECRET_VERSION: "{{ python_jobs_libwizard_secret_version }}"
   RAILS_DATABASE_CONFIG_VERSION: "{{ rails_database_config_version }}"
   RAILS_SECRETS_CONFIG_VERSION: "{{ rails_secrets_config_version }}"
+  SAML_EMAIL_ATTRIBUTE: "{{ saml_email_attribute }}"
+  SAML_FIRST_NAME_ATTRIBUTE: "{{ saml_first_name_attribute }}"
+  SAML_LAST_NAME_ATTRIBUTE: "{{ saml_last_name_attribute }}"
+  SAML_LOGOUT_URL: "{{ saml_logout_url }}"
 
   COLUMBIA_ILLIAD_MSSQL_DB: "{{ vault_columbia_illiad_mssql_db }}"
   COLUMBIA_ILLIAD_MSSQL_HOST: "{{ vault_columbia_illiad_mssql_host }}"
