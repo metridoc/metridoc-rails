@@ -54,6 +54,7 @@ jobs:
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
+              -T 60 \
               --vault-id vault_password.py \
               production.yml
       - run:
@@ -90,6 +91,7 @@ jobs:
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
+              -T 60 \
               --vault-id vault_password.py \
               site.yml
       - run:
