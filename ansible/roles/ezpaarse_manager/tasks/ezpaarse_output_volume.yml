@@ -1,6 +1,6 @@
 ---
 - name: create volume for ezpaarse_output
   docker_volume:
-    name: metridoc_ezpaarse_output
+    name: ezpaarse_output
     state: present
   tags: ezpaarse_output_volume
