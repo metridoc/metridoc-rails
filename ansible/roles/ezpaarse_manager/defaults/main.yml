@@ -1,0 +1,7 @@
+---
+ezpaarse_mongodb_password: "x"
+ezpaarse_mongodb_username: "x"
+ezpaarse_mongodb_root_password: "x"
+ezpaarse_mongodb_root_username: "x"
+ezpaarse_nfs_input_volume_address: "127.0.0.1"
+ezpaarse_nfs_input_volume_device: "/ezpaarse_input"

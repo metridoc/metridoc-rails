@@ -27,6 +27,11 @@ services:
       PASSENGER_APP_ENV: ${RAILS_ENV}
       RAILS_ENV:
 
+      SAML_EMAIL_ATTRIBUTE:
+      SAML_FIRST_NAME_ATTRIBUTE:
+      SAML_LAST_NAME_ATTRIBUTE:
+      SAML_LOGOUT_URL:
+
       COLUMBIA_ILLIAD_MSSQL_DB:
       COLUMBIA_ILLIAD_MSSQL_HOST:
       COLUMBIA_ILLIAD_MSSQL_PORT:
@@ -107,8 +112,7 @@ services:
     networks:
       - app
       - database
-    ports:
-      - "80:80"
+      - shibboleth
     secrets:
       - source: metridoc_rails_database_config
         target: /home/app/webapp/config/database.yml
@@ -122,6 +126,7 @@ services:
         mode: 0440
     volumes:
       - metridoc_tmp_data:/home/app/webapp/tmp
+      - ezpaarse_output:/tmp/upenn_ezproxy
   delayed_jobs:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
@@ -170,6 +175,8 @@ networks:
     ipam:
       config:
         - subnet: ${DATABASE_SUBNET}
+  shibboleth:
+    external: true
 
 secrets:
   metridoc_rails_database_config:
@@ -181,4 +188,6 @@ secrets:
 
 volumes:
   metridoc_tmp_data:
+    external: true
+  ezpaarse_output:
     external: true

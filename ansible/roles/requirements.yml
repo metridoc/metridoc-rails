@@ -1,4 +1,4 @@
 ---
 roles:
-  - name: atosatto.docker-swarm
-    version: v2.2.0
+  - src: https://gitlab.library.upenn.edu/devops/ansible/shibboleth_sp.git
+    scm: git

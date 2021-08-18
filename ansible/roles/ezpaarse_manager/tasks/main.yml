@@ -1,0 +1,59 @@
+---
+- name: Create ezpaarse_jobs config directory
+  file:
+    path: "{{ config_dir }}/ezpaarse"
+    state: directory
+  tags: ezpaarse
+
+- name: Copy docker compose file
+  copy:
+    src: docker-compose.yml
+    dest: "{{ config_dir }}/ezpaarse/docker-compose.yml"
+  tags: ezpaarse
+
+- name: Label ezpaarse swarm node
+  docker_node:
+    hostname: "{{ ezpaarse_swarm_node }}"
+    labels:
+      metridoc: "true"
+  tags:
+    - docker
+    - ezpaarse
+
+- name: Create ezpaarse docker secrets
+  docker_secret:
+    name: metridoc_{{ item }}_{{ lookup("vars", item + "_version") }}
+    data: '{{ lookup("vars", item) }}'
+    state: present
+  loop:
+    - ezpaarse_mongodb_password
+    - ezpaarse_mongodb_username
+    - ezpaarse_mongodb_root_password
+    - ezpaarse_mongodb_root_username
+  no_log: true
+  tags:
+    - docker
+    - ezpaarse
+
+- name: Create docker secret for ezpaarse
+  docker_secret:
+    name: "{{ 'metridoc_ezpaarse_config_' ~ ezpaarse_config_version }}"
+    data: "{{ lookup('template', 'config.local.json.j2') | to_json }}"
+    state: present
+  no_log: true
+  tags:
+    - docker
+    - ezpaarse
+
+- name: Deploy ezpaarse
+  docker_stack:
+    name: "metridoc"
+    compose:
+      - "{{ config_dir ~ '/ezpaarse/docker-compose.yml' }}"
+    state: present
+  changed_when: false
+  environment: "{{ docker_stack_env }}"
+  no_log: true
+  tags:
+    - docker
+    - ezpaarse

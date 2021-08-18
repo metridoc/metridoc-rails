@@ -1,4 +1,87 @@
 ---
+- name: "Set up nginx reverse proxy with ssl termination to mimic a reverse-proxy/loadbalancer"
+  become: true
+  hosts: docker_swarm_manager
+  collections:
+    - nginxinc.nginx_core
+  pre_tasks:
+    - name: Create a self-signed cert for nginx
+      command: >
+        openssl req -x509 -nodes -subj '/CN={{ shibboleth['templates']['configs']['shib2']['values']['fqdn'] }}' -days 365
+        -newkey rsa:4096 -sha256 -keyout {{ proxy.ssl.key.location }} -out {{ proxy.ssl.crt.location }}
+        creates={{ proxy.ssl.crt.location }}
+  roles:
+    - role: nginx
+    - role: nginx_config
+      vars:
+        nginx_config_http_template_enable: true
+        nginx_config_http_template:
+          app:
+            template_file: http/default.conf.j2
+            conf_file_name: default.conf
+            conf_file_location: /etc/nginx/conf.d/
+            servers:
+              main:
+                listen:
+                  listen_public:
+                    ip: 0.0.0.0
+                    port: 443
+                    ssl: true
+                server_name: "{{ shibboleth['templates']['configs']['shib2']['values']['fqdn'] }}"
+                ssl:
+                  cert: "{{ proxy.ssl.crt.location }}"
+                  key: "{{ proxy.ssl.key.location }}"
+                access_log:
+                  - name: main
+                    location: /var/log/nginx/access.log
+                error_log:
+                  location: /var/log/nginx/error.log
+                  level: warn
+                reverse_proxy:
+                  locations:
+                    main:
+                      location: /
+                      proxy_pass: "http://127.0.0.1:80"
+                      proxy_set_header:
+                        header_host:
+                          name: Host
+                          value: $host
+                        header_x_real_ip:
+                          name: X-Real-IP
+                          value: $remote_addr
+                        header_x_forwarded_for:
+                          name: X-Forwarded-For
+                          value: $proxy_add_x_forwarded_for
+                        header_x_forwarded_proto:
+                          name: X-Forwarded-Proto
+                          value: $scheme
+
+- name: "Mimic NFS share for ezpaarse"
+  become: yes
+  hosts: docker_swarm_manager
+  tasks:
+    - name: Install NFS
+      package:
+        name: nfs-kernel-server
+        state: present
+    - name: Create a directory to mount
+      file:
+        path: /ezpaarse-input
+        state: directory
+        owner: nobody
+        group: nogroup
+        mode: "0777"
+    - name: Grant NFS share access
+      lineinfile:
+        path: "/etc/exports"
+        line: "/ezpaarse-input 127.0.0.1(rw,sync,no_subtree_check)"
+    - name: Export NFS share dir
+      shell: exportfs -a
+    - name: Restart NFS
+      service:
+        name: nfs-kernel-server
+        state: restarted
+
 - name: "Provision Docker Swarm Cluster"
   become: yes
   hosts: docker_swarm_manager
@@ -33,16 +116,43 @@
         name: "quay.io/upennlibraries/metridoc-python-jobs:local"
         source: build
         state: present
+    - name: Create ezpaarse docker image
+      docker_image:
+        build:
+          dockerfile: "/metridoc/ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile"
+          path: "/metridoc/ansible/roles/ezpaarse_manager/files/ezpaarse/"
+          pull: yes
+        force_tag: yes
+        force_source: yes
+        name: "quay.io/upennlibraries/metridoc-ezpaarse:local"
+        source: build
+        state: present
+    - name: Create ezpaarse mongodb docker image
+      docker_image:
+        build:
+          dockerfile: "/metridoc/ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile"
+          path: "/metridoc/ansible/roles/ezpaarse_manager/files/mongodb/"
+          pull: yes
+        force_tag: yes
+        force_source: yes
+        name: "quay.io/upennlibraries/metridoc-ezpaarse-mongodb:local"
+        source: build
+        state: present
     - import_role:
         name: postgres_primary_manager
     - import_role:
         name: postgres_replica_manager
+    - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_input_volume.yml"
+    - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_output_volume.yml"
+    - import_tasks: "roles/shibboleth_sp/tasks/create_docker_network.yml"
     - import_role:
         name: metridoc_manager
+    - import_role:
+        name: ezpaarse_manager
     - name: Update permissions and mounts for dev env
       block:
-        - name: Scale down metridoc_app metridoc_delayed_jobs services
-          command: docker service scale metridoc_app=0 metridoc_delayed_jobs=0
+        - name: Scale down metridoc_app, metridoc_delayed_jobs, and metridoc_replica-db services
+          command: docker service scale metridoc_app=0 metridoc_delayed_jobs=0 metridoc_replica-db=0
         - getent:
             database: passwd
             key: vagrant
@@ -54,6 +164,8 @@
               --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
               --args /home/app/webapp/local_docker_init.sh
               metridoc_app
+        - name: Scale up metridoc_app
+          command: docker service scale metridoc_app={{ docker_stack_env.METRIDOC_REPLICAS }}
         - name: update UID and GID and mount folders in delayed_job containers
           command: >
             docker service update
@@ -62,8 +174,9 @@
               --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
               --args /home/app/webapp/local_docker_job_init.sh
               metridoc_delayed_jobs
-        - name: Scale up metridoc_app metridoc_delayed_jobs services
-          command: docker service scale metridoc_app={{ docker_stack_env.METRIDOC_REPLICAS }} metridoc_delayed_jobs=1
+        - name: Scale up metridoc_delayed_jobs and metridoc_replica-db
+          # command: docker service scale metridoc_delayed_jobs=1 metridoc_replica-db=1
+          command: docker service scale metridoc_delayed_jobs=1
     - import_role:
         name: python_jobs_manager
     - name: Update permissions and mounts for dev env
@@ -86,3 +199,5 @@
         name: jenkins_manager
     - import_role:
         name: monitoring_manager
+    - import_role:
+        name: shibboleth_sp

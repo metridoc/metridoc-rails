@@ -27,7 +27,7 @@ commands:
 jobs:
   deploy-production:
     docker:
-      - image: quay.io/upennlibraries/ansible:2.8
+      - image: gitlab.library.upenn.edu/docker/docker_ansible:2-9
     environment:
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
       BASH_ENV: /etc/profile
@@ -45,11 +45,16 @@ jobs:
       - run:
           working_directory: ~/project/ansible
           command: |
+            ansible-galaxy install -p roles -r roles/requirements.yml
+      - run:
+          working_directory: ~/project/ansible
+          command: |
             ansible-playbook \
               -i inventories/production \
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
+              -T 60 \
               --vault-id vault_password.py \
               production.yml
       - run:
@@ -60,7 +65,7 @@ jobs:
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
-      - image: quay.io/upennlibraries/ansible:2.8
+      - image: gitlab.library.upenn.edu/docker/docker_ansible:2-9
     environment:
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
       BASH_ENV: /etc/profile
@@ -77,11 +82,16 @@ jobs:
       - run:
           working_directory: ~/project/ansible
           command: |
+            ansible-galaxy install -p roles -r roles/requirements.yml
+      - run:
+          working_directory: ~/project/ansible
+          command: |
             ansible-playbook \
               -i inventories/staging \
               -e "metridoc_image_tag=${CIRCLE_SHA1:0:7}" \
               -e "ansible_ssh_common_args='-qJ \"$SSH_BASTION_USER@$SSH_BASTION_HOST:$SSH_BASTION_PORT\"'" \
               -u deploy \
+              -T 60 \
               --vault-id vault_password.py \
               site.yml
       - run:
@@ -128,6 +138,26 @@ workflows:
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
+      - docker-publish/publish:
+          name: publish_metridoc_ezpaarse
+          context: quay.io
+          registry: quay.io
+          image: upennlibraries/metridoc-ezpaarse
+          dockerfile: ./ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile
+          path: ./ansible/roles/ezpaarse_manager/files/ezpaarse
+          label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
+      - docker-publish/publish:
+          name: publish_metridoc_ezpaarse_mongodb
+          context: quay.io
+          registry: quay.io
+          image: upennlibraries/metridoc-ezpaarse-mongodb
+          dockerfile: ./ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile
+          path: ./ansible/roles/ezpaarse_manager/files/mongodb
+          label_prefix: edu.upenn.library
+          requires:
+            - gitleaks/check_local
       - test_role:
           name: test_jenkins_manager_role
           role: jenkins_manager
@@ -155,6 +185,8 @@ workflows:
           requires:
             - publish_metridoc
             - publish_metridoc_python_jobs
+            - publish_metridoc_ezpaarse
+            - publish_metridoc_ezpaarse_mongodb
             - test_jenkins_manager_role
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role
@@ -166,6 +198,8 @@ workflows:
           requires:
             - publish_metridoc
             - publish_metridoc_python_jobs
+            - publish_metridoc_ezpaarse
+            - publish_metridoc_ezpaarse_mongodb
             - test_jenkins_manager_role
             - test_metridoc_manager_role
             - test_postgres_primary_manager_role
