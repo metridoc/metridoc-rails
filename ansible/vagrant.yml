@@ -56,6 +56,32 @@
                           name: X-Forwarded-Proto
                           value: $scheme
 
+- name: "Mimic NFS share for ezpaarse"
+  become: yes
+  hosts: docker_swarm_manager
+  tasks:
+    - name: Install NFS
+      package:
+        name: nfs-kernel-server
+        state: present
+    - name: Create a directory to mount
+      file:
+        path: /ezpaarse-input
+        state: directory
+        owner: nobody
+        group: nogroup
+        mode: "0777"
+    - name: Grant NFS share access
+      lineinfile:
+        path: "/etc/exports"
+        line: "/ezpaarse-input 127.0.0.1(rw,sync,no_subtree_check)"
+    - name: Export NFS share dir
+      shell: exportfs -a
+    - name: Restart NFS
+      service:
+        name: nfs-kernel-server
+        state: restarted
+
 - name: "Provision Docker Swarm Cluster"
   become: yes
   hosts: docker_swarm_manager

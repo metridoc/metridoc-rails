@@ -1,7 +1,7 @@
 ---
 - name: create nfs volume for ezpaarse_input
   docker_volume:
-    name: metridoc_ezpaarse_input
+    name: ezpaarse_input
     driver: local
     driver_options:
       type: nfs
