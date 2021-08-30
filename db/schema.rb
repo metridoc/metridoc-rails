@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_16_155543) do
+ActiveRecord::Schema.define(version: 2021_08_23_150503) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -229,35 +229,36 @@ ActiveRecord::Schema.define(version: 2021_07_16_155543) do
     t.string "consultation_or_instruction"
     t.string "staff_pennkey"
     t.string "staff_expertise"
-    t.datetime "event_date"
+    t.date "event_date"
     t.string "mode_of_consultation"
     t.string "session_type"
     t.string "service_provided"
+    t.string "rtg"
     t.string "outcome"
     t.string "research_community"
-    t.string "total_attendance"
+    t.integer "total_attendance"
+    t.integer "number_of_registrations"
     t.string "location"
-    t.string "event_length"
-    t.string "prep_time"
-    t.string "number_of_interactions"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
     t.string "patron_type"
+    t.string "patron_name"
+    t.integer "graduation_year"
     t.string "undergraduate_student_type"
     t.string "graduate_student_type"
+    t.string "mba_type"
+    t.string "campus"
     t.string "school_affiliation"
     t.string "department"
     t.string "faculty_sponsor"
     t.string "course_sponsor"
     t.string "course_name"
     t.string "course_number"
+    t.string "referral_method"
     t.string "patron_question"
     t.text "session_description"
     t.text "notes"
-    t.string "ip"
-    t.string "refer"
-    t.string "browser"
-  end
-
-  create_table "consultation_tables", force: :cascade do |t|
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -741,14 +742,14 @@ ActiveRecord::Schema.define(version: 2021_07_16_155543) do
     t.string "ip"
     t.string "refer"
     t.string "browser"
-    t.integer "number_of_registrations"
-    t.string "referral_method"
+    t.string "staff_penn_key"
     t.string "rtg"
     t.string "mba_type"
     t.string "campus"
     t.string "patron_name"
     t.integer "graduation_year"
-    t.string "staff_penn_key"
+    t.integer "number_of_registrations"
+    t.string "referral_method"
   end
 
   create_table "report_queries", force: :cascade do |t|
