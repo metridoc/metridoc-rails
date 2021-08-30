@@ -1,3 +1,42 @@
+%h2= "Resources"
+Link to downloadable raw data table.
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+
+%h2 Individual Librarian Reporting
+Get summary statistics on a specific librarian.
+
+-# Get List of Unique PennKeys
+- pennkeys = pennkey_list
+
+-# Get date range of data
+- start_date, end_date = date_range()
+
+-# Make a form to select a PennKey for a report page
+%center
+  = form_tag({:controller => admin_consultation_path,
+      :action => "statistics"},
+      {:method => :post}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select Staff PennKey
+        %td
+        %td= select_tag "pennkey", options_for_select(pennkeys, pennkeys[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
+      %tr
+        %td{rowspan:"2"} Filter by Date (Optional):
+        %td From:
+        %td= date_field_tag 'start_date', nil
+      %tr
+        %td To:
+        %td= date_field_tag 'end_date', nil
+%br
+
+%hr
+
+%h2 Summary Statistics and Network Diagrams
+
+Link to summary #{content_tag(:em, "COMING SOON ...")}
