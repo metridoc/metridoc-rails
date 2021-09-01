@@ -126,7 +126,7 @@ body.active_admin {
       background-color: #dadada;
       width: 45%;
       padding: 10px;
-      margin: 0px 10px;
+      margin: 10px 10px;
     }
     #left-col {
       float: left;
@@ -140,6 +140,14 @@ body.active_admin {
     }
     #right-col-tut {
       float: right;
+    }
+    #single-col {
+      background-color: #dadada;
+      width: 98%;
+      padding: 10px;
+      margin: auto;
+      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     .actions {
@@ -238,7 +246,7 @@ body.active_admin {
   line-height: 66px;
   height: 66px;
   padding: 0 50px;
-  
+
   img {
     vertical-align: middle;
     border: 0;
@@ -261,7 +269,7 @@ body.active_admin {
     text-align: center;
     padding: 0 40px;
   }
-  
+
   .options-container {
     display: flex;
     flex-wrap: wrap;
@@ -282,8 +290,8 @@ body.active_admin {
       min-width: 300px;
       display: flex;
       flex-direction: column;
-            
-      a { 
+
+      a {
         min-width: 220px;
         max-width: 300px;
         white-space: normal;
@@ -298,13 +306,13 @@ body.active_admin {
         color: #FFFFFF;
       }
     }
-  
+
     .options-separator {
       margin-top: 24px;
       background-color: #e8e8e8;
       width: 1px;
     }
-  
+
     .non-penn {
       flex: 1;
       text-align: center;
@@ -312,7 +320,7 @@ body.active_admin {
       min-width: 300px;
       display: flex;
       flex-direction: column;
-      
+
       a {
         min-width: 220px;
         max-width: 300px;
@@ -333,5 +341,3 @@ body.active_admin {
     }
   }
 }
-
-
