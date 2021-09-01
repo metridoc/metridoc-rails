@@ -158,26 +158,26 @@ workflows:
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
-      - test_role:
-          name: test_jenkins_manager_role
-          role: jenkins_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_metridoc_manager_role
-          role: metridoc_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_postgres_primary_manager_role
-          role: postgres_primary_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_postgres_replica_manager_role
-          role: postgres_replica_manager
-          requires:
-            - gitleaks/check_local
+      #- test_role:
+      #    name: test_jenkins_manager_role
+      #    role: jenkins_manager
+      #    requires:
+      #      - gitleaks/check_local
+      #- test_role:
+      #    name: test_metridoc_manager_role
+      #    role: metridoc_manager
+      #    requires:
+      #      - gitleaks/check_local
+      #- test_role:
+      #    name: test_postgres_primary_manager_role
+      #    role: postgres_primary_manager
+      #    requires:
+      #      - gitleaks/check_local
+      #- test_role:
+      #    name: test_postgres_replica_manager_role
+      #    role: postgres_replica_manager
+      #    requires:
+      #      - gitleaks/check_local
       - deploy-production:
           filters:
             branches:
