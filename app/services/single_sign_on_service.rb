@@ -10,12 +10,12 @@ class SingleSignOnService
     Rails.logger.info("SingleSignOnService.get_or_create_user last_name: [#{last_name}]")
 
     Rails.logger.info("SingleSignOnService.get_or_create_user - 1")
-    user = AdminUser.find_by_email(email)
+    user = AdminUser.find_by_email(email.downcase)
     Rails.logger.info("SingleSignOnService.get_or_create_user - 2")
     return user if user.present?
     Rails.logger.info("SingleSignOnService.get_or_create_user - 3")
     AdminUser.create!(
-      email: email,
+      email: email.downcase,
       first_name: first_name,
       last_name: last_name,
       password: SecureRandom.hex
