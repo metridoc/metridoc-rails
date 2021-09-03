@@ -98,6 +98,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
+    consultation:
+      consultation_menu: "Consultation"
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
@@ -147,11 +149,11 @@ en:
       title: 'Part of University of Pennsylvania?'
       sso_option:
         text: |
-          University of Pennsylvania uses your network credentials to login to MetriDoc. Continue to login to MetriDoc through your network. 
+          University of Pennsylvania uses your network credentials to login to MetriDoc. Continue to login to MetriDoc through your network.
         button: 'Continue'
       non-penn:
         text: |
-          If you are not a part of University of Pennsylvania, continue to log in with your MetriDoc account. 
+          If you are not a part of University of Pennsylvania, continue to log in with your MetriDoc account.
         button: 'Not a part of University of Pennslyvania'
 
   pages:
@@ -180,6 +182,9 @@ en:
       misc/consultation_data:
         one: "Consultation/Instruction Data"
         other: "Consultation/Instruction Data"
+      consultation/interaction:
+        one: "Consultation Interaction"
+        other: "Consultation Interactions"
       tools/file_upload_import:
         one: "File Upload Import"
         other: "File Upload Imports"
