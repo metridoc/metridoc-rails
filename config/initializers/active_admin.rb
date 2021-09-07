@@ -194,7 +194,6 @@ ActiveAdmin.setup do |config|
   #
   # To load a stylesheet:
   #   config.register_stylesheet 'my_stylesheet.css'
-  config.register_stylesheet 'vis-network.css'
   #
   # You can provide an options hash for more control, which is passed along to stylesheet_link_tag():
   #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
@@ -202,8 +201,6 @@ ActiveAdmin.setup do |config|
   # To load a javascript file:
     config.register_javascript 'report_template.js'
     config.register_javascript 'report_query.js'
-  config.register_javascript 'vis-network.esm.js'
-  config.register_javascript 'vis-network.js'
 
   # == CSV options
   #

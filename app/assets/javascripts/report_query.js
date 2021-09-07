@@ -29,7 +29,7 @@ $(document).ready(function() {
 
     $(document).on("change","#report_query_select_section_input select", function(event) {
       var changedAggregateDropdown = event.target;
-      var liParent = $(changedAggregateDropdown).parent();
+      var liParent = changedAggregateDropdown.closest("li.choice");
       var selectSectionOption = $(liParent).find("input[type='checkbox']");
       addAggregateToSelectValue(selectSectionOption, liParent);
     });
@@ -357,7 +357,7 @@ $(document).ready(function() {
     if (aggregateValue != "") {
       var baseSelectValue = $(selectSectionOption).parent().text();
       var newSelectValue = aggregateValue + "(" + baseSelectValue + ")";
-      $(selectSectionOption).val(newSelectValue);
+      selectSectionOption.val(newSelectValue);
     } else {
       resetSelectValue(selectSectionOption);
     };
