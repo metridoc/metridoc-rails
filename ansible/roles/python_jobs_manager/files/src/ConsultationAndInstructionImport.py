@@ -36,7 +36,7 @@ logging.basicConfig(filename='output.log',
 # *************************************************************************** #
 #             DEFAULTS - OVERRIDE VIA COMMAND LINE INVOCATION
 # *************************************************************************** #
-TARGET_TABLE = 'misc_consultation_data'
+TARGET_TABLE = 'consultation_interactions'
 DATABASE_CONFIG_FILE = 'config/database.yml'
 RAILS_ENV = os.environ.get('RAILS_ENV', 'testing')
 LIBWIZARD_CONFIG_FILE = 'config/libwizard.ini'
