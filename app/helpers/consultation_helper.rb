@@ -3,6 +3,7 @@
 module ConsultationHelper
   # Method to access the list of staff pennkeys for use in drop down menu
   def pennkey_list
+    Rails.logger.info("ConsultationHelper::pennkey_list")
     Consultation::Interaction.distinct
                                           .pluck(:staff_pennkey)
                                           .sort
@@ -11,8 +12,10 @@ module ConsultationHelper
 
   # Method to query the default range of dates of the table
   def date_range(pennkey = nil)
+    Rails.logger.info("ConsultationHelper::date_range - 1 - pennkey: #{pennkey}")
     output = Consultation::Interaction
     output = output.where(staff_pennkey: pennkey) unless pennkey.nil?
+    Rails.logger.info("ConsultationHelper::date_range - 2 - minimum: #{output.minimum(:event_date)}, maximum: #{output.maximum("event_date")}")
 
     [
       output.minimum(:event_date),
@@ -23,7 +26,9 @@ module ConsultationHelper
   # Method to build a date range using either default range of all dates, or selection.
   def minimize_date_range(start_date, end_date, pennkey = nil)
     # Find default range
+    Rails.logger.info("ConsultationHelper::minimize_date_range - 1 - start_date: #{start_date}, end_date: #{end_date}, pennkey: #{pennkey}")
     default_range = date_range(pennkey)
+    Rails.logger.info("ConsultationHelper::minimize_date_range - 2 - default_range: #{default_range}")
     # Handle nil start and end date values
     start_date = start_date.nil? ? default_range.first : Date.parse(start_date)
     end_date = end_date.nil? ? default_range.last : Date.parse(end_date)
@@ -96,6 +101,7 @@ module ConsultationHelper
 
   # Method to sort counts grouped by an input key
   def key_groups(input_query, key)
+    Rails.logger.info("ConsultationHelper::key_groups")
     input_query.group(key)
                         .count
                         .sort_by { |_k, v| v }
@@ -104,23 +110,27 @@ module ConsultationHelper
 
   # Method to average a column
   def column_average(input_query, key)
+    Rails.logger.info("ConsultationHelper::column_average")
     output = input_query.average(key)
     number_with_precision(output, precision: 1)
   end
 
   # Method to get the median of a column
   def column_median(input_query, key)
+    Rails.logger.info("ConsultationHelper::column_median")
     output = input_query.median(key)
     output || 'Insufficient Data'
   end
 
   # Method to get the sum of a column
   def column_sum(input_query, key)
+    Rails.logger.info("ConsultationHelper::column_sum")
     input_query.sum(key)
   end
 
   # Method to count the number of nils in the column
   def column_nils(input_query, key)
+    Rails.logger.info("ConsultationHelper::column_nils")
     input_query.count - input_query.count(key)
   end
 
