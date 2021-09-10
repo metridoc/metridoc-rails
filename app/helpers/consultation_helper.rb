@@ -152,6 +152,7 @@ module ConsultationHelper
                .where('event_date <= ?', dates.last)
 
       # Loop through the columns for calculations
+      Rails.logger.info("ConsultationHelper#event_groups - Loop through columns ...")
       category_hash.each do |column, method|
         # Treat columns differently by method
         category_output[column.to_s] = if method == 'average'
@@ -172,7 +173,6 @@ module ConsultationHelper
                                        else
                                          key_groups(events, column)
                                        end
-        Rails.logger.info("ConsultationHelper#event_groups - category_output: #{category_output}")
       end # End of category hash loop
 
       # Group the event date by month.
@@ -184,15 +184,21 @@ module ConsultationHelper
 
     # Manipulate timelines to create uniformity
     # Flatten the list of timestamps
+    Rails.logger.info("ConsultationHelper#event_groups - flatten list of timestamps ...")
     timestamps = timeline.map { |_k, v| v.keys }.flatten
     # Find the full range of months
+    Rails.logger.info("ConsultationHelper#event_groups - find full range of months ...")
     months = find_months_between(timestamps.minmax)
     # Fill in zeros for missing months
+    Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months (Consultation) ...")
     months_fill_zero(timeline['Consultation'], months)
+    Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months (Instruction) ...")
     months_fill_zero(timeline['Instruction'], months)
 
     # Convert the keys to Date instead of Time
+    Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Consultation) ...")
     timeline['Consultation'].transform_keys!(&:to_date)
+    Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Instruction) ...")
     timeline['Instruction'].transform_keys!(&:to_date)
 
     [output, timeline]
