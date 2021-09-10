@@ -177,7 +177,7 @@ module ConsultationHelper
 
       # Group the event date by month.
       # Keep separate for further handling
-      timeline[category.to_s] = events.group_by_month(:event_date, format: '%b %Y').count
+      timeline[category.to_s] = events.group_by_month(:event_date).count
 
       output[category.to_s] = category_output
     end # end of KEY_HASH loop
