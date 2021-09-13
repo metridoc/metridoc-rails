@@ -65,7 +65,7 @@ module ConsultationHelper
   # Method to fill in the missing months with zeroes
   def months_fill_zero(data, months)
     Rails.logger.info("ConsultationHelper::months_fill_zero - data: #{data}, months: #{months}")
-    months.each {|m| [m, data[m] ||= 0]}
+    months.map {|m| [m, data[m] ||= 0]}.to_h
   end
 
   # List of specific event types
@@ -190,10 +190,8 @@ module ConsultationHelper
     Rails.logger.info("ConsultationHelper#event_groups - find full range of months ...")
     months = find_months_between(timestamps.minmax)
     # Fill in zeros for missing months
-    Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months (Consultation) ...")
-    months_fill_zero(timeline['Consultation'], months)
-    Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months (Instruction) ...")
-    months_fill_zero(timeline['Instruction'], months)
+    Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months ...")
+    timeline.map {|k, v| [k, months_fill_zero(v, months)]}.to_h
 
     # Convert the keys to Date instead of Time
     Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Consultation) ...")
