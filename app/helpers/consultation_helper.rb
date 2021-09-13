@@ -5,9 +5,11 @@ module ConsultationHelper
   def pennkey_list
     Rails.logger.info("ConsultationHelper::pennkey_list")
     Consultation::Interaction.distinct
-                                          .pluck(:staff_pennkey)
-                                          .sort
-                                          .map { |k| [k, k] }
+                             .where
+                             .not(staff_pennkey: nil)
+                             .pluck(:staff_pennkey)
+                             .sort
+                             .map { |k| [k, k] }
   end
 
   # Method to query the default range of dates of the table
@@ -65,7 +67,7 @@ module ConsultationHelper
   # Method to fill in the missing months with zeroes
   def months_fill_zero(data, months)
     Rails.logger.info("ConsultationHelper::months_fill_zero - data: #{data}, months: #{months}")
-    months.map {|m| [m, data[m] ||= 0]}.to_h
+    months.map { |m| [m, data[m] ||= 0] }.to_h
   end
 
   # List of specific event types
@@ -103,9 +105,9 @@ module ConsultationHelper
   def key_groups(input_query, key)
     Rails.logger.info("ConsultationHelper::key_groups")
     input_query.group(key)
-                        .count
-                        .sort_by { |_k, v| v }
-                        .reverse
+               .count
+               .sort_by { |_k, v| v }
+               .reverse
   end
 
   # Method to average a column
@@ -148,8 +150,8 @@ module ConsultationHelper
       events = events.where(staff_pennkey: pennkey) unless pennkey.nil?
       # Filter on date range
       events = events
-               .where('event_date >= ?', dates.first)
-               .where('event_date <= ?', dates.last)
+                 .where('event_date >= ?', dates.first)
+                 .where('event_date <= ?', dates.last)
 
       # Loop through the columns for calculations
       Rails.logger.info("ConsultationHelper#event_groups - Loop through columns ...")
@@ -191,7 +193,7 @@ module ConsultationHelper
     months = find_months_between(timestamps.minmax)
     # Fill in zeros for missing months
     Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months ...")
-    timeline.map {|k, v| [k, months_fill_zero(v, months)]}.to_h
+    timeline.map { |k, v| [k, months_fill_zero(v, months)] }.to_h
 
     # Convert the keys to Date instead of Time
     Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Consultation) ...")
