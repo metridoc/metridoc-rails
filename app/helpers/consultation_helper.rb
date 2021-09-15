@@ -196,12 +196,6 @@ module ConsultationHelper
     Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months ...")
     dateline.map { |k, v| [k, months_fill_zero(v, months)] }.to_h
 
-    # Convert the keys to Date instead of Time
-    #Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Consultation) ...")
-    #timeline['Consultation'].transform_keys!(&:to_date)
-    #Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Instruction) ...")
-    #timeline['Instruction'].transform_keys!(&:to_date)
-
     [output, dateline]
   end
 
