@@ -20,5 +20,7 @@
 //= require rails-ujs
 //= require turbolinks
 
+//= require vis-network
+
 //= require_tree .
 
