@@ -31,71 +31,71 @@
 %h2 Consultations
 %hr
 
-#- if timeline["Consultation"].sum { |_,v| v }  == 0
-#  %h3{style: "text-align:center;"} No Data to Report
-#- else
+- if timeline["Consultation"].sum { |_,v| v }  == 0
+  %h3{style: "text-align:center;"} No Data to Report
+- else
 
-%h2 Statistics
+  %h2 Statistics
 
-%table{align: "center", border: "1", cellpadding: "5"}
-%thead
-%tr
-%td Statistic
-%td Value
-%td Nulls
-%tbody
-%tr
-%td Average Event Length (minutes):
-%td{align: "right"} #{consultations_hash["event_length"].first}
-%td{align: "right"} #{consultations_hash["event_length"].last}
-%tr
-%td Average Preparation Time (minutes):
-%td{align: "right"} #{consultations_hash["prep_time"].first}
-%td{align: "right"} #{consultations_hash["prep_time"].last}
-%tr
-%td Total Number of Interactions:
-%td{align: "right"} #{consultations_hash["number_of_interactions"].first}
-%td{align: "right"} #{consultations_hash["number_of_interactions"].last}
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Statistic
+        %td Value
+        %td Nulls
+    %tbody
+      %tr
+        %td Average Event Length (minutes):
+        %td{align: "right"} #{consultations_hash["event_length"].first}
+        %td{align: "right"} #{consultations_hash["event_length"].last}
+      %tr
+        %td Average Preparation Time (minutes):
+        %td{align: "right"} #{consultations_hash["prep_time"].first}
+        %td{align: "right"} #{consultations_hash["prep_time"].last}
+      %tr
+        %td Total Number of Interactions:
+        %td{align: "right"} #{consultations_hash["number_of_interactions"].first}
+        %td{align: "right"} #{consultations_hash["number_of_interactions"].last}
 
-#data-viz
-#left-col
-%h3 Patron Types
-= pie_chart consultations_hash["patron_type"], download: true
-#right-col
-%h3 Goal of Appointment
-= pie_chart consultations_hash["outcome"], download: true
+  #data-viz
+    #left-col
+      %h3 Patron Types
+      = pie_chart consultations_hash["patron_type"], download: true
+    #right-col
+      %h3 Goal of Appointment
+      = pie_chart consultations_hash["outcome"], download: true
 
-%h2 Alternate plot style
-#data-viz
-#left-col
-%h3 Patron Types
-= bar_chart consultations_hash["patron_type"], library: logx, download: true
-#right-col
-%h3 Goal of Appointment
-= bar_chart consultations_hash["outcome"], library: logx, download: true
+  %h2 Alternate plot style
+  #data-viz
+    #left-col
+      %h3 Patron Types
+      = bar_chart consultations_hash["patron_type"], library: logx, download: true
+    #right-col
+      %h3 Goal of Appointment
+      = bar_chart consultations_hash["outcome"], library: logx, download: true
 
-%h2 Community
-#data-viz
-#left-col
-%h3 School Affiliations
-= pie_chart consultations_hash["school_affiliation"], download: true
-#right-col
-%h3 Research Subject Area
-= pie_chart consultations_hash["research_community"], download: true
+  %h2 Community
+  #data-viz
+    #left-col
+      %h3 School Affiliations
+      = pie_chart consultations_hash["school_affiliation"], download: true
+    #right-col
+      %h3 Research Subject Area
+      = pie_chart consultations_hash["research_community"], download: true
 
-#data-viz
-#single-col
-%h3 Associated Department
-= column_chart consultations_hash["department"], library: logy, download: true
+  #data-viz
+    #single-col
+      %h3 Associated Department
+      = column_chart consultations_hash["department"], library: logy, download: true
 
-%h2 Methods
-#data-viz
-#left-col
-%h3 Mode of Consultation
-= pie_chart consultations_hash["mode_of_consultation"], download: true
-#right-col
-%h3 Service Provided
-= pie_chart consultations_hash["service_provided"], download: true
+  %h2 Methods
+  #data-viz
+    #left-col
+      %h3 Mode of Consultation
+      = pie_chart consultations_hash["mode_of_consultation"], download: true
+    #right-col
+      %h3 Service Provided
+      = pie_chart consultations_hash["service_provided"], download: true
 
 %hr
 %h2 Instruction

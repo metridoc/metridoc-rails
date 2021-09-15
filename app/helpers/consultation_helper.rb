@@ -57,7 +57,7 @@ module ConsultationHelper
 
       # Loop through months
       (start_month..end_month).each do |m|
-        output.append(Time.utc(y, m, 1))
+        output.append(Date.new(y, m, 1))
       end
     end
     Rails.logger.info("ConsultationHelper#find_months_between - output: #{output}")
@@ -139,7 +139,7 @@ module ConsultationHelper
   # Method to calculate all statistics needed for statistics page
   def event_groups(dates, pennkey = nil)
     output = {}
-    timeline = {}
+    dateline = {}
 
     Rails.logger.info("ConsultationHelper#event_groups - dates: #{dates}, pennkey: #{pennkey}")
 
@@ -179,7 +179,8 @@ module ConsultationHelper
 
       # Group the event date by month.
       # Keep separate for further handling
-      timeline[category.to_s] = events.group_by_month(:event_date).count
+      dateline[category.to_s] = events.group_by_month(:event_date).count
+      dateline[category.to_s].transform_keys!(&:to_date)
 
       output[category.to_s] = category_output
     end # end of KEY_HASH loop
@@ -187,21 +188,21 @@ module ConsultationHelper
     # Manipulate timelines to create uniformity
     # Flatten the list of timestamps
     Rails.logger.info("ConsultationHelper#event_groups - flatten list of timestamps ...")
-    timestamps = timeline.map { |_k, v| v.keys }.flatten
+    datestamps = dateline.map { |_k, v| v.keys }.flatten
     # Find the full range of months
     Rails.logger.info("ConsultationHelper#event_groups - find full range of months ...")
-    months = find_months_between(timestamps.minmax)
+    months = find_months_between(datestamps.minmax)
     # Fill in zeros for missing months
     Rails.logger.info("ConsultationHelper#event_groups - fill in zeros for missing months ...")
-    timeline.map { |k, v| [k, months_fill_zero(v, months)] }.to_h
+    dateline.map { |k, v| [k, months_fill_zero(v, months)] }.to_h
 
     # Convert the keys to Date instead of Time
-    Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Consultation) ...")
-    timeline['Consultation'].transform_keys!(&:to_date)
-    Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Instruction) ...")
-    timeline['Instruction'].transform_keys!(&:to_date)
+    #Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Consultation) ...")
+    #timeline['Consultation'].transform_keys!(&:to_date)
+    #Rails.logger.info("ConsultationHelper#event_groups - convert keys to Date instead of Time (Instruction) ...")
+    #timeline['Instruction'].transform_keys!(&:to_date)
 
-    [output, timeline]
+    [output, dateline]
   end
 
   # end of event_groups
