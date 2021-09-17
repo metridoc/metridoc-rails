@@ -35,7 +35,6 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
-    misc: "Miscellaneous"
     edit_resource: "Edit %{resource}"
     delete_resource: "Delete %{resource}"
     supplemental_data: "RSAT Supplemental Data"
@@ -179,9 +178,6 @@ en:
       security/user_role_section:
         one: "User Role Section"
         other: "User Role Sections"
-      misc/consultation_data:
-        one: "Consultation/Instruction Data"
-        other: "Consultation/Instruction Data"
       consultation/interaction:
         one: "Consultation Interaction"
         other: "Consultation Interactions"
