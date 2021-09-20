@@ -1,19 +1,21 @@
 ---
 - name: create metridoc config directory
   file:
-    path: '{{ config_dir }}/metridoc'
+    path: "{{ config_dir }}/metridoc"
+    mode: 0440
     state: directory
 
 - name: copy docker compose file
   copy:
     src: docker-compose.yml
-    dest: '{{ config_dir }}/metridoc/docker-compose.yml'
+    dest: "{{ config_dir }}/metridoc/docker-compose.yml"
+    mode: 0440
 
 - name: label metridoc swarm node
   docker_node:
-    hostname: '{{ metridoc_swarm_node }}'
+    hostname: "{{ metridoc_swarm_node }}"
     labels:
-      metridoc: 'true'
+      metridoc: "true"
   tags:
     - docker
 
@@ -30,7 +32,7 @@
     - docker
 
 - name: start docker services
-  environment: '{{ docker_stack_env }}'
+  environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/metridoc/docker-compose.yml metridoc
   changed_when: false
   tags:

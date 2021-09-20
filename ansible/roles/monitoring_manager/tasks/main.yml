@@ -2,6 +2,7 @@
 - name: create config directories
   file:
     path: "{{ config_dir }}/postgres/monitoring/{{ item }}"
+    mode: 0440
     state: directory
   loop:
     - alertmanager
@@ -15,6 +16,7 @@
   copy:
     src: "{{ item }}"
     dest: "{{ config_dir }}/postgres/monitoring/{{ item }}"
+    mode: 0440
   loop:
     - docker-compose.yml
     - alertmanager/templates.tmpl
@@ -77,7 +79,8 @@
   tags:
     - docker
 
-- debug:
+- name: display notification
+  debug:
     msg: Docker services are deploying in the background. Check host to see progress.
   tags:
     - docker
