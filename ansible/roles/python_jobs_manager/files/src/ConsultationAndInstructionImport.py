@@ -272,7 +272,9 @@ class CIHelper:
         # this method produces the merged DataFrame
         logging.info('Preparing data [start_date: %s, end_date: %s.' % (start_date, end_date))
         lippincott = self.build_dataframe(is_lippincott=True)
+        print('=> %s Lippincott records fetched.' % len(lippincott))
         library = self.build_dataframe()
+        print('=> %s Library records fetched.' % len(library))
         combined_df = pd.concat([lippincott, library], ignore_index=True)
         combined_df = combined_df.drop(['staff_info_header', 'event_info_header', 'patron_info_header',
                                         # TODO: The following columns are  not predefined in the database!
@@ -293,15 +295,16 @@ class CIHelper:
         return self.dataframe
 
     def truncate(self):
-        logging.warning('Truncating table [%s]' % self.target_table)
+        print('Truncating table [%s]' % self.target_table)
         conn = psycopg2.connect(**parse_dsn(self.db_config.db_connect_string))
         cur = conn.cursor()
         cur.execute('TRUNCATE TABLE %s;' % self.target_table)
+        conn.commit()
         cur.close()
         conn.close()
 
     def import_to_target(self):
-        logging.warning('Importing data [target_table: %s]' % self.target_table)
+        print('Importing data [target_table: %s]' % self.target_table)
         if not self.target_table:
             print('ERROR: Target table not set')
             return
@@ -341,8 +344,7 @@ if __name__ == '__main__':
         method = 'append'
 
     ci_helper = CIHelper(target_table=TARGET_TABLE)
-    print('Preparing data ...')
+    print('Preparing data consultation/interaction data.')
     df = ci_helper.prepare_data()
-    if method == 'replace':
-        ci_helper.truncate()
     ci_helper.import_to_target()
+    print('Import complete.')
