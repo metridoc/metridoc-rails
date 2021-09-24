@@ -21,6 +21,8 @@ commands:
         type: string
     steps:
       - run:
+          command: pip3 install pytest pytest-testinfra
+      - run:
           command: molecule test
           working_directory: ansible/roles/<< parameters.role >>
 
