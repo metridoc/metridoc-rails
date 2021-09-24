@@ -33,6 +33,7 @@
   template:
     src: grafana_db/pg_hba.conf.j2
     dest: "{{ config_dir }}/postgres/monitoring/grafana_db/pg_hba.conf"
+    mode: 0440
 
 - name: create docker secrets
   docker_secret:
