@@ -24,3 +24,6 @@
 
 //= require_tree .
 
+//= require d3
+//= require d3_chord/d3.layout.chord.sort
+//= require d3_chord/d3.stretched.chord
