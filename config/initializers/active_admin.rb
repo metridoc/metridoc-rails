@@ -205,6 +205,11 @@ ActiveAdmin.setup do |config|
     config.register_javascript 'vis-network.esm.js'
     config.register_javascript 'vis-network.js'
 
+  # == Javascript for Chord diagrams
+  config.register_javascript 'chord_diagram.js'
+  config.register_javascript 'd3_chord/d3.layout.chord.sort.js'
+  config.register_javascript 'd3_chord/d3.stretched.chord.js'
+
   # == CSV options
   #
   # Set the CSV builder separator
