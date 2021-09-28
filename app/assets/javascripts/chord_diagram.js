@@ -29,6 +29,10 @@ chordDiagram = function(data) {
       opacityHigh = 1.0, // default opacity of the chord hovered over
       opacityLow = 0.1; //hover opacity of those chords not hovered over
 
+  // Define the number formatting
+  var formatNumber = d3.format(",.0f");
+  var formatPercent = d3.format(".2f");
+
   ////////////////////////////////////////////////////////////
   ////////////////////////// Data ////////////////////////////
   ////////////////////////////////////////////////////////////
@@ -140,10 +144,18 @@ chordDiagram = function(data) {
       .enter().append("linearGradient")
       .attr("id", getGradID)
       .attr("gradientUnits", "userSpaceOnUse")
-      .attr("x1", function(d,i) { return innerRadius * Math.cos((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2); })
-      .attr("y1", function(d,i) { return innerRadius * Math.sin((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2); })
-      .attr("x2", function(d,i) { return innerRadius * Math.cos((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2); })
-      .attr("y2", function(d,i) { return innerRadius * Math.sin((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2); })
+      .attr("x1", function(d,i) {
+        return innerRadius * Math.cos((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2);
+      })
+      .attr("y1", function(d,i) {
+        return innerRadius * Math.sin((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2);
+      })
+      .attr("x2", function(d,i) {
+        return innerRadius * Math.cos((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2);
+      })
+      .attr("y2", function(d,i) {
+        return innerRadius * Math.sin((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2);
+      })
 
   // Note: to reverse the gradient, flip the source and target
 
@@ -165,8 +177,8 @@ chordDiagram = function(data) {
       .data(chord.groups)
       .enter().append("g")
       .attr("class", "group")
-      .on("mouseover", fade(opacityLow)) // setting mouse over arc options
-      .on("mouseout", fade(opacityDefault));
+      .on("mouseover", fade(opacityLow, true)) // setting mouse over arc options
+      .on("mouseout", fade(opacityDefault, false));
 
   g.append("path")
     .style("stroke", function(d,i) { return (names[i] === "" ? "none" : "black"); }) // outline of the arcs
@@ -228,6 +240,38 @@ chordDiagram = function(data) {
       return [Math.round(d.source.value), " events from ", names[d.target.index], " to ", names[d.source.index]].join("");
     });
 
+  ////////////////////////////////////////////////////////////
+  //////////////////////// Title text ////////////////////////
+  ////////////////////////////////////////////////////////////
+
+  // Put the total number of events above the chord diagram
+  svg.append("text")
+    .attr("class", "total")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height / 8 + margin.top )
+    .attr("text-anchor", "middle")
+    .style("textAlign", "center")
+    .text("Total Interactions:")
+    .style("font-size", "30px")
+    .append("tspan")
+    .attr("x", width / 2 + margin.left)
+    .attr("y",  height / 8 + margin.top )
+    .attr("dy", "1.1em")
+    .attr("text-anchor", "middle")
+    .style("textAlign", "center")
+    .text(formatNumber(total));
+
+  let lineHeight = 1.1; // ems
+  svg.append("text")
+    .attr("class", "description")
+    .attr("text-anchor", "middle")
+    .style("font-size", "30px")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height / 4 + margin.top)
+    .style("textAlign", "center")
+    .text("A descriptive tooltip")
+    .style("visibility", "hidden");
+
 
   ////////////////////////////////////////////////////////////
   ////////////////// Extra Functions /////////////////////////
@@ -238,30 +282,94 @@ chordDiagram = function(data) {
   function endAngle(d) { return d.endAngle + offset; }
 
   // Returns an event handler for fading a given chord group
-  function fade(opacity) {
-    return function(d, i) {
+  function fade(opacity, mouseover) {
+    return function(event, arc) {
+      // Darken selected chords
+      let selectedChords = svg.selectAll("path.chord")
+        .filter(function(d) {
+          return d.source.index == arc.index || d.target.index == arc.index;
+        })
+        .transition("fadeOnArc")
+        .style("opacity", (mouseover ? opacityHigh : opacityDefault))
+
+      // Fade non-selected chords
       svg.selectAll("path.chord")
         .filter(function(d) {
-          return d.source.index !== i.index && d.target.index !== i.index && names[d.source.index] !== "";
+          return d.source.index !== arc.index && d.target.index !== arc.index && names[d.source.index] !== "";
         })
         .transition("fadeOnArc")
         .style("opacity", opacity);
+
+      // Find the indices of all source and target arcs for the selected chords
+      let targetArcs = selectedChords
+        ._groups[0]
+        .map(c => c.__data__.target.index)
+      let sourceArcs = selectedChords
+        ._groups[0]
+        .map(c => c.__data__.source.index)
+      // List of all connected arcs indices (non-unique)
+      let selectedArcs = targetArcs.concat(sourceArcs)
+
+      // Decrease the opacity for other arcs
+      svg.selectAll("g.group")
+        .filter(function(d) {return !selectedArcs.includes(d.index); })
+        .transition("fadeOnArc")
+        .style("opacity", (mouseover ? opacityLow : opacityHigh));
+
+      // Fade the description text
+      fadeDescription(arc.value, mouseover)
+
     };
   }//fade
 
   // Returns an event handler for fading a given chord group
   function fadeChord(opacity, mouseover) {
-    return function(d, i) {
-      // Decrease the opacity for all chords
+    return function(event, chord) {
+      // Decrease the opacity for all other chords
       svg.selectAll("path.chord")
         .filter(function(d) { return d !== i && names[d.source.index] !== ""; })
         .transition("fadeOnArc")
         .style("opacity", opacity);
 
+      // Decrease the opacity for all other arcs
+      svg.selectAll("g.group")
+        .filter(function(d) {return d.index !== chord.source.index && d.index !== chord.target.index; })
+        .transition("fadeOnArc")
+        .style("opacity", (mouseover ? opacityLow : opacityHigh));
+
       // Show hovered over chord with specialized opacity
+      // Exclude the empty chord
       d3.select(this)
+        .filter(d => names[d.source.index] !== "")
         .transition("fadeOnArc")
         .style("opacity", (mouseover ? opacityHigh : opacityDefault));
+
+      // Fade the description text
+      fadeDescription(chord.source.value, mouseover)
     };
-  }//fade
+  }//fadeChord
+
+  function fadeDescription(value, mouseover) {
+    // Only add description text if a selection is made.
+    if (mouseover) {
+      // Add the text for the highlighted events
+      svg.selectAll(".description")
+        .text(formatPercent(value / total * 100 ) + "% of Total")
+        .attr("font-weight", 700)
+        .style("visibility", "visible")
+        .append("tspan")
+        .attr("x", width / 2 + margin.left)
+        .attr("y", height / 4 + margin.top)
+        .attr("dy", "1.45" + "em")
+        .text(formatNumber(value) + " events")
+        .attr("font-weight", 300);
+    }
+    else {
+      svg.selectAll(".description")
+        .text("")
+        .style("visibility", "hidden");
+    }
+  } // fadeDescription
+
+
 } // chordDiagram
