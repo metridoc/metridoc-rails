@@ -5,8 +5,10 @@ class Security::UserRole < ApplicationRecord
   accepts_nested_attributes_for :user_role_sections, allow_destroy: true, reject_if: proc {|attributes| attributes['section'].blank? }
 
   MANAGED_SECTIONS = [  "Security",
+                        "Ares",
                         "Alma",
                         "Borrowdirect",
+                        "Consultation",
                         "EzBorrow",
                         "GateCount",
                         "Illiad",
