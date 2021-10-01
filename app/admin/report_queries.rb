@@ -57,6 +57,12 @@ ActiveAdmin.register Report::Query do
     link_to I18n.t("phrases.process"), re_process_admin_report_query_path(report_query)
   end
 
+  action_item I18n.t("phrases.report_query.save_as_template"),
+              only: [:show, :edit],
+              if: proc{ current_admin_user.authorized?('read-write', Report) } do
+    link_to I18n.t("phrases.report_query.save_as_template"), save_as_template_admin_report_query_path(report_query)
+  end
+
   index download_links: [:csv] do
     column :name
     column :owner
@@ -74,6 +80,15 @@ ActiveAdmin.register Report::Query do
   member_action :re_process, method: :get do
     resource.re_process
     redirect_to resource_path, notice: "Your export is in queue."
+  end
+
+  member_action :save_as_template, method: :get do
+    report_template = Report::TemplateService.save_query_as_template(query: resource)
+    if report_template.errors.blank?
+      redirect_to admin_report_template_path(report_template), notice: "Successfully saved query as template."
+    else
+      redirect_to resource_path, notice: "Failed to save query as template: #{report_template.errors.full_messages.join(", ")}"
+    end
   end
 
   member_action :cancel, method: :get do

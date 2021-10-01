@@ -138,6 +138,7 @@ en:
         failed:  "Failed"
         cancelled: "Cancelled"
     report_query:
+      save_as_template: "Save As Template"
       statuses:
         pending: "Pending"
         in-progress: "In Progress"
