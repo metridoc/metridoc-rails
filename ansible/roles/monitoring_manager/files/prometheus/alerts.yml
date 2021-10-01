@@ -1,3 +1,4 @@
+---
 groups:
   - name: postgres
     rules:
@@ -10,7 +11,7 @@ groups:
           service: metridoc_db
           severity: warning
         annotations:
-          summary: '`/var` is at least 90% full on `{{ $labels.node_name }}`'
+          summary: "`/var` is at least 90% full on `{{ $labels.node_name }}`"
           description: >-
             The `/var` partition is {{ $value | printf "%.2f" }}% full on
             `{{ $labels.node_name }}`. The partition needs to have existing
@@ -24,7 +25,7 @@ groups:
           service: metridoc_db
           severity: warning
         annotations:
-          summary: 'Total memory usage is at least 80% on `{{ $labels.node_name }}`'
+          summary: "Total memory usage is at least 80% on `{{ $labels.node_name }}`"
           description: >-
             Memory usage is at {{ $value | printf "%.2f" }}% on
             `{{ $labels.node_name }}`. Memory-intensive jobs or scripts should

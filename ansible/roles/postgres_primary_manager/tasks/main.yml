@@ -1,18 +1,21 @@
 ---
 - name: create config directory
   file:
-    path: '{{ config_dir }}/postgres/primary'
+    path: "{{ config_dir }}/postgres/primary"
+    mode: 0440
     state: directory
 
 - name: copy docker compose file
   copy:
     src: docker-compose.yml
-    dest: '{{ config_dir }}/postgres/primary/docker-compose.yml'
+    dest: "{{ config_dir }}/postgres/primary/docker-compose.yml"
+    mode: 0440
 
 - name: create pg_hba config file
   template:
     src: pg_hba.conf.j2
-    dest: '{{ config_dir }}/postgres/primary/pg_hba.conf'
+    dest: "{{ config_dir }}/postgres/primary/pg_hba.conf"
+    mode: 0440
 
 - name: create docker secret for init_primary query
   docker_secret:
@@ -26,7 +29,7 @@
 - name: create docker secret for database password
   docker_secret:
     name: metridoc_postgres_database_password_{{ postgres_database_password_version }}
-    data: '{{ postgres_database_password }}'
+    data: "{{ postgres_database_password }}"
     state: present
   no_log: true
   tags:
@@ -34,20 +37,21 @@
 
 - name: label primary swarm node
   docker_node:
-    hostname: '{{ postgres_primary_swarm_node }}'
+    hostname: "{{ postgres_primary_swarm_node }}"
     labels:
-      postgres-primary: 'true'
+      postgres-primary: "true"
   tags:
     - docker
 
 - name: start docker services
-  environment: '{{ docker_stack_env }}'
+  environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/postgres/primary/docker-compose.yml metridoc
   changed_when: false
   tags:
     - docker
 
-- debug:
+- name: display notification
+  debug:
     msg: Docker services are deploying in the background. Check host to see progress.
   tags:
     - docker

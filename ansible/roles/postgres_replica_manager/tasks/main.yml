@@ -1,28 +1,32 @@
 ---
 - name: create config directory
   file:
-    path: '{{ config_dir }}/postgres/replica'
+    path: "{{ config_dir }}/postgres/replica"
+    mode: 0440
     state: directory
 
 - name: copy docker compose file
   copy:
     src: docker-compose.yml
-    dest: '{{ config_dir }}/postgres/replica/docker-compose.yml'
+    dest: "{{ config_dir }}/postgres/replica/docker-compose.yml"
+    mode: 0440
 
 - name: copy start_replica script
   copy:
     src: start_replica.sh
-    dest: '{{ config_dir }}/postgres/replica/start_replica.sh'
+    dest: "{{ config_dir }}/postgres/replica/start_replica.sh"
+    mode: 0440
 
 - name: create pg_hba config file
   template:
     src: pg_hba.conf.j2
-    dest: '{{ config_dir }}/postgres/replica/pg_hba.conf'
+    dest: "{{ config_dir }}/postgres/replica/pg_hba.conf"
+    mode: 0440
 
 - name: create docker secret for database password
   docker_secret:
     name: metridoc_postgres_database_password_{{ postgres_database_password_version }}
-    data: '{{ postgres_database_password }}'
+    data: "{{ postgres_database_password }}"
     state: present
   no_log: true
   tags:
@@ -39,20 +43,21 @@
 
 - name: label replica swarm node
   docker_node:
-    hostname: '{{ postgres_replica_swarm_node }}'
+    hostname: "{{ postgres_replica_swarm_node }}"
     labels:
-      postgres-replica: 'true'
+      postgres-replica: "true"
   tags:
     - docker
 
 - name: start docker services
-  environment: '{{ docker_stack_env }}'
+  environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/postgres/replica/docker-compose.yml metridoc
   changed_when: false
   tags:
     - docker
 
-- debug:
+- name: display notification
+  debug:
     msg: Docker services are deploying in the background. Check host to see progress.
   tags:
     - docker

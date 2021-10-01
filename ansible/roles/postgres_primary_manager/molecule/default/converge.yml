@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: "Include postgres_primary"
+      include_role:
+        name: postgres_primary_manager
