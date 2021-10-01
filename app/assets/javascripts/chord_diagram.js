@@ -1,4 +1,8 @@
-chordDiagram = function(data) {
+// Function should take a list of Hashes of data and a unique identifier
+// data = [{A: From Category, B: To Category, value: strength}, ...]
+// The uid must be the name of the div that the svg will be inserted into
+// It needs to be unique to ensure that the gradient colors aren't screwed up.
+chordDiagram = function(data, uid) {
   ////////////////////////////////////////////////////////////
   //////////////////////// Set-up ////////////////////////////
   ////////////////////////////////////////////////////////////
@@ -12,7 +16,7 @@ chordDiagram = function(data) {
       height = (mobileScreen ? 300 : Math.min(screenWidth, 1000) * 5/6) - margin.top - margin.bottom;
 
   // Create an svg to display
-  var svg = d3.select("#chart").append("svg")
+  var svg = d3.select("#" + uid).append("svg")
       .attr("width", (width + margin.left + margin.right))
       .attr("height", (height + margin.top + margin.bottom));
 
@@ -68,14 +72,6 @@ chordDiagram = function(data) {
   // d3.interpolateRainbow(float) - function takes a float 0-1 and returns a color
   // d3.quantize(interpolator, n) - function that returns an array of n samples from interpolator
   var colors = d3.quantize(d3.interpolateRainbow, names.length-1)
-
-  // Make a mapping of the names to the colors
-  const colorMap = new Map()
-  i = 0
-  names.forEach( function(n) {
-    n == "" ? colorMap.set("", "none") : colorMap.set(n, colors[i]);
-    i = (n == "" ? i : i + 1);
-  });
 
   // Calculate the total number of events to put in the chord
   var total = data.reduce((obj, {A, B, value}) => {
@@ -136,25 +132,40 @@ chordDiagram = function(data) {
   ////////////////////////////////////////////////////////////
 
   //Function to create the id for each chord gradient
-  function getGradID(d){ return "linkGrad-" + d.source.index + "-" + d.target.index; }
+  function getGradID(d){
+    return uid + "-" + "linkGrad-" + d.source.index + "-" + d.target.index;
+  }
 
   //Create the gradients definitions for each chord
   var grads = svg.append("defs").selectAll("linearGradient")
       .data(chord.chords())
       .enter().append("linearGradient")
-      .attr("id", getGradID)
+      .attr("id", function(d) { return getGradID(d); })
       .attr("gradientUnits", "userSpaceOnUse")
       .attr("x1", function(d,i) {
-        return innerRadius * Math.cos((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2);
+        // Find the midpoint angle of the arc (with offset)
+        // A 90 turn is needed as well
+        var avg_angle = (startAngle(d.source) + endAngle(d.source)) / 2 - Math.PI / 2;
+        // Find the x location on the circle
+        var x = innerRadius * Math.cos(avg_angle);
+        // Depending on the sign of x will direct which direction to do the pull out
+        var sign = (x >= 0 ? 1 : -1);
+        // Return the x value modified by half of the pullout size
+        return x + sign * pullOutSize/2;
       })
       .attr("y1", function(d,i) {
-        return innerRadius * Math.sin((d.source.endAngle-d.source.startAngle)/2 + d.source.startAngle - Math.PI/2);
+        var avg_angle = (startAngle(d.source) + endAngle(d.source)) / 2 - Math.PI / 2;
+        return innerRadius * Math.sin(avg_angle);
       })
       .attr("x2", function(d,i) {
-        return innerRadius * Math.cos((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2);
+        var avg_angle = (startAngle(d.target) + endAngle(d.target)) / 2 - Math.PI / 2;
+        var x = innerRadius * Math.cos(avg_angle);
+        var sign = (x >= 0 ? 1 : -1);
+        return x + sign * pullOutSize/2;
       })
       .attr("y2", function(d,i) {
-        return innerRadius * Math.sin((d.target.endAngle-d.target.startAngle)/2 + d.target.startAngle - Math.PI/2);
+        var avg_angle = (startAngle(d.target) + endAngle(d.target)) / 2 - Math.PI / 2;
+        return innerRadius * Math.sin(avg_angle);
       })
 
   // Note: to reverse the gradient, flip the source and target
@@ -162,12 +173,16 @@ chordDiagram = function(data) {
   //Set the starting color (at 0%)
   grads.append("stop")
     .attr("offset", "0%")
-    .attr("stop-color", function(d){ return colorMap.get(names[d.source.index]); });
+    .attr("stop-color", function(d) {
+      return colors[d.source.index];
+    });
 
   //Set the ending color (at 100%)
   grads.append("stop")
     .attr("offset", "100%")
-    .attr("stop-color", function(d){ return colorMap.get(names[d.target.index]); });
+    .attr("stop-color", function(d) {
+      return colors[d.target.index];
+    });
 
   ////////////////////////////////////////////////////////////
   //////////////////// Draw outer Arcs ///////////////////////
@@ -181,9 +196,15 @@ chordDiagram = function(data) {
       .on("mouseout", fade(opacityDefault, false));
 
   g.append("path")
-    .style("stroke", function(d,i) { return (names[i] === "" ? "none" : "black"); }) // outline of the arcs
-    .style("fill", function(d,i) { return colorMap.get(names[i]); }) // colors of the arcs
-    .style("pointer-events", function(d,i) { return (names[i] === "" ? "none" : "auto"); })
+    .style("stroke", function(d,i) {
+      return (names[i] === "" ? "none" : "black");
+    }) // outline of the arcs
+    .style("fill", function(d,i) {
+      return (names[i] === "" ? "none" : colors[i]);
+    }) // colors of the arcs
+    .style("pointer-events", function(d,i) {
+      return (names[i] === "" ? "none" : "auto");
+    })
     .attr("d", arc)
     .attr("transform", function(d, i) { //Pull the two slices apart
       d.pullOutSize = pullOutSize * (i > split ? -1 : 1);
@@ -219,9 +240,14 @@ chordDiagram = function(data) {
       .enter().append("path")
       .attr("class", "chord")
       .style("stroke", "black")
-      .style("fill", function(d){ return "url(#" + getGradID(d) + ")" }) // Defining fill color here
-      .style("opacity", function(d) { return (names[d.source.index] === "" ? 0 : opacityDefault); }) //Make the dummy strokes have a zero opacity (invisible)
-      .style("pointer-events", function(d,i) { return (names[d.source.index] === "" ? "none" : "auto"); }) //Remove pointer events from dummy strokes
+      .style("fill", function(d){
+        return "url(#" + getGradID(d) + ")" }) // Defining fill color here
+      .style("opacity", function(d) {
+        return (names[d.source.index] === "" ? 0 : opacityDefault);
+      }) //Make the dummy strokes have a zero opacity (invisible)
+      .style("pointer-events", function(d,i) {
+        return (names[d.source.index] === "" ? "none" : "auto");
+      }) //Remove pointer events from dummy strokes
       .attr("d", path)
       .on("mouseover", fadeChord(opacityLow, true))
       .on("mouseout", fadeChord(opacityDefault, false));
@@ -327,7 +353,7 @@ chordDiagram = function(data) {
     return function(event, chord) {
       // Decrease the opacity for all other chords
       svg.selectAll("path.chord")
-        .filter(function(d) { return d !== i && names[d.source.index] !== ""; })
+        .filter(function(d) { return d !== chord && names[d.source.index] !== ""; })
         .transition("fadeOnArc")
         .style("opacity", opacity);
 
