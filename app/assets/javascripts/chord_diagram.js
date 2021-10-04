@@ -106,7 +106,7 @@ chordDiagram = function(data, uid) {
 
   //Calculate how far the Chord Diagram needs to be rotated clockwise to make the dummy
   //invisible chord center vertically
-  var offset = Math.PI / 4 - (names_a.length - names_b.length) / 2 * padding;
+  var offset = Math.PI / 4 - (names_b.length - names_a.length) / 2 * padding;
 
   //Custom sort function of the chords to keep them in the original order
   var chord = customChordLayout() //d3.layout.chord()//Custom sort function of the chords to keep them in the original order
