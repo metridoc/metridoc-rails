@@ -5,8 +5,8 @@ truncate_before_load:  "no"
 file_name:             "gate.csv"
 target_mappings:
   swipe_date: date
-#  swipe_time: time
-  swipe_time: id
+  swipe_time: date
+#  swipe_time: id
   door_name: door_name
   affiliation_desc: affiliation_desc
   center_desc: center_desc
