@@ -43,6 +43,10 @@ module ConsultationHelper
     end_date = dates.last
 
     output = []
+    # Handle the case where there is no data.
+    if start_date.nil? or end_date.nil?
+      return output
+    end
     # Loop through years
     (start_date.year..end_date.year).each do |y|
       # Find the range of months needed

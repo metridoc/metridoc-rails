@@ -20,12 +20,15 @@
 - logy = {scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'}]}}
 - logx = {scales: {xAxes: [{id: 'x-axis', type: 'logarithmic'}]}}
 
-%h2 Timeline
-#data-viz
-  #single-col
-    = line_chart [{name: "Consultations", data: timeline["Consultation"], library: {lineTension: 0}},
-      {name: "Instruction", data: timeline["Instruction"], library: {lineTension:0}}],
-      download: true
+- if timeline["Consultation"].sum { |_,v| v }  == 0 and timeline["Instruction"].sum { |_,v| v } == 0
+  %h3{style: "text-align:center;"} No data available in this time range.
+- else
+  %h2 Timeline
+  #data-viz
+    #single-col
+      = line_chart [{name: "Consultations", data: timeline["Consultation"], library: {lineTension: 0}},
+        {name: "Instruction", data: timeline["Instruction"], library: {lineTension:0}}],
+        download: true
 
 %hr
 %h2 Consultations
