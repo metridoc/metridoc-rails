@@ -200,10 +200,13 @@ ActiveAdmin.setup do |config|
   #   config.register_stylesheet 'my_print_stylesheet.css', media: :print
   #
   # To load a javascript file:
-    config.register_javascript 'report_template.js'
-    config.register_javascript 'report_query.js'
-    config.register_javascript 'vis-network.esm.js'
-    config.register_javascript 'vis-network.js'
+  config.register_javascript 'report_template.js'
+  config.register_javascript 'report_query.js'
+
+  # == Javascript for Chord diagrams
+  config.register_javascript 'chord_diagram.js'
+  config.register_javascript 'd3_chord/d3.layout.chord.sort.js'
+  config.register_javascript 'd3_chord/d3.stretched.chord.js'
 
   # == CSV options
   #

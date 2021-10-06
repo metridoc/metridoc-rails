@@ -47,6 +47,9 @@ gem 'chartkick'
 gem 'active_median'
 gem 'groupdate'
 
+# Gem to use d3.js for visualizations
+gem 'd3-rails'
+
 gem 'chronic'
 
 gem 'delayed_job_active_record'

@@ -1,18 +1,15 @@
 = javascript_include_tag 'application'
 
--# Access form option for the pennkey
-- pennkey = params[:staff_pennkey].nil? ? null : params[:staff_pennkey]
-
--# Set date range using form input or default range
-- start_date, end_date = minimize_date_range(params[:start_date], params[:end_date], pennkey)
+-# Get date range of data
+- start_date, end_date = date_range()
 
 -# Using chartkick to create quick dashboard
-%h2 Statistics for #{pennkey}
+%h2 Statistics for All Library Interactions
 
 %hr
 
 -# Generate all needed statistics
-- events, timeline = event_groups([start_date, end_date], pennkey)
+- events, timeline = event_groups([start_date, end_date])
 - consultations_hash = events["Consultation"]
 - instructions_hash = events["Instruction"]
 
@@ -20,8 +17,8 @@
 - logy = {scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'}]}}
 - logx = {scales: {xAxes: [{id: 'x-axis', type: 'logarithmic'}]}}
 
-- consultation_community_school = chord_data_mapper("Consultation", pennkey, "research_community", "school_affiliation")
-- instruction_community_school = chord_data_mapper("Instruction", pennkey, "research_community", "school_affiliation")
+- consultation_community_school = chord_data_mapper("Consultation", nil, "research_community", "school_affiliation")
+- instruction_community_school = chord_data_mapper("Instruction", nil, "research_community", "school_affiliation")
 
 - if timeline["Consultation"].sum { |_,v| v }  == 0 and timeline["Instruction"].sum { |_,v| v } == 0
   %h3{style: "text-align:center;"} No data available in this time range.
@@ -32,6 +29,7 @@
       = line_chart [{name: "Consultations", data: timeline["Consultation"], library: {lineTension: 0}},
         {name: "Instruction", data: timeline["Instruction"], library: {lineTension:0}}],
         download: true
+
 
 %hr
 %h2 Consultations
@@ -77,7 +75,7 @@
       %h3 Mapping School Affiliations to the Research Subject Area (Interactive Visualization)
       %div{:id => "consultation_community", :style => "text-align:center;"}
       :javascript
-        chordDiagram(#{consultation_community_school}, "consultation_community")
+        loomDiagram(#{consultation_community_school}, "consultation_community")
 
   #data-viz
     #single-col
@@ -138,7 +136,7 @@
       %h3 Mapping School Affiliations to the Research Subject Area (Interactive Visualization)
       %div{:id => "instruction_community", :style => "text-align:center;"}
       :javascript
-        chordDiagram(#{instruction_community_school}, "instruction_community")
+        loomDiagram(#{instruction_community_school}, "instruction_community")
 
   #data-viz
     #single-col
@@ -148,7 +146,7 @@
         (The y scale is log
         %sub> 10
         )
-
+        
   %h2 Session Description
   #data-viz
     #left-col

@@ -43,6 +43,10 @@ module ConsultationHelper
     end_date = dates.last
 
     output = []
+    # Handle the case where there is no data.
+    if start_date.nil? or end_date.nil?
+      return output
+    end
     # Loop through years
     (start_date.year..end_date.year).each do |y|
       # Find the range of months needed
@@ -128,7 +132,6 @@ module ConsultationHelper
     output = {}
     dateline = {}
 
-
     KEY_HASH.each do |category, category_hash|
       category_output = {}
       events = Consultation::Interaction.where(consultation_or_instruction: category)
@@ -182,4 +185,30 @@ module ConsultationHelper
   end
 
   # end of event_groups
+
+  # Function to calculate the mapping between the school_affiliation
+  # and the research_community or a particular pennkey and
+  # consultation/instruction type
+  def chord_data_mapper(kind, pennkey, left, right)
+    query = Consultation::Interaction.where(:consultation_or_instruction => kind)
+
+    unless pennkey.nil?
+      query = query.where(:staff_pennkey => pennkey)
+    end
+
+    # Query the group by mapping between the two variables of interest
+    value_map = query.group(left, right).count
+
+    # Transform any nils in the keys
+    value_map.transform_keys!{ |k|
+      [
+        k[0].nil? ? "Unknown" : k[0],
+        k[1].nil? ? "Unknown" : k[1]
+      ]
+    }
+
+    output = value_map.map{ |k,v| {"A": k[0], "B": k[1], "value": v} }.to_json().html_safe
+
+    return output
+  end # end of chord mapper
 end
