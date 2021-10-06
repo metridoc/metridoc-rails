@@ -20,6 +20,9 @@
 - logy = {scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'}]}}
 - logx = {scales: {xAxes: [{id: 'x-axis', type: 'logarithmic'}]}}
 
+- consultation_community_school = chord_data_mapper("Consultation", pennkey, "research_community", "school_affiliation")
+- instruction_community_school = chord_data_mapper("Instruction", pennkey, "research_community", "school_affiliation")
+
 - if timeline["Consultation"].sum { |_,v| v }  == 0 and timeline["Instruction"].sum { |_,v| v } == 0
   %h3{style: "text-align:center;"} No data available in this time range.
 - else
@@ -63,42 +66,36 @@
   #data-viz
     #left-col
       %h3 Patron Types
-      = pie_chart consultations_hash["patron_type"], download: true
+      = bar_chart consultations_hash["patron_type"], download: true
     #right-col
       %h3 Goal of Appointment
-      = pie_chart consultations_hash["outcome"], download: true
-
-  %h2 Alternate plot style
-  #data-viz
-    #left-col
-      %h3 Patron Types
-      = bar_chart consultations_hash["patron_type"], library: logx, download: true
-    #right-col
-      %h3 Goal of Appointment
-      = bar_chart consultations_hash["outcome"], library: logx, download: true
+      = bar_chart consultations_hash["outcome"], download: true
 
   %h2 Community
   #data-viz
-    #left-col
-      %h3 School Affiliations
-      = pie_chart consultations_hash["school_affiliation"], download: true
-    #right-col
-      %h3 Research Subject Area
-      = pie_chart consultations_hash["research_community"], download: true
+    #single-col
+      %h3 Mapping School Affiliations to the Research Subject Area (Interactive Visualization)
+      %div{:id => "consultation_community", :style => "text-align:center;"}
+      :javascript
+        chordDiagram(#{consultation_community_school}, "consultation_community")
 
   #data-viz
     #single-col
       %h3 Associated Department
       = column_chart consultations_hash["department"], library: logy, download: true
+      %p{style: "text-align:right;"}
+        (The y scale is log
+        %sub> 10
+        )
 
   %h2 Methods
   #data-viz
     #left-col
       %h3 Mode of Consultation
-      = pie_chart consultations_hash["mode_of_consultation"], download: true
+      = bar_chart consultations_hash["mode_of_consultation"], download: true
     #right-col
       %h3 Service Provided
-      = pie_chart consultations_hash["service_provided"], download: true
+      = bar_chart consultations_hash["service_provided"], download: true
 
 %hr
 %h2 Instruction
@@ -134,28 +131,32 @@
         %td{align: "right"} #{instructions_hash["total_attendance"].first}
         %td{align: "right"} #{instructions_hash["total_attendance"].last}
 
+
   %h2 Community
   #data-viz
-    #left-col
-      %h3 School Affiliations
-      = pie_chart instructions_hash["school_affiliation"], download: true
-    #right-col
-      %h3 Research Subject Area
-      = pie_chart instructions_hash["research_community"], download: true
+    #single-col
+      %h3 Mapping School Affiliations to the Research Subject Area (Interactive Visualization)
+      %div{:id => "instruction_community", :style => "text-align:center;"}
+      :javascript
+        chordDiagram(#{instruction_community_school}, "instruction_community")
 
   #data-viz
     #single-col
       %h3 Associated Department
       = column_chart instructions_hash["department"], library: logy, download: true
+      %p{style: "text-align:right;"}
+        (The y scale is log
+        %sub> 10
+        )
 
   %h2 Session Description
   #data-viz
     #left-col
       %h3 Session Type
-      = pie_chart instructions_hash["session_type"], download: true
+      = bar_chart instructions_hash["session_type"], download: true
     #right-col
       %h3 Session Location
-      = pie_chart instructions_hash["location"], download: true
+      = bar_chart instructions_hash["location"], download: true
 
 %hr
 %h2{style: "text-align:center;color:DarkGreen;"} Keep up the good work!  What you do is amazing!
