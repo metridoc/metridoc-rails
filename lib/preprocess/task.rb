@@ -194,9 +194,9 @@ module Preprocess
       # both (i.e., the date and the time), rather than each.
       begin
         if is_time
-          v = Chronic.parse(val).strftime('%I:%M:%S %p')
+          Chronic.parse(val).strftime('%I:%M:%S %p')
         else
-          v = Chronic.parse(val).to_date
+          Chronic.parse(val).to_date
         end
       rescue
         puts "caught exception: val: #{val}"

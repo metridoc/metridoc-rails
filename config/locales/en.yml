@@ -35,7 +35,6 @@ en:
     created_at: "Ingested on"
     call_number: "Local Library Call Number"
   active_admin:
-    misc: "Miscellaneous"
     edit_resource: "Edit %{resource}"
     delete_resource: "Delete %{resource}"
     supplemental_data: "RSAT Supplemental Data"
@@ -116,7 +115,9 @@ en:
       read-only: "Read Only"
       read-write: "Read/Write"
     user_role_sections:
+      ares: "Ares"
       borrowdirect: "Borrow Direct"
+      consultation: "Consultation"
       ezborrow: "E-Z Borrow"
       gatecount: "Gate Counts"
       illiad: "Illiad"
@@ -139,6 +140,7 @@ en:
         failed:  "Failed"
         cancelled: "Cancelled"
     report_query:
+      save_as_template: "Save As Template"
       statuses:
         pending: "Pending"
         in-progress: "In Progress"
@@ -179,9 +181,6 @@ en:
       security/user_role_section:
         one: "User Role Section"
         other: "User Role Sections"
-      misc/consultation_data:
-        one: "Consultation/Instruction Data"
-        other: "Consultation/Instruction Data"
       consultation/interaction:
         one: "Consultation Interaction"
         other: "Consultation Interactions"

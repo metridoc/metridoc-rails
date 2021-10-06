@@ -309,10 +309,7 @@ ActiveAdmin.setup do |config|
     end
 
     admin.build_menu do |menu|
-      menu.add label: I18n.t("active_admin.resource_sharing"), priority: 1 do |sites|
-        sites.add label: I18n.t("active_admin.comments_heading"),
-                  url: :admin_comments_path
-      end
+      menu.add label: I18n.t("active_admin.resource_sharing"), priority: 1
     end
 
     admin.build_menu do |menu|

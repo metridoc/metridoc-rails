@@ -1,3 +1,4 @@
+---
 pg_replication:
   query: >
     SELECT COALESCE(
