@@ -45,6 +45,21 @@ ActiveAdmin.register Report::Template do
     active_admin_comments
   end
 
+  action_item I18n.t("phrases.report_template.run_as_query"),
+              only: [:show, :edit],
+              if: proc{ current_admin_user.authorized?('read-write', Report) } do
+    link_to I18n.t("phrases.report_template.run_as_query"), run_as_query_admin_report_template_path(report_template)
+  end
+
+  member_action :run_as_query, method: :get do
+    report_query = Report::TemplateService.run_template_as_query(template: resource, owner: current_admin_user)
+    if report_query.errors.blank?
+      redirect_to admin_report_query_path(report_query), notice: "Successfully queued template as query."
+    else
+      redirect_to resource_path, notice: "Failed to queue template as query: #{report_query.errors.full_messages.join(", ")}"
+    end
+  end
+
   controller do
     def update
       # required because the radio button can be unselected
