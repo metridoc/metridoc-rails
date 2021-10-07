@@ -25,5 +25,47 @@ module Report
       template
     end
 
+    def self.run_template_as_query(template:, owner:)
+      query = get_matching_query(template: template, owner: owner)
+      if query
+        query.re_process
+        return query
+      end
+
+      query = Report::Query.new(
+        report_template_id: template.id,
+        owner_id: owner.id,
+        name: template.name,
+        comments: template.comments,
+        select_section: template.select_section,
+        from_section: template.from_section,
+        where_section: template.where_section,
+        group_by_section: template.group_by_section,
+        order_section: template.order_section,
+        order_direction_section: template.order_direction_section,
+        full_sql: template.full_sql,
+      )
+      template.report_template_join_clauses.each do |join_clause|
+        query.report_query_join_clauses.build(
+          keyword: join_clause.keyword,
+          table: join_clause.table,
+          on_keys: join_clause.on_keys,
+        )
+      end
+
+      query.save
+      query
+    end
+  
+    private
+    def self.get_matching_query(template:, owner:)
+      Report::Query.find_by(
+        report_template: template,
+        owner: owner,
+      )
+    end
   end
 end
+
+
+
