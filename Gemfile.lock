@@ -105,6 +105,8 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.8)
     crass (1.0.6)
+    d3-rails (7.0.0)
+      railties (>= 3.1)
     daemons (1.3.1)
     delayed_job (4.1.9)
       activesupport (>= 3.0, < 6.2)
@@ -330,6 +332,7 @@ DEPENDENCIES
   chartkick
   chronic
   coffee-rails (~> 4.2)
+  d3-rails
   daemons
   delayed_job_active_record
   devise
