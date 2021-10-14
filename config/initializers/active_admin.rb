@@ -208,9 +208,6 @@ ActiveAdmin.setup do |config|
   config.register_javascript 'd3_chord/d3.layout.chord.sort.js'
   config.register_javascript 'd3_chord/d3.stretched.chord.js'
 
-  # Load javascript for loom diagram
-  config.register_javascript 'loom_diagram.js'
-  
   # == CSV options
   #
   # Set the CSV builder separator
