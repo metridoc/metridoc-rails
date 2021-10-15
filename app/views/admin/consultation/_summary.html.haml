@@ -1,5 +1,7 @@
 -# Get date range of data
 - start_date, end_date = date_range()
+-# Fix the summary start date to get rid of nonsense
+- start_date = Date.parse("2018-01-01")
 
 -# Using chartkick to create quick dashboard
 %h2 Statistics for All Library Interactions
@@ -144,7 +146,7 @@
         (The y scale is log
         %sub> 10
         )
-        
+
   %h2 Session Description
   #data-viz
     #left-col
