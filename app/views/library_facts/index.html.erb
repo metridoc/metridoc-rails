@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>MetriDoc</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   <%= favicon_link_tag(asset_path('favicon.ico')) %>
 </head>
@@ -21,11 +21,14 @@
   <div id="main_content_wrapper">
     <div id="main_content">
       <div id="dashboard_default_message">
-        <h1><%= I18n.t('pages.homepage_heading') %></h1>
-        <p><%= I18n.t('pages.homepage_text') %></p>
-      </div>
+        <h1>Library Fact Book</h1>
+        <ul>
+          <li><a href="library_facts/factbook">Download Library Fact Book (Epub format)</a></li>
+        </ul>
       </div>
     </div>
   </div>
+</div>
+
 </body>
 </html>
