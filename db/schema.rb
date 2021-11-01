@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_06_192521) do
+ActiveRecord::Schema.define(version: 2021_10_12_165103) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -357,8 +357,8 @@ ActiveRecord::Schema.define(version: 2021_10_06_192521) do
   create_table "ezpaarse_jobs", force: :cascade do |t|
     t.string "file_name"
     t.date "log_date"
-    t.boolean "successful_import"
-    t.integer "records_imported"
+    t.text "message"
+    t.datetime "run_date"
   end
 
   create_table "file_upload_import_logs", force: :cascade do |t|
