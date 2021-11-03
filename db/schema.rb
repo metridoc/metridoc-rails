@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_23_171924) do
+ActiveRecord::Schema.define(version: 2021_11_03_023736) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -406,6 +406,32 @@ ActiveRecord::Schema.define(version: 2021_08_23_171924) do
     t.index ["transaction_status"], name: "index_illiad_borrowings_on_transaction_status"
   end
 
+  create_table "illiad_doc_del_trackings", force: :cascade do |t|
+    t.bigint "institution_id", null: false
+    t.datetime "arrival_date"
+    t.datetime "completion_date"
+    t.string "completion_status", limit: 255
+    t.string "request_type", limit: 255, null: false
+    t.bigint "transaction_number", null: false
+    t.float "turnaround"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
+    t.index ["institution_id"], name: "index_illiad_doc_del_trackings_on_institution_id"
+  end
+
+  create_table "illiad_doc_dels", force: :cascade do |t|
+    t.bigint "institution_id", null: false
+    t.string "request_type", limit: 255, null: false
+    t.string "status", limit: 255, null: false
+    t.datetime "transaction_date", null: false
+    t.bigint "transaction_number", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "is_legacy", default: false, null: false
+    t.index ["institution_id"], name: "index_illiad_doc_dels_on_institution_id"
+  end
+
   create_table "illiad_groups", force: :cascade do |t|
     t.bigint "institution_id", null: false
     t.string "group_name", limit: 255, null: false
@@ -742,13 +768,14 @@ ActiveRecord::Schema.define(version: 2021_08_23_171924) do
     t.string "ip"
     t.string "refer"
     t.string "browser"
-    t.integer "number_of_registrations"
-    t.string "referral_method"
+    t.string "staff_penn_key"
     t.string "rtg"
     t.string "mba_type"
     t.string "campus"
     t.string "patron_name"
     t.integer "graduation_year"
+    t.integer "number_of_registrations"
+    t.string "referral_method"
   end
 
   create_table "report_queries", force: :cascade do |t|

@@ -1,4 +1,4 @@
-load_sequence:         11
+load_sequence:         12
 target_adapter:        'native_sql'
 target_model:          "Illiad::LendingTracking"
 truncate_before_load:  "yes"

@@ -1,0 +1,52 @@
+load_sequence:         13
+target_adapter:        'native_sql'
+target_model:          "Illiad::DocDelTracking"
+truncate_before_load:  "yes"
+sqls:
+  - |
+                        INSERT INTO illiad_doc_del_trackings (
+                                  institution_id,
+                                  transaction_number,
+                                  request_type,
+                                  arrival_date,
+                                  created_at,
+                                  updated_at
+                        )
+                        SELECT    %{institution_id},
+                                  transaction_number,
+                                  request_type,
+                                  transaction_date,
+                                  NOW(),
+                                  NOW()
+                        FROM  illiad_doc_dels
+                        WHERE status = 'Awaiting Lending Request Processing';
+
+  - |
+                        UPDATE illiad_doc_del_trackings
+                        SET completion_date = L.transaction_date,
+                            completion_status = L.status
+                        FROM illiad_doc_dels L
+                        WHERE L.transaction_number = illiad_doc_del_trackings.transaction_number
+                          AND L.status NOT IN ('Awaiting Lending Request Processing','Cancelled by ILL Staff')
+                          AND L.institution_id = %{institution_id}
+                          AND L.institution_id = illiad_doc_del_trackings.institution_id
+
+  - |
+                        UPDATE illiad_doc_del_trackings
+                        SET completion_date = L.transaction_date,
+                            completion_status = L.status
+                        FROM illiad_doc_dels L
+                        WHERE L.transaction_number = illiad_doc_del_trackings.transaction_number
+                          AND L.status = 'Item Shipped'
+                          AND L.institution_id = %{institution_id}
+                          AND L.institution_id = illiad_doc_del_trackings.institution_id
+
+  - |
+                        UPDATE illiad_doc_del_trackings
+                        SET completion_date = L.transaction_date,
+                            completion_status = L.status
+                        FROM illiad_doc_dels L
+                        WHERE L.transaction_number = illiad_doc_del_trackings.transaction_number
+                          AND L.status ='Cancelled by ILL Staff'
+                          AND L.institution_id = %{institution_id}
+                          AND L.institution_id = illiad_doc_del_trackings.institution_id
