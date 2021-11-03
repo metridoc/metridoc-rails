@@ -1,4 +1,4 @@
-load_sequence:         9
+load_sequence:         10
 
 # Source Config
 source_adapter:        mssql
