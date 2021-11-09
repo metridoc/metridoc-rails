@@ -1,8 +1,8 @@
 ---
 shibboleth:
   image:
-    name: "gitlab.library.upenn.edu/devops/ansible/shibboleth_sp"
-    tag: "f1c2b88a"
+    name: "quay.io/upennlibraries/ansible_shibboleth_sp"
+    tag: "f1c2b88"
   is_development: false
   swarm_node_constraint: "metridoc"
   templates:

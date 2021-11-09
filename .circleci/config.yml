@@ -29,7 +29,7 @@ commands:
 jobs:
   deploy-production:
     docker:
-      - image: gitlab.library.upenn.edu/docker/docker_ansible:2-9
+      - image: quay.io/upennlibraries/ansible:2.9
     environment:
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
       BASH_ENV: /etc/profile
@@ -67,7 +67,7 @@ jobs:
       - slack/status: *default-slack-config
   deploy-staging:
     docker:
-      - image: gitlab.library.upenn.edu/docker/docker_ansible:2-9
+      - image: quay.io/upennlibraries/ansible:2.9
     environment:
       GIT_URL: << pipeline.project.git_url >>/compare/<< pipeline.git.base_revision >>..<< pipeline.git.revision >>
       BASH_ENV: /etc/profile
