@@ -27,8 +27,6 @@ services:
       - ezpaarse_exclusions:/opt/ezpaarse/exclusions
       - ezpaarse_input:/tmp/ezpaarse_input
       - ezpaarse_output:/tmp/ezpaarse_output
-    # ports:
-    #   - 59599:59599
     secrets:
       - source: metridoc_ezpaarse_config
         target: /opt/ezpaarse/config.local.json
