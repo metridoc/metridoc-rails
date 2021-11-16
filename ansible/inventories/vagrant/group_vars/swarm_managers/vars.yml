@@ -15,6 +15,7 @@ libwizard_client_secret: "{{ vault_libwizard_client_secret }}"
 libwizard_base_url: "{{ vault_libwizard_base_url }}"
 monitoring_subnet: 10.0.10.0/24
 postgres_database_password: "{{ vault_postgres_database_password }}"
+postgres_ezpaarse_password: "{{ vault_postgres_ezpaarse_password }}"
 postgres_monitoring_password: "{{ vault_postgres_monitoring_password }}"
 postgres_replication_password: "{{ vault_postgres_replication_password }}"
 rails_secret_key_base: "{{ vault_rails_secret_key_base }}"
@@ -58,10 +59,10 @@ grafana_datasources_version: v1
 node_exporter_entrypoint_version: v1
 postgres_database_password_version: v1
 postgres_exporter_queries_version: v1
-postgres_init_primary_version: v1
+postgres_init_primary_version: v2
 postgres_monitoring_password_version: v1
 postgres_pgpass_version: v1
-postgres_primary_pg_hba_conf_version: v4
+postgres_primary_pg_hba_conf_version: v5
 postgres_replica_pg_hba_conf_version: v3
 postgres_start_replica_version: v1
 prometheus_alerts_version: v2

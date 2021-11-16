@@ -12,12 +12,14 @@ services:
     image: quay.io/upennlibraries/metridoc-ezpaarse:${EZPAARSE_IMAGE_TAG}
     environment:
       NODE_ENV: "production"
+      RAILS_ENV:
     deploy:
       placement:
         constraints:
           - node.labels.metridoc == true
     logging: *default-logging
     networks:
+      - database
       - ezpaarse
     volumes:
       - ezpaarse_platforms:/opt/ezpaarse/platforms
@@ -34,6 +36,7 @@ services:
         uid: "1000"
         gid: "1000"
         mode: 0440
+      - postgres_database_password
     restart: unless-stopped
 
   ezpaarse_db:
@@ -56,6 +59,11 @@ services:
       - metridoc_ezpaarse_mongodb_username
 
 networks:
+  database:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: ${DATABASE_SUBNET}
   ezpaarse:
     driver: overlay
 
@@ -63,6 +71,9 @@ secrets:
   metridoc_ezpaarse_config:
     external: true
     name: metridoc_ezpaarse_config_${EZPAARSE_CONFIG_VERSION}
+  postgres_database_password:
+    external: true
+    name: metridoc_postgres_database_password_${POSTGRES_DATABASE_PASSWORD_VERSION}
   metridoc_ezpaarse_mongodb_root_password:
     external: true
     name: metridoc_ezpaarse_mongodb_root_password_${EZPAARSE_MONGODB_ROOT_PASSWORD_VERSION}
