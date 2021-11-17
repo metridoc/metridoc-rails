@@ -1,0 +1,2 @@
+class LibraryFactsController < ApplicationController
+end

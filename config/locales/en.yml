@@ -139,6 +139,8 @@ en:
         success: "Success"
         failed:  "Failed"
         cancelled: "Cancelled"
+    report_template:
+      run_as_query: "Run as Query"
     report_query:
       save_as_template: "Save As Template"
       statuses:
