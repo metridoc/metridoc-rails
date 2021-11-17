@@ -12,7 +12,7 @@ shibboleth:
         values:
           admin_email: "{{ vault_shib2_admin_email }}"
           fqdn: "{{ vault_shib2_fqdn }}"
-        version: 1
+        version: 2
     secrets:
       attribute_map:
         path: "shibboleth/shibboleth/attribute_map.xml.j2"
