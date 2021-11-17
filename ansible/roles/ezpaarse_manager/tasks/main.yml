@@ -35,7 +35,7 @@
     - docker
     - ezpaarse
 
-- name: Create docker secret for ezpaarse
+- name: Create docker config secret for ezpaarse
   docker_secret:
     name: "{{ 'metridoc_ezpaarse_config_' ~ ezpaarse_config_version }}"
     data: "{{ lookup('template', 'config.local.json.j2') | to_json }}"
