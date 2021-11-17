@@ -354,6 +354,13 @@ ActiveRecord::Schema.define(version: 2021_11_03_023736) do
     t.boolean "is_legacy", default: false, null: false
   end
 
+  create_table "ezpaarse_jobs", force: :cascade do |t|
+    t.string "file_name"
+    t.date "log_date"
+    t.text "message"
+    t.datetime "run_date"
+  end
+
   create_table "file_upload_import_logs", force: :cascade do |t|
     t.bigint "file_upload_import_id", null: false
     t.datetime "log_datetime", null: false
