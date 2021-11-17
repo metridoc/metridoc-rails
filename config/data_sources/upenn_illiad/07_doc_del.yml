@@ -23,7 +23,7 @@ filter_raw: |
                             )
                         )
 join_tables:
-  - INNER JOIN Tracking ON Tracking.TransactionNumber = Transactions.TransactionNumber AND Transactions.ProcessType = 'DocDel'
+  - INNER JOIN Tracking ON Tracking.TransactionNumber = Transactions.TransactionNumber AND Transactions.ProcessType IN ('DocDel', 'Doc Del')
 group_by_columns:
   - "Tracking.TransactionNumber"
   - "Transactions.RequestType"
