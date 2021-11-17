@@ -1,0 +1,39 @@
+load_sequence:         7
+
+# Source Config
+source_adapter:        mssql
+source_table:           Transactions
+column_mappings:
+  "Tracking.TransactionNumber": transaction_number
+  "Transactions.RequestType": request_type
+  "Tracking.ChangedTo": status
+  "MIN(Tracking.DateTime)": transaction_date
+filter_raw: |
+                        (
+                            (
+                              Transactions.RequestType = 'Article'
+                              AND
+                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                            )
+                            OR
+                            (
+                              Transactions.RequestType = 'Loan'
+                              AND
+                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
+                            )
+                        )
+join_tables:
+  - INNER JOIN Tracking ON Tracking.TransactionNumber = Transactions.TransactionNumber AND Transactions.ProcessType = 'DocDel'
+group_by_columns:
+  - "Tracking.TransactionNumber"
+  - "Transactions.RequestType"
+  - "Tracking.ChangedTo"
+export_file_name:      "doc_del.csv"
+export_filter_date_sql: "Tracking.DateTime > ?"
+export_filter_date_range_sql: "Tracking.DateTime > ? AND Tracking.DateTime < ?"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Illiad::DocDel"
+truncate_before_load:  "yes"
+legacy_filter_date_field: "transaction_date"
