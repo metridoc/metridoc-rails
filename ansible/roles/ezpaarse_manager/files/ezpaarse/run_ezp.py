@@ -24,7 +24,7 @@ OUTPUT_PATH = '/tmp/ezpaarse_output'
 EZP_PATH = '/opt/ezpaarse/node_modules/.bin/ezp'
 # Before handling by MetriDoc preprocess/import, combine all output files
 CSV_INPUT_PATH = OUTPUT_PATH
-CSV_OUTPUT_PATH = OUTPUT_PATH
+CSV_OUTPUT_PATH = '/tmp/ezpaarse_output/ezpaarse_out.csv'
 # Are we keeping processed logs or no?
 PURGE_PROCESSED_LOGS = False
 DB_HOST = 'primary-db'
