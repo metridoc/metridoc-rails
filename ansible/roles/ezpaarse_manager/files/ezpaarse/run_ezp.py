@@ -196,10 +196,6 @@ class CsvCombiner:
     def set_csv_header(self, path):
         self.csv_header = linecache.getline(path.as_posix(), 1).strip().replace('-', '_').split(';')
 
-    def cleanup(self):
-        for f in self.input_files:
-            f.unlink()
-
     def write_csv(self):
         for i in range(len(self.input_files)):
             if i == 0:
@@ -210,14 +206,14 @@ class CsvCombiner:
                     if r.line_num == 1:
                         continue
                     self.records.append(l)
+            if CLEAN_UP_EZPAARSE_OUTPUT:
+                logging.warning('Removing file [%s]' % self.input_files[i].name)
+                self.input_files[i].unlink()
         with self.output_path.open('w', newline='', encoding='utf-8') as c:
             w = csv.DictWriter(c, fieldnames=self.csv_header, delimiter=',')
             w.writeheader()
             for r in self.records:
                 w.writerow(dict(zip(self.csv_header, r)))
-        if CLEAN_UP_EZPAARSE_OUTPUT:
-            logging.warning('Cleaning up')
-            self.cleanup()
 
 
 if __name__ == '__main__':
