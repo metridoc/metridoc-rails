@@ -14,7 +14,7 @@
 - name: Create docker database secret for python_jobs
   docker_secret:
     name: "{{ 'metridoc_python_jobs_database_secret_' ~ python_jobs_database_secret_version }}"
-    data: '{{ lookup("template", "database.yml.j2") }}'
+    data: '{{ lookup("template", "metridoc.ini.j2") }}'
     state: present
   no_log: true
   tags:
