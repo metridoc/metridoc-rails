@@ -2,6 +2,7 @@ import sys
 import re
 import configparser
 import argparse
+from pathlib import Path
 
 # For connections to LibWizard
 import requests
@@ -55,7 +56,7 @@ def config(filename='config/metridoc.ini',
 
     return db
 
-def buildDataFrame(oauth, isLippencott, start_date = None, end_date=None):
+def buildDataFrame(oauth, is_lippincott, start_date = None, end_date=None):
     # Specify that today is the exclusive end date
     if not end_date:
         end_date = datetime.date.today()
@@ -68,7 +69,7 @@ def buildDataFrame(oauth, isLippencott, start_date = None, end_date=None):
     print ("Accessing records submitted from " + start_date + " to " + end_date)
 
     # Consultation/Instruction form ids for Lippencott and Penn LibWizard Forms
-    form_id = 66960 if isLippencott else 60734
+    form_id = 66960 if is_lippincott else 60734
     
     # Skip these not useful columns
     columns_to_ignore = [
@@ -102,7 +103,7 @@ def buildDataFrame(oauth, isLippencott, start_date = None, end_date=None):
         value = value.replace(" ", "_").replace('/', '_')
         field_mapping[field["fieldId"]] = value
 
-    if isLippencott:
+    if is_lippincott:
         print ("Loading Lippencott form information:")
     else:
         print ("Loading Library form information:")
@@ -179,10 +180,16 @@ def buildDataFrame(oauth, isLippencott, start_date = None, end_date=None):
     # Return the dataframe
     return df
 
-def uploadToMetridoc(df, temp_dir, isLippencott, cursor, connection):
-    # Define a timestamp for the filename
-    filename = temp_dir + ("lippencott_" if isLippencott else "library_") + datetime.datetime.today().strftime("%Y%m%d_%H%M%S") + ".csv"
+def get_path(temp_dir, is_lippincott):
+    # return a file path for the csv file to be output
+    date_component = datetime.datetime.today().strftime('%Y%m%d_%H%M%S')
+    file_name = 'lippincott' if is_lippincott else 'library'
+    file_name += '_%s.csv' % date_component
+    return Path(temp_dir).joinpath(file_name).as_posix()
+
+def uploadToMetridoc(df, temp_dir, is_lippincott, cursor, connection):
     # Push dataframe to CSV
+    filename = get_path(temp_dir, is_lippincott)
     df.to_csv(filename, index=False)
     # Extract column names
     columns = ",".join(df.columns.tolist())
@@ -217,7 +224,7 @@ if __name__ == '__main__':
     parser.add_argument("--temporary_directory",
                         dest="temp_dir",
                         help="Temporary directory to hold CSVs before upload to postgres",
-                        default="/tmp/")
+                        default="/tmp")
     parser.add_argument("--metridoc-config",
                         dest="metridoc_config",
                         help="Configuration for Metridoc Connection",
@@ -270,10 +277,10 @@ if __name__ == '__main__':
     oauth = startClientConnection(args.springshare_config)
     
     # Fetch the data from SpringShare and preprocess
-    lippencott = buildDataFrame(oauth, True, args.start_date, args.end_date)
+    lippincott = buildDataFrame(oauth, True, args.start_date, args.end_date)
     # Upload the data to metridoc
-    if lippencott is not None:
-        uploadToMetridoc(lippencott, args.temp_dir, True, cursor, connection)
+    if lippincott is not None:
+        uploadToMetridoc(lippincott, args.temp_dir, True, cursor, connection)
 
     # Fetch the data from SpringShare and preprocess
     library = buildDataFrame(oauth, False, args.start_date, args.end_date)
