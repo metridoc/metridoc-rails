@@ -59,7 +59,7 @@ postgres_replica_pg_hba_conf_version: v3
 postgres_start_replica_version: v1
 prometheus_alerts_version: v3
 prometheus_config_version: v2
-python_jobs_database_secret_version: v1
+python_jobs_database_secret_version: v2
 python_jobs_libwizard_secret_version: v1
 rails_database_config_version: v5
 rails_secrets_config_version: v1

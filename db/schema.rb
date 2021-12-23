@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_17_044550) do
+ActiveRecord::Schema.define(version: 2021_12_23_154923) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -384,8 +384,7 @@ ActiveRecord::Schema.define(version: 2021_11_17_044550) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
-    t.date "swipe_date"
-    t.string "swipe_time"
+    t.datetime "swipe_date"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
@@ -802,7 +801,7 @@ ActiveRecord::Schema.define(version: 2021_11_17_044550) do
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
-    t.string "identifier_value", limit: 8
+    t.string "pennkey", limit: 8
     t.boolean "status"
     t.date "status_date"
     t.string "statistical_category_1"
@@ -810,6 +809,11 @@ ActiveRecord::Schema.define(version: 2021_11_17_044550) do
     t.string "statistical_category_3"
     t.string "statistical_category_4"
     t.string "statistical_category_5"
+    t.text "penn_id"
+    t.text "first_name"
+    t.text "last_name"
+    t.text "email"
+    t.text "user_group"
     t.index ["statistical_category_1"], name: "index_upenn_alma_demographics_on_statistical_category_1"
     t.index ["statistical_category_2"], name: "index_upenn_alma_demographics_on_statistical_category_2"
     t.index ["statistical_category_3"], name: "index_upenn_alma_demographics_on_statistical_category_3"
