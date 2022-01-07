@@ -333,39 +333,3 @@ if __name__ == '__main__':
 
     ci_helper.run_job()
 
-    # To completed reset the database
-    if args.run_reset:
-        # Totally wipe the table for reloading
-
-        # Delete all rows from table
-        cursor.execute("ROLLBACK;")
-        cursor.execute("DELETE FROM consultation_interactions;")
-
-        # Reset the sequence to 0
-        cursor.execute("ROLLBACK;")
-        cursor.execute("ALTER SEQUENCE consultation_interactions_id_seq RESTART;")
-
-        # Persist changes
-        connection.commit()
-        connection.close()
-
-        # quit the program
-        sys.exit()
-
-    # Start the connection to SpringShare
-    oauth = startClientConnection(args.springshare_config)
-    
-    # Fetch the data from SpringShare and preprocess
-    lippencott = buildDataFrame(oauth, True, args.start_date, args.end_date)
-    # Upload the data to metridoc
-    if lippencott is not None:
-        uploadToMetridoc(lippencott, args.temp_dir, True, cursor, connection)
-
-    # Fetch the data from SpringShare and preprocess
-    library = buildDataFrame(oauth, False, args.start_date, args.end_date)
-    # Upload to metridoc
-    if library is not None:
-        uploadToMetridoc(library, args.temp_dir, False, cursor, connection)
-
-    # Close the connection to metridoc
-    connection.close()
