@@ -29,10 +29,8 @@ logging.basicConfig(filename='output.log',
                     datefmt=dateStr)
 
 TABLE_NAME = 'consultation_interactions'
-SPRINGSHARE_CONFIG = 'config/libwizard.ini'
-METRIDOC_CONFIG = 'config/metridoc.ini'
 
-
+# simple class to make dealing w/ db a little simpler
 class DbConfigurator:
     def __init__(self, path, section):
         self.path = path
@@ -71,18 +69,13 @@ class DbConfigurator:
     def db_connect_string(self):
         return 'postgresql://%(user)s:%(password)s@%(host)s:%(port)s/%(database)s' % self._config
 
+
 class CIHelper:
-    def __init__(self, target_table=TABLE_NAME, **kwargs):
+    def __init__(self, target_table=TABLE_NAME):
+        # note: using argparse's namespace= option to provide most of our attributes
         self.target_table = target_table
         self._engine = None
         self._db_config = None
-        # self.springshare_config = kwargs['springshare_config']
-        # self.metridoc_config = kwargs['metridoc_config']
-        # self.start_date = kwargs['start_date']
-        # self.end_date = kwargs['end_date']
-        # self.temp_dir = kwargs['temp_dir']
-        # self.metridoc_section = kwargs['metridoc_section']
-        # self.reset = kwargs['run_reset']
 
     @property
     def db_config(self):
@@ -98,22 +91,24 @@ class CIHelper:
 
     # Function to start up a connection to libWizard API using OAuth2
     def startClientConnection(self):
+        logging.debug('startClientConnection()')
         # Parse the connection ini file
         config = configparser.ConfigParser()
         config.read(self.springshare_config)
 
         # Setup connection information
-        client = BackendApplicationClient(client_id = config['default']['client_id'])
-        oauth = OAuth2Session(client = client)
+        client = BackendApplicationClient(client_id=config['default']['client_id'])
+        oauth = OAuth2Session(client=client)
         token = oauth.fetch_token(
-            token_url = config['default']['authorization_endpoint'],
-            client_id = config['default']['client_id'],
-            client_secret = config['default']['client_secret']
+            token_url=config['default']['authorization_endpoint'],
+            client_id=config['default']['client_id'],
+            client_secret=config['default']['client_secret']
         )
 
         return oauth
 
     def buildDataFrame(self, oauth, is_lippincott):
+        logging.debug('buildDataFrame()')
         # Specify that today is the exclusive end date
         if not self.end_date:
             self.end_date = datetime.date.today()
@@ -123,9 +118,11 @@ class CIHelper:
         if not self.start_date:
             self.start_date = "2010-01-01"
 
-        print ("Accessing records submitted from " + self.start_date + " to " + self.end_date)
+        msg = '====> Accessing records submitted from ' + self.start_date + ' to ' + self.end_date
+        print(msg)
+        logging.warning(msg)
 
-        # Consultation/Instruction form ids for Lippencott and Penn LibWizard Forms
+        # Consultation/Instruction form ids for Lippincott and Penn LibWizard Forms
         form_id = 66960 if is_lippincott else 60734
 
         # Skip these not useful columns
@@ -148,22 +145,22 @@ class CIHelper:
         # Prepare regex search and replace
         remove_parenthetical = re.compile(r"\(.*\)")
 
-        # Loop through the fields
+        # Loop through the field
         for field in info_dict["fields"]:
-                                             # Format the field name
-                                             value = field["properties"]["col_header"]
-                                             # Remove parenthetical statement
-                                             value = remove_parenthetical.sub('', value)
-                                             # Make lower case and strip extra spaces
-                                             value = value.strip().lower()
-                                             # Replace spaces with underscores and parens with nothing
-                                             value = value.replace(" ", "_").replace('/', '_')
-                                             field_mapping[field["fieldId"]] = value
+            # Format the field name
+            value = field["properties"]["col_header"]
+            # Remove parenthetical statement
+            value = remove_parenthetical.sub('', value)
+            # Make lower case and strip extra spaces
+            value = value.strip().lower()
+            # Replace spaces with underscores and parens with nothing
+            value = value.replace(" ", "_").replace('/', '_')
+            field_mapping[field["fieldId"]] = value
 
         if is_lippincott:
-            print ("Loading Lippencott form information:")
+            print("====> Loading Lippincott form information.")
         else:
-            print ("Loading Library form information:")
+            print("====> Loading Library form information.")
 
         # Initialize empty list for rows
         all_entries = []
@@ -176,55 +173,55 @@ class CIHelper:
 
         # Loop through api pages until told to stop
         while paginate:
-           # Get the form entries
-           entry_api = f"https://upenn.libwizard.com/api/v1/public/submissions/{str(form_id)}"
-           # Run the pagination
-           entry_api = entry_api + f"?limit=100&page={page_number}"
+            # Get the form entries
+            entry_api = f"https://upenn.libwizard.com/api/v1/public/submissions/{str(form_id)}"
+            # Run the pagination
+            entry_api = entry_api + f"?limit=100&page={page_number}"
+            logging.debug('entry_api: %s' % entry_api)
 
-           # Get all responses to the form
-           entry_response = oauth.get(entry_api)
+            # Get all responses to the form
+            entry_response = oauth.get(entry_api)
 
-           entry_dict = entry_response.json()
+            entry_dict = entry_response.json()
 
-           # Stop if no more rows are fetched
-           if len(entry_dict) == 0:
-               paginate = False
-               break
+            # Stop if no more rows are fetched
+            if len(entry_dict) == 0:
+                paginate = False
+                break
 
-           # Loop through the submissions listed in the response
-           for entry in entry_dict:
-               # Create a hash for this entry
-               data_dict = {}
+            # Loop through the submissions listed in the response
+            for entry in entry_dict:
+                # Create a hash for this entry
+                data_dict = {}
 
-               # Loop through the fields in the responses and add them to the dictionary
-               for field in entry["data"]:
-                   key = field_mapping[field["fieldId"]]
-                   # Skip some unneeded columns
-                   if key in columns_to_ignore:
-                       continue
+                # Loop through the fields in the responses and add them to the dictionary
+                for field in entry["data"]:
+                    key = field_mapping[field["fieldId"]]
+                    # Skip some unneeded columns
+                    if key in columns_to_ignore:
+                        continue
 
-                   data_dict[key] = field["data"]
+                    data_dict[key] = field["data"]
 
-               # Add the metadata of the submission time to the dictionary
-               # N.B. this time is in UTC not EST
-               data_dict["submitted"] = entry["created"]
+                # Add the metadata of the submission time to the dictionary
+                # N.B. this time is in UTC not EST
+                data_dict["submitted"] = entry["created"]
 
-               # Stop looking for entries earlier than the start date
-               if data_dict["submitted"] < self.start_date:
-                   print ("Stop now")
-                   paginate = False
-                   break
+                # Stop looking for entries earlier than the start date
+                if data_dict["submitted"] < self.start_date:
+                    paginate = False
+                    break
 
-               # Skip entries missing the staff pennkey
-               if len(data_dict["staff_pennkey"]) != 0:
-                   all_entries.append(data_dict)
+                # Skip entries missing the staff pennkey
+                if len(data_dict["staff_pennkey"]) != 0:
+                    all_entries.append(data_dict)
 
-           # Increase pagination
-           page_number = page_number + 1
+            # Increase pagination
+            page_number = page_number + 1
 
-    # Check to see if there are any entries in the dataframe
+            # Check to see if there are any entries in the dataframe
         if len(all_entries) == 0:
-            print ("No new submissions found")
+            print("====> No new submissions found")
             return None
 
         # Make a dataframe
@@ -233,26 +230,32 @@ class CIHelper:
         # Filter the dataframe by end date
         df = df[df.submitted < self.end_date]
 
+        # Add column to flag that these records originate from import job,
+        # rather than upload:
+        df.insert(len(df.columns), 'upload_record', False, allow_duplicates=True)
+
         # Return the dataframe
         return df
 
-    def reset_table(self):
-        # wipe table prior to reloading
+    def purge_old(self):
+        logging.debug('purge_old()')
+        # purge all records flagged as upload_record = false
         connection = psycopg2.connect(**parse_dsn(self.db_config.db_connect_string))
         cursor = connection.cursor()
         # delete all rows
         cursor.execute("ROLLBACK;")
-        cursor.execute("DELETE FROM %s;" % self.target_table)
+        cursor.execute("DELETE FROM %s WHERE upload_record != true;" % self.target_table)
         # reset sequence to 0
-        cursor.execute("ROLLBACK;")
-        seq = self.target_table + '_id_seq'
-        cursor.execute("ALTER SEQUENCE %s RESTART;" % seq)
+        # cursor.execute("ROLLBACK;")
+        # seq = self.target_table + '_id_seq'
+        # cursor.execute("ALTER SEQUENCE %s RESTART;" % seq)
         # persist changes
         connection.commit()
         cursor.close()
         connection.close()
 
     def get_path(self, temp_dir, is_lippincott):
+        logging.debug('get_path()')
         # return a file path for the csv file to be output
         date_component = datetime.datetime.today().strftime('%Y%m%d_%H%M%S')
         file_name = 'lippincott' if is_lippincott else 'library'
@@ -260,76 +263,79 @@ class CIHelper:
         return Path(temp_dir).joinpath(file_name).as_posix()
 
     def uploadToMetridoc(self, data_frame):
+        logging.debug('uploadToMetridoc()')
         connection = self.engine.raw_connection()
         cursor = connection.cursor()
         # Push dataframe to CSV
         output = io.StringIO()
         data_frame.to_csv(output, index=False, header=False, sep='\t', quoting=csv.QUOTE_NONE, escapechar='\\')
-        # print(output.getvalue())
         # jump to start of stream
         output.seek(0)
         # Extract column names
         # columns = ",".join(data_frame.columns.tolist())
-        # print(columns)
+        logging.warning('Loading records into Metridoc.')
         cursor.execute("ROLLBACK;")
         cursor.copy_from(output, 'consultation_interactions', columns=data_frame.columns.tolist(), null='')
         connection.commit()
         cursor.close()
 
     def run_job(self):
-        if self.reset_table:
-            self.reset_table()
+        logging.debug('run_job()')
+        if self.purge_old_imported:
+            print('=> Purging table [%s].' % TABLE_NAME)
+            self.purge_old()
         # start connection to SpringShare
+        print('==> Connecting to SpringShare.')
         oauth = self.startClientConnection()
         # fetch data for Lippincott
+        print('==> Fetching Lippincott records.')
         lippincott = self.buildDataFrame(oauth, True)
         # upload data to Metridoc
         if lippincott is not None:
+            print('====> Loading Lippincott records.')
             self.uploadToMetridoc(lippincott)
+            print('====> Lippincott records saved.')
         # fetch data for Library
+        print('==> Fetching Library records.')
         library = self.buildDataFrame(oauth, False)
         if library is not None:
+            print('====> Loading Library records.')
             self.uploadToMetridoc(library)
+            print('====> Library records saved.')
 
-        
+
 # Main function
 if __name__ == '__main__':
-
     ci_helper = CIHelper()
 
     # Command Options
-    parser = argparse.ArgumentParser("Fetch consultation and instruction data from SpringShare and upload to metridoc via a csv")
+    parser = argparse.ArgumentParser(
+        "Fetch consultation and instruction data from SpringShare and upload to metridoc via a csv")
     parser.add_argument("--start-date",
-                        dest="start_date",
                         help="Earliest date to upload in YYYY-MM-DD format (inclusive), default is 2010.",
                         default=None)
     parser.add_argument("--end-date",
-                        dest="end_date",
                         help="Last date to upload in YYYY-MM-DD format (exclusive), default is today's date.",
                         default=None)
     parser.add_argument("--springshare-config",
-                        dest="springshare_config",
                         help="Configuration for SpringShare Connection",
                         default="config/libwizard.ini")
-    parser.add_argument("--temporary_directory",
-                        dest="temp_dir",
+    parser.add_argument("--temp-dir",
                         help="Temporary directory to hold CSVs before upload to postgres",
                         default="/tmp")
     parser.add_argument("--metridoc-config",
-                        dest="metridoc_config",
                         help="Configuration for Metridoc Connection",
                         default="config/metridoc.ini")
     parser.add_argument("--metridoc-section",
-                        dest="metridoc_section",
                         help="Section of configuration file for Metridoc connection",
-                        default="local")
-    parser.add_argument("--reset",
-                        dest = "run_reset",
-                        action = "store_true",
-                        help="Reset the table, drops all rows and resets the id sequence",
+                        default="postgresql")
+    parser.add_argument("--purge-old-imported",
+                        action="store_true",
+                        help="Purge all records flagged as \'upload_record = false\'",
                         default=False)
-    
+
     args = parser.parse_args(namespace=ci_helper)
 
+    print('Starting record load.')
     ci_helper.run_job()
-
+    print('Record load complete.')
