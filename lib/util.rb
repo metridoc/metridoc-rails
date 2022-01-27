@@ -32,7 +32,7 @@ module Util
     end
 
     def column_to_attribute(column)
-      column.underscore.gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase
+      column.underscore.gsub(/\(.+\)/, '').gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase
     end
 
   end
