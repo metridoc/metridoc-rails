@@ -42,7 +42,7 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def calculate_rows_to_process
     csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
-    csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+    csv = CSV.read(csv_file_path)
     return csv.size-1
   end
 
@@ -56,7 +56,7 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def get_headers
     csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
-    csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+    csv = CSV.read(csv_file_path)
     headers = csv.first.map{|c| Util.column_to_attribute(c) }
     headers.each do |column_name|
       if target_class.columns_hash[column_name].blank?
@@ -68,7 +68,7 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def import
     batch_size = 1000
-    csv = CSV.read(csv_file_path, {encoding: 'ISO-8859-1'})
+    csv = CSV.read(csv_file_path)
 
     headers = get_headers
 
