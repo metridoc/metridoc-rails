@@ -113,7 +113,7 @@ ActiveRecord::Schema.define(version: 2022_02_01_184443) do
     t.string "first_name"
     t.string "last_name"
     t.string "preferred_email"
-    t.integer "penn_id_number"
+    t.string "penn_id_number"
   end
 
   create_table "ares_item_usages", force: :cascade do |t|
