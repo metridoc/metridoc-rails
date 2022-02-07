@@ -110,6 +110,10 @@ ActiveRecord::Schema.define(version: 2022_01_31_192354) do
     t.datetime "loan_date"
     t.datetime "due_date"
     t.datetime "original_due_date"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "preferred_email"
+    t.string "penn_id_number"
   end
 
   create_table "ares_item_usages", force: :cascade do |t|
@@ -385,13 +389,12 @@ ActiveRecord::Schema.define(version: 2022_01_31_192354) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
-    t.date "swipe_date"
-    t.string "swipe_time"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
+    t.datetime "swipe_date"
     t.integer "card_num"
     t.string "first_name"
     t.string "last_name"
