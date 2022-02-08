@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_24_144420) do
+ActiveRecord::Schema.define(version: 2022_01_31_192354) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,10 @@ ActiveRecord::Schema.define(version: 2022_01_24_144420) do
     t.datetime "loan_date"
     t.datetime "due_date"
     t.datetime "original_due_date"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "preferred_email"
+    t.string "penn_id_number"
   end
 
   create_table "ares_item_usages", force: :cascade do |t|
@@ -385,12 +389,15 @@ ActiveRecord::Schema.define(version: 2022_01_24_144420) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
-    t.datetime "swipe_date"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
+    t.datetime "swipe_date"
+    t.integer "card_num"
+    t.string "first_name"
+    t.string "last_name"
   end
 
   create_table "geo_data_zip_codes", force: :cascade do |t|
