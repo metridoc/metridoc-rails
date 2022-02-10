@@ -69,7 +69,10 @@ def processChunk(chunk, delta):
             row.Affiliation_Desc,
             row.Center_Desc,
             row.Dept_Desc,
-            row.USC_Desc
+            row.USC_Desc,
+            row.Card_num,
+            row.First_name,
+            row.Last_Name
         ]
 
         # Surround value by single quotes and allow for NULL entries
@@ -83,7 +86,7 @@ def processChunk(chunk, delta):
 
     # Prepare for bulk insert
     insert_command = f"""INSERT INTO gate_count_card_swipes
-            (swipe_date, door_name, affiliation_desc, center_desc, dept_desc, usc_desc) VALUES
+            (swipe_date, door_name, affiliation_desc, center_desc, dept_desc, usc_desc, card_num, first_name, last_name) VALUES
             {comma_newline.join(values_to_insert)};
         """
 
@@ -106,6 +109,9 @@ if __name__ == '__main__':
                         dest="config_file",
                         help="Configuration for Metridoc Connection",
                         default="config/metridoc.ini")
+    parser.add_argument('--chunksize',
+                        help='Size (in records) of csv chunks to process at a time.',
+                        default=10000)
     parser.add_argument("--section",
                         dest="config_section",
                         help="Section of configuration file for Metridoc connection",
@@ -134,6 +140,7 @@ if __name__ == '__main__':
     # To completed reset the database
     if args.run_reset:
         # Totally wipe the table for reloading
+        print('Purging existing table records ...')
 
         # Delete all rows from table
         cursor.execute("ROLLBACK;")
@@ -150,11 +157,15 @@ if __name__ == '__main__':
         # quit the program
         sys.exit()
 
+    print('Processing file %s ...' % args.input_file)
+
     # Note that the chunk size should be tuned for optimum memory usage
     # when doing the import
-    chunked = pd.read_csv(args.input_file, parse_dates=['Date'], chunksize=10000)
+    chunked = pd.read_csv(args.input_file, dtype={'Card_num': object}, parse_dates=['Date'], chunksize=args.chunksize)
 
+    record_range = 0
     for chunk in chunked:
+        print('  Processing records %d - %d' % (record_range + 1, record_range + args.chunksize))
         # Get the insert command
         insert_command = processChunk(
             chunk,
@@ -168,7 +179,8 @@ if __name__ == '__main__':
             cursor.execute("ROLLBACK;")
             cursor.execute(insert_command)
 
-        # Make changes persistant
+        # Make changes persistent
         connection.commit()
+        record_range += args.chunksize
 
     connection.close()
