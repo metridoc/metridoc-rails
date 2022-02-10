@@ -19,7 +19,8 @@ sqls:
                                   NOW(),
                                   NOW()
                         FROM  illiad_doc_dels
-                        WHERE status = 'Awaiting Lending Request Processing';
+                        WHERE status = 'Awaiting Lending Request Processing'
+                          AND institution_id = %{institution_id};
 
   - |
                         UPDATE illiad_doc_del_trackings
