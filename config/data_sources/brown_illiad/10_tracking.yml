@@ -23,7 +23,8 @@ sqls:
                                   NOW(),
                                   NOW()
                         FROM  illiad_borrowings
-                        WHERE transaction_status = 'Awaiting Copyright Clearance';
+                        WHERE transaction_status = 'Awaiting Copyright Clearance'
+                          AND institution_id = %{institution_id};
 
   - |
                         UPDATE illiad_trackings
