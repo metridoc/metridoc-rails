@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_31_192354) do
+ActiveRecord::Schema.define(version: 2022_02_01_184443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -389,12 +389,12 @@ ActiveRecord::Schema.define(version: 2022_01_31_192354) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
+    t.datetime "swipe_date"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
-    t.datetime "swipe_date"
     t.integer "card_num"
     t.string "first_name"
     t.string "last_name"
