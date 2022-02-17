@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_01_184443) do
+ActiveRecord::Schema.define(version: 2022_02_11_180816) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -395,7 +395,7 @@ ActiveRecord::Schema.define(version: 2022_02_01_184443) do
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
-    t.integer "card_num"
+    t.string "card_num"
     t.string "first_name"
     t.string "last_name"
   end
