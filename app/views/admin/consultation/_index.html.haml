@@ -1,5 +1,4 @@
-%h2= "Resources"
-Link to downloadable raw data table.
+%h2= "Link to Downloadable Raw Data Table"
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
@@ -39,6 +38,7 @@ Get summary statistics on a specific librarian.
 
 %h2 Summary Statistics and Network Diagrams
 
-#{content_tag(:em, "Work in Progress...")}
 %ul
   %li= link_to "All Library Summary", "consultation_summary"
+  %li
+    %div{style: "font-style: italic; color: gray"}Summaries by unit in development

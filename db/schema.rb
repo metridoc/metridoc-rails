@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_01_184443) do
+ActiveRecord::Schema.define(version: 2022_02_17_172232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -395,7 +395,7 @@ ActiveRecord::Schema.define(version: 2022_02_01_184443) do
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
-    t.integer "card_num"
+    t.string "card_num"
     t.string "first_name"
     t.string "last_name"
   end
@@ -722,33 +722,6 @@ ActiveRecord::Schema.define(version: 2022_02_01_184443) do
     t.datetime "status_set_at", null: false
     t.string "status", null: false
     t.text "log_text"
-  end
-
-  create_table "marc_book_mods", force: :cascade do |t|
-    t.string "title"
-    t.string "name"
-    t.string "name_date"
-    t.string "role"
-    t.string "type_of_resource"
-    t.string "genre"
-    t.string "origin_place_code"
-    t.string "origin_place"
-    t.string "origin_publisher"
-    t.string "origin_date_issued"
-    t.string "origin_issuance"
-    t.string "language"
-    t.string "physical_description_form"
-    t.string "physical_description_extent"
-    t.string "subject"
-    t.string "classification"
-    t.string "related_item_title"
-    t.string "lccn_identifier"
-    t.string "oclc_identifier"
-    t.string "record_content_source"
-    t.string "record_creation_date"
-    t.string "record_change_date"
-    t.string "record_identifier"
-    t.string "record_origin"
   end
 
   create_table "report_queries", force: :cascade do |t|
