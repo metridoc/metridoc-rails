@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_31_192354) do
+ActiveRecord::Schema.define(version: 2022_02_18_194431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -545,6 +545,7 @@ ActiveRecord::Schema.define(version: 2022_01_31_192354) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_legacy", default: false, null: false
+    t.string "completion_status"
     t.index ["institution_id"], name: "index_illiad_trackings_on_institution_id"
     t.index ["order_date"], name: "index_illiad_trackings_on_order_date"
   end
