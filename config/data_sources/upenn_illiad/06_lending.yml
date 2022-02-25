@@ -9,19 +9,19 @@ column_mappings:
   "Tracking.ChangedTo": status
   "MIN(Tracking.DateTime)": transaction_date
 filter_raw: |
-                        (
-                            (
-                              Transactions.RequestType = 'Article'
-                              AND
-                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
-                            )
-                            OR
-                            (
-                              Transactions.RequestType = 'Loan'
-                              AND
-                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
-                            )
-                        )
+              (
+                          Tracking.ChangedTo IN (
+                            'Awaiting Lending Request Processing',
+                            'Awaiting Local Request Processing',
+                            'Imported from OCLC',
+                            'Imported from DOCLINE',
+                            'Request Finished',
+                            'Request Conditionalized',
+                            'Item Shipped',
+                            'Cancelled by ILL Staff'
+                          )
+              )
+
 join_tables:
   - INNER JOIN Tracking ON Tracking.TransactionNumber = Transactions.TransactionNumber AND Transactions.ProcessType = 'Lending'
 group_by_columns:

@@ -2,10 +2,28 @@ load_sequence:         16
 target_adapter:        'native_sql'
 target_model:          "Illiad::Tracking"
 truncate_before_load:  "no"
-sql: |
+sqls:
+  - |
                         UPDATE illiad_trackings
-                        SET turnaround_req_rec = DATE_PART('day', receive_date - request_date) ,
-                            turnaround_req_shp = DATE_PART('day', ship_date - request_date) ,
-                            turnaround_shp_rec = DATE_PART('day', receive_date - ship_date) 
-                        WHERE institution_id = %{institution_id}
-                        ;
+                        SET turnaround_req_shp = ROUND(
+                          CAST (
+                            EXTRACT(
+                              EPOCH FROM (ship_date - request_date)
+                            ) / 24 / 3600
+                            AS NUMERIC
+                          ), 5),
+                          turnaround_req_rec = ROUND(
+                            CAST(
+                              EXTRACT(
+                                EPOCH FROM (receive_date - request_date)
+                              ) / 24 / 3600
+                              AS NUMERIC
+                            ), 5),
+                          turnaround_shp_rec = ROUND(
+                            CAST(
+                              EXTRACT(
+                                EPOCH FROM (receive_date - ship_date)
+                              ) / 24 / 3600
+                              AS NUMERIC
+                            ),5)
+                        WHERE institution_id = %{institution_id};

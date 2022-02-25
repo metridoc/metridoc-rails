@@ -1,11 +1,11 @@
-load_sequence:         17
+load_sequence:         18
 target_adapter:        'native_sql'
-target_model:          "Illiad::LendingTracking"
+target_model:          "Illiad::DocDelTracking"
 truncate_before_load:  "no"
 sql: |
-                        UPDATE illiad_lending_trackings
+                        UPDATE illiad_doc_del_trackings
                         SET turnaround = ROUND (
-                          CAST(
+                          CAST (
                             EXTRACT( EPOCH FROM (completion_date - arrival_date)) / 24 / 3600
                             AS NUMERIC
                           ), 5)
