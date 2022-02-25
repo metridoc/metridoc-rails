@@ -2,7 +2,7 @@ ActiveAdmin.register_page "Consultation Statistics" do
 
   breadcrumb do
     # Custom breadcrumb links
-    [link_to('Admin', admin_root_path), link_to('Consultation', admin_consultation_path)]
+    [link_to('Admin', admin_root_path), link_to('Consultation and Instruction', admin_consultation_path)]
   end
 
   # Do not add to top menu
