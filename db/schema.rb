@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_17_172232) do
+ActiveRecord::Schema.define(version: 2022_03_01_190408) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,9 +163,11 @@ ActiveRecord::Schema.define(version: 2022_02_17_172232) do
     t.boolean "is_legacy", default: false, null: false
     t.index ["borrower", "lender", "request_number", "patron_type"], name: "borrowdirect_bibliographies_composite_idx"
     t.index ["borrower"], name: "index_borrowdirect_bibliographies_on_borrower"
+    t.index ["call_number"], name: "index_borrowdirect_bibliographies_on_call_number", using: :hash
     t.index ["lender"], name: "index_borrowdirect_bibliographies_on_lender"
     t.index ["patron_type"], name: "index_borrowdirect_bibliographies_on_patron_type"
     t.index ["request_number"], name: "index_borrowdirect_bibliographies_on_request_number"
+    t.index ["supplier_code"], name: "index_borrowdirect_bibliographies_on_supplier_code"
   end
 
   create_table "borrowdirect_call_numbers", force: :cascade do |t|
@@ -264,6 +266,9 @@ ActiveRecord::Schema.define(version: 2022_02_17_172232) do
     t.text "session_description"
     t.text "notes"
     t.boolean "upload_record", default: true
+    t.index ["outcome"], name: "index_consultation_interactions_on_outcome"
+    t.index ["patron_question"], name: "index_consultation_interactions_on_patron_question"
+    t.index ["staff_pennkey"], name: "index_consultation_interactions_on_staff_pennkey"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -782,7 +787,7 @@ ActiveRecord::Schema.define(version: 2022_02_17_172232) do
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
-    t.string "pennkey", limit: 8
+    t.string "pennkey", limit: 8, null: false
     t.boolean "status"
     t.date "status_date"
     t.string "statistical_category_1"
@@ -790,11 +795,12 @@ ActiveRecord::Schema.define(version: 2022_02_17_172232) do
     t.string "statistical_category_3"
     t.string "statistical_category_4"
     t.string "statistical_category_5"
-    t.text "penn_id"
+    t.text "penn_id", null: false
     t.text "first_name"
     t.text "last_name"
     t.text "email"
     t.text "user_group"
+    t.index ["pennkey", "penn_id"], name: "index_upenn_alma_demographics_on_pennkey_and_penn_id", unique: true
     t.index ["statistical_category_1"], name: "index_upenn_alma_demographics_on_statistical_category_1"
     t.index ["statistical_category_2"], name: "index_upenn_alma_demographics_on_statistical_category_2"
     t.index ["statistical_category_3"], name: "index_upenn_alma_demographics_on_statistical_category_3"
