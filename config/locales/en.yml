@@ -184,8 +184,8 @@ en:
         one: "User Role Section"
         other: "User Role Sections"
       consultation/interaction:
-        one: "Consultation Interaction"
-        other: "Consultation Interactions"
+        one: "Consultation and Instruction Interaction"
+        other: "Consultation and Instruction Interactions"
       tools/file_upload_import:
         one: "File Upload Import"
         other: "File Upload Imports"
