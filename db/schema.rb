@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_01_190408) do
+ActiveRecord::Schema.define(version: 2022_03_02_151040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -177,6 +177,8 @@ ActiveRecord::Schema.define(version: 2022_03_01_190408) do
     t.string "call_number", limit: 256
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["call_number"], name: "index_borrowdirect_call_numbers_on_call_number", using: :hash
+    t.index ["supplier_code"], name: "index_borrowdirect_call_numbers_on_supplier_code"
   end
 
   create_table "borrowdirect_exception_codes", force: :cascade do |t|
@@ -319,6 +321,9 @@ ActiveRecord::Schema.define(version: 2022_03_01_190408) do
     t.string "call_number", limit: 256
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["call_number"], name: "index_ezborrow_call_numbers_on_call_number", using: :hash
+    t.index ["request_number"], name: "index_ezborrow_call_numbers_on_request_number"
+    t.index ["supplier_code"], name: "index_ezborrow_call_numbers_on_supplier_code"
   end
 
   create_table "ezborrow_exception_codes", force: :cascade do |t|
