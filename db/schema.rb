@@ -560,6 +560,7 @@ ActiveRecord::Schema.define(version: 2022_03_04_174926) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_legacy", default: false, null: false
+    t.string "completion_status"
     t.index ["institution_id"], name: "index_illiad_trackings_on_institution_id"
     t.index ["order_date"], name: "index_illiad_trackings_on_order_date"
   end

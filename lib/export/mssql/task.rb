@@ -84,7 +84,7 @@ module Export
 
         if export_filter_date_range_sql.present?
           validate_range_request('to', earliest, nil) unless earliest.nil?
-          scope = scope.where(export_filter_date_range_sql, from_date || Date.today - 1.years, to_date || earliest)
+          scope = scope.where(export_filter_date_range_sql, from_date || Date.today - 1.years, to_date || Date.yesterday)
         end
 
         if group_by_columns.present?
