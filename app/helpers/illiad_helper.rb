@@ -9,6 +9,13 @@ module IlliadHelper
   end
 
   # Locations of the start date of the request
+  TRACKING_TABLE_NAMES = {
+    "Borrowing" => "illiad_trackings",
+    "Lending" => "illiad_lending_trackings",
+    "Doc Del" => "illiad_doc_del_trackings"
+  }
+
+  # Locations of the start date of the request
   TURNAROUND_START_DATE = {
     "Borrowing" => "request_date",
     "Lending" => "arrival_date",
@@ -64,17 +71,34 @@ module IlliadHelper
     library_id = options.fetch(:library_id, 2)
 
     # Get the name of the table
-    table_name = table.table_name
+    table_name = TRACKING_TABLE_NAMES[process_type]
 
-    # Create a subquery for further calculations
+    # Start the base query selecting the billing information and
+    # process and request types from the Transaction Table
+    # This will be used as a subquery.
+    from_sql = Illiad::Transaction.select(:request_type)
+      .select(:process_type)
+      .select("COUNT(DISTINCT illiad_transactions.transaction_number) AS total_requests")
+      .select("SUM(
+        CASE
+          WHEN illiad_transactions.process_type = 'Lending'
+            THEN CAST(illiad_transactions.billing_amount AS DOUBLE PRECISION)
+          WHEN TRANSLATE(illiad_transactions.ifm_cost, '$', '') = ''
+            THEN 0
+          WHEN TRANSLATE(illiad_transactions.ifm_cost, '$', '') IS NULL
+            THEN 0
+          ELSE
+            CAST(TRANSLATE(illiad_transactions.ifm_cost, '$', '') AS DOUBLE PRECISION)
+        END) AS billing_amount")
+      .where(institution_id: library_id)
+      .where("illiad_transactions.creation_date BETWEEN '#{year.begin}' AND '#{year.end}'")
+
     # This will count the total requests,
     # the filled requests, the unfilled requests,
     # and the pending requests in the specified
     # fiscal year for the specified institution
-    # and group by the request type
-    from_sql = table.select(:request_type)
-      .select("COUNT(DISTINCT #{table_name}.transaction_number) AS total_requests")
-      .select("COUNT(
+    # and process
+    from_sql = from_sql.select("COUNT(
         CASE WHEN
           NOT #{table_name}.completion_status = '#{UNFILLED_STATUS}'
           AND #{table_name}.completion_status IS NOT #{PENDING_STATUS}
@@ -94,46 +118,22 @@ module IlliadHelper
         CASE WHEN
           NOT #{table_name}.completion_status = '#{UNFILLED_STATUS}'
           AND #{table_name}.completion_status IS NOT #{PENDING_STATUS}
-        THEN #{TURNAROUND_TIMES[process_type]}
+        THEN #{table_name}.#{TURNAROUND_TIMES[process_type]}
         END) AS turnaround")
-      .where(institution_id: library_id)
-      .where("#{TURNAROUND_START_DATE[process_type]} BETWEEN '#{year.begin}' AND '#{year.end}'")
-
-      # Documentation in case billing will be added
-      # Calculate the billed amount
-      # UPenn uses ifm cost for internal lending
-      # Other institutions may use billing_amount
-      # if process_type = 'Lending'
-      #   from_sql = from_sql.select(
-      #     "SUM(
-      #       CAST(
-      #         illiad_transactions.billing_amount AS DOUBLE PRECISION
-      #       )
-      #     ) AS billing_amount"
-      #   )
-      # else
-      #   from_sql = from_sql.select(
-      #     "SUM(
-      #       CAST(
-      #         SUBSTRING( illiad_transactions.ifm_cost, 2) AS DOUBLE PRECISION
-      #       )
-      #     ) AS billing_amount"
-      #   )
-      # end
+      .joins("INNER JOIN #{table_name} " +
+        "ON illiad_transactions.transaction_number = #{table_name}.transaction_number " +
+        "AND illiad_transactions.institution_id = #{table_name}.institution_id")
 
     # Group by month when requested
     if get_monthly
       from_sql = from_sql.select(
-        "CAST(EXTRACT (MONTH FROM #{TURNAROUND_START_DATE[process_type]}) AS int) AS month"
+        "CAST(EXTRACT (MONTH FROM illiad_transactions.creation_date) AS int) AS month"
       ).group("month")
     end
 
     # Group by lender groups when requested
     if group_by_user
       from_sql = from_sql.select("illiad_groups.group_name AS group_name")
-        .joins("LEFT JOIN illiad_transactions " +
-          "ON illiad_transactions.transaction_number = #{table_name}.transaction_number " +
-          "AND illiad_transactions.institution_id = #{table_name}.institution_id")
         .joins("LEFT JOIN illiad_lender_groups " +
           "ON illiad_transactions.lending_library = illiad_lender_groups.lender_code " +
           "AND illiad_transactions.institution_id = illiad_lender_groups.institution_id")
@@ -143,12 +143,14 @@ module IlliadHelper
       ).group("group_name")
     end
 
-    # Group by request type
-    from_sql = from_sql.group(:request_type).to_sql
+    # Group by process type and by request type
+    from_sql = from_sql.group(:request_type)
+      .group(:process_type)
+      .to_sql
 
     # Run further calculations based on subquery
-    query = table.select(
-      "'#{process_type}' AS process_type",
+    query = Illiad::Transaction.select(
+      "process_type",
       "request_type",
       "'FY#{year.begin.year + 1}' AS fiscal_year",
       "total_requests",
@@ -157,7 +159,8 @@ module IlliadHelper
       "unfilled_requests",
       "unfilled_requests::float / total_requests AS unfilled_rate",
       "pending_requests",
-      "turnaround"
+      "turnaround",
+      "billing_amount"
     )
 
     # Select month when requested
@@ -243,7 +246,7 @@ module IlliadHelper
         format_percent(r["unfilled_rate"]),
         format_big_number(r["pending_requests"]),
         format_into_days(r["turnaround"]),
-        #format_currency(billing.fetch(key, 0))
+        format_currency(r["billing_amount"])
       ]
 
       # Remove the fiscal year for sub pages
