@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_02_18_194431) do
+
+ActiveRecord::Schema.define(version: 2022_03_02_151040) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,9 +164,11 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
     t.boolean "is_legacy", default: false, null: false
     t.index ["borrower", "lender", "request_number", "patron_type"], name: "borrowdirect_bibliographies_composite_idx"
     t.index ["borrower"], name: "index_borrowdirect_bibliographies_on_borrower"
+    t.index ["call_number"], name: "index_borrowdirect_bibliographies_on_call_number", using: :hash
     t.index ["lender"], name: "index_borrowdirect_bibliographies_on_lender"
     t.index ["patron_type"], name: "index_borrowdirect_bibliographies_on_patron_type"
     t.index ["request_number"], name: "index_borrowdirect_bibliographies_on_request_number"
+    t.index ["supplier_code"], name: "index_borrowdirect_bibliographies_on_supplier_code"
   end
 
   create_table "borrowdirect_call_numbers", force: :cascade do |t|
@@ -175,6 +178,8 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
     t.string "call_number", limit: 256
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["call_number"], name: "index_borrowdirect_call_numbers_on_call_number", using: :hash
+    t.index ["supplier_code"], name: "index_borrowdirect_call_numbers_on_supplier_code"
   end
 
   create_table "borrowdirect_exception_codes", force: :cascade do |t|
@@ -264,6 +269,9 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
     t.text "session_description"
     t.text "notes"
     t.boolean "upload_record", default: true
+    t.index ["outcome"], name: "index_consultation_interactions_on_outcome"
+    t.index ["patron_question"], name: "index_consultation_interactions_on_patron_question"
+    t.index ["staff_pennkey"], name: "index_consultation_interactions_on_staff_pennkey"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -314,6 +322,9 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
     t.string "call_number", limit: 256
     t.datetime "process_date"
     t.boolean "is_legacy", default: false, null: false
+    t.index ["call_number"], name: "index_ezborrow_call_numbers_on_call_number", using: :hash
+    t.index ["request_number"], name: "index_ezborrow_call_numbers_on_request_number"
+    t.index ["supplier_code"], name: "index_ezborrow_call_numbers_on_supplier_code"
   end
 
   create_table "ezborrow_exception_codes", force: :cascade do |t|
@@ -389,13 +400,13 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
+    t.datetime "swipe_date"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
-    t.datetime "swipe_date"
-    t.integer "card_num"
+    t.string "card_num"
     t.string "first_name"
     t.string "last_name"
   end
@@ -725,33 +736,6 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
     t.text "log_text"
   end
 
-  create_table "marc_book_mods", force: :cascade do |t|
-    t.string "title"
-    t.string "name"
-    t.string "name_date"
-    t.string "role"
-    t.string "type_of_resource"
-    t.string "genre"
-    t.string "origin_place_code"
-    t.string "origin_place"
-    t.string "origin_publisher"
-    t.string "origin_date_issued"
-    t.string "origin_issuance"
-    t.string "language"
-    t.string "physical_description_form"
-    t.string "physical_description_extent"
-    t.string "subject"
-    t.string "classification"
-    t.string "related_item_title"
-    t.string "lccn_identifier"
-    t.string "oclc_identifier"
-    t.string "record_content_source"
-    t.string "record_creation_date"
-    t.string "record_change_date"
-    t.string "record_identifier"
-    t.string "record_origin"
-  end
-
   create_table "report_queries", force: :cascade do |t|
     t.bigint "report_template_id"
     t.integer "owner_id", null: false
@@ -810,7 +794,7 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
-    t.string "pennkey", limit: 8
+    t.string "pennkey", limit: 8, null: false
     t.boolean "status"
     t.date "status_date"
     t.string "statistical_category_1"
@@ -818,11 +802,12 @@ ActiveRecord::Schema.define(version: 2022_02_18_194431) do
     t.string "statistical_category_3"
     t.string "statistical_category_4"
     t.string "statistical_category_5"
-    t.text "penn_id"
+    t.text "penn_id", null: false
     t.text "first_name"
     t.text "last_name"
     t.text "email"
     t.text "user_group"
+    t.index ["pennkey", "penn_id"], name: "index_upenn_alma_demographics_on_pennkey_and_penn_id", unique: true
     t.index ["statistical_category_1"], name: "index_upenn_alma_demographics_on_statistical_category_1"
     t.index ["statistical_category_2"], name: "index_upenn_alma_demographics_on_statistical_category_2"
     t.index ["statistical_category_3"], name: "index_upenn_alma_demographics_on_statistical_category_3"

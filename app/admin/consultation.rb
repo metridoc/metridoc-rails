@@ -17,7 +17,7 @@ ActiveAdmin.register_page 'Consultation' do
     redirect_to redirect_url
   end
 
-  content do
+  content title: "Consultation and Instruction" do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
     resources = resources.select { |r| /^Consultation::/.match(r.resource_name.name) }

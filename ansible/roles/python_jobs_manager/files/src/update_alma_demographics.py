@@ -107,6 +107,8 @@ class AlmaDemographicsUpdater:
         self._db_config = None
         self.invalid_pennkeys = 0
         self.invalid_pennids = 0
+        self._seen = set()
+        self.duplicate_pennkeys = []
         self._datafile = None
 
     @property
@@ -126,7 +128,7 @@ class AlmaDemographicsUpdater:
         return Path(self._datafile)
 
     def generate_csv_lines(self):
-        print('read_csv()')
+        print('Processing %s ...' % self.input_file)
         with Path(self.input_file).open(encoding='utf-8-sig', newline='') as csv_file:
             reader = csv.reader(csv_file)
             for line in reader:
@@ -141,38 +143,49 @@ class AlmaDemographicsUpdater:
         return True if status == 'Active' else False
 
     def preprocess_csv_record(self, record):
-        # print('preprocess_csv_record()')
         if self.preprocess:
             # Check pennkey:
             pennkey, pennid = record[:2]
+            if pennkey in self._seen:
+                self.duplicate_pennkeys.append(pennkey)
+                return
             if not is_pennkey(pennkey):
                 self.invalid_pennkeys += 1
                 return
             # Check pennid
             if not is_pennid(pennid):
-                self.invalid_pennids + 1
+                self.invalid_pennids += 1
                 return
+            self._seen.add(pennkey)
             status = record[5]
             record[5] = self._status(status)
         return dict(zip(COLS, record))
 
     def write_preprocessed_csv_file(self):
-        print('write_preprocessed_csv()')
+        print('Writing file %s ...' % self.preprocess_file)
         with Path(self.preprocess_file).open('w') as csv_file:
             writer = csv.DictWriter(csv_file, fieldnames=COLS)
             writer.writeheader()
             for record in self.generate_csv_lines():
                 writer.writerow(record)
+        if self.invalid_pennkeys:
+            print('Skipped %s invalid pennkeys.' % self.invalid_pennkeys)
+        if self.invalid_pennids:
+            print('Skipped %s invalid pennids.' % self.invalid_pennids)
+        if self.duplicate_pennkeys:
+            print('Following pennkeys appeared more than once\n(only first csv record encountered inserted).')
+            for i in range(len(self.duplicate_pennkeys)):
+                print('  %3d. %s' % (i, self.duplicate_pennkeys[i]))
 
     def get_datafile(self):
         return self.datafile
 
     def get_dataframe(self):
-        print('get_dataframe()')
+        print('Creating dataframe ...')
         return pd.read_csv(self.get_datafile(), parse_dates=[6], infer_datetime_format=True)
 
     def truncate_table(self):
-        print('truncate_table()')
+        print('Truncating table %s ...' % self.target_table)
         conn = psycopg2.connect(**parse_dsn(self.db_config.db_connect_string))
         cur = conn.cursor()
         cur.execute('TRUNCATE TABLE %s' % self.target_table)
@@ -181,9 +194,9 @@ class AlmaDemographicsUpdater:
         conn.close()
 
     def insert_records(self):
-        print('insert_records()')
         dataframe = self.get_dataframe()
         self.truncate_table()
+        print('Inserting records ...')
         engine = sqlalchemy.create_engine(self.db_config.db_connect_string)
         dataframe.to_sql(self.target_table, con=engine, index=False, if_exists='append', method='multi')
 

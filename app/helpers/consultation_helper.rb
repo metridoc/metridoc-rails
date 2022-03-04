@@ -8,7 +8,6 @@ module ConsultationHelper
                              .not(staff_pennkey: nil)
                              .pluck(:staff_pennkey)
                              .sort
-                             .map { |k| [k, k] }
   end
 
   # Method to query the default range of dates of the table
@@ -200,15 +199,17 @@ module ConsultationHelper
     value_map = query.group(left, right).count
 
     # Transform any nils in the keys
-    value_map.transform_keys!{ |k|
+    value_map.transform_keys! { |k|
       [
         k[0].nil? ? "Unknown" : k[0],
         k[1].nil? ? "Unknown" : k[1]
       ]
     }
 
-    output = value_map.map{ |k,v| {"A": k[0], "B": k[1], "value": v} }.to_json().html_safe
+    output = value_map.map { |k, v| { "A": k[0], "B": k[1], "value": v } }.to_json().html_safe
 
     return output
-  end # end of chord mapper
+  end
+
+  # end of chord mapper
 end
