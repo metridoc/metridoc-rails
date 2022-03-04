@@ -15,9 +15,27 @@ from_raw: |
                                   MIN(t2.DateTime) AS transaction_date
                           FROM Transactions t1
                           INNER JOIN Tracking t2 ON t2.TransactionNumber = t1.TransactionNumber
-                          WHERE t1.ProcessType = 'Borrowing' 
-                            AND t2.ChangedTo in ('Awaiting Copyright Clearance','Awaiting Request Processing','Request Sent','Awaiting Post Receipt Processing','Delivered to Web')
+                          WHERE t1.ProcessType = 'Borrowing'
+                            AND t2.ChangedTo in (
+                              'Awaiting Copyright Clearance',
+                              'Awaiting Request Processing',
+                              'Request Sent',
+                              'Awaiting Post Receipt Processing'
+                            )
                           GROUP BY t2.TransactionNumber, t1.RequestType, t2.ChangedTo
+                          UNION
+                          SELECT  t2.TransactionNumber AS transaction_number,
+                                    t1.RequestType AS request_type,
+                                    t2.ChangedTo AS transaction_status,
+                                    MAX(t2.DateTime) AS transaction_date
+                            FROM Transactions t1
+                            INNER JOIN Tracking t2 ON t2.TransactionNumber = t1.TransactionNumber
+                            WHERE t1.ProcessType = 'Borrowing'
+                              AND t2.ChangedTo in (
+                                'Delivered to Web',
+                                'Cancelled by ILL Staff'
+                              )
+                            GROUP BY t2.TransactionNumber, t1.RequestType, t2.ChangedTo
                           UNION
                           SELECT    h.TransactionNumber AS transaction_number,
                                     t.RequestType AS request_type,
@@ -25,7 +43,7 @@ from_raw: |
                                     MIN(h.DateTime) AS transaction_date
                           FROM Transactions t
                           INNER JOIN History h ON h.TransactionNumber = t.TransactionNumber
-                          where t.ProcessType = 'Borrowing' 
+                          WHERE t.ProcessType = 'Borrowing'
                             AND h.UserName = 'System'
                             AND CHARINDEX('shipped', entry) > 0
                           GROUP BY h.TransactionNumber, t.RequestType ) AS S

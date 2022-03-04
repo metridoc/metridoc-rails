@@ -2,6 +2,8 @@ load_sequence:         5
 
 # Source Config
 source_adapter:        mssql
+# This does nothing
+# see https://github.com/metridoc/metridoc-rails/blob/master/lib/export/mssql/task.rb#L117
 filter:
   - "Transactions.TransactionStatus": ['Request Finished','Cancelled by ILL Staff']
 source_table: Transactions

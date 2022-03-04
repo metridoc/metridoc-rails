@@ -45,22 +45,26 @@
               %span.tooltiptext Count of unique transaction numbers requested in the fiscal year
           %th
             %div.tooltip
-              Successful Requests
+              Fulfilled Requests
               %span.tooltiptext Requests where the user has received access to item
-          %th Successful Rate
+          %th Fulfilled Rate
           %th
             %div.tooltip
-              Failed Requests
+              Unfulfilled Requests
               %span.tooltiptext Requests cancelled by ILL staff
-          %th Failure Rate
+          %th Unfulfilled Rate
           %th
             %div.tooltip
-              In Progress
+              Pending Requests
               %span.tooltiptext Outstanding requests that have not reached a final state
           %th
             %div.tooltip
               Turnaround (days)
               %span.tooltiptext Details at bottom of page
+          %th
+            %div.tooltip
+              Total Billing
+              %span.tooltiptext Total of charges and credits
       %tbody
         - table[[p_k.to_s,r_k.to_s]].each do |row|
           %tr
@@ -73,15 +77,15 @@
 
 %h2 Turnaround times
 For Borrowing items, the turnaround time is defined as the difference in days |
-between the request's creation date and either the "Delivered to Web" status |
-for Articles, or "Awaiting Post Receipt Processing" for Books, indicating that |
+between the request's creation date and either the last "Delivered to Web" status |
+for Articles, or first "Awaiting Post Receipt Processing" for Books, indicating that |
 the borrowing institution has the item.
 %p
 For Lending items, the turnaround time is defined as the difference in days |
-between the request's creation date and either the "Request Finished" status |
-for Articles, or "Item Shipped" for Books, indicating that |
-the lending institution has fulfilled the item.
+between the request's creation date and either the "Request Finished", |
+"Request Conditionalized", or "Item Shipped" status, indicating that |
+the lending institution has fulfilled the item or was prepared to.
 %p
 For Doc Del items, the turnaround time is defined as the difference in days |
-between the request's creation date and the "Request Finished" status.  There |
-is a 30 day padding that is added to Articles.
+between the request's creation date and the first instance of "Request Finished", |
+"Request Conditionalized", "Item Found", or "Delivered to Web".
