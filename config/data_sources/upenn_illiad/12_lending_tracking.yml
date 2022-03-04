@@ -15,39 +15,52 @@ sqls:
                         SELECT    %{institution_id},
                                   transaction_number,
                                   request_type,
-                                  transaction_date,
+                                  MIN(transaction_date),
                                   NOW(),
                                   NOW()
                         FROM  illiad_lendings
-                        WHERE status = 'Awaiting Lending Request Processing'
-                          AND institution_id = %{institution_id};
+                        WHERE institution_id = %{institution_id}
+                          AND status IN (
+                            'Awaiting Lending Request Processing',
+                            'Awaiting Local Request Processing',
+                            'Imported from OCLC',
+                            'Imported from DOCLINE'
+                          )
+                        GROUP BY transaction_number, request_type;
 
   - |
-                        UPDATE illiad_lending_trackings
+                        UPDATE illiad_lending_trackings LT
                         SET completion_date = L.transaction_date,
                             completion_status = L.status
                         FROM illiad_lendings L
-                        WHERE L.transaction_number = illiad_lending_trackings.transaction_number
-                          AND L.status NOT IN ('Awaiting Lending Request Processing','Cancelled by ILL Staff')
-                          AND L.institution_id = %{institution_id}
-                          AND L.institution_id = illiad_lending_trackings.institution_id
+                        WHERE status = 'Cancelled by ILL Staff'
+                          AND L.transaction_number = LT.transaction_number
+                          AND L.institution_id = LT.institution_id
+                          AND L.institution_id = %{institution_id};
 
   - |
-                        UPDATE illiad_lending_trackings
+                        UPDATE illiad_lending_trackings LT
                         SET completion_date = L.transaction_date,
                             completion_status = L.status
                         FROM illiad_lendings L
-                        WHERE L.transaction_number = illiad_lending_trackings.transaction_number
-                          AND L.status = 'Item Shipped'
+                        INNER JOIN (
+                          SELECT
+                            transaction_number,
+                            institution_id,
+                            MIN(transaction_date) AS transaction_date
+                          FROM illiad_lendings
+                          WHERE
+                            status IN (
+                              'Request Conditionalized',
+                              'Item Shipped',
+                              'Request Finished'
+                            )
+                          GROUP BY transaction_number, institution_id
+                        ) L2
+                        ON L.transaction_number = L2.transaction_number
+                          AND L.transaction_date = L2.transaction_date
+                          AND L.institution_id = L2.institution_id
+                        WHERE L.transaction_number = LT.transaction_number
+                          AND L.institution_id = LT.institution_id
                           AND L.institution_id = %{institution_id}
-                          AND L.institution_id = illiad_lending_trackings.institution_id
-
-  - |
-                        UPDATE illiad_lending_trackings
-                        SET completion_date = L.transaction_date,
-                            completion_status = L.status
-                        FROM illiad_lendings L
-                        WHERE L.transaction_number = illiad_lending_trackings.transaction_number
-                          AND L.status ='Cancelled by ILL Staff'
-                          AND L.institution_id = %{institution_id}
-                          AND L.institution_id = illiad_lending_trackings.institution_id
+                          AND LT.completion_date IS NULL;

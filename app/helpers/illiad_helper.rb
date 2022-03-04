@@ -8,240 +8,172 @@ module IlliadHelper
     return render_ids
   end
 
-  # Define what the turnaround status is for all types
-  TURNAROUND_STATUS =
-  {
-    "Borrowing" =>
-    {
-      "Article" => "Delivered to Web",
-      "Loan" => "Awaiting Post Receipt Processing"
-    },
-    "Lending" =>
-    {
-      # Penn provides request to online portal
-      "Article" => "Request Finished",
-      "Loan" => "Item Shipped"
-    },
-    "Doc Del" =>
-    {
-      # Should be Delivered to Web if a Doc Del tracking table is created
-      "Article" => "Request Finished",
-       # Should be Item Found, if a Doc Del tracking table is created
-      "Loan" => "Request Finished"
-    }
+  # Locations of the start date of the request
+  TRACKING_TABLE_NAMES = {
+    "Borrowing" => "illiad_trackings",
+    "Lending" => "illiad_lending_trackings",
+    "Doc Del" => "illiad_doc_del_trackings"
   }
 
-  # Define what a successful status is for all types
-  TURNAROUND_STATUS_TABLES =
-  {
-    "Borrowing" => "illiad_borrowings.transaction_status",
-    "Lending" => "illiad_lendings.status",
-    # Doc Del doesn't have tracking information stored in metridoc
-    # TODO: Add Doc Del tracking table
-    "Doc Del" => "illiad_transactions.transaction_status"
+  # Locations of the start date of the request
+  TURNAROUND_START_DATE = {
+    "Borrowing" => "request_date",
+    "Lending" => "arrival_date",
+    "Doc Del" => "arrival_date"
   }
 
-  # Define what a successful status is for all types
-  TURNAROUND_DATE_TABLES =
+  # Locations of completion date
+  TURNAROUND_COMPLETION_DATE =
   {
-    "Borrowing" => "illiad_borrowings.transaction_date",
-    "Lending" => "illiad_lendings.transaction_date",
-    "Doc Del" => "illiad_transactions.transaction_date"
+    "Borrowing" => "receive_date",
+    "Lending" => "completion_date",
+    "Doc Del" => "completion_date"
   }
 
-  # Calculate the turnaround times
-  def find_turnaround(query, options = {})
-    # Example Query:
-    # SELECT
-    #  AVG(EXTRACT(epoch FROM illiad_lendings.transaction_date - illiad_transactions.creation_date))
-    # FROM illiad_transactions
-    # LEFT JOIN illiad_lendings
-    #  ON illiad_transactions.transaction_number = illiad_lendings.transaction_number
-    #  AND illiad_transactions.institution_id = illiad_lendings.institution_id
-    # WHERE illiad_transactions.institution_id = 2
-    #  AND illiad_lendings.status = 'Item Shipped';
+  # Locations of calculated turnaround times
+  TURNAROUND_TIMES =
+  {
+    "Borrowing" => "turnaround_req_rec",
+    "Lending" => "turnaround",
+    "Doc Del" => "turnaround"
+  }
 
-    filter_statement = "CASE "
-    turnaround_calculation = "CASE "
-    # Loop through process types
-    process_types.each do |p_k, p_v|
-      # Loop through request types
-      request_types.each do |r_k, r_v|
-        prefix = ("WHEN illiad_transactions.process_type = '" + p_k.to_s + "'" +
-          " AND illiad_transactions.request_type = '" + r_k.to_s + "'"
-        )
+  # A FILLED status is not in UNFILLED_STATUS or PENDING_STATUS
+  # Define what a unfilled status is for all types
+  UNFILLED_STATUS = "Cancelled by ILL Staff"
 
-        filter_statement = (
-          filter_statement + prefix +
-          " THEN " + TURNAROUND_STATUS_TABLES[p_k.to_s] + " = '" + TURNAROUND_STATUS[p_k.to_s][r_k.to_s] + "' "
-        )
+  # Define what a pending status is for all types
+  PENDING_STATUS = "NULL"
 
-        turnaround_calculation = (
-          turnaround_calculation + prefix +
-          " THEN EXTRACT (epoch FROM " + TURNAROUND_DATE_TABLES[p_k.to_s] + " - illiad_transactions.creation_date) "
-        )
-
-      end
+  # Function uses a process type to determine which Tracking
+  # table to access then collects all the statistics information
+  # in a nested SQL statement
+  def count_requests(process_type, year, options={})
+    # Select the table
+    case process_type
+    when "Borrowing"
+      table = Illiad::Tracking
+    when "Lending"
+      table = Illiad::LendingTracking
+    when "Doc Del"
+      table = Illiad::DocDelTracking
+    else
+      table = nil
     end
 
-    filter_statement = filter_statement + " END"
-    turnaround_calculation = turnaround_calculation + " END"
-
-    turnaround = base_query(
-      query,
-      **options.merge(:only_filled => true)
-    ).joins(
-      "LEFT JOIN illiad_lendings " +
-      "ON illiad_transactions.transaction_number = illiad_lendings.transaction_number " +
-      "AND illiad_transactions.institution_id = illiad_lendings.institution_id"
-    ).joins(
-      "LEFT JOIN illiad_borrowings " +
-      "ON illiad_transactions.transaction_number = illiad_borrowings.transaction_number " +
-      "AND illiad_transactions.institution_id = illiad_borrowings.institution_id"
-    ).where(
-      filter_statement
-    ).average(
-      turnaround_calculation
-    )
-
-    return turnaround
-
-  end
-
-  # Define what a successful status is for all types
-  COMPLETED_STATUS =
-  {
-    "Borrowing" =>
-    {
-      "Article" => [
-        # Available to user to retrieve?
-        "Delivered to Web",
-        # A 30 day padding to the end of the request
-        "Request Finished"
-      ],
-      "Loan" => [
-        "Delivered to Web",
-        # Loan has been returned lending institution
-        "Request Finished",
-        # Loan has been received by Penn
-        "Awaiting Post Receipt Processing",
-        # Customer has Loan
-        "Checked Out to Customer"
-      ]
-    },
-    "Lending" =>
-    {
-      # Penn provides request to online portal
-      "Article" => ["Request Finished"],
-      "Loan" => [
-        # Loan returned to Penn
-        "Request Finished",
-        # Loan set out from Penn
-        "Item Shipped"
-      ]
-    },
-    "Doc Del" =>
-    {
-      "Article" => [
-        # Available to user
-        "Delivered to Web",
-        # With a 30 day padding to mark as complete
-        "Request Finished"
-      ],
-      "Loan" => [
-        # Item found then taken to pick up location
-        "Item Found",
-        # Request completed and picked up or shipped
-        "Request Finished",
-        # Loans rerouted from DocDel to Borrowing
-        # Do not have "Item Found" in History
-        "Request Sent"
-      ]
-    }
-  }
-
-  # Define what a failed status is for all types
-  FAILED_STATUS = ["Cancelled by ILL Staff"]
-
-  # Method to construct the standard query to be used across all queries
-  def base_query(input_query, options = {})
-
-    # Set up the default conditions
-    library_id = options.fetch(:library_id, 2)
-
-    # Group by months
+    # Group by month
     get_monthly = options.fetch(:get_monthly, false)
 
     # Group by lender groups
     group_by_user = options.fetch(:group_by_user, false)
 
-    # Filter only filled or exhausted records
-    only_filled = options.fetch(:only_filled, false)
-    only_exhausted = options.fetch(:only_exhausted, false)
+    # Set up the default conditions
+    library_id = options.fetch(:library_id, 2)
 
-    # Find Penn only transactions
-    output_query = input_query.where(institution_id: library_id)
+    # Get the name of the table
+    table_name = TRACKING_TABLE_NAMES[process_type]
 
-    # Group the result by the request and process types
-    # Group by the process type:
-    # Borrowing, Lending, or Doc Del (internal)
-    output_query = output_query.group(:process_type)
-    # Group by the request type:
-    # Article or Loan (book)
-    output_query = output_query.group(:request_type)
+    # Start the base query selecting the billing information and
+    # process and request types from the Transaction Table
+    # This will be used as a subquery.
+    from_sql = Illiad::Transaction.select(:request_type)
+      .select(:process_type)
+      .select("COUNT(DISTINCT illiad_transactions.transaction_number) AS total_requests")
+      .select("SUM(
+        CASE
+          WHEN illiad_transactions.process_type = 'Lending'
+            THEN CAST(illiad_transactions.billing_amount AS DOUBLE PRECISION)
+          WHEN TRANSLATE(illiad_transactions.ifm_cost, '$', '') = ''
+            THEN 0
+          WHEN TRANSLATE(illiad_transactions.ifm_cost, '$', '') IS NULL
+            THEN 0
+          ELSE
+            CAST(TRANSLATE(illiad_transactions.ifm_cost, '$', '') AS DOUBLE PRECISION)
+        END) AS billing_amount")
+      .where(institution_id: library_id)
+      .where("illiad_transactions.creation_date BETWEEN '#{year.begin}' AND '#{year.end}'")
 
-    # Select only successfully completed records
-    if only_filled
-      # Complicated CASE statement needed to be able
-      # to group by process_type and request_type
-      case_statement = "CASE "
-      # Loop through process types
-      process_types.each do |p_k, p_v|
-        # Loop through request types
-        request_types.each do |r_k, r_v|
-          case_statement = (
-            case_statement +
-            "WHEN illiad_transactions.process_type = '" + p_k.to_s + "'" +
-            " AND illiad_transactions.request_type = '" + r_k.to_s + "'" +
-            " THEN illiad_transactions.transaction_status IN (" +
-            # Hacky way to get 'value', 'value',...
-            "'#{COMPLETED_STATUS[p_k.to_s][r_k.to_s].join("', '")}'" + ") "
-          )
-        end
-      end
-      case_statement = case_statement + " END"
-
-      output_query = output_query.where(
-        case_statement
-      )
-    end
-
-    # Select only exhausted (permanently unfilled) records
-    output_query = only_exhausted ?
-    output_query.where(
-      transaction_status: FAILED_STATUS
-      ) : output_query
+    # This will count the total requests,
+    # the filled requests, the unfilled requests,
+    # and the pending requests in the specified
+    # fiscal year for the specified institution
+    # and process
+    from_sql = from_sql.select("COUNT(
+        CASE WHEN
+          NOT #{table_name}.completion_status = '#{UNFILLED_STATUS}'
+          AND #{table_name}.completion_status IS NOT #{PENDING_STATUS}
+        THEN 1
+        END) AS filled_requests")
+      .select("COUNT(
+        CASE WHEN
+          #{table_name}.completion_status = '#{UNFILLED_STATUS}'
+        THEN 1
+        END) AS unfilled_requests")
+      .select("COUNT(
+        CASE WHEN
+          #{table_name}.completion_status IS #{PENDING_STATUS}
+        THEN 1
+        END) AS pending_requests")
+      .select("AVG(
+        CASE WHEN
+          NOT #{table_name}.completion_status = '#{UNFILLED_STATUS}'
+          AND #{table_name}.completion_status IS NOT #{PENDING_STATUS}
+        THEN #{table_name}.#{TURNAROUND_TIMES[process_type]}
+        END) AS turnaround")
+      .joins("INNER JOIN #{table_name} " +
+        "ON illiad_transactions.transaction_number = #{table_name}.transaction_number " +
+        "AND illiad_transactions.institution_id = #{table_name}.institution_id")
 
     # Group by month when requested
-    output_query = get_monthly ?
-    output_query.group(
-      "CAST(EXTRACT (MONTH FROM creation_date) AS int)"
-      ) : output_query
-
-    # Group by lender groups
-    if group_by_user
-      output_query = output_query.joins(
-        "LEFT JOIN illiad_lender_groups " +
-        "ON illiad_transactions.lending_library = illiad_lender_groups.lender_code " +
-        "AND illiad_transactions.institution_id = illiad_lender_groups.institution_id"
-      ).joins(
-        "LEFT JOIN illiad_groups " +
-        "ON illiad_lender_groups.group_no = illiad_groups.group_no " +
-        "AND illiad_lender_groups.institution_id = illiad_groups.institution_id"
-      ).group("illiad_groups.group_name")
+    if get_monthly
+      from_sql = from_sql.select(
+        "CAST(EXTRACT (MONTH FROM illiad_transactions.creation_date) AS int) AS month"
+      ).group("month")
     end
 
-    return output_query
+    # Group by lender groups when requested
+    if group_by_user
+      from_sql = from_sql.select("illiad_groups.group_name AS group_name")
+        .joins("LEFT JOIN illiad_lender_groups " +
+          "ON illiad_transactions.lending_library = illiad_lender_groups.lender_code " +
+          "AND illiad_transactions.institution_id = illiad_lender_groups.institution_id")
+        .joins("LEFT JOIN illiad_groups " +
+          "ON illiad_lender_groups.group_no = illiad_groups.group_no " +
+          "AND illiad_lender_groups.institution_id = illiad_groups.institution_id"
+      ).group("group_name")
+    end
+
+    # Group by process type and by request type
+    from_sql = from_sql.group(:request_type)
+      .group(:process_type)
+      .to_sql
+
+    # Run further calculations based on subquery
+    query = Illiad::Transaction.select(
+      "process_type",
+      "request_type",
+      "'FY#{year.begin.year + 1}' AS fiscal_year",
+      "total_requests",
+      "filled_requests",
+      "filled_requests::float / total_requests AS filled_rate",
+      "unfilled_requests",
+      "unfilled_requests::float / total_requests AS unfilled_rate",
+      "pending_requests",
+      "turnaround",
+      "billing_amount"
+    )
+
+    # Select month when requested
+    query = get_monthly ? query.select("month") : query
+
+    # Select lender group when requested
+    query = group_by_user ? query.select("group_name") : query
+
+    # Run the query and return a json format
+    query = query.from("(#{from_sql}) AS counts").all.as_json
+
+    return query
+
   end
 
   # Calculate the completion rate
@@ -256,59 +188,19 @@ module IlliadHelper
     # Group by lender groups
     group_by_user = options.fetch(:group_by_user, false)
 
-    # Find distinct transactions
-    query = Illiad::Transaction.select(
-      :transaction_number
-    ).distinct
-    # Restrict to this year
-    query = query.where(creation_date: year)
-
-    turnaround = find_turnaround(
-      query,
-      **options.merge(:only_filled => true)
-    )
-
-    # Find the number of successful requests
-    successful_requests = base_query(
-      query,
-      **options.merge(:only_filled => true)
-    ).count
-
-    # Find the number of failed requests
-    failed_requests = base_query(
-      query,
-      **options.merge(:only_exhausted => true)
-    ).count
-
-    # Set the basic query for the remaining calls
-    query = base_query(query, **options)
-
-    # Find the total number of requests
-    total_requests = query.count
-
-    # Calculate the billed amount
-    # UPenn uses ifm cost for internal lending
-    # Other institutions may use billing_amount
-    # Complicated CASE statement needed to be able
-    # to group by process_type
-    # case_statement = (
-    #   "CASE " +
-    #   "WHEN process_type = 'Borrowing' " +
-    #   "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
-    #   "WHEN process_type = 'Doc Del' " +
-    #   "THEN CAST (SUBSTRING(ifm_cost, 2) AS DOUBLE PRECISION) " +
-    #   "WHEN process_type = 'Lending' " +
-    #   "THEN CAST (billing_amount AS DOUBLE PRECISION) " +
-    #   "END"
-    # )
-    # billing = query.sum(case_statement)
+    # For each process type load the results into an array
+    results = []
+    process_types.keys.each do |process_type|
+      results = results + count_requests(process_type.to_s, year, options)
+    end
 
     # Product will combine lists
+    # Get a list of all keys needed for tables
     output_keys = process_types.keys.map{ |k| k.to_s }.product(
       request_types.keys.map{ |k| k.to_s }
     )
 
-    # Build keys for the monthly situation
+    # Build keys for the monthly tables
     if get_monthly
       months = display_months(year)
       output_keys = process_types.keys.map{ |k| k.to_s }.product(
@@ -317,11 +209,9 @@ module IlliadHelper
       )
     end
 
-    # Build keys for grouping by user
+    # Build keys for grouping by user tables
     if group_by_user
-      # Find distinct transactions
       groups = lender_groups(library_id)
-
       output_keys = process_types.keys.map{ |k| k.to_s }.product(
         request_types.keys.map{ |k| k.to_s },
         groups
@@ -331,21 +221,51 @@ module IlliadHelper
     # Return a hash of the request_type and process_type
     # as keys to the related row.
     output = {}
-    # Loop through the output keys
-    output_keys.each do |key|
-      total = total_requests.fetch(key, 0)
-      successful = successful_requests.fetch(key, 0)
-      failed = failed_requests.fetch(key, 0)
-      output[key] = [
-        format_big_number(total),
-        format_big_number(successful),
-        format_percent(successful.fdiv(total)),
-        format_big_number(failed),
-        format_percent(failed.fdiv(total)),
-        format_big_number(total - successful - failed),
-        format_into_days(turnaround.fetch(key, 0)),
-        #format_currency(billing.fetch(key, 0))
+    # Loop through the results
+    results.each do |r|
+      key = [r["process_type"], r["request_type"]]
+
+      # Append to key the month
+      if get_monthly
+        key.append(r["month"])
+      end
+
+      # Append to key the group
+      if group_by_user
+        key.append(r["group_name"])
+      end
+
+      # Create the values to enter into the table
+      # and format them appropriately
+      value = [
+        r["fiscal_year"],
+        format_big_number(r["total_requests"]),
+        format_big_number(r["filled_requests"]),
+        format_percent(r["filled_rate"]),
+        format_big_number(r["unfilled_requests"]),
+        format_percent(r["unfilled_rate"]),
+        format_big_number(r["pending_requests"]),
+        format_into_days(r["turnaround"]),
+        format_currency(r["billing_amount"])
       ]
+
+      # Remove the fiscal year for sub pages
+      if get_monthly or group_by_user
+        value = value.drop(1)
+      end
+
+      output[key] = value
+    end
+
+    # The length of the value is variable depending on the request made
+    value_length = output.values.first.length()
+
+    # Fill in default for missing keys
+    output_keys.each do |key|
+      unless output.key?(key)
+        value = Array.new(value_length) {"---"}
+        output[key] = value
+      end
     end
 
     return output
@@ -367,11 +287,11 @@ module IlliadHelper
     return groups.sort.append(nil)
   end
 
-  # Turn a time difference in seconds into days
+  # Format the number of days to 2 decimal places
   def format_into_days(input)
     output = "---"
     if input and input != 0 and not input.to_f.nan?
-      output = sprintf('%.2f', input / 60 / 60 / 24)
+      output = sprintf('%.2f', input)
     end
     return output
   end
@@ -403,7 +323,7 @@ module IlliadHelper
     {
       "Borrowing": "Borrowing",
       "Lending": "Lending",
-      "Doc Del": "Doc Del"
+      "Doc Del": "Document Delivery"
     }
   end
 
@@ -441,12 +361,10 @@ module IlliadHelper
       year_table.each do |k, v|
         # If the key exists, append to the end
         if output_table.key?(k)
-          output_table[k] = output_table[k].append(
-            ["FY" + (year.min.year + 1).to_s] + v
-          )
+          output_table[k] = output_table[k].append(v)
         # if the key doesn't exist, make a list of lists
         else
-          output_table[k] = [["FY" + (year.min.year + 1).to_s] + v]
+          output_table[k] = [v]
         end
       end
     end

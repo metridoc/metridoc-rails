@@ -10,17 +10,21 @@ column_mappings:
   "MIN(Tracking.DateTime)": transaction_date
 filter_raw: |
                         (
+                            Tracking.ChangedTo IN ('Submitted by Customer', 'Request Added Through Client', 'Request Added through Web Platform')
+                            OR
                             (
                               Transactions.RequestType = 'Article'
                               AND
-                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Request Finished','Request Conditionalized','Cancelled by ILL Staff')
+                              Tracking.ChangedTo IN ('Delivered To Web')
                             )
                             OR
                             (
                               Transactions.RequestType = 'Loan'
                               AND
-                              Tracking.ChangedTo IN ('Awaiting Lending Request Processing','Awaiting Mailing', 'Item Shipped','Request Conditionalized','Cancelled by ILL Staff')
+                              Tracking.ChangedTo IN ('Item Found')
                             )
+                            OR
+                            Tracking.ChangedTo IN ('Cancelled by ILL Staff', 'Request Finished')
                         )
 join_tables:
   - INNER JOIN Tracking ON Tracking.TransactionNumber = Transactions.TransactionNumber AND Transactions.ProcessType IN ('DocDel', 'Doc Del')

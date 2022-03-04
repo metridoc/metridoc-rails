@@ -15,39 +15,52 @@ sqls:
                         SELECT    %{institution_id},
                                   transaction_number,
                                   request_type,
-                                  transaction_date,
+                                  MIN(transaction_date),
                                   NOW(),
                                   NOW()
                         FROM  illiad_doc_dels
-                        WHERE status = 'Awaiting Lending Request Processing'
-                          AND institution_id = %{institution_id};
+                        WHERE institution_id = %{institution_id}
+                          AND status IN (
+                            'Submitted by Customer',
+                            'Request Added Through Client',
+                            'Request Added through Web Platform'
+                          )
+                        GROUP BY transaction_number, request_type;
 
   - |
-                        UPDATE illiad_doc_del_trackings
-                        SET completion_date = L.transaction_date,
-                            completion_status = L.status
-                        FROM illiad_doc_dels L
-                        WHERE L.transaction_number = illiad_doc_del_trackings.transaction_number
-                          AND L.status NOT IN ('Awaiting Lending Request Processing','Cancelled by ILL Staff')
-                          AND L.institution_id = %{institution_id}
-                          AND L.institution_id = illiad_doc_del_trackings.institution_id
+                        UPDATE illiad_doc_del_trackings DT
+                        SET completion_date = D.transaction_date,
+                            completion_status = D.status
+                        FROM illiad_doc_dels D
+                        WHERE status = 'Cancelled by ILL Staff'
+                          AND D.transaction_number = DT.transaction_number
+                          AND D.institution_id = DT.institution_id
+                          AND D.institution_id = %{institution_id};
 
   - |
-                        UPDATE illiad_doc_del_trackings
-                        SET completion_date = L.transaction_date,
-                            completion_status = L.status
-                        FROM illiad_doc_dels L
-                        WHERE L.transaction_number = illiad_doc_del_trackings.transaction_number
-                          AND L.status = 'Item Shipped'
-                          AND L.institution_id = %{institution_id}
-                          AND L.institution_id = illiad_doc_del_trackings.institution_id
-
-  - |
-                        UPDATE illiad_doc_del_trackings
-                        SET completion_date = L.transaction_date,
-                            completion_status = L.status
-                        FROM illiad_doc_dels L
-                        WHERE L.transaction_number = illiad_doc_del_trackings.transaction_number
-                          AND L.status ='Cancelled by ILL Staff'
-                          AND L.institution_id = %{institution_id}
-                          AND L.institution_id = illiad_doc_del_trackings.institution_id
+                        UPDATE illiad_doc_del_trackings DT
+                        SET completion_date = D.transaction_date,
+                            completion_status = D.status
+                        FROM illiad_doc_dels D
+                        INNER JOIN (
+                          SELECT
+                            transaction_number,
+                            institution_id,
+                            MIN(transaction_date) AS transaction_date
+                          FROM illiad_doc_dels
+                          WHERE
+                            status IN (
+                              'Item Found',
+                              'Delivered to Web',
+                              'Request Conditionalized',
+                              'Request Finished'
+                            )
+                          GROUP BY transaction_number, institution_id
+                        ) D2
+                        ON D.transaction_number = D2.transaction_number
+                          AND D.transaction_date = D2.transaction_date
+                          AND D.institution_id = D2.institution_id
+                        WHERE D.transaction_number = DT.transaction_number
+                          AND D.institution_id = DT.institution_id
+                          AND D.institution_id = %{institution_id}
+                          AND DT.completion_date IS NULL;
