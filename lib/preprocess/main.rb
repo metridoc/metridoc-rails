@@ -66,6 +66,7 @@ module Preprocess
         full_paths = Dir[ File.join(root_path, "config", "data_sources", config_folder, "**", "*")]
         tasks = []
         full_paths.each do |full_path|
+          next if File.extname(full_path) != '.yml'
           next if File.basename(full_path) == "global.yml"
 
           table_params = YAML.load_file(full_path)

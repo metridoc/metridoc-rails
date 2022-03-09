@@ -36,10 +36,11 @@ sqls:
                           SELECT
                             MIN(B.transaction_date)
                           FROM illiad_borrowings B
-                          WHERE B.transaction_number = illiad_trackings.transaction_number
-                            AND B.transaction_status = 'Request Sent'
+                          INNER JOIN illiad_trackings T
+                          ON B.transaction_number = T.transaction_number
+                            WHERE B.transaction_status = 'Request Sent'
                             AND B.institution_id = %{institution_id}
-                            AND B.institution_id = illiad_trackings.institution_id
+                            AND B.institution_id = T.institution_id
                         )
                         WHERE illiad_trackings.order_date IS NULL;
 
@@ -49,10 +50,11 @@ sqls:
                           SELECT
                             MAX(B.transaction_date)
                           FROM illiad_borrowings B
-                          WHERE B.transaction_number = illiad_trackings.transaction_number
-                            AND B.transaction_status = 'Delivered to Web'
+                          INNER JOIN illiad_trackings T
+                          ON B.transaction_number = T.transaction_number
+                            WHERE B.transaction_status = 'Delivered to Web'
                             AND B.institution_id = %{institution_id}
-                            AND B.institution_id = illiad_trackings.institution_id
+                            AND B.institution_id = T.institution_id
                         );
 
   - |
@@ -61,10 +63,11 @@ sqls:
                           SELECT
                             MIN(B.transaction_date)
                           FROM illiad_borrowings B
-                          WHERE B.transaction_number = illiad_trackings.transaction_number
-                            AND B.transaction_status = 'Shipped'
+                          INNER JOIN illiad_trackings T
+                          ON B.transaction_number = T.transaction_number
+                            WHERE B.transaction_status = 'Shipped'
                             AND B.institution_id = %{institution_id}
-                            AND B.institution_id = illiad_trackings.institution_id
+                            AND B.institution_id = T.institution_id
                         )
                         WHERE illiad_trackings.ship_date IS NULL;
 
