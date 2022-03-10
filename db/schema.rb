@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2022_03_02_151040) do
+ActiveRecord::Schema.define(version: 2022_03_04_174926) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -409,6 +408,11 @@ ActiveRecord::Schema.define(version: 2022_03_02_151040) do
     t.string "card_num"
     t.string "first_name"
     t.string "last_name"
+    t.index ["affiliation_desc"], name: "index_gate_count_card_swipes_on_affiliation_desc"
+    t.index ["center_desc"], name: "index_gate_count_card_swipes_on_center_desc"
+    t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
+    t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
+    t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
   end
 
   create_table "geo_data_zip_codes", force: :cascade do |t|
