@@ -39,9 +39,10 @@ sqls:
                           INNER JOIN illiad_trackings T
                           ON B.transaction_number = T.transaction_number
                             WHERE B.transaction_status = 'Request Sent'
-                            AND B.institution_id = %{institution_id}
                             AND B.institution_id = T.institution_id
-                        )
+                            AND B.transaction_id = T.transaction_id
+                            AND B.institution_id = %{institution_id}
+    )
                         WHERE illiad_trackings.order_date IS NULL;
 
   - |
