@@ -49,8 +49,8 @@ sqls:
                             institution_id,
                             MIN(transaction_date) AS transaction_date
                           FROM illiad_lendings
-                          WHERE
-                            status IN (
+                          WHERE institution_id = %{institution_id}
+                            AND status IN (
                               'Request Conditionalized',
                               'Item Shipped',
                               'Request Finished'
