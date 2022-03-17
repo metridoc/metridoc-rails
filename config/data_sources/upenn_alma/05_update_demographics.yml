@@ -7,7 +7,8 @@ sqls:
   - |
       UPDATE upenn_alma_demographics
       SET school = statistical_category_2
-      WHERE statistical_category_2 IS NOT NULL;
+      WHERE statistical_category_2 IS NOT NULL
+        AND NOT statistical_category_2 = 'School code and Major code';
 
   - |
       UPDATE upenn_alma_demographics
@@ -18,7 +19,7 @@ sqls:
           upenn_alma_divisions.division = upenn_alma_demographics.statistical_category_3
       )
       WHERE upenn_alma_demographics.statistical_category_3 IS NOT NULL
-      AND upenn_alma_demographics.school IS NULL;
+        AND upenn_alma_demographics.school IS NULL;
 
   - |
       UPDATE upenn_alma_demographics
@@ -31,4 +32,5 @@ sqls:
           )
       )
       WHERE upenn_alma_demographics.statistical_category_5 IS NOT NULL
-      AND upenn_alma_demographics.school IS NULL;
+        AND NOT upenn_alma_demographics.statistical_category_5 = '4 digit organization code'
+        AND upenn_alma_demographics.school IS NULL;
