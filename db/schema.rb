@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_04_174926) do
+ActiveRecord::Schema.define(version: 2022_03_17_145559) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgstattuple"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|
@@ -268,6 +269,7 @@ ActiveRecord::Schema.define(version: 2022_03_04_174926) do
     t.text "session_description"
     t.text "notes"
     t.boolean "upload_record", default: true
+    t.string "patron_email"
     t.index ["outcome"], name: "index_consultation_interactions_on_outcome"
     t.index ["patron_question"], name: "index_consultation_interactions_on_patron_question"
     t.index ["staff_pennkey"], name: "index_consultation_interactions_on_staff_pennkey"
@@ -399,12 +401,12 @@ ActiveRecord::Schema.define(version: 2022_03_04_174926) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
-    t.datetime "swipe_date"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
+    t.datetime "swipe_date"
     t.string "card_num"
     t.string "first_name"
     t.string "last_name"
@@ -811,12 +813,24 @@ ActiveRecord::Schema.define(version: 2022_03_04_174926) do
     t.text "last_name"
     t.text "email"
     t.text "user_group"
+    t.string "school"
     t.index ["pennkey", "penn_id"], name: "index_upenn_alma_demographics_on_pennkey_and_penn_id", unique: true
     t.index ["statistical_category_1"], name: "index_upenn_alma_demographics_on_statistical_category_1"
     t.index ["statistical_category_2"], name: "index_upenn_alma_demographics_on_statistical_category_2"
     t.index ["statistical_category_3"], name: "index_upenn_alma_demographics_on_statistical_category_3"
     t.index ["statistical_category_4"], name: "index_upenn_alma_demographics_on_statistical_category_4"
     t.index ["statistical_category_5"], name: "index_upenn_alma_demographics_on_statistical_category_5"
+  end
+
+  create_table "upenn_alma_departments", force: :cascade do |t|
+    t.string "department_code"
+    t.string "school"
+  end
+
+  create_table "upenn_alma_divisions", force: :cascade do |t|
+    t.string "division"
+    t.string "division_description"
+    t.string "school"
   end
 
   create_table "upenn_ezproxy_ezpaarse_jobs", force: :cascade do |t|
