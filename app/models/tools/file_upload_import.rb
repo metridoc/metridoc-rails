@@ -174,19 +174,6 @@ class Tools::FileUploadImport < ApplicationRecord
         log "Finished importing #{target_model_name}."
       end
 
-      if n_errors <= 0 && self.post_sql_to_execute.present?
-        log "Executing Post Sql."
-        log self.post_sql_to_execute
-        begin
-          ActiveRecord::Base.connection.execute(self.post_sql_to_execute)
-        rescue => ex
-          log "Error while executing sql => #{ex.message}"
-          success = false
-          raise ActiveRecord::Rollback, "Rolling back the upload."
-        end
-        log "Finished executing Post Sql."
-      end
-
     end #transaction
 
     self.update_columns(status: success ? "success" : "failed") unless cancelled?
