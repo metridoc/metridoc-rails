@@ -97,6 +97,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
+    reshare:
+      reshare_menu: "Reshare"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"

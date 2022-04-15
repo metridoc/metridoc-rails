@@ -49,6 +49,5 @@ end
 args = option_parser.order!(ARGV) {}
 option_parser.parse!(args)
 
-puts "Started running Export::Mssql"
-m = Export::Mssql::Main.new(options)
-exit m.execute(options[:single_step].present? ? [options[:single_step]] : nil) ? 0 : 1
+puts "Started running Export::Database"
+exit Export::Database::Main.new(options).execute(options[:single_step].present? ? [options[:single_step]] : nil) ? 0 : 1
