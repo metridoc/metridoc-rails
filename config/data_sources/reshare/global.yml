@@ -1,0 +1,10 @@
+---
+institution_code: 'UPENN'
+host:             '<%= ENV["RESHARE_HOST"] %>'
+port:             '<%= ENV["RESHARE_PORT"] %>'
+database:         '<%= ENV["RESHARE_DB"] %>'
+username:         '<%= ENV["RESHARE_UID"] %>'
+password:         '<%= ENV["RESHARE_PWD"] %>'
+pool:             5
+timeout:          5000
+export_folder:    '/tmp/reshare/'

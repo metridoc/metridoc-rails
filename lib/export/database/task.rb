@@ -1,5 +1,5 @@
 module Export
-  module Mssql
+  module Database
 
     class Task
 
@@ -20,7 +20,7 @@ module Export
         return import_model_name.constantize if (import_model_name.constantize rescue nil)
         klass = Object.const_set(import_model_name, Class.new(ActiveRecord::Base))
         klass.table_name = task_config['source_table']
-        klass.establish_connection @main_driver.db_opts
+        klass.establish_connection @main_driver.db_opts.merge(adapter: source_adapter_engine)
         klass.primary_key = nil
         # TODO handle multiple source_tables / break them into joins
         klass
@@ -99,7 +99,11 @@ module Export
       end
 
       def source_adapter
-        task_config["source_adapter"]
+        @source_adapter ||= task_config["source_adapter"]
+      end
+
+      def source_adapter_engine
+        source_adapter == "postgres" ? "postgresql" : "sqlserver"
       end
 
       def from_raw

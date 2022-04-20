@@ -26,7 +26,7 @@ task :export => :environment do |_t, args|
   args = option_parser.order!(ARGV) {}
   option_parser.parse!(args)
 
-  m = Export::Mssql::Main.new(options)
+  m = Export::Database::Main.new(options)
   exit m.execute(options[:single_step].present? ? [options[:single_step].to_i] : nil) ? 0 : 1
 end
 
