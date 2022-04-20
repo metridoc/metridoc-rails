@@ -1,0 +1,22 @@
+load_sequence:         5
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_derived.consortial_view"
+column_mappings:
+  "cv_requester": cv_requester
+  "cv_requester_nice_name": cv_requester_nice_name
+  "cv_date_created": cv_date_created
+  "cv_last_updated": cv_last_updated
+  "cv_supplier_nice_name": cv_supplier_nice_name
+  "cv_patron_request_fk": cv_patron_request_fk
+  "cv_state_fk": cv_state_fk
+  "cv_code": cv_code
+
+export_file_name:      "reshare_consortial_views.csv"
+
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::ConsortialView"
+truncate_before_load:  "yes"

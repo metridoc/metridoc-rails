@@ -797,7 +797,22 @@ ActiveRecord::Schema.define(version: 2022_04_06_032957) do
     t.string "full_sql"
   end
 
-  create_table "reshare_directory_entry", force: :cascade do |t|
+  create_table "reshare_consortial_views", force: :cascade do |t|
+    t.string "cv_requester"
+    t.string "cv_requester_nice_name"
+    t.datetime "cv_date_created"
+    t.datetime "cv_last_updated"
+    t.string "cv_supplier_nice_name"
+    t.string "cv_patron_request_fk"
+    t.string "cv_state_fk"
+    t.string "cv_code"
+  end
+
+  create_table "reshare_directory_entries", force: :cascade do |t|
+    t.bigint "__id"
+    t.boolean "__cf"
+    t.datetime "__start"
+    t.string "__origin"
     t.string "de_id"
     t.bigint "version"
     t.bigint "custom_properties_id"
@@ -905,6 +920,20 @@ ActiveRecord::Schema.define(version: 2022_04_06_032957) do
     t.string "pr_pickup_location_slug"
   end
 
+  create_table "reshare_req_overdues", force: :cascade do |t|
+    t.string "ro_requester"
+    t.string "ro_requester_nice_name"
+    t.string "ro_hrid"
+    t.string "ro_title"
+    t.string "ro_requester_sym"
+    t.text "ro_requester_url"
+    t.string "ro_supplier_sym"
+    t.string "ro_req_state"
+    t.string "ro_due_date_rs"
+    t.datetime "ro_return_shipped_date"
+    t.datetime "ro_last_updated"
+  end
+
   create_table "reshare_req_stats", force: :cascade do |t|
     t.string "rs_requester"
     t.string "rs_requester_nice_name"
@@ -916,12 +945,55 @@ ActiveRecord::Schema.define(version: 2022_04_06_032957) do
     t.string "rs_message"
   end
 
+  create_table "reshare_rtat_recs", force: :cascade do |t|
+    t.string "rtre_requester"
+    t.datetime "rtre_date_created"
+    t.string "rtre_req_id"
+    t.string "rtre_status"
+  end
+
+  create_table "reshare_rtat_reqs", force: :cascade do |t|
+    t.string "rtr_requester"
+    t.string "rtr_requester_nice_name"
+    t.string "rtr_hrid"
+    t.string "rtr_title"
+    t.string "rtr_call_number"
+    t.string "rtr_barcode"
+    t.string "rtr_supplier"
+    t.string "rtr_supplier_nice_name"
+    t.datetime "rtr_date_created"
+    t.string "rtr_id"
+  end
+
+  create_table "reshare_rtat_ships", force: :cascade do |t|
+    t.string "rts_requester"
+    t.datetime "rts_date_created"
+    t.string "rts_req_id"
+    t.string "rts_from_status"
+    t.string "rts_to_status"
+  end
+
+  create_table "reshare_sup_overdues", force: :cascade do |t|
+    t.string "so_supplier"
+    t.string "so_supplier_nice_name"
+    t.string "so_hrid"
+    t.string "so_title"
+    t.string "so_requester_sym"
+    t.text "so_supplier_url"
+    t.string "so_supplier_sym"
+    t.string "so_res_state"
+    t.string "so_due_date_rs"
+    t.string "so_local_call_number"
+    t.string "so_item_barcode"
+    t.datetime "so_last_updated"
+  end
+
   create_table "reshare_sup_stats", force: :cascade do |t|
     t.string "ss_supplier"
     t.string "ss_supplier_nice_name"
     t.string "ss_id"
     t.string "ss_req_id"
-    t.string "ss_date_created"
+    t.datetime "ss_date_created"
     t.string "ss_from_status"
     t.string "ss_to_status"
     t.string "ss_message"
