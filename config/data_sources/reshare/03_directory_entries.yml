@@ -1,0 +1,36 @@
+load_sequence:         3
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.directory_entry"
+column_mappings:
+  "__id": __id
+  "__cf": __cf
+  "__start": __start
+  "__origin": __origin
+  "de_id": de_id
+  "version": version
+  "custom_properties_id": custom_properties_id
+  "de_slug": de_slug
+  "de_foaf_timestamp": de_foaf_timestamp
+  "de_foaf_url": de_foaf_url
+  "de_name": de_name
+  "de_status_fk": de_status_fk
+  "de_desc": de_desc
+  "de_parent": de_parent
+  "de_lms_location_code": de_lms_location_code
+  "de_entry_url": de_entry_url
+  "de_phone_number": de_phone_number
+  "de_email_address": de_email_address
+  "de_contact_name": de_contact_name
+  "de_type_rv_fk": de_type_rv_fk
+  "de_published_last_update": de_published_last_update
+  "de_branding_url": de_branding_url
+
+export_file_name:      "reshare_directory_entries.csv"
+
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::DirectoryEntry"
+truncate_before_load:  "yes"

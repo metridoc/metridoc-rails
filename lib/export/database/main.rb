@@ -1,5 +1,5 @@
 module Export
-  module Mssql
+  module Database
     class Main
       def initialize(options = {})
         @options = options
@@ -22,14 +22,14 @@ module Export
         return @test_mode unless @test_mode.nil?
         @test_mode = @options[:test_mode].upcase.strip == "TRUE" rescue false
       end
-  
+
       def execute(sequences_only = [])
         @log_job_execution = log_job_execution
         task_files(sequences_only).each do |task_file|
-          t = Task.new(self, task_file)
-          next unless t.source_adapter == 'mssql'
+          task = Task.new(self, task_file)
+          next unless task.source_adapter.in?(['mssql', 'postgres'])
           log("Started executing step [#{task_file}]")
-          unless t.execute
+          unless task.execute
             log("Failed executing step [#{task_file}]")
             log_job_execution.set_status!('failed')
             return false
@@ -108,9 +108,12 @@ module Export
         log_job_execution.log_line(log)
         puts log
       end
-  
+
+      private
+      def source_adapter
+        @source_adapter ||= Task.new(self, task_file).source_adapter
+      end
+
     end
-  
   end
-  
 end
