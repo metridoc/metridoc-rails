@@ -4,10 +4,7 @@ load_sequence:         3
 source_adapter:        postgres
 source_table:          "reshare_rs.directory_entry"
 column_mappings:
-  "__id": __id
-  "__cf": __cf
-  "__start": __start
-  "__origin": __origin
+  "origin": __origin
   "de_id": de_id
   "version": version
   "custom_properties_id": custom_properties_id
