@@ -78,12 +78,5 @@ class RemoveSuperfluousColumnsToResharePatronRequests < ActiveRecord::Migration[
     remove_column :reshare_patron_requests, :pr_bib_record_id, :string
     remove_column :reshare_patron_requests, :pr_supplier_unique_record_id, :string
     remove_column :reshare_patron_requests, :pr_pickup_location_slug, :string
-
-
-
-
-
-
-
   end
 end
