@@ -21,6 +21,7 @@ class Security::UserRole < ApplicationRecord
                         "Tools",
                         "Misc",
                         "Report",
+                        "Reshare",
                       ]
   ACCESS_LEVELS = ["read-only", "read-write"]
 
