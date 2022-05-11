@@ -133,6 +133,7 @@ en:
       security: "Security"
       misc: "Miscellaneous"
       report: "Reports"
+      reshare: "Reshare"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:

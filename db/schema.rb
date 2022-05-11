@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_09_140757) do
+ActiveRecord::Schema.define(version: 2022_05_11_022908) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -893,6 +893,51 @@ ActiveRecord::Schema.define(version: 2022_05_09_140757) do
     t.string "rts_to_status"
   end
 
+  create_table "reshare_stat_assis", force: :cascade do |t|
+    t.string "sta_supplier"
+    t.datetime "sta_date_created"
+    t.string "sta_req_id"
+    t.string "sta_from_status"
+    t.string "sta_to_status"
+  end
+
+  create_table "reshare_stat_fills", force: :cascade do |t|
+    t.string "stf_supplier"
+    t.datetime "stf_date_created"
+    t.string "stf_req_id"
+    t.string "stf_from_status"
+    t.string "stf_to_status"
+  end
+
+  create_table "reshare_stat_recs", force: :cascade do |t|
+    t.string "stre_supplier"
+    t.datetime "stre_date_created"
+    t.string "stre_req_id"
+    t.string "stre_from_status"
+    t.string "stre_to_status"
+  end
+
+  create_table "reshare_stat_reqs", force: :cascade do |t|
+    t.string "str_supplier"
+    t.string "str_supplier_nice_name"
+    t.string "str_hrid"
+    t.string "str_title"
+    t.string "str_call_number"
+    t.string "str_barcode"
+    t.string "str_requester"
+    t.string "str_requester_nice_name"
+    t.datetime "str_date_created"
+    t.string "str_id"
+  end
+
+  create_table "reshare_stat_ships", force: :cascade do |t|
+    t.string "sts_supplier"
+    t.datetime "sts_date_created"
+    t.string "sts_req_id"
+    t.string "sts_from_status"
+    t.string "sts_to_status"
+  end
+
   create_table "reshare_sup_overdues", force: :cascade do |t|
     t.string "so_supplier"
     t.string "so_supplier_nice_name"
@@ -917,6 +962,15 @@ ActiveRecord::Schema.define(version: 2022_05_09_140757) do
     t.string "ss_from_status"
     t.string "ss_to_status"
     t.string "ss_message"
+  end
+
+  create_table "reshare_sup_tat_stats", force: :cascade do |t|
+    t.string "stst_supplier"
+    t.datetime "stst_date_created"
+    t.string "stst_req_id"
+    t.string "stst_from_status"
+    t.string "stst_to_status"
+    t.string "stst_message"
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|

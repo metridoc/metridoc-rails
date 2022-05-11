@@ -1,0 +1,18 @@
+load_sequence:         15
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_derived.stat_rec"
+column_mappings:
+  "stre_supplier": stre_supplier
+  "stre_date_created": stre_date_created
+  "stre_req_id": stre_req_id
+  "stre_from_status": stre_from_status
+  "stre_to_status": stre_to_status
+
+export_file_name:      "reshare_stat_recs.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::StatRec"
+truncate_before_load:  "yes"
