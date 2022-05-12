@@ -14,5 +14,5 @@ export_file_name:      "reshare_stat_ships.csv"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Reshare::StatFill"
+target_model:          "Reshare::StatShip"
 truncate_before_load:  "yes"
