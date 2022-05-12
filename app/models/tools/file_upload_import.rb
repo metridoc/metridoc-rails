@@ -38,6 +38,10 @@ class Tools::FileUploadImport < ApplicationRecord
     import
     log "Finished processing."
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
+    rescue SignalException => se
+      log "Process terminated => #{se.message}"
+      update_columns(status: 'pending')
+      raise se
   end
 
   def calculate_rows_to_process
