@@ -1,4 +1,4 @@
-ActiveAdmin.register Reshare::RtatReq do
+ActiveAdmin.register Reshare::SupTatStat do
   menu false
   permit_params :stst_supplier,
     :stst_date_created,
