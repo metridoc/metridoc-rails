@@ -1,10 +1,4 @@
-FROM phusion/passenger-ruby25:1.0.9
-
-# Remove Let's Encrypt's expired DST Root CA X3 cert
-# https://letsencrypt.org/docs/certificate-compatibility/
-RUN rm /usr/share/ca-certificates/mozilla/DST_Root_CA_X3.crt && \
-    sed -i 's~^mozilla/DST_Root_CA_X3.crt$~!mozilla/DST_Root_CA_X3.crt~g' /etc/ca-certificates.conf && \
-    update-ca-certificates --fresh
+FROM phusion/passenger-ruby27:2.3.0
 
 COPY delayed-job-log-forwarder.sh /etc/service/delayed-job-log-forwarder/run
 COPY webapp.conf /etc/nginx/sites-enabled/webapp
