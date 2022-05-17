@@ -1,4 +1,4 @@
-ActiveAdmin.register_page "Upenn::Alma" do
+ActiveAdmin.register_page "UPenn Alma" do
   menu false
 
   content title: "UPenn Alma Demographics" do
