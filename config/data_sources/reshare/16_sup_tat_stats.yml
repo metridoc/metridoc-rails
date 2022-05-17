@@ -1,0 +1,19 @@
+load_sequence:         16
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_derived.sup_tat_stats"
+column_mappings:
+  "stst_supplier": stst_supplier
+  "stst_date_created": stst_date_created
+  "stst_req_id": stst_req_id
+  "stst_from_status": stst_from_status
+  "stst_to_status": stst_to_status
+  "stst_message": stst_message
+
+export_file_name:      "reshare_sup_tat_stats.csv"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::SupTatStat"
+truncate_before_load:  "yes"

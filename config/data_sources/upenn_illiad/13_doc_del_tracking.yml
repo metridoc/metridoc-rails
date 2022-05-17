@@ -48,8 +48,8 @@ sqls:
                             institution_id,
                             MIN(transaction_date) AS transaction_date
                           FROM illiad_doc_dels
-                          WHERE
-                            status IN (
+                          WHERE institution_id = %{institution_id}
+                            AND status IN (
                               'Item Found',
                               'Delivered to Web',
                               'Request Conditionalized',

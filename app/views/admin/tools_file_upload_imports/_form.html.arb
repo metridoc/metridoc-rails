@@ -2,7 +2,6 @@ active_admin_form_for [:admin, resource], remote: true do |f|
   f.inputs do
     f.input :target_model, as: :select, collection: Tools::FileUploadImport::UPLOADABLE_MODELS.sort_by{|m| m.model_name.human }.collect{|m| [m.model_name.human, m.to_s]}, include_blank: I18n.t('phrases.please_select')
     f.input :uploaded_file, as: :file
-    f.input :post_sql_to_execute, as: :text, rows: 4
     f.input :comments, as: :text
     f.actions do
       f.action :submit

@@ -37,9 +37,6 @@ ActiveAdmin.register Tools::FileUploadImport do
         row :uploaded_file do
           link_to file_upload_import.uploaded_file.filename, url_for(file_upload_import.uploaded_file), target: '_blank' if file_upload_import.status == 'success'
         end
-        row :post_sql_to_execute do
-          simple_format(file_upload_import.post_sql_to_execute)
-        end
         row :status do
           file_upload_import.status.blank? ? I18n.t("phrases.file_upload_import.statuses.pending") : I18n.t("phrases.file_upload_import.statuses.#{file_upload_import.status}")
         end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_03_17_145559) do
+ActiveRecord::Schema.define(version: 2022_05_17_134000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -401,12 +401,12 @@ ActiveRecord::Schema.define(version: 2022_03_17_145559) do
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
+    t.datetime "swipe_date"
     t.string "door_name"
     t.string "affiliation_desc"
     t.string "center_desc"
     t.string "dept_desc"
     t.string "usc_desc"
-    t.datetime "swipe_date"
     t.string "card_num"
     t.string "first_name"
     t.string "last_name"
@@ -797,6 +797,181 @@ ActiveRecord::Schema.define(version: 2022_03_17_145559) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "full_sql"
+  end
+
+  create_table "reshare_consortial_views", force: :cascade do |t|
+    t.string "cv_requester"
+    t.string "cv_requester_nice_name"
+    t.datetime "cv_date_created"
+    t.datetime "cv_last_updated"
+    t.string "cv_supplier_nice_name"
+    t.string "cv_patron_request_fk"
+    t.string "cv_state_fk"
+    t.string "cv_code"
+  end
+
+  create_table "reshare_directory_entries", force: :cascade do |t|
+    t.string "origin"
+    t.string "de_id"
+    t.bigint "version"
+    t.bigint "custom_properties_id"
+    t.string "de_slug"
+    t.bigint "de_foaf_timestamp"
+    t.string "de_foaf_url"
+    t.string "de_name"
+    t.string "de_status_fk"
+    t.string "de_desc"
+    t.string "de_parent"
+    t.string "de_lms_location_code"
+    t.string "de_entry_url"
+    t.string "de_phone_number"
+    t.string "de_email_address"
+    t.string "de_contact_name"
+    t.string "de_type_rv_fk"
+    t.bigint "de_published_last_update"
+    t.string "de_branding_url"
+  end
+
+  create_table "reshare_patron_requests", force: :cascade do |t|
+    t.string "pr_id"
+    t.bigint "pr_version"
+    t.string "pr_patron_surname"
+    t.datetime "pr_date_created"
+    t.string "pr_pub_date"
+    t.string "pr_edition"
+  end
+
+  create_table "reshare_req_overdues", force: :cascade do |t|
+    t.string "ro_requester"
+    t.string "ro_requester_nice_name"
+    t.string "ro_hrid"
+    t.string "ro_title"
+    t.string "ro_requester_sym"
+    t.text "ro_requester_url"
+    t.string "ro_supplier_sym"
+    t.string "ro_req_state"
+    t.string "ro_due_date_rs"
+    t.datetime "ro_return_shipped_date"
+    t.datetime "ro_last_updated"
+  end
+
+  create_table "reshare_req_stats", force: :cascade do |t|
+    t.string "rs_requester"
+    t.string "rs_requester_nice_name"
+    t.string "rs_id"
+    t.string "rs_req_id"
+    t.datetime "rs_date_created"
+    t.string "rs_from_status"
+    t.string "rs_to_status"
+    t.string "rs_message"
+  end
+
+  create_table "reshare_rtat_recs", force: :cascade do |t|
+    t.string "rtre_requester"
+    t.datetime "rtre_date_created"
+    t.string "rtre_req_id"
+    t.string "rtre_status"
+  end
+
+  create_table "reshare_rtat_reqs", force: :cascade do |t|
+    t.string "rtr_requester"
+    t.string "rtr_requester_nice_name"
+    t.string "rtr_hrid"
+    t.string "rtr_title"
+    t.string "rtr_call_number"
+    t.string "rtr_barcode"
+    t.string "rtr_supplier"
+    t.string "rtr_supplier_nice_name"
+    t.datetime "rtr_date_created"
+    t.string "rtr_id"
+  end
+
+  create_table "reshare_rtat_ships", force: :cascade do |t|
+    t.string "rts_requester"
+    t.datetime "rts_date_created"
+    t.string "rts_req_id"
+    t.string "rts_from_status"
+    t.string "rts_to_status"
+  end
+
+  create_table "reshare_stat_assis", force: :cascade do |t|
+    t.string "sta_supplier"
+    t.datetime "sta_date_created"
+    t.string "sta_req_id"
+    t.string "sta_from_status"
+    t.string "sta_to_status"
+  end
+
+  create_table "reshare_stat_fills", force: :cascade do |t|
+    t.string "stf_supplier"
+    t.datetime "stf_date_created"
+    t.string "stf_req_id"
+    t.string "stf_from_status"
+    t.string "stf_to_status"
+  end
+
+  create_table "reshare_stat_recs", force: :cascade do |t|
+    t.string "stre_supplier"
+    t.datetime "stre_date_created"
+    t.string "stre_req_id"
+    t.string "stre_from_status"
+    t.string "stre_to_status"
+  end
+
+  create_table "reshare_stat_reqs", force: :cascade do |t|
+    t.string "str_supplier"
+    t.string "str_supplier_nice_name"
+    t.string "str_hrid"
+    t.string "str_title"
+    t.string "str_call_number"
+    t.string "str_barcode"
+    t.string "str_requester"
+    t.string "str_requester_nice_name"
+    t.datetime "str_date_created"
+    t.string "str_id"
+  end
+
+  create_table "reshare_stat_ships", force: :cascade do |t|
+    t.string "sts_supplier"
+    t.datetime "sts_date_created"
+    t.string "sts_req_id"
+    t.string "sts_from_status"
+    t.string "sts_to_status"
+  end
+
+  create_table "reshare_sup_overdues", force: :cascade do |t|
+    t.string "so_supplier"
+    t.string "so_supplier_nice_name"
+    t.string "so_hrid"
+    t.string "so_title"
+    t.string "so_requester_sym"
+    t.text "so_supplier_url"
+    t.string "so_supplier_sym"
+    t.string "so_res_state"
+    t.string "so_due_date_rs"
+    t.string "so_local_call_number"
+    t.string "so_item_barcode"
+    t.datetime "so_last_updated"
+  end
+
+  create_table "reshare_sup_stats", force: :cascade do |t|
+    t.string "ss_supplier"
+    t.string "ss_supplier_nice_name"
+    t.string "ss_id"
+    t.string "ss_req_id"
+    t.datetime "ss_date_created"
+    t.string "ss_from_status"
+    t.string "ss_to_status"
+    t.string "ss_message"
+  end
+
+  create_table "reshare_sup_tat_stats", force: :cascade do |t|
+    t.string "stst_supplier"
+    t.datetime "stst_date_created"
+    t.string "stst_req_id"
+    t.string "stst_from_status"
+    t.string "stst_to_status"
+    t.string "stst_message"
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|

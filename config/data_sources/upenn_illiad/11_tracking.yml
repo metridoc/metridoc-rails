@@ -4,137 +4,127 @@ target_model:          "Illiad::Tracking"
 truncate_before_load:  "yes"
 sqls:
   - |
-                        INSERT INTO illiad_trackings (
-                                  institution_id,
-                                  transaction_number,
-                                  request_type,
-                                  process_type,
-                                  request_date,
-                                  turnarounds_processed,
-                                  created_at,
-                                  updated_at
-                        )
-                        SELECT    %{institution_id},
-                                  transaction_number,
-                                  request_type,
-                                  'Borrowing',
-                                  MIN(transaction_date),
-                                  false,
-                                  NOW(),
-                                  NOW()
-                        FROM  illiad_borrowings
-                        WHERE transaction_status IN (
-                            'Awaiting Copyright Clearance',
-                            'Awaiting Request Processing'
-                            )
-                          AND institution_id = %{institution_id}
-                        GROUP BY transaction_number, request_type;
-
-  - |
-                        UPDATE illiad_trackings
-                        SET order_date = (
-                          SELECT
-                            MIN(B.transaction_date)
-                          FROM illiad_borrowings B
-                          INNER JOIN illiad_trackings T
-                          ON B.transaction_number = T.transaction_number
-                            WHERE B.transaction_status = 'Request Sent'
-                            AND B.institution_id = T.institution_id
-                            AND B.transaction_id = T.transaction_id
-                            AND B.institution_id = %{institution_id}
+    INSERT INTO illiad_trackings (
+              institution_id,
+              transaction_number,
+              request_type,
+              process_type,
+              request_date,
+              turnarounds_processed,
+              created_at,
+              updated_at
     )
-                        WHERE illiad_trackings.order_date IS NULL;
-
+    SELECT    %{institution_id},
+              transaction_number,
+              request_type,
+              'Borrowing',
+              MIN(transaction_date),
+              false,
+              NOW(),
+              NOW()
+    FROM  illiad_borrowings
+    WHERE transaction_status IN (
+        'Awaiting Copyright Clearance',
+        'Awaiting Request Processing'
+        )
+      AND institution_id = %{institution_id}
+    GROUP BY transaction_number, request_type;
   - |
-                        UPDATE illiad_trackings
-                        SET ship_date = (
-                          SELECT
-                            MAX(B.transaction_date)
-                          FROM illiad_borrowings B
-                          INNER JOIN illiad_trackings T
-                          ON B.transaction_number = T.transaction_number
-                            WHERE B.transaction_status = 'Delivered to Web'
-                            AND B.institution_id = %{institution_id}
-                            AND B.institution_id = T.institution_id
-                        );
-
+    UPDATE illiad_trackings
+    SET order_date = (
+      SELECT
+        MIN(B.transaction_date)
+      FROM illiad_borrowings B
+      WHERE B.transaction_number = illiad_trackings.transaction_number
+        AND B.transaction_status = 'Request Sent'
+        AND B.institution_id = %{institution_id}
+        AND B.institution_id = illiad_trackings.institution_id
+    )
+    WHERE illiad_trackings.order_date IS NULL;
   - |
-                        UPDATE illiad_trackings
-                        SET ship_date = (
-                          SELECT
-                            MIN(B.transaction_date)
-                          FROM illiad_borrowings B
-                          INNER JOIN illiad_trackings T
-                          ON B.transaction_number = T.transaction_number
-                            WHERE B.transaction_status = 'Shipped'
-                            AND B.institution_id = %{institution_id}
-                            AND B.institution_id = T.institution_id
-                        )
-                        WHERE illiad_trackings.ship_date IS NULL;
-
+    UPDATE illiad_trackings
+    SET ship_date = (
+      SELECT
+        MAX(B.transaction_date)
+      FROM illiad_borrowings B
+      WHERE B.transaction_number = illiad_trackings.transaction_number
+        AND B.transaction_status = 'Delivered to Web'
+        AND B.institution_id = %{institution_id}
+        AND B.institution_id = illiad_trackings.institution_id
+    );
   - |
-                        UPDATE illiad_trackings
-                        SET
-                          receive_date = B.transaction_date,
-                          completion_status = 'Delivered to Web'
-                        FROM (
-                          SELECT
-                            DISTINCT ON (institution_id, transaction_number)
-                            institution_id,
-                            transaction_number,
-                            transaction_date
-                          FROM illiad_borrowings
-                          WHERE transaction_status = 'Delivered to Web'
-                          ORDER BY institution_id, transaction_number, transaction_date DESC
-                        ) B
-                        WHERE B.transaction_number = illiad_trackings.transaction_number
-                          AND illiad_trackings.institution_id = %{institution_id}
-                          AND B.institution_id = illiad_trackings.institution_id;
-
+    UPDATE illiad_trackings
+    SET ship_date = (
+      SELECT
+        MIN(B.transaction_date)
+      FROM illiad_borrowings B
+      WHERE B.transaction_number = illiad_trackings.transaction_number
+        AND B.transaction_status = 'Shipped'
+        AND B.institution_id = %{institution_id}
+        AND B.institution_id = illiad_trackings.institution_id
+    )
+    WHERE illiad_trackings.ship_date IS NULL;
   - |
-                        UPDATE illiad_trackings
-                        SET
-                          receive_date = B.transaction_date,
-                          completion_status = 'Awaiting Post Receipt Processing'
-                        FROM (
-                          SELECT
-                            DISTINCT ON (institution_id, transaction_number)
-                            institution_id,
-                            transaction_number,
-                            transaction_date
-                          FROM illiad_borrowings
-                          WHERE transaction_status = 'Awaiting Post Receipt Processing'
-                          ORDER BY institution_id, transaction_number, transaction_date ASC
-                        ) B
-                        WHERE B.transaction_number = illiad_trackings.transaction_number
-                          AND illiad_trackings.institution_id = %{institution_id}
-                          AND B.institution_id = illiad_trackings.institution_id
-                          AND (
-                            NOT illiad_trackings.completion_status = 'Delivered to Web'
-                            OR
-                            illiad_trackings.completion_status IS NULL
-                          );
-
+    UPDATE illiad_trackings
+    SET
+      receive_date = B.transaction_date,
+      completion_status = 'Delivered to Web'
+    FROM (
+      SELECT
+        DISTINCT ON (institution_id, transaction_number)
+        institution_id,
+        transaction_number,
+        transaction_date
+      FROM illiad_borrowings
+      WHERE transaction_status = 'Delivered to Web'
+      ORDER BY institution_id, transaction_number, transaction_date DESC
+    ) B
+    WHERE B.transaction_number = illiad_trackings.transaction_number
+      AND illiad_trackings.institution_id = %{institution_id}
+      AND B.institution_id = illiad_trackings.institution_id;
   - |
-                        UPDATE illiad_trackings
-                        SET
-                          receive_date = B.transaction_date,
-                          completion_status = 'Cancelled by ILL Staff'
-                        FROM (
-                          SELECT
-                            DISTINCT ON (institution_id, transaction_number)
-                            institution_id,
-                            transaction_number,
-                            transaction_date
-                          FROM illiad_borrowings
-                          WHERE transaction_status = 'Cancelled by ILL Staff'
-                          ORDER BY institution_id, transaction_number, transaction_date DESC
-                        ) B
-                        WHERE B.transaction_number = illiad_trackings.transaction_number
-                          AND illiad_trackings.institution_id = %{institution_id}
-                          AND B.institution_id = illiad_trackings.institution_id
-                          AND (
-                            illiad_trackings.completion_status IS NULL
-                            OR
-                            illiad_trackings.receive_date < receive_date
-                          );
+    UPDATE illiad_trackings
+    SET
+      receive_date = B.transaction_date,
+      completion_status = 'Awaiting Post Receipt Processing'
+    FROM (
+      SELECT
+        DISTINCT ON (institution_id, transaction_number)
+        institution_id,
+        transaction_number,
+        transaction_date
+      FROM illiad_borrowings
+      WHERE transaction_status = 'Awaiting Post Receipt Processing'
+      ORDER BY institution_id, transaction_number, transaction_date ASC
+    ) B
+    WHERE B.transaction_number = illiad_trackings.transaction_number
+      AND illiad_trackings.institution_id = %{institution_id}
+      AND B.institution_id = illiad_trackings.institution_id
+      AND (
+        NOT illiad_trackings.completion_status = 'Delivered to Web'
+        OR
+        illiad_trackings.completion_status IS NULL
+      );
+  - |
+    UPDATE illiad_trackings
+    SET
+      receive_date = B.transaction_date,
+      completion_status = 'Cancelled by ILL Staff'
+    FROM (
+      SELECT
+        DISTINCT ON (institution_id, transaction_number)
+        institution_id,
+        transaction_number,
+        transaction_date
+      FROM illiad_borrowings
+      WHERE transaction_status = 'Cancelled by ILL Staff'
+      ORDER BY institution_id, transaction_number, transaction_date DESC
+    ) B
+    WHERE B.transaction_number = illiad_trackings.transaction_number
+      AND illiad_trackings.institution_id = %{institution_id}
+      AND B.institution_id = illiad_trackings.institution_id
+      AND (
+        illiad_trackings.completion_status IS NULL
+        OR
+        illiad_trackings.receive_date < receive_date
+      );

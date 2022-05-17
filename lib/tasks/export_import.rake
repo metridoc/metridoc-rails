@@ -46,8 +46,7 @@ namespace "export_import" do
         job = YAML.load(todo_file)
         options = {}
         job.each do |k,v| options[k.to_sym] = v end
-        m = Export::Mssql::Main.new(options)
-        success = m.execute()
+        success = Export::Database::Main.new(options).execute()
 
         if success
           job['run_date'] = Date.today.to_s
