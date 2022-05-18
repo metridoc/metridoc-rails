@@ -22,6 +22,7 @@ class Security::UserRole < ApplicationRecord
                         "Misc",
                         "Report",
                         "Reshare",
+                        "UpennAlma"
                       ]
   ACCESS_LEVELS = ["read-only", "read-write"]
 
@@ -41,7 +42,7 @@ class Security::UserRole < ApplicationRecord
   end
 
   def self.translate_subject_to_section(subject)
-    if subject.is_a?(Class) 
+    if subject.is_a?(Class)
       s = subject
     elsif subject.class.to_s != "String"
       s = subject.class
