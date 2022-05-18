@@ -1,0 +1,6 @@
+---
+load_sequence: 4
+target_model: "UpennAlma::Department"
+target_adapter: "csv"
+truncate_before_load: "yes"
+file_name: "alma_departments.csv"

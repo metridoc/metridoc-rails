@@ -987,12 +987,24 @@ ActiveRecord::Schema.define(version: 2022_05_11_022908) do
     t.text "last_name"
     t.text "email"
     t.text "user_group"
+    t.string "school"
     t.index ["pennkey", "penn_id"], name: "index_upenn_alma_demographics_on_pennkey_and_penn_id", unique: true
     t.index ["statistical_category_1"], name: "index_upenn_alma_demographics_on_statistical_category_1"
     t.index ["statistical_category_2"], name: "index_upenn_alma_demographics_on_statistical_category_2"
     t.index ["statistical_category_3"], name: "index_upenn_alma_demographics_on_statistical_category_3"
     t.index ["statistical_category_4"], name: "index_upenn_alma_demographics_on_statistical_category_4"
     t.index ["statistical_category_5"], name: "index_upenn_alma_demographics_on_statistical_category_5"
+  end
+
+  create_table "upenn_alma_departments", force: :cascade do |t|
+    t.string "department_code"
+    t.string "school"
+  end
+
+  create_table "upenn_alma_divisions", force: :cascade do |t|
+    t.string "division"
+    t.string "division_description"
+    t.string "school"
   end
 
   create_table "upenn_ezproxy_ezpaarse_jobs", force: :cascade do |t|
