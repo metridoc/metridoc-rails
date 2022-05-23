@@ -173,7 +173,20 @@ Metridoc supports uploading csv's into existing tables in the schema. The follow
        ...
     ]
    ```
+ 1. To ensure the model remains protected, update MANAGED_SECTIONS in user_role.rb to include the new model.  This will handle any pages created with ActiveAdmin.register.
 
+ 1. In order to protect pages created with ActiveAdmin.register_page, add the following snippet to the controller to specify which model will control access.
+
+  ```
+  # Redefine ActiveAdmin::PageController::authorize_access
+  # This will restrict the page view to the correct users.
+  controller do
+    private
+    def authorize_access!
+      authorize! :read, "ModelName"
+    end
+  end
+  ```
 ### Vagrant
 
 > Caveat: the vagrant development environment has only been tested in Linux.

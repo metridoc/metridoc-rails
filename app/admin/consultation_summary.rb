@@ -16,4 +16,14 @@ ActiveAdmin.register_page "Consultation Summary" do
       render partial: 'admin/consultation/summary'
     end
   end
+
+  # Redefine ActiveAdmin::PageController::authorize_access
+  # This will restrict the page view to the correct users.
+  controller do
+    private
+    def authorize_access!
+      authorize! :read, "Consultation"
+    end
+  end
+  
 end

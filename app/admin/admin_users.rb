@@ -24,6 +24,7 @@ ActiveAdmin.register AdminUser do
     column Security::UserRole.model_name.human do |admin_user|
       admin_user.user_role ? admin_user.user_role.name : ""
     end
+    column :super_admin
     column :current_sign_in_at
     column :sign_in_count
     column :created_at

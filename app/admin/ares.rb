@@ -9,4 +9,14 @@ ActiveAdmin.register_page "Ares" do
 
     render partial: 'index', locals: {resources: resources}
   end
+
+  # Redefine ActiveAdmin::PageController::authorize_access
+  # This will restrict the page view to the correct users.
+  controller do
+    private
+    def authorize_access!
+      authorize! :read, "Ares"
+    end
+  end
+
 end
