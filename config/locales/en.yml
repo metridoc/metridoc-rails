@@ -52,7 +52,7 @@ en:
 
                  <p>Presently, MetriDoc is the analytics platform for the IvyPlus Resources Sharing Service, BorrowDirect.  The latter includes comprehensive interlibrary loan data logged by Illiad and the Relais D2D platforms used by the 13 libraries of the IvyPlus.  In addition, Penn continues to develop applications for use with the framework to analyze building entry logs, Keyserver license management logs, reference consultations, and instructional events, and liaison development activities.</p>
 
-                 <p>The MetriDoc code base is available under Apache-2 license for open source development.  It’s GitHub repository is located at <a href=\"https://github.com/metridoc\">MetriDoc GitHub account</a>.  Contacts about MetriDoc may be directed to the Library Technology Services division of the Penn Libraries, at <a href=\"mailto:libhelpdesk@upenn.edu\">libhelpdesk@upenn.edu</a>.</p>"
+                 <p>The MetriDoc code base is available under Apache-2 license for open source development.  It’s GitHub repository is located at <a href=\"https://github.com/metridoc\">MetriDoc GitHub account</a>.  Contacts about MetriDoc may be directed to the Impact Assessment and Organizational Analysis division of the Penn Libraries, at <a href=\"mailto:libhelpdesk@upenn.edu\">libhelpdesk@upenn.edu</a>.</p>"
     policies: "Policies"
     policies_text: "Placeholder for policies content"
     tutorials: "Resources"
@@ -98,7 +98,9 @@ en:
       left_column_heading: "Top 10 program publishers"
       right_column_heading: "Top 10 usage event types"
     reshare:
-      reshare_menu: "Reshare"
+      reshare_menu: "RSAT: PALCI"
+    ezproxy:
+      ezproxy_menu: "EZProxy"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"
@@ -133,7 +135,9 @@ en:
       security: "Security"
       misc: "Miscellaneous"
       report: "Reports"
-      reshare: "Reshare"
+      reshare: "RSAT: PALCI"
+      alma: "Alma Circulation"
+      upennalma: "Alma Demographics"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:
