@@ -16,4 +16,14 @@ ActiveAdmin.register_page "Borrowdirect Statistics" do
       render partial: 'admin/borrowdirect/statistics'
     end
   end
+
+  # Redefine ActiveAdmin::PageController::authorize_access
+  # This will restrict the page view to the correct users.
+  controller do
+    private
+    def authorize_access!
+      authorize! :read, "Borrowdirect"
+    end
+  end
+
 end

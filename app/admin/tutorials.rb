@@ -7,4 +7,6 @@ ActiveAdmin.register_page "Tutorials" do
       render partial: 'index'
     end
   end
+
+  # No need to obfuscate this page
 end
