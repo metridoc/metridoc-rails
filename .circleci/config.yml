@@ -189,10 +189,10 @@ workflows:
             - publish_metridoc_python_jobs
             - publish_metridoc_ezpaarse
             - publish_metridoc_ezpaarse_mongodb
-            - test_jenkins_manager_role
-            - test_metridoc_manager_role
-            - test_postgres_primary_manager_role
-            - test_postgres_replica_manager_role
+            # - test_jenkins_manager_role
+            # - test_metridoc_manager_role
+            # - test_postgres_primary_manager_role
+            # - test_postgres_replica_manager_role
       - deploy-staging:
           filters:
             branches:
@@ -202,7 +202,7 @@ workflows:
             - publish_metridoc_python_jobs
             - publish_metridoc_ezpaarse
             - publish_metridoc_ezpaarse_mongodb
-            - test_jenkins_manager_role
-            - test_metridoc_manager_role
-            - test_postgres_primary_manager_role
-            - test_postgres_replica_manager_role
+            # - test_jenkins_manager_role
+            # - test_metridoc_manager_role
+            # - test_postgres_primary_manager_role
+            # - test_postgres_replica_manager_role
