@@ -102,19 +102,19 @@ jobs:
             echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
             source $BASH_ENV
       - slack/status: *default-slack-config
-  test_role:
-    description: Test an Ansible role using Molecule
-    parameters:
-      role:
-        description: Name of the Ansible role
-        type: string
-    docker:
-      - image: quay.io/ansible/creator-ee:v0.4.2
-    steps:
-      - checkout
-      - setup_remote_docker
-      - molecule_test:
-          role: << parameters.role >>
+  # test_role:
+  #   description: Test an Ansible role using Molecule
+  #   parameters:
+  #     role:
+  #       description: Name of the Ansible role
+  #       type: string
+  #   docker:
+  #     - image: quay.io/ansible/creator-ee:v0.4.2
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - molecule_test:
+  #         role: << parameters.role >>
 
 workflows:
   build_test_and_deploy:
@@ -160,26 +160,26 @@ workflows:
           label_prefix: edu.upenn.library
           requires:
             - gitleaks/check_local
-      - test_role:
-          name: test_jenkins_manager_role
-          role: jenkins_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_metridoc_manager_role
-          role: metridoc_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_postgres_primary_manager_role
-          role: postgres_primary_manager
-          requires:
-            - gitleaks/check_local
-      - test_role:
-          name: test_postgres_replica_manager_role
-          role: postgres_replica_manager
-          requires:
-            - gitleaks/check_local
+      # - test_role:
+      #     name: test_jenkins_manager_role
+      #     role: jenkins_manager
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_metridoc_manager_role
+      #     role: metridoc_manager
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_postgres_primary_manager_role
+      #     role: postgres_primary_manager
+      #     requires:
+      #       - gitleaks/check_local
+      # - test_role:
+      #     name: test_postgres_replica_manager_role
+      #     role: postgres_replica_manager
+      #     requires:
+      #       - gitleaks/check_local
       - deploy-production:
           filters:
             branches:
