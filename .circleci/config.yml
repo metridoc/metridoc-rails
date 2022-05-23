@@ -109,7 +109,7 @@ jobs:
         description: Name of the Ansible role
         type: string
     docker:
-      - image: quay.io/ansible/creator-ee:v0.5.0
+      - image: quay.io/ansible/creator-ee:v0.4.2
     steps:
       - checkout
       - setup_remote_docker
