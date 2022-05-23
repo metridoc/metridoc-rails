@@ -9,6 +9,6 @@ ActiveAdmin.register_page "GeoData" do
 
     render partial: 'index', locals: {resources: resources}
   end
+
+  # No need to obfuscate this page.
 end
-
-

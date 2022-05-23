@@ -16,4 +16,13 @@ ActiveAdmin.register_page "ILLiad User Statistics" do
       render partial: 'admin/illiad/user_statistics'
     end
   end
+
+  # Redefine ActiveAdmin::PageController::authorize_access
+  # This will restrict the page view to the correct users.
+  controller do
+    private
+    def authorize_access!
+      authorize! :read, "Illiad"
+    end
+  end
 end

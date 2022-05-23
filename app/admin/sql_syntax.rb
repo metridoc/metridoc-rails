@@ -7,4 +7,6 @@ ActiveAdmin.register_page "SQL Syntax" do
       render partial: 'admin/tutorials/sql_syntax'
     end
   end
+
+  # No need to obfuscate this page
 end

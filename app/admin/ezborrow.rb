@@ -9,4 +9,14 @@ ActiveAdmin.register_page "Ezborrow" do
 
     render partial: 'index', locals: {resources: resources}
   end
+
+  # Redefine ActiveAdmin::PageController::authorize_access
+  # This will restrict the page view to the correct users.
+  controller do
+    private
+    def authorize_access!
+      authorize! :read, "EzBorrow"
+    end
+  end
+
 end

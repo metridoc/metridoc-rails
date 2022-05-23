@@ -6,4 +6,6 @@ ActiveAdmin.register_page "Policies" do
       render partial: 'index'
     end
   end
+
+  # No need to obfuscate this page
 end
