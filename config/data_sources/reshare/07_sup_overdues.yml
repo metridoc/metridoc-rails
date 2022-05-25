@@ -18,6 +18,7 @@ column_mappings:
   "so_last_updated": so_last_updated
 
 export_file_name:      "reshare_sup_overdues.csv"
+export_filter_date_sql: "so_last_updated > ?"
 
 
 # Target Config

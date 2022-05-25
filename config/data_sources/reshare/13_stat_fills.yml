@@ -12,6 +12,7 @@ column_mappings:
 
 
 export_file_name:      "reshare_stat_fills.csv"
+export_filter_date_sql: "stf_date_created > ?"
 
 # Target Config
 target_adapter:        csv

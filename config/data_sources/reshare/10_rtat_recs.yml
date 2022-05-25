@@ -10,6 +10,7 @@ column_mappings:
   "rtre_status": rtre_status
 
 export_file_name:      "reshare_rtat_recs.csv"
+export_filter_date_sql: "rtre_date_created > ?"
 
 # Target Config
 target_adapter:        csv
