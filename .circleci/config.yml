@@ -110,6 +110,8 @@ jobs:
         type: string
     docker:
       - image: quay.io/ansible/creator-ee:v0.4.2
+    environment:
+      HOME: /root
     steps:
       - checkout
       - setup_remote_docker
