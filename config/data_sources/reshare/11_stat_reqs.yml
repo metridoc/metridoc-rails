@@ -16,6 +16,7 @@ column_mappings:
   "str_id": str_id
 
 export_file_name:      "reshare_stat_reqs.csv"
+export_filter_date_sql: "str_date_created > ?"
 
 # Target Config
 target_adapter:        csv

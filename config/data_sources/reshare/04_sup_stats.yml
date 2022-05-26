@@ -14,7 +14,7 @@ column_mappings:
   "ss_message": ss_message 
 
 export_file_name:      "reshare_sup_stats.csv"
-
+export_filter_date_sql: "ss_date_created > ?"
 
 # Target Config
 target_adapter:        csv

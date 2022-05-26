@@ -12,6 +12,7 @@ column_mappings:
   "stst_message": stst_message
 
 export_file_name:      "reshare_sup_tat_stats.csv"
+export_filter_date_sql: "stst_date_created > ?"
 
 # Target Config
 target_adapter:        csv

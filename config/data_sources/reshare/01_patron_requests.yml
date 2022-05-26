@@ -12,6 +12,7 @@ column_mappings:
   "pr_edition": pr_edition
 
 export_file_name:      "reshare_patron_requests.csv"
+export_filter_date_sql: "__start > ?"
 
 
 # Target Config
