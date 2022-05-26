@@ -25,6 +25,7 @@ column_mappings:
   "de_branding_url": de_branding_url
 
 export_file_name:      "reshare_directory_entries.csv"
+export_filter_date_sql: "__start > ?"
 
 
 # Target Config

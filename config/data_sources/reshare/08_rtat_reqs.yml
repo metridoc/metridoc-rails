@@ -16,6 +16,8 @@ column_mappings:
   "rtr_id": rtr_id
 
 export_file_name:      "reshare_rtat_reqs.csv"
+export_filter_date_sql: "rtr_date_created > ?"
+
 
 # Target Config
 target_adapter:        csv

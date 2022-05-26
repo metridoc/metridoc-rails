@@ -11,6 +11,7 @@ column_mappings:
   "stre_to_status": stre_to_status
 
 export_file_name:      "reshare_stat_recs.csv"
+export_filter_date_sql: "stre_date_created > ?"
 
 # Target Config
 target_adapter:        csv

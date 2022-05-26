@@ -17,6 +17,7 @@ column_mappings:
   "ro_last_updated": ro_last_updated
 
 export_file_name:      "reshare_req_overdues.csv"
+export_filter_date_sql: "ro_last_updated > ?"
 
 
 # Target Config
