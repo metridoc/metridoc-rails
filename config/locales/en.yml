@@ -106,6 +106,9 @@ en:
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
+    log:
+      log_menu: "Logs"
+      jobs_heading: "Recent Jobs"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
   phrases:
@@ -239,6 +242,12 @@ en:
         one: "Ares Item Usage"
         other: "Ares Item Usage"
     attributes:
+      log/job_execution:
+        id: "ID"
+        source_name: "Source"
+        job_type: "Job Type"
+        started_at: "Started At"
+        status: "Status"
       tools/file_upload_import:
         target_model: "Target Model"
         uploaded_file: "Upload File"

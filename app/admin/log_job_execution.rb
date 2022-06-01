@@ -1,5 +1,5 @@
 ActiveAdmin.register Log::JobExecution do
-  menu if: proc{ authorized?(:read, "Log") }, parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   actions :index, :show
 
