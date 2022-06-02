@@ -162,6 +162,12 @@ docker_stack_env:
   PRINCETON_ILLIAD_MSSQL_PWD: "{{ vault_princeton_illiad_mssql_pwd }}"
   PRINCETON_ILLIAD_MSSQL_UID: "{{ vault_princeton_illiad_mssql_uid }}"
 
+  RESHARE_DB: "{{ vault_reshare_db }}"
+  RESHARE_HOST: "{{ vault_reshare_host }}"
+  RESHARE_PORT: "{{ vault_reshare_port }}"
+  RESHARE_PWD: "{{ vault_reshare_pwd }}"
+  RESHARE_UID: "{{ vault_reshare_uid }}"
+
   UPENN_BORROWDIRECT_MSSQL_DB: "{{ vault_upenn_borrowdirect_mssql_db }}"
   UPENN_BORROWDIRECT_MSSQL_HOST: "{{ vault_upenn_borrowdirect_mssql_host }}"
   UPENN_BORROWDIRECT_MSSQL_PORT: "{{ vault_upenn_borrowdirect_mssql_port }}"
