@@ -12,6 +12,10 @@ default: &default
         disable_blacklist: true
       - role: slave
         host: replica-db
+  variables:
+    tcp_keepalives_idle: 60
+    tcp_keepalives_interval: 60
+    tcp_keepalives_count: 100
 
 development:
   <<: *default
