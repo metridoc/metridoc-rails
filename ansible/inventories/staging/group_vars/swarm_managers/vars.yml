@@ -61,7 +61,7 @@ prometheus_alerts_version: v3
 prometheus_config_version: v2
 python_jobs_database_secret_version: v2
 python_jobs_libwizard_secret_version: v1
-rails_database_config_version: v5
+rails_database_config_version: v6
 rails_secrets_config_version: v1
 
 docker_stack_env:
@@ -161,6 +161,12 @@ docker_stack_env:
   PRINCETON_ILLIAD_MSSQL_PORT: "{{ vault_princeton_illiad_mssql_port }}"
   PRINCETON_ILLIAD_MSSQL_PWD: "{{ vault_princeton_illiad_mssql_pwd }}"
   PRINCETON_ILLIAD_MSSQL_UID: "{{ vault_princeton_illiad_mssql_uid }}"
+
+  RESHARE_DB: "{{ vault_reshare_db }}"
+  RESHARE_HOST: "{{ vault_reshare_host }}"
+  RESHARE_PORT: "{{ vault_reshare_port }}"
+  RESHARE_PWD: "{{ vault_reshare_pwd }}"
+  RESHARE_UID: "{{ vault_reshare_uid }}"
 
   UPENN_BORROWDIRECT_MSSQL_DB: "{{ vault_upenn_borrowdirect_mssql_db }}"
   UPENN_BORROWDIRECT_MSSQL_HOST: "{{ vault_upenn_borrowdirect_mssql_host }}"
