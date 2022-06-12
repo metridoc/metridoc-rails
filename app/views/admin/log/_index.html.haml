@@ -2,21 +2,23 @@
 
 %ul
   - resources.each do |resource|
-    %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+    %li= link_to resource.resource_name.human(count: 2), "/admin/#{resource.resource_name.param_key.pluralize}"
 
-#data-viz
-  %h3= t 'active_admin.log.jobs_heading'
-  %table.statistics_summary
+- ["reshare", "illiad", "ezborrow"].each do |source|
+  %h3= t("active_admin.log.jobs_heading", source: t("phrases.user_role_sections.#{source}"))
+  %table.data_summary
     %tr
       %th= Log::JobExecution.human_attribute_name(:id)
-      %th= Log::JobExecution.human_attribute_name(:source_name)
       %th= Log::JobExecution.human_attribute_name(:job_type)
       %th= Log::JobExecution.human_attribute_name(:started_at)
       %th= Log::JobExecution.human_attribute_name(:status)
-    - Log::JobExecution.order(id: :desc).limit(10).each do |job|
+    - unless Log::JobExecution.of_source(source).exists?
       %tr
+        %td{colspan: 4}= t("phrases.no_records_found")
+    - Log::JobExecution.of_source(source).order(id: :desc).limit(10).each do |job|
+      %tr{class: (job.status == 'failed' ? "failed" : "")}
         %td= link_to job.id, admin_log_job_execution_steps_path("q[job_execution_id_equals]" => job.id)
-        %td= job.source_name
         %td= job.job_type
         %td= job.started_at
         %td= job.status
+  %br
