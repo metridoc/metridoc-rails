@@ -5,7 +5,7 @@ module Log
 
     scope :of_source, -> (source_name) { where(source_name: source_name) }
 
-    has_many :job_execution_steps
+    has_many :job_execution_steps, dependent: :destroy
 
     before_validation :set_defaults
 
