@@ -75,6 +75,3 @@ sqls:
                           AND L.institution_id = LT.institution_id
                           AND L.institution_id = %{institution_id}
                           AND LT.completion_status <> L.status;
-
-  - |
-                        VACUUM ANALYZE illiad_lending_trackings;
