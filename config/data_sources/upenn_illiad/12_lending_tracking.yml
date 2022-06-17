@@ -74,4 +74,4 @@ sqls:
                           AND L.transaction_number = LT.transaction_number
                           AND L.institution_id = LT.institution_id
                           AND L.institution_id = %{institution_id}
-                          AND LT.completion_status <> L.status;
+                          AND LT.completion_status IS DISTINCT FROM L.status;
