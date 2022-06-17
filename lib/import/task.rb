@@ -159,9 +159,16 @@ module Import
         truncate if truncate_before_load?
 
         sqls.each do |sql|
-          sql = sql % {institution_id: institution_id}
-          log "Executing Query [#{sql}]"
-          ActiveRecord::Base.connection.execute(sql)
+          begin
+            sql = sql % {institution_id: institution_id}
+            log "Executing Query [#{sql}]"
+            ActiveRecord::Base.connection.execute(sql)
+          rescue SignalException => e
+            log "Recieved Exception: #{e}"
+            log_job_execution_step.set_status!("failed")
+            log_job_execution.set_status!("failed")
+            return false
+          end
         end
 
         return true
