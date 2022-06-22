@@ -118,6 +118,7 @@ en:
     reports: "Reports"
     tools: "Tools"
     security: "Security"
+    admin: "Admin"
     please_select: "Please Select..."
     log_job_execution:
       title: "Execution #%{execution_id} Step %{step_name}"

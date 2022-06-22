@@ -16,7 +16,7 @@
       %tr
         %td{colspan: 4}= t("phrases.no_records_found")
     - Log::JobExecution.of_source(source).order(id: :desc).limit(10).each do |job|
-      %tr{class: (job.status == 'failed' ? "failed" : "")}
+      %tr{class: "#{job.status}" }
         %td= link_to job.id, admin_log_job_execution_steps_path("q[job_execution_id_equals]" => job.id)
         %td= job.job_type
         %td= job.started_at

@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Log" do
-  menu if: proc{ authorized?(:read, "Log") }, label: I18n.t("active_admin.log.log_menu"), parent: I18n.t("active_admin.resource_sharing")
+  menu if: proc{ authorized?(:read, "Log") }, label: I18n.t("active_admin.log.log_menu"), parent: I18n.t("phrases.admin")
 
   content title: I18n.t("active_admin.log.log_menu") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

@@ -74,19 +74,23 @@ body.active_admin {
         background-color: #011F5B25;
         padding: 5px;
       }
-      tbody {
-        tr:nth-child(even) {
-          background-color: #9fbbbf;
-        }
-      }
+
       td {
         border: 1px solid black;
         padding: 5px;
         text-align: left
       }
+
       tr.failed > td {
-        background-color: #e36671;
+        background-color: #f8a694;
       }
+      tr.successful > td {
+        background-color: #bdfca8;
+      }
+      tr.running > td {
+        background-color: #fbfca8;
+      }
+
       tfoot {
         font-weight: bold;
         background-color: #011F5B50;
