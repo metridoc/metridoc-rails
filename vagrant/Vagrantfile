@@ -7,7 +7,7 @@ cluster = {
 }
 
 Vagrant.configure("2") do |config|
-  config.vagrant.plugins = ["vagrant-env", "vagrant-vbguest", "vagrant-hostsupdater", "vagrant-disksize"]
+  config.vagrant.plugins = ["vagrant-env", "vagrant-vbguest", "vagrant-hostsupdater"]
 
   cluster.each_with_index do |(hostname, info), index|
     config.vm.box = "ubuntu/bionic64"
@@ -40,8 +40,6 @@ Vagrant.configure("2") do |config|
         # cfg.vm.provider :virtualbox do |vb, override|
         #   override.vm.network :forwarded_port, id: "http", host: 8080, guest: 80
         # end
-
-        cfg.disksize.size = '30GB'
 
         cfg.vm.provision :ansible do |ansible|
           ansible.ask_vault_pass = true

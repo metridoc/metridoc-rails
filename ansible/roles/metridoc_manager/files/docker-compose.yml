@@ -131,8 +131,9 @@ services:
         gid: "${APP_USER_GID}"
         mode: 0440
     volumes:
-      - metridoc_tmp_data:/home/app/webapp/tmp
       - ezpaarse_output:/tmp/upenn_ezproxy
+      - gate_count:/tmp/gate_count
+      - metridoc_tmp_data:/home/app/webapp/tmp
   delayed_jobs:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
@@ -193,7 +194,9 @@ secrets:
     name: metridoc_rails_secrets_config_${RAILS_SECRETS_CONFIG_VERSION}
 
 volumes:
-  metridoc_tmp_data:
-    external: true
   ezpaarse_output:
+    external: true
+  gate_count:
+    external: true
+  metridoc_tmp_data:
     external: true

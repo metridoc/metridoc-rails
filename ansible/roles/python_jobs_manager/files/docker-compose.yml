@@ -35,6 +35,8 @@ services:
         uid: "${APP_USER_UID}"
         gid: "${APP_USER_GID}"
         mode: 0440
+    volumes:
+      - gate_count:/gate_count
     working_dir: /home/app
 
 networks:
@@ -51,3 +53,7 @@ secrets:
   metridoc_python_jobs_libwizard_secret:
     external: true
     name: metridoc_python_jobs_libwizard_secret_${PYTHON_JOBS_LIBWIZARD_SECRET_VERSION}
+
+volumes:
+  gate_count:
+    external: true

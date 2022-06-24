@@ -3,6 +3,7 @@
   become: yes
   tasks:
     - include: "roles/metridoc_manager/tasks/nfs_volume.yml"
+    - include: "roles/metridoc_manager/tasks/gate_count_volume.yml"
 
 - hosts: swarm_managers
   become: yes
