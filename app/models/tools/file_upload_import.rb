@@ -1,4 +1,5 @@
-require 'csv'
+require 'roo'
+
 class Tools::FileUploadImport < ApplicationRecord
   has_one_attached :uploaded_file
   belongs_to :uploaded_by, class_name: "AdminUser"
@@ -40,24 +41,39 @@ class Tools::FileUploadImport < ApplicationRecord
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
   end
 
-  def calculate_rows_to_process
-    csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
-    csv = CSV.read(csv_file_path)
-    return csv.size-1
+  # Get the extension of the uploaded file
+  def extension
+    self.uploaded_file.filename.extension_without_delimiter
   end
 
-  def csv_file_path
-    decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
+  # Get the file_path of the uploaded file
+  def file_path
+    decompress(
+      ActiveStorage::Blob.service.path_for(self.uploaded_file.key)
+    )
+  end
+
+  # Open the Spreadsheet
+  # This can be a csv, xls, xlsx and the Roo gem will handle all of them
+  def spreadsheet
+    Roo::Spreadsheet.open(file_path, extension: extension.to_sym())
+  rescue
+    raise "Unknown file type: #{self.uploaded_file.filename}"
+  end
+
+  # Count the number of rows, excluding the header row
+  def calculate_rows_to_process
+    # Get the index of the last row
+    spreadsheet.last_row-1
   end
 
   def target_class
     self.target_model.constantize
   end
 
+  # Get the header row and update the column names
   def get_headers
-    csv_file_path = decompress(ActiveStorage::Blob.service.send(:path_for, self.uploaded_file.key))
-    csv = CSV.read(csv_file_path)
-    headers = csv.first.map{|c| Util.column_to_attribute(c) }
+    headers = spreadsheet.first.map{|c| Util.column_to_attribute(c) }
     headers.each do |column_name|
       if target_class.columns_hash[column_name].blank?
         headers[headers.index(column_name)] = column_name.split(/\_+/).first
@@ -68,8 +84,6 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def import
     batch_size = 1000
-    csv = CSV.read(csv_file_path)
-
     headers = get_headers
 
     unmatched_columns = headers.select { |column_name| target_class.columns_hash[column_name].blank? }
@@ -80,43 +94,44 @@ class Tools::FileUploadImport < ApplicationRecord
     n_errors = 0
     n_inserted = 0
 
-    update_columns(total_rows_to_process: (csv.size-1), n_rows_processed: 0)
+    self.update_columns(total_rows_to_process: calculate_rows_to_process, n_rows_processed: 0)
 
     success = true
     Tools::FileUploadImport.transaction do
 
       records = []
-      csv.drop(1).each_with_index do |row, n|
+      # Loop through each row of the spreadsheet
+      spreadsheet.drop(1).each_with_index do |row, n|
         if n_errors >= 100
           log "Too many errors #{n_errors}, exiting!"
           records = []
           break
         end
 
-        cols = {}
-        headers.each_with_index do |k,i|
-          cols[k.to_sym] = row[i]
-        end
-
         row_error = false
         attributes = {}
-        headers.each do |column_name|
-          val = cols[column_name.to_sym]
+        # Loop through each column of the spreadsheet
+        headers.each_with_index do |column_name, i|
+          # Ensure all values are strings
+          val = row[i].to_s
 
           next if target_class.columns_hash[column_name].blank?
 
+          # Check for valid integer for integer columns, requires a string input
           if target_class.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
             log "Invalid integer [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
             row_error = true
             next
           end
+          # Check for valid datetimes for datetime columns, requires a string input
           if target_class.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
             log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
             row_error = true
             next
           end
+          # Check for valid dates for date columns, requires a sting input
           if target_class.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
             log "Invalid date [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
@@ -124,11 +139,13 @@ class Tools::FileUploadImport < ApplicationRecord
             next
           end
 
+          # If the target column is a datetime type, then turn the value into a datetime
           val = Util.parse_datetime(val) if target_class.columns_hash[column_name].type == :datetime
 
           attributes[column_name] = val
         end
 
+        # Skip this row if there were any errors
         next if row_error
 
         records << target_class.new(attributes)
