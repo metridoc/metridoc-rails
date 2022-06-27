@@ -49,6 +49,9 @@ gem 'groupdate'
 # Gem to use d3.js for visualizations
 gem 'd3-rails'
 
+# Gem for reading xlsx and csv files
+gem 'roo'
+
 gem 'chronic'
 
 gem 'delayed_job_active_record'

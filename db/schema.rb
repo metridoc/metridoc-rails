@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_05_11_022908) do
+ActiveRecord::Schema.define(version: 2022_06_27_160745) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -269,6 +269,7 @@ ActiveRecord::Schema.define(version: 2022_05_11_022908) do
     t.text "session_description"
     t.text "notes"
     t.boolean "upload_record", default: true
+    t.boolean "returning_user"
     t.index ["outcome"], name: "index_consultation_interactions_on_outcome"
     t.index ["patron_question"], name: "index_consultation_interactions_on_patron_question"
     t.index ["staff_pennkey"], name: "index_consultation_interactions_on_staff_pennkey"
