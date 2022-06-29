@@ -107,7 +107,7 @@ en:
     library_profiles:
       profiles: "Library Profiles"
     log:
-      log_menu: "Logs"
+      log_menu: "Jobs Dashboard"
       jobs_heading: "Recent Jobs - %{source}"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"

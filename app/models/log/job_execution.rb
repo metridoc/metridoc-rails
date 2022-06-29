@@ -3,7 +3,7 @@ module Log
   class JobExecution < ActiveRecord::Base
     self.table_name_prefix = 'log_'
 
-    scope :of_source, -> (source_name) { where(source_name: source_name) }
+    scope :of_source, -> (source_name) { where("source_name ILIKE ? ",  "%#{source_name}%") }
 
     has_many :job_execution_steps, dependent: :destroy
 
