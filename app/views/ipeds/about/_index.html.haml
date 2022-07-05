@@ -1,0 +1,36 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 About the Data
+  %p
+    Vivamus sit amet elementum tortor. Cras ultrices, tellus ut rhoncus posuere,
+    arcu velit eleifend lectus, ac placerat orci neque sit amet purus.
+    Ut fermentum dui velit, pulvinar viverra purus porta in. Ut pulvinar justo
+    nulla, quis aliquam ipsum sodales ut. Pellentesque nec mauris in enim
+    fringilla molestie in ut mauris. Cras viverra tellus a tincidunt
+    consectetur. Vivamus aliquet venenatis convallis. Nam non semper ante, vitae
+    mollis sapien. Morbi ut rhoncus nulla. Curabitur semper felis at nulla
+    ultrices sollicitudin. Nunc vulputate felis at faucibus tincidunt. Cras
+    hendrerit efficitur ipsum, ac rutrum leo bibendum nec. Pellentesque suscipit
+    ipsum erat, sit amet bibendum augue fermentum eu.
+
+%hr
+%section
+  %h2 Resources
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/ipeds/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+%section
+  %h2 Data Preparation
+  %p
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Donec ornare leo non risus maximus efficitur.
+    Fusce consequat eu urna vel faucibus.
+    Phasellus gravida dictum dolor id aliquet. Sed a ultrices tortor.
+    Donec varius scelerisque egestas. Nunc eget ornare felis.
+    Maecenas eget malesuada lacus. Maecenas eros risus, rutrum sed lacinia nec,
+    aliquam eu nisl. Donec orci ipsum, feugiat venenatis diam ac,
+    vestibulum faucibus ex. Vivamus semper congue diam. Fusce quis turpis nisi.
+    Phasellus non viverra felis, vitae lacinia metus.
