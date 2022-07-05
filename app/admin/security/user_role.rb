@@ -1,5 +1,5 @@
 ActiveAdmin.register Security::UserRole, as: "UserRole" do
-  menu if: proc{ authorized?(:read, Security::UserRole) }, parent: I18n.t("phrases.security")
+  menu false
 
   index do
     column :name
@@ -46,5 +46,3 @@ ActiveAdmin.register Security::UserRole, as: "UserRole" do
   end
 
 end
-
-
