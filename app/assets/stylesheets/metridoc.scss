@@ -61,6 +61,42 @@ body.active_admin {
       }
     }
 
+    /* Construct table style for data summary tables */
+    .data_summary {
+      table-layout: auto !important;
+      border: 1px solid black;
+      border-collapse: collapse;
+      padding: 5px;
+      width: 100%;
+      th {
+        border: 1px solid black;
+        text-align: left;
+        background-color: #011F5B25;
+        padding: 5px;
+      }
+
+      td {
+        border: 1px solid black;
+        padding: 5px;
+        text-align: left
+      }
+
+      tr.failed > td {
+        background-color: #f8a694;
+      }
+      tr.successful > td {
+        background-color: #bdfca8;
+      }
+      tr.running > td {
+        background-color: #fbfca8;
+      }
+
+      tfoot {
+        font-weight: bold;
+        background-color: #011F5B50;
+      }
+    }
+
     /* Construct a method for hover text */
     .tooltip {
       position: relative;

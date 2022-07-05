@@ -3,7 +3,13 @@ module Log
   class JobExecutionStep < ActiveRecord::Base
     self.table_name_prefix = 'log_'
 
+    belongs_to :job_execution
+
     before_validation :set_defaults
+
+    def title
+      I18n.t("phrases.log_job_execution.title", execution_id: self.job_execution.id, step_name: self.step_name)
+    end
 
     def set_status!(status)
       self.status = status

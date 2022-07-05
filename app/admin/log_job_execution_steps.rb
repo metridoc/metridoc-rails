@@ -11,9 +11,11 @@ ActiveAdmin.register Log::JobExecutionStep do
     actions
   end
   
-  show do
+  show title: :title do |job_execution_step|
     attributes_table do
-      row :job_execution_id
+      row :job_execution_id do
+        link_to job_execution_step.job_execution_id, admin_log_job_execution_path(job_execution_step.job_execution_id)
+      end
       row :step_name
       row :step_yml
       row :started_at
