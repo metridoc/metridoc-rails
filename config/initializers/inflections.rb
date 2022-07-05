@@ -14,3 +14,20 @@
 # ActiveSupport::Inflector.inflections(:en) do |inflect|
 #   inflect.acronym 'RESTful'
 # end
+
+ActiveSupport::Inflector.inflections(:en) do |inflect|
+
+  # IPEDS is uncountable
+  # Integrated Postsecondary Education Data System
+  inflect.uncountable "Ipeds"
+
+  # IPEDS::DirectorySchema is uncountable
+  inflect.uncountable "DirectorySchema"
+  inflect.uncountable "directory_schema"
+  inflect.uncountable "ipeds_directory_schema"
+
+  # IPEDS::CompletionSchema is uncountable
+  inflect.uncountable "CompletionSchema"
+  inflect.uncountable "completion_schema"
+  inflect.uncountable "ipeds_completion_schema"
+end
