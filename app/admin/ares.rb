@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Ares" do
-  menu if: proc{ authorized?(:read, "Ares") }, label: I18n.t("active_admin.ares.ares_menu"), parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   content title: I18n.t("active_admin.ares.ares_menu") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

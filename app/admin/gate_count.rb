@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "GateCount" do
-  menu if: proc{ authorized?(:read, "GateCount") }, label: I18n.t("active_admin.gate_counts"), parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   content title: I18n.t("active_admin.gate_counts") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

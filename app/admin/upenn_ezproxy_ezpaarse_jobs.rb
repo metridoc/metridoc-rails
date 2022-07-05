@@ -1,8 +1,6 @@
 ActiveAdmin.register UpennEzproxy::EzpaarseJob do
-  menu if: proc{ authorized?(:read, "UpennEzproxy") },
-   label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
-   parent: I18n.t("active_admin.resource_sharing")
-   
+  menu false
+
   permit_params :datetime,
    :login,
    :platform,

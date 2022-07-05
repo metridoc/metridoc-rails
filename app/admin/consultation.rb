@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 ActiveAdmin.register_page 'Consultation' do
-  menu if: proc { authorized?(:read, 'Consultation') },
-       label: I18n.t('active_admin.consultation.consultation_menu'),
-       parent: I18n.t('active_admin.resource_sharing')
+  menu false
 
   # Action need to get the redirect with parameters
   page_action :statistics, method: :post do

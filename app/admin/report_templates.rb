@@ -1,7 +1,7 @@
 ActiveAdmin.register Report::Template do
   actions :all
 
-  menu if: proc{ authorized?(:read, Report::Template) }, parent: I18n.t("phrases.reports")
+  menu false
 
   permit_params :name,
                 :comments,
