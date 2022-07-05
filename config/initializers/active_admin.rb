@@ -9,7 +9,7 @@ ActiveAdmin.setup do |config|
   # Set the link url for the title. For example, to take
   # users to your main site. Defaults to no link.
   #
-  # config.site_title_link = "/"
+  config.site_title_link = "/admin/about"
 
   # Set an optional image to be displayed for the header
   # instead of a string (overrides :site_title)
@@ -296,23 +296,120 @@ ActiveAdmin.setup do |config|
   #
   # config.footer = 'my custom footer text'
 
-  config.view_factory.footer = Footer
+  # Define a custom footer
+  # This displays the Penn Logo and the IPLC logo
+  config.footer = proc {
+    image_tag("penn_libraries_logo.png", :alt => "Penn Libraries", :class => "penn_lib_logo") +
+    image_tag("iplc_logo.png", :alt => "Ivies Plus Libraries Consortium logo", :width => 150)
+  }
 
-  config.namespace :admin do |admin|
+  # Creating navigation menus
+  # Generate the head data menu
+  def build_data_menu(namespace)
+    namespace.build_menu do |menu|
+      # Main drop down for all Data
+      menu.add label: I18n.t("active_admin.resource_sharing"),
+        priority: 1
 
-    admin.build_menu :utility_navigation do |menu|
-      user_menu = menu.add  label: proc { current_admin_user.full_name },
-                            url: proc { edit_profile_admin_admin_users_url },
-                            id: 'current_user',
-                            if:  proc { current_active_admin_user } # Check the permissions here
-      admin.add_logout_button_to_menu user_menu, 100
+      # Ares
+      menu.add label: I18n.t("active_admin.ares.ares_menu"),
+        url: :admin_ares_path,
+        if: proc{ authorized?(:read, "Ares") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Consultation and Instruction
+      menu.add label: I18n.t('active_admin.consultation.consultation_menu'),
+        url: :admin_consultation_path,
+        if: proc { authorized?(:read, 'Consultation') },
+        parent: I18n.t('active_admin.resource_sharing')
+
+      # EZ Borrow (Relais - remove soon)
+      menu.add label: I18n.t("active_admin.ezborrow.ezborrow_menu"),
+        url: :admin_ezborrow_path,
+        if: proc{ authorized?(:read, "EzBorrow") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # EZ Proxy
+      menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
+        url: :admin_upenn_ezproxy_ezpaarse_jobs_path,
+        if: proc{ authorized?(:read, "UpennEzproxy") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Gate Counts
+      menu.add label: I18n.t("active_admin.gate_counts"),
+        url: :admin_gatecount_path,
+        if: proc{ authorized?(:read, "GateCount") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # IPEDS
+      menu.add label: I18n.t("active_admin.ipeds.ipeds_menu"),
+        url: :ipeds_root_path,
+        if: proc{ authorized?(:read, "Ipeds") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Keyserver
+      menu.add label: I18n.t("active_admin.keyserver.keyserver_menu"),
+        url: :admin_keyserver_path,
+        if: proc{ authorized?(:read, "Keyserver") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Logs
+      menu.add label: "Logs",
+        url: :admin_log_job_execution_steps_path,
+        if: proc{ authorized?(:read, "Log") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Library Profiles
+      menu.add label: I18n.t("active_admin.library_profiles_heading"),
+        url: :admin_libraryprofile_path,
+        if: proc{ authorized?(:read, "LibraryProfile") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # RSAT Supplemental Data
+      menu.add label: I18n.t("active_admin.supplemental_data"),
+        url: :admin_supplementaldata_path,
+        if: proc{ authorized?(:read, "SupplementalData") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # RSAT: Borrowdirect
+      menu.add label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"),
+        url: :admin_borrowdirect_path,
+        if: proc{ authorized?(:read, "Borrowdirect") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # RSAT: ILLiad
+      menu.add label: I18n.t("active_admin.illiad.illiad_menu"),
+        url: :admin_illiad_path,
+        if: proc{ authorized?(:read, "Illiad") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # RSAT: PALCI
+      menu.add label: I18n.t("active_admin.reshare.reshare_menu"),
+        url: :admin_reshare_path,
+        if: proc{ authorized?(:read, "Reshare") },
+        parent: I18n.t("active_admin.resource_sharing")
+
     end
+  end
 
-    admin.build_menu do |menu|
-      menu.add label: I18n.t("active_admin.resource_sharing"), priority: 1
+  # Helper method to build the security drop down menu
+  def build_security_menu(namespace)
+    namespace.build_menu do |menu|
+      menu.add label: "Admin Users",
+        url: :admin_admin_users_path,
+        if: proc{ authorized?(:read, AdminUser) },
+        parent: I18n.t("phrases.security")
+
+      menu.add label: "User Roles",
+        url: :admin_user_roles_path,
+        if: proc{ authorized?(:read, Security::UserRole) },
+        parent: I18n.t("phrases.security")
     end
+  end
 
-    admin.build_menu do |menu|
+  # Helper method to build the documentation drop down menu.
+  def build_documentation_menu(namespace)
+    namespace.build_menu do |menu|
       menu.add label: I18n.t("active_admin.documentation"), priority: 2 do |sites|
         sites.add label: I18n.t("active_admin.about"),
                   url: :admin_about_path
@@ -325,6 +422,73 @@ ActiveAdmin.setup do |config|
       end
     end
 
+  end
+
+  # Helper method to build the bookkeeping menu
+  # This class may be deprecated?
+  def build_bookkeeping_menu(namespace)
+    namespace.build_menu do |menu|
+      menu.add label: "Bookkeeping",
+        url: :admin_bookkeeping_path,
+        if: proc{ authorized?(:read, "Bookkeeping::DataLoad") },
+        parent: I18n.t("active_admin.bookkeeping")
+    end
+  end
+
+  # Helper method to build the report query menu
+  def build_report_query_menu(namespace)
+    namespace.build_menu do |menu|
+      menu.add label: "Report Queries",
+        url: :admin_report_queries_path,
+        if: proc{ authorized?(:read, Report::Query) },
+        parent: I18n.t("phrases.reports")
+
+      menu.add label: "Report Templates",
+        url: :admin_report_templates_path,
+        if: proc{ authorized?(:read, Report::Template) },
+        parent: I18n.t("phrases.reports")
+    end
+  end
+
+  # Helper method to build the tools menu.
+  def build_tools_menu(namespace)
+    namespace.build_menu do |menu|
+      menu.add label: I18n.t("active_admin.tools.file_upload_import"),
+        url: :admin_tools_file_upload_imports_path,
+        parent: I18n.t("phrases.tools"),
+        if: proc{ authorized?(:read, Tools::FileUploadImport) }
+    end
+  end
+
+  # Helper method to build the user menu
+  def build_utility_navigation(namespace)
+    namespace.build_menu :utility_navigation do |menu|
+      user_menu = menu.add  label: proc { current_admin_user.full_name },
+                            url: proc { edit_profile_admin_admin_users_url },
+                            id: 'current_user',
+                            if:  proc { current_active_admin_user }
+      namespace.add_logout_button_to_menu user_menu, 100
+    end
+  end
+
+  # Helper method to build the default menu
+  def build_default_menu(namespace)
+    build_utility_navigation(namespace)
+    build_data_menu(namespace)
+    build_security_menu(namespace)
+    build_report_query_menu(namespace)
+    build_tools_menu(namespace)
+    build_documentation_menu(namespace)
+  end
+
+  # Admin namespace configuration (Primarily Set Up Menus)
+  config.namespace :admin do |admin|
+    build_default_menu(admin)
+  end
+
+  # Configuration for the IPEDS namespace
+  config.namespace :ipeds do |admin|
+    build_default_menu(admin)
   end
 
   # == Sorting
