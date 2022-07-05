@@ -108,6 +108,10 @@ en:
       profiles: "Library Profiles"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
+    ipeds:
+      ipeds_menu: "IPEDS"
+    tools:
+      file_upload_import: "Upload File"
   phrases:
     process: "Process"
     download: "Download"
@@ -238,6 +242,27 @@ en:
       ares/item_usage:
         one: "Ares Item Usage"
         other: "Ares Item Usage"
+      ipeds:
+        one: "IPEDS Data"
+        other: "IPEDS Data"
+      ipeds/completion_schema:
+        one: "IPEDS Completion Schema"
+        other: "IPEDS Completion Schema"
+      ipeds/directory_schema:
+        one: "IPEDS Directory Schema"
+        other: "IPEDS Directory Schema"
+      ipeds/directory:
+        one: "IPEDS Directory"
+        other: "IPEDS Directories"
+      ipeds/completion:
+        one: "IPEDS Completion"
+        other: "IPEDS Completions"
+      ipeds/cipcode:
+        one: "CIP Code"
+        other: "CIP Codes"
+      ipeds/stem_cipcode:
+        one: "CIP Code - STEM"
+        other: "CIP Codes - STEM"
     attributes:
       tools/file_upload_import:
         target_model: "Target Model"
