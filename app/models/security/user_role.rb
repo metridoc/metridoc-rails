@@ -23,7 +23,8 @@ class Security::UserRole < ApplicationRecord
                         "Report",
                         "Reshare",
                         "UpennAlma",
-                        "UpennEzproxy"
+                        "UpennEzproxy",
+                        "Ipeds"
                       ]
   ACCESS_LEVELS = ["read-only", "read-write"]
 
@@ -41,25 +42,27 @@ class Security::UserRole < ApplicationRecord
 
   # Check if the subject is in the list of managed sections of the site
   def self.subject_secured?(subject)
-    return translate_subject_to_section(subject).in?(MANAGED_SECTIONS)
+    return translate_subject_to_section(subject).in?(
+      MANAGED_SECTIONS.map(&:downcase)
+    )
   end
 
   # Turn the subject into an equivalent section name
   def self.translate_subject_to_section(subject)
-    # If the subject is type Class, return the subject
-    if subject.is_a?(Class)
+    # Use a case statement to determine what subject is
+    case subject
+    when ActiveAdmin::Page
+      # Return the namespace of the page
+      s = subject.namespace_name
+    when Class
+      # Return the class
       s = subject
-    # Find the namespace of the subject, if it is defined
-    # TODO: Placeholder for reconfiguration of namespaces
-    # Currently has no effect.
-    elsif subject.respond_to?(:namespace_name)
-      s = subject.class
-    # If the subjects class isn't a string, return the class name
-    elsif subject.class.to_s != "String"
-      s = subject.class
-    # Otherwise return the subject (a string)
+    when String
+      # Handle a String input
+      s = subject
     else
-      s = subject
+      # Otherwise return the subject's class
+      s = subject.class
     end
 
     # Use a regex to get the module name from Module::Class
@@ -71,15 +74,19 @@ class Security::UserRole < ApplicationRecord
     # BUG: At this point GeoData::ZipCode will be processed to GeoData ... feature?
     s = "SupplementalData" if s.to_s.in?(["UpsZone", "GeoData::ZipCode", "Institution"])
 
-    return s.to_s
+    return s.to_s.downcase
   end
 
   def self.section_select_options
-    MANAGED_SECTIONS.sort_by{|e| Security::UserRoleSection.section_humanized_name(e).upcase }.map{|e| [Security::UserRoleSection.section_humanized_name(e), e]}
+    MANAGED_SECTIONS.sort_by{
+      |e| Security::UserRoleSection.section_humanized_name(e).upcase
+    }.map{|e| [Security::UserRoleSection.section_humanized_name(e), e]}
   end
 
   def user_role_sections_sorted
-    self.user_role_sections.sort_by{|a| Security::UserRoleSection.section_humanized_name(a.section)}
+    self.user_role_sections.sort_by{
+      |a| Security::UserRoleSection.section_humanized_name(a.section)
+    }
   end
 
 end

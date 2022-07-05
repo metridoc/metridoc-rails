@@ -21,6 +21,12 @@ class Tools::FileUploadImport < ApplicationRecord
                         Keyserver::CpuTypeTerm,
                         Keyserver::Usage,
                         GateCount::CardSwipe,
+                        Ipeds::Completion,
+                        Ipeds::Directory,
+                        Ipeds::CompletionSchema,
+                        Ipeds::DirectorySchema,
+                        Ipeds::StemCipcode,
+                        Ipeds::Cipcode
                       ]
 
   validates :target_model, presence: true
@@ -57,8 +63,9 @@ class Tools::FileUploadImport < ApplicationRecord
   # This can be a csv, xls, xlsx and the Roo gem will handle all of them
   def spreadsheet
     Roo::Spreadsheet.open(file_path, extension: extension.to_sym())
-  rescue
-    raise "Unknown file type: #{self.uploaded_file.filename}"
+  rescue => ex
+    log "Error =>  [#{ex.message}]"
+    raise ex
   end
 
   # Count the number of rows, excluding the header row
