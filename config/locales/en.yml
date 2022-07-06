@@ -106,6 +106,9 @@ en:
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
+    log:
+      log_menu: "Jobs Dashboard"
+      jobs_heading: "Recent Jobs - %{source}"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
     ipeds:
@@ -113,12 +116,16 @@ en:
     tools:
       file_upload_import: "Upload File"
   phrases:
+    no_records_found: "No records found."
     process: "Process"
     download: "Download"
     reports: "Reports"
     tools: "Tools"
     security: "Security"
+    admin: "Admin"
     please_select: "Please Select..."
+    log_job_execution:
+      title: "Execution #%{execution_id} Step %{step_name}"
     access_levels:
       read-only: "Read Only"
       read-write: "Read/Write"
@@ -177,8 +184,8 @@ en:
   activerecord:
     models:
       log/job_execution:
-        one: "Log"
-        other: "Logs"
+        one: "Job Execution"
+        other: "Job Executions"
       log/job_execution_step:
         one: "Job Execution Step"
         other: "Job Execution Steps"
@@ -264,6 +271,12 @@ en:
         one: "CIP Code - STEM"
         other: "CIP Codes - STEM"
     attributes:
+      log/job_execution:
+        id: "ID"
+        source_name: "Source"
+        job_type: "Job Type"
+        started_at: "Started At"
+        status: "Status"
       tools/file_upload_import:
         target_model: "Target Model"
         uploaded_file: "Upload File"

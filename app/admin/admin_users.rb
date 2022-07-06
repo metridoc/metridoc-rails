@@ -13,7 +13,7 @@ ActiveAdmin.register AdminUser do
 
   actions :all
 
-  menu false
+  menu if: proc{ authorized?(:read, AdminUser) }, parent: I18n.t("phrases.admin")
 
   index do
     selectable_column
