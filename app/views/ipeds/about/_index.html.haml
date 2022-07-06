@@ -3,16 +3,23 @@
 %section
   %h2 About the Data
   %p
-    Vivamus sit amet elementum tortor. Cras ultrices, tellus ut rhoncus posuere,
-    arcu velit eleifend lectus, ac placerat orci neque sit amet purus.
-    Ut fermentum dui velit, pulvinar viverra purus porta in. Ut pulvinar justo
-    nulla, quis aliquam ipsum sodales ut. Pellentesque nec mauris in enim
-    fringilla molestie in ut mauris. Cras viverra tellus a tincidunt
-    consectetur. Vivamus aliquet venenatis convallis. Nam non semper ante, vitae
-    mollis sapien. Morbi ut rhoncus nulla. Curabitur semper felis at nulla
-    ultrices sollicitudin. Nunc vulputate felis at faucibus tincidunt. Cras
-    hendrerit efficitur ipsum, ac rutrum leo bibendum nec. Pellentesque suscipit
-    ipsum erat, sit amet bibendum augue fermentum eu.
+    IPEDS is the Integrated Postsecondary Education Data System. It is a system
+    of interrelated surveys conducted annually by the U.S. Department of
+    Education’s National Center for Education Statistics (NCES). IPEDS gathers
+    information from every college, university, and technical and vocational
+    institution that participates in the federal student financial aid programs.
+    The Higher Education Act of 1965, as amended, requires that institutions
+    that participate in federal student aid programs report data on enrollments,
+    program completions, graduation rates, faculty and staff, finances,
+    institutional prices, and student financial aid.
+    %br
+    %br
+    Source: #{link_to "About IPEDS", "https://nces.ed.gov/ipeds/about-ipeds"}
+    %br
+    %br
+    More detailed information about each IPEDS data table in and preparation for
+    MetriDoc appears below.
+
 
 %hr
 %section
@@ -24,13 +31,115 @@
 %hr
 %section
   %h2 Data Preparation
+
+  %h3 Completions Table
   %p
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-    Donec ornare leo non risus maximus efficitur.
-    Fusce consequat eu urna vel faucibus.
-    Phasellus gravida dictum dolor id aliquet. Sed a ultrices tortor.
-    Donec varius scelerisque egestas. Nunc eget ornare felis.
-    Maecenas eget malesuada lacus. Maecenas eros risus, rutrum sed lacinia nec,
-    aliquam eu nisl. Donec orci ipsum, feugiat venenatis diam ac,
-    vestibulum faucibus ex. Vivamus semper congue diam. Fusce quis turpis nisi.
-    Phasellus non viverra felis, vitae lacinia metus.
+    IPEDS collects data on the number of students who complete a postsecondary
+    education program (completers) and the number of postsecondary awards earned
+    (#{link_to "IPEDS Completions", "https://nces.ed.gov/ipeds/use-the-data/survey-components/7/completions"}).
+    Business and industry, the military, and other groups that
+    need to recruit individuals with particular skills use these data
+    extensively.
+
+  %h4 Data collected include:
+  %ul
+    %li
+      Completions by field of study, award level, recipient race/ethnicity
+      and gender;
+    %li
+      Completers by race/ethnicity, gender, and age (collected at the total
+      as well as by award level); and
+    %li
+      Whether programs are offered via distance education
+    %li
+      Field of study is categorized according to the Classification of
+      Instructional Programs (CIP), a detailed coding system for postsecondary
+      instructional programs.
+
+  %h4 Steps for producing the file for the Completions Schema Table:
+  %ul
+    %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
+    %li Go to: Survey Data > Complete Data Files
+    %li Download dictionary for completions dataset that includes CIP codes
+    %li In the varlist tab, delete the varnumber column
+    %li Delete any blank rows at the end of the file and save as a csv
+
+  %h4 Steps for producing the files for the Completions Data Table:
+  %ul
+    %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
+    %li Go to: Survey Data > Complete Data Files
+    %li
+      For each year of data download the data file for completions dataset
+      that includes CIP codes
+    %li
+      In each file, add the column YEAR and fill it with the year the data
+      are from
+    %li Save each file as a csv
+
+  %h3 Directory Tables
+  %p
+    Institutional characteristics are collected through two survey
+    components: Institutional Characteristics Header and Institutional
+    Characteristics. #{link_to "Institutional Characteristics", "https://nces.ed.gov/ipeds/use-the-data/survey-components/4/institutional-characteristics"}
+    data are the foundation of the entire IPEDS system.
+
+  %h4 Data collected include:
+  %ul
+    %li Basic institutional contact information;
+    %li Student services information;
+    %li Tuition/fees and other student charges;
+    %li Control or affiliation;
+    %li Type of calendar system; and
+    %li Levels of awards and types of programs offered.
+
+  %h4 Steps for producing the file for the Directory Schema Table:
+  %ul
+    %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
+    %li Go to: Survey Data > Complete Data Files
+    %li Download the most recent dictionary for directory dataset
+    %li In the varlist tab, delete the varnumber column
+    %li Delete any blank rows at the end of the file and save as a csv
+
+  %h4 Steps for producing the files for the Directory Data Table:
+  %ul
+    %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
+    %li Go to: Survey Data > Complete Data Files
+    %li Download the most recent directory dataset
+    %li Save file as xlsx
+
+
+  %h3 CIP Code Lookup Table
+  %p
+    The Classification of Instructional Programs (CIP) provides a taxonomic
+    scheme that supports the accurate tracking and reporting of fields of study
+    and program completions activity. CIP was originally developed by the U.S.
+    Department of Education's National Center for Education Statistics (NCES)
+    in 1980, with revisions occurring in 1985, 1990, 2000, 2010 and 2020. The
+    CIP Code Lookup Table is sourced from the resources provided by
+    #{link_to "NCES", "https://nces.ed.gov/ipeds/cipcode/default.aspx?y=56"}.
+
+  %h4 Steps for producing the file for the CIP Code Lookup Table:
+  %ul
+    %li Download the Crosswalk-2010-2020 file (downloads as csv)
+    %li Save file as xlsx
+
+  %h3 STEM CIP Code Lookup Table
+  %p
+    Certain F-1 students who receive science, technology, engineering, and
+    mathematics (STEM) degrees may apply for a 24-month extension of their
+    post-completion optional practical training (OPT). The Department of
+    Homeland Security maintains a complete list of fields that fall within the
+    regulatory definition of “STEM field” that qualifies certain degrees to
+    fulfill the extension requirement. This list is known as the
+    #{link_to "STEM Designated Degree Programs", "https://studyinthestates.dhs.gov/stem-opt-hub/additional-resources/eligible-cip-codes-for-the-stem-opt-extension"}.
+    The Department of Education’s Classification of Instructional Program (CIP)
+    taxonomy system serves as the basis for the STEM OPT extension.
+    Since the CIP codes are published in pdf files, data for the STEM CIP Code
+    Lookup Table are copied from a
+    #{link_to "NAFSA resource", "https://www.nafsa.org/regulatory-information/dhs-stem-designated-degree-program-list"}.
+
+  %h4 Steps for producing the file for the STEM CIP Code Lookup Table:
+  %ul
+    %li Copy the NAFSA table and paste into an Excel file
+    %li Rename the 2020 CIP Code column to CIP Code 2020
+    %li Save as csv
