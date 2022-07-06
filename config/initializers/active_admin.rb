@@ -386,17 +386,24 @@ ActiveAdmin.setup do |config|
   end
 
   # Helper method to build the security drop down menu
-  def build_security_menu(namespace)
+  def build_admin_menu(namespace)
     namespace.build_menu do |menu|
       menu.add label: "Admin Users",
-        url: :admin_admin_users_path,
-        if: proc{ authorized?(:read, AdminUser) },
-        parent: I18n.t("phrases.security")
+      url: :admin_admin_users_path,
+      if: proc{ authorized?(:read, AdminUser) },
+      parent: I18n.t("phrases.admin")
+
+      # Add in Job Log information
+      menu.add label: I18n.t("active_admin.log.log_menu"),
+      url: :admin_log_path,
+      if: proc{ authorized?(:read, "Log") },
+      parent: I18n.t("phrases.admin")
+
 
       menu.add label: "User Roles",
-        url: :admin_user_roles_path,
-        if: proc{ authorized?(:read, Security::UserRole) },
-        parent: I18n.t("phrases.security")
+      url: :admin_user_roles_path,
+      if: proc{ authorized?(:read, Security::UserRole) },
+      parent: I18n.t("phrases.admin")
     end
   end
 
@@ -468,7 +475,7 @@ ActiveAdmin.setup do |config|
   def build_default_menu(namespace)
     build_utility_navigation(namespace)
     build_data_menu(namespace)
-    build_security_menu(namespace)
+    build_admin_menu(namespace)
     build_report_query_menu(namespace)
     build_tools_menu(namespace)
     build_documentation_menu(namespace)
