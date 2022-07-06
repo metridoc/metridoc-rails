@@ -296,13 +296,6 @@ ActiveAdmin.setup do |config|
   #
   # config.footer = 'my custom footer text'
 
-  # Define a custom footer
-  # This displays the Penn Logo and the IPLC logo
-  config.footer = proc {
-    image_tag("penn_libraries_logo.png", :alt => "Penn Libraries", :class => "penn_lib_logo") +
-    image_tag("iplc_logo.png", :alt => "Ivies Plus Libraries Consortium logo", :width => 150)
-  }
-
   # Creating navigation menus
   # Generate the head data menu
   def build_data_menu(namespace)
@@ -479,6 +472,21 @@ ActiveAdmin.setup do |config|
     build_report_query_menu(namespace)
     build_tools_menu(namespace)
     build_documentation_menu(namespace)
+
+    # Add Penn Libraries Logo to menu bar
+    namespace.build_menu do |menu|
+      menu.add id: "penn_libraries",
+      label: proc {
+        image_tag(
+          "penn_libraries_white.png",
+          :alt => "Penn Libraries",
+          :class => "penn_lib_logo"
+        )
+      },
+      url: "https://www.library.upenn.edu/",
+      priority: 99
+
+    end
   end
 
   # Admin namespace configuration (Primarily Set Up Menus)

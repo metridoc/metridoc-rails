@@ -169,26 +169,36 @@ body.active_admin {
   }
 
   #header {
+    // Define MetriDoc Logo Width
     img {
       width: 250px;
+    }
+    // Define the line-height for all menu item links
+    .menu_item a{
+      // 16 (bottom) + 24 (text) + 16 (top) = 56
+        line-height: 24px;
+    }
+    // Special handling for Penn Libraries logo
+    #penn_libraries {
+      // Push the logo as far right as possible
+      float: right;
+      // Style the link
+      a {
+        // 12 (bottom) + 32 (image) + 0 (link) +  12 (top) = 56
+        padding: 12px 0px 12px 0px;
+        line-height: 0px;
+        img {
+          height: 32px;
+          width: auto;
+        }
+      }
     }
   }
 
   #footer {
-    text-align: center;
+    text-align: right;
     span {
-      font-size: 12px;
-    }
-    img.penn_lib_logo {
-      width: 200px;
-      border-right: 1px #5d5d5d solid;
-      padding-right: 10px;
-      margin-right: 10px;
-      padding-bottom: 10px;
-    }
-    img.iplc_logo {
-      margin-left: 10px;
-      padding-bottom: 10px;
+      font-size: 10px;
     }
   }
 
