@@ -26,6 +26,7 @@ class Security::UserRole < ApplicationRecord
                         "UpennEzproxy",
                         "Ipeds"
                       ]
+
   ACCESS_LEVELS = ["read-only", "read-write"]
 
   # Define the authorization function for all pages here.
@@ -42,9 +43,10 @@ class Security::UserRole < ApplicationRecord
 
   # Check if the subject is in the list of managed sections of the site
   def self.subject_secured?(subject)
-    return translate_subject_to_section(subject).in?(
-      MANAGED_SECTIONS.map(&:downcase)
-    )
+    section = translate_subject_to_section(subject)
+    # Check both the normal sections (for models)
+    # and a downcase version (for namespaces)
+    return section.in?(MANAGED_SECTIONS.map(&:downcase) + MANAGED_SECTIONS)
   end
 
   # Turn the subject into an equivalent section name
@@ -74,7 +76,7 @@ class Security::UserRole < ApplicationRecord
     # BUG: At this point GeoData::ZipCode will be processed to GeoData ... feature?
     s = "SupplementalData" if s.to_s.in?(["UpsZone", "GeoData::ZipCode", "Institution"])
 
-    return s.to_s.downcase
+    return s.to_s
   end
 
   def self.section_select_options
