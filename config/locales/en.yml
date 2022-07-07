@@ -111,6 +111,10 @@ en:
       jobs_heading: "Recent Jobs - %{source}"
     geo_data:
       zip_codes: "U.S. Census Zip Codes"
+    ipeds:
+      ipeds_menu: "IPEDS"
+    tools:
+      file_upload_import: "Upload File"
   phrases:
     no_records_found: "No records found."
     process: "Process"
@@ -145,6 +149,8 @@ en:
       reshare: "RSAT: PALCI"
       alma: "Alma Circulation"
       upennalma: "Alma Demographics"
+      ipeds: "IPEDS Data"
+      upennezproxy: "EZProxy Logs"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:
@@ -245,6 +251,27 @@ en:
       ares/item_usage:
         one: "Ares Item Usage"
         other: "Ares Item Usage"
+      ipeds:
+        one: "IPEDS Data"
+        other: "IPEDS Data"
+      ipeds/completion_schema:
+        one: "IPEDS Completion Schema"
+        other: "IPEDS Completion Schema"
+      ipeds/directory_schema:
+        one: "IPEDS Directory Schema"
+        other: "IPEDS Directory Schema"
+      ipeds/directory:
+        one: "IPEDS Directory"
+        other: "IPEDS Directories"
+      ipeds/completion:
+        one: "IPEDS Completion"
+        other: "IPEDS Completions"
+      ipeds/cipcode:
+        one: "CIP Code"
+        other: "CIP Codes"
+      ipeds/stem_cipcode:
+        one: "CIP Code - STEM"
+        other: "CIP Codes - STEM"
     attributes:
       log/job_execution:
         id: "ID"

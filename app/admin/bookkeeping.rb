@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Bookkeeping" do
-  menu if: proc{ authorized?(:read, "Bookkeeping::DataLoad") }, parent: I18n.t("active_admin.bookkeeping")
+  menu false
 
   content do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

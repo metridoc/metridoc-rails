@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Borrowdirect" do
-  menu if: proc{ authorized?(:read, "Borrowdirect") }, label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"), parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   # Action need to get the redirect with parameters
   page_action :statistics, method: :post do

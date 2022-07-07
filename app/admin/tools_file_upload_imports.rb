@@ -1,7 +1,8 @@
 ActiveAdmin.register Tools::FileUploadImport do
-  actions :all, except: [:edit, :destroy]
 
-  menu if: proc{ authorized?(:read, Tools::FileUploadImport) }, parent: I18n.t("phrases.tools")
+  menu false
+
+  actions :all, except: [:edit, :destroy]
 
   permit_params :target_model,
                 :uploaded_file,

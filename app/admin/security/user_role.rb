@@ -46,5 +46,3 @@ ActiveAdmin.register Security::UserRole, as: "UserRole" do
   end
 
 end
-
-

@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "SupplementalData" do
-  menu if: proc{ authorized?(:read, "SupplementalData") }, label: I18n.t("active_admin.supplemental_data"), parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   content title: proc{ I18n.t("active_admin.supplemental_data") } do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources

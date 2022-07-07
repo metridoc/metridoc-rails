@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Illiad" do
-  menu if: proc{ authorized?(:read, "Illiad") }, label: I18n.t("active_admin.illiad.illiad_menu"), parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   # Action need to get the redirect with parameters
   page_action :statistics, method: :post do
