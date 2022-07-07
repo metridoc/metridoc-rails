@@ -1,5 +1,5 @@
 ActiveAdmin.register_page "Reshare" do
-  menu if: proc{ authorized?(:read, "Reshare") }, label: I18n.t("active_admin.reshare.reshare_menu"), parent: I18n.t("active_admin.resource_sharing")
+  menu false
 
   content title: I18n.t("active_admin.reshare.reshare_menu") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
