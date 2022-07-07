@@ -476,6 +476,7 @@ ActiveAdmin.setup do |config|
     build_utility_navigation(namespace)
     build_data_menu(namespace)
     build_admin_menu(namespace)
+    build_bookkeeping_menu(namespace)
     build_report_query_menu(namespace)
     build_tools_menu(namespace)
     build_documentation_menu(namespace)
