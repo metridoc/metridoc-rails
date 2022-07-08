@@ -12,10 +12,8 @@ module Log
     scope :parent_source, -> (source_name, sources) {
       # Return the basic result
       unless source_name == "other"
-        puts source_name
         return self.of_source(source_name)
       end
-      puts "Making a big clause"
       # If source_name is "other"
       # Return a linked series removing the named sources
       clause = self.where(nil)
