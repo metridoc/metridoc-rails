@@ -6,7 +6,6 @@ source_table:          "reshare_rs.patron_request"
 column_mappings:
   "pr_id": pr_id
   "pr_version": pr_version
-  "pr_patron_surname": pr_patron_surname
   "pr_date_created": pr_date_created
   "pr_pub_date": pr_pub_date
   "pr_edition": pr_edition
