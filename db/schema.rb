@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_28_004333) do
+ActiveRecord::Schema.define(version: 2022_07_08_225437) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -982,7 +982,6 @@ ActiveRecord::Schema.define(version: 2022_06_28_004333) do
   create_table "reshare_patron_requests", force: :cascade do |t|
     t.string "pr_id"
     t.bigint "pr_version"
-    t.string "pr_patron_surname"
     t.datetime "pr_date_created"
     t.string "pr_pub_date"
     t.string "pr_edition"

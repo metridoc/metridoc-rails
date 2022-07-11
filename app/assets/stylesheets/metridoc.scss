@@ -214,6 +214,10 @@ body.active_admin {
       // 16 (bottom) + 24 (text) + 16 (top) = 56
         line-height: 24px;
     }
+    // Bump the nested list down a smidge
+    .has_nested ul{
+      margin: 5px 0px 0px 0px;
+    }
     // Special handling for Penn Libraries logo
     #penn_libraries {
       // Push the logo as far right as possible
