@@ -24,6 +24,10 @@
 %hr
 %section
   %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li= link_to "Exploratory IPEDS Dashboard", "/ipeds/dashboard"
+  %h3 Data Tables
   %ul
     - resources.each do |resource|
       %li= link_to resource.resource_name.human, "/ipeds/#{resource.resource_name.param_key.pluralize}"
