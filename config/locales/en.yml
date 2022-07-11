@@ -113,6 +113,7 @@ en:
       zip_codes: "U.S. Census Zip Codes"
     ipeds:
       ipeds_menu: "IPEDS"
+      ipeds_dashboard: "IPEDS Data Exploration"
     tools:
       file_upload_import: "Upload File"
   phrases:
