@@ -346,12 +346,6 @@ ActiveAdmin.setup do |config|
         if: proc{ authorized?(:read, "Keyserver") },
         parent: I18n.t("active_admin.resource_sharing")
 
-      # Logs
-      menu.add label: "Logs",
-        url: :admin_log_job_execution_steps_path,
-        if: proc{ authorized?(:read, "Log") },
-        parent: I18n.t("active_admin.resource_sharing")
-
       # Library Profiles
       menu.add label: I18n.t("active_admin.library_profiles_heading"),
         url: :admin_libraryprofile_path,
