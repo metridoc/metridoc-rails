@@ -62,7 +62,7 @@ jobs:
       - run:
           command: |
             apk add --update-cache --upgrade bash curl
-            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --oneline -n 1 $CIRCLE_SHA1)'" | tr '\n' ' ' >> $BASH_ENV
             source $BASH_ENV
       - slack/status: *default-slack-config
   deploy-staging:
@@ -99,7 +99,7 @@ jobs:
       - run:
           command: |
             apk add --update-cache --upgrade bash curl
-            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --format=%B -n 1 $CIRCLE_SHA1)'" >> $BASH_ENV
+            echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --oneline -n 1 $CIRCLE_SHA1)'" | tr '\n' ' ' >> $BASH_ENV
             source $BASH_ENV
       - slack/status: *default-slack-config
   test_role:
