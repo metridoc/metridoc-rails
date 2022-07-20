@@ -23,4 +23,5 @@ export_filter_date_sql: "ro_last_updated > ?"
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::ReqOverdue"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
+incremental_filter_column: "ro_last_updated"

@@ -17,8 +17,8 @@ column_mappings:
 export_file_name:      "reshare_req_stats.csv"
 export_filter_date_sql: "rs_date_created > ?"
 
-
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::ReqStat"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
+incremental_filter_column: "rs_date_created"

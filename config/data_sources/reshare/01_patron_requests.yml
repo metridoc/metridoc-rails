@@ -9,6 +9,7 @@ column_mappings:
   "pr_date_created": pr_date_created
   "pr_pub_date": pr_pub_date
   "pr_edition": pr_edition
+  "__start": __start
 
 export_file_name:      "reshare_patron_requests.csv"
 export_filter_date_sql: "__start > ?"
@@ -17,4 +18,5 @@ export_filter_date_sql: "__start > ?"
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::PatronRequest"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
+incremental_filter_column: "__start"

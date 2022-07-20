@@ -22,4 +22,6 @@ export_filter_date_sql: "rtr_date_created > ?"
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::RtatReq"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
+incremental_filter_column: "rtr_date_created"
+

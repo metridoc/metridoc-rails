@@ -19,4 +19,6 @@ export_filter_date_sql: "ss_date_created > ?"
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::SupStat"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
+incremental_filter_column: "ss_date_created"
+

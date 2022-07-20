@@ -16,4 +16,5 @@ export_filter_date_sql: "sts_date_created > ?"
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::StatShip"
-truncate_before_load:  "yes"
+truncate_before_load:  "no"
+incremental_filter_column: "sts_date_created"
