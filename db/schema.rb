@@ -13,7 +13,6 @@
 ActiveRecord::Schema.define(version: 2022_07_20_041810) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pgstattuple"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|
@@ -977,7 +976,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "de_type_rv_fk"
     t.bigint "de_published_last_update"
     t.string "de_branding_url"
-    t.datetime "__start"
+    t.datetime "start_at"
   end
 
   create_table "reshare_patron_requests", force: :cascade do |t|
@@ -986,7 +985,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.datetime "pr_date_created"
     t.string "pr_pub_date"
     t.string "pr_edition"
-    t.datetime "__start"
+    t.datetime "start_at"
   end
 
   create_table "reshare_req_overdues", force: :cascade do |t|
