@@ -1,0 +1,8 @@
+= javascript_include_tag 'application'
+
+- source_url = "https://app.powerbi.com/reportEmbed?reportId=2f3d10c1-7b64-45cc-8c8c-a6abd46527e9&autoAuth=true&ctid=6c4d949d-b91c-4c45-9aae-66d76443110d&config=eyJjbHVzdGVyVXJsIjoiaHR0cHM6Ly93YWJpLXVzLWVhc3QyLWMtcHJpbWFyeS1yZWRpcmVjdC5hbmFseXNpcy53aW5kb3dzLm5ldC8ifQ%3D%3D"
+- title = "BorrowDirect Relais Statistics"
+%section
+  %h2= title
+  %center{style: "height:100vh;"}
+    %iframe{allowFullScreen: true, src: source_url, title: title, style: "height: 80vh; width:80%;"}
