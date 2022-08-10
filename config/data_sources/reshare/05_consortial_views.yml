@@ -14,11 +14,19 @@ column_mappings:
   "cv_code": cv_code
 
 export_file_name:      "reshare_consortial_views.csv"
-export_filter_date_sql: "cv_date_created > ?"
+export_filter_date_sql: "cv_last_updated > ?"
 
+# Filter out Bobst and South Charleston
+# They cause double counting for NYU and Marshall University
+filters:
+  - "cv_requester_nice_name NOT IN ('Bobst Circulation Desk', 'South Charleston Campus Collection')"
+  - "cv_supplier_nice_name NOT IN ('Bobst Circulation Desk', 'South Charleston Campus Collection')"
 
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::ConsortialView"
 truncate_before_load:  "no"
-incremental_filter_column: "cv_date_created"
+incremental_filter_column: "cv_last_updated"
+
+unique_keys: "cv_patron_request_fk"
+upsert: true

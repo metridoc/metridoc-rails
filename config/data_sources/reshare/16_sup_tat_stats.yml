@@ -14,8 +14,14 @@ column_mappings:
 export_file_name:      "reshare_sup_tat_stats.csv"
 export_filter_date_sql: "stst_date_created > ?"
 
+filters:
+  - "stst_supplier NOT IN ('Bobst Circulation Desk', 'South Charleston Campus Collection')"
+
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::SupTatStat"
 truncate_before_load:  "no"
 incremental_filter_column: "stst_date_created"
+
+unique_keys: ["stst_req_id"]
+upsert: false

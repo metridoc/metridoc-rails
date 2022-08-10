@@ -18,3 +18,5 @@ target_model:          "Reshare::RtatRec"
 truncate_before_load:  "no"
 incremental_filter_column: "rtre_date_created"
 
+unique_keys: ["rtre_req_id"]
+upsert: false

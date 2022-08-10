@@ -17,11 +17,10 @@ column_mappings:
   "ro_last_updated": ro_last_updated
 
 export_file_name:      "reshare_req_overdues.csv"
-export_filter_date_sql: "ro_last_updated > ?"
-
 
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::ReqOverdue"
-truncate_before_load:  "no"
-incremental_filter_column: "ro_last_updated"
+
+# Run the full truncation every time
+truncate_before_load:  "yes"

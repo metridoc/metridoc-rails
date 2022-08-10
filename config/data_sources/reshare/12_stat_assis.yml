@@ -19,3 +19,5 @@ target_model:          "Reshare::StatAssi"
 truncate_before_load:  "no"
 incremental_filter_column: "sta_date_created"
 
+unique_keys: ["sta_req_id"]
+upsert: false

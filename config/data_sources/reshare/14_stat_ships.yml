@@ -18,3 +18,6 @@ target_adapter:        csv
 target_model:          "Reshare::StatShip"
 truncate_before_load:  "no"
 incremental_filter_column: "sts_date_created"
+
+unique_keys: ["sts_req_id"]
+upsert: false

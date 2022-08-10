@@ -23,7 +23,7 @@ column_mappings:
   "de_type_rv_fk": de_type_rv_fk
   "de_published_last_update": de_published_last_update
   "de_branding_url": de_branding_url
-  "__start": start_at
+  "__start": last_updated
 
 export_file_name:      "reshare_directory_entries.csv"
 export_filter_date_sql: "__start > ?"
@@ -33,4 +33,7 @@ export_filter_date_sql: "__start > ?"
 target_adapter:        csv
 target_model:          "Reshare::DirectoryEntry"
 truncate_before_load:  "no"
-incremental_filter_column: "start_at"
+incremental_filter_column: "last_updated"
+
+unique_keys: ["origin", "de_id"]
+upsert: true

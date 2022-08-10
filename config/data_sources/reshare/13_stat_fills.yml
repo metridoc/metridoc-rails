@@ -20,3 +20,5 @@ target_model:          "Reshare::StatFill"
 truncate_before_load:  "no"
 incremental_filter_column: "stf_date_created"
 
+unique_keys: ["stf_req_id"]
+upsert: false

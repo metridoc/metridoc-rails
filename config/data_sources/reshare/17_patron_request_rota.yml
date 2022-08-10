@@ -1,0 +1,34 @@
+load_sequence:         17
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.patron_request_rota"
+column_mappings:
+  "__start": last_updated
+  "__origin": origin
+
+  "prr_id": prr_id
+  "prr_version": prr_version
+  "prr_date_created": prr_date_created
+  "prr_last_updated": prr_last_updated
+
+  "prr_rota_position": prr_rota_position
+  "prr_directory_id_fk": prr_directory_id_fk
+  "prr_patron_request_fk": prr_patron_request_fk
+  "prr_state_fk": prr_state_fk
+  "prr_peer_symbol_fk": prr_peer_symbol_fk
+  
+  "prr_lb_score": prr_lb_score
+  "prr_lb_reason": prr_lb_reason
+
+export_file_name:      "reshare_patron_request_rotas.csv"
+export_filter_date_sql: "__start > ?"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::PatronRequestRota"
+truncate_before_load:  "no"
+incremental_filter_column: "last_updated"
+
+unique_keys: ["prr_id"]
+upsert: true

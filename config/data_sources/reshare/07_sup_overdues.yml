@@ -18,11 +18,10 @@ column_mappings:
   "so_last_updated": so_last_updated
 
 export_file_name:      "reshare_sup_overdues.csv"
-export_filter_date_sql: "so_last_updated > ?"
-
 
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::SupOverdue"
-truncate_before_load:  "no"
-incremental_filter_column: "so_last_updated"
+
+# Run the full truncate every time
+truncate_before_load:  "yes"

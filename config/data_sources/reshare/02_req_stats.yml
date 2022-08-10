@@ -17,8 +17,14 @@ column_mappings:
 export_file_name:      "reshare_req_stats.csv"
 export_filter_date_sql: "rs_date_created > ?"
 
+# Filter out Bobst and South Charleston
+# They cause double counting for NYU and Marshall University
+filters:
+  - "rs_requester_nice_name NOT IN ('Bobst Circulation Desk', 'South Charleston Campus Collection')"
+
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::ReqStat"
 truncate_before_load:  "no"
 incremental_filter_column: "rs_date_created"
+# No columns, purely run on the incremental date

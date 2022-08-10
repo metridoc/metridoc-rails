@@ -4,7 +4,7 @@ load_sequence:         11
 source_adapter:        postgres
 source_table:          "reshare_derived.stat_reqs"
 column_mappings:
-  "str_supplier": str_supplier 
+  "str_supplier": str_supplier
   "str_supplier_nice_name": str_supplier_nice_name
   "str_hrid": str_hrid
   "str_title": str_title
@@ -18,8 +18,18 @@ column_mappings:
 export_file_name:      "reshare_stat_reqs.csv"
 export_filter_date_sql: "str_date_created > ?"
 
+# Filter out Bobst and South Charleston
+# They cause double counting for NYU and Marshall University
+filters:
+  - "str_supplier_nice_name NOT IN ('Bobst Circulation Desk', 'South Charleston Campus Collection')"
+  - "str_requester_nice_name NOT IN ('Bobst Circulation Desk', 'South Charleston Campus Collection')"
+
+
 # Target Config
 target_adapter:        csv
 target_model:          "Reshare::StatReq"
 truncate_before_load:  "no"
 incremental_filter_column: "str_date_created"
+
+unique_keys: ["str_id"]
+upsert: false

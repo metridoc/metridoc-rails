@@ -18,3 +18,6 @@ target_adapter:        csv
 target_model:          "Reshare::RtatShip"
 truncate_before_load:  "no"
 incremental_filter_column: "rts_date_created"
+
+unique_keys: ["rts_req_id"]
+upsert: false
