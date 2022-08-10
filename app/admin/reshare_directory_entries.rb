@@ -18,7 +18,8 @@ ActiveAdmin.register Reshare::DirectoryEntry do
   :de_contact_name,
   :de_type_rv_fk,
   :de_published_last_update,
-  :de_branding_url
+  :de_branding_url,
+  :last_updated
 
   preserve_default_filters!
   filter :de_slug, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
