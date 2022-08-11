@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_20_041810) do
+ActiveRecord::Schema.define(version: 2022_08_05_174324) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgstattuple"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|
@@ -954,6 +955,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "cv_patron_request_fk"
     t.string "cv_state_fk"
     t.string "cv_code"
+    t.index ["cv_patron_request_fk"], name: "index_reshare_consortial_views_on_cv_patron_request_fk", unique: true
   end
 
   create_table "reshare_directory_entries", force: :cascade do |t|
@@ -976,7 +978,25 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "de_type_rv_fk"
     t.bigint "de_published_last_update"
     t.string "de_branding_url"
-    t.datetime "start_at"
+    t.datetime "last_updated"
+    t.index ["origin", "de_id"], name: "index_reshare_directory_entries_on_origin_and_de_id", unique: true
+  end
+
+  create_table "reshare_patron_request_rota", force: :cascade do |t|
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "prr_id"
+    t.string "prr_version"
+    t.datetime "prr_date_created"
+    t.datetime "prr_last_updated"
+    t.integer "prr_rota_position"
+    t.string "prr_directory_id_fk"
+    t.string "prr_patron_request_fk"
+    t.string "prr_state_fk"
+    t.string "prr_peer_symbol_fk"
+    t.integer "prr_lb_score"
+    t.string "prr_lb_reason"
+    t.index ["prr_id"], name: "index_reshare_patron_request_rota_on_prr_id", unique: true
   end
 
   create_table "reshare_patron_requests", force: :cascade do |t|
@@ -984,8 +1004,24 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.bigint "pr_version"
     t.datetime "pr_date_created"
     t.string "pr_pub_date"
-    t.string "pr_edition"
-    t.datetime "start_at"
+    t.datetime "last_updated"
+    t.string "pr_hrid"
+    t.string "pr_patron_type"
+    t.string "pr_resolved_req_inst_symbol_fk"
+    t.string "pr_resolved_pickup_location_fk"
+    t.string "pr_pickup_location_slug"
+    t.string "pr_resolved_sup_inst_symbol_fk"
+    t.string "pr_pick_location_fk"
+    t.string "pr_pick_shelving_location"
+    t.string "pr_local_call_number"
+    t.string "pr_oclc_number"
+    t.string "pr_publisher"
+    t.string "pr_place_of_pub"
+    t.string "pr_bib_record"
+    t.string "pr_state_fk"
+    t.integer "pr_rota_position"
+    t.boolean "pr_is_requester"
+    t.index ["pr_id"], name: "index_reshare_patron_requests_on_pr_id", unique: true
   end
 
   create_table "reshare_req_overdues", force: :cascade do |t|
@@ -1000,6 +1036,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "ro_due_date_rs"
     t.datetime "ro_return_shipped_date"
     t.datetime "ro_last_updated"
+    t.index ["ro_hrid"], name: "index_reshare_req_overdues_on_ro_hrid", unique: true
   end
 
   create_table "reshare_req_stats", force: :cascade do |t|
@@ -1018,6 +1055,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.datetime "rtre_date_created"
     t.string "rtre_req_id"
     t.string "rtre_status"
+    t.index ["rtre_req_id"], name: "index_reshare_rtat_recs_on_rtre_req_id", unique: true
   end
 
   create_table "reshare_rtat_reqs", force: :cascade do |t|
@@ -1031,6 +1069,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "rtr_supplier_nice_name"
     t.datetime "rtr_date_created"
     t.string "rtr_id"
+    t.index ["rtr_hrid"], name: "index_reshare_rtat_reqs_on_rtr_hrid", unique: true
   end
 
   create_table "reshare_rtat_ships", force: :cascade do |t|
@@ -1039,6 +1078,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "rts_req_id"
     t.string "rts_from_status"
     t.string "rts_to_status"
+    t.index ["rts_req_id"], name: "index_reshare_rtat_ships_on_rts_req_id", unique: true
   end
 
   create_table "reshare_stat_assis", force: :cascade do |t|
@@ -1047,6 +1087,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "sta_req_id"
     t.string "sta_from_status"
     t.string "sta_to_status"
+    t.index ["sta_supplier", "sta_req_id"], name: "index_reshare_stat_assis_on_sta_supplier_and_sta_req_id", unique: true
   end
 
   create_table "reshare_stat_fills", force: :cascade do |t|
@@ -1055,6 +1096,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "stf_req_id"
     t.string "stf_from_status"
     t.string "stf_to_status"
+    t.index ["stf_supplier", "stf_req_id"], name: "index_reshare_stat_fills_on_stf_supplier_and_stf_req_id", unique: true
   end
 
   create_table "reshare_stat_recs", force: :cascade do |t|
@@ -1063,6 +1105,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "stre_req_id"
     t.string "stre_from_status"
     t.string "stre_to_status"
+    t.index ["stre_supplier", "stre_req_id"], name: "index_reshare_stat_recs_on_stre_supplier_and_stre_req_id", unique: true
   end
 
   create_table "reshare_stat_reqs", force: :cascade do |t|
@@ -1076,6 +1119,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "str_requester_nice_name"
     t.datetime "str_date_created"
     t.string "str_id"
+    t.index ["str_supplier", "str_id"], name: "index_reshare_stat_reqs_on_str_supplier_and_str_id", unique: true
   end
 
   create_table "reshare_stat_ships", force: :cascade do |t|
@@ -1084,6 +1128,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "sts_req_id"
     t.string "sts_from_status"
     t.string "sts_to_status"
+    t.index ["sts_supplier", "sts_req_id"], name: "index_reshare_stat_ships_on_sts_supplier_and_sts_req_id", unique: true
   end
 
   create_table "reshare_sup_overdues", force: :cascade do |t|
@@ -1099,6 +1144,7 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "so_local_call_number"
     t.string "so_item_barcode"
     t.datetime "so_last_updated"
+    t.index ["so_supplier", "so_hrid"], name: "index_reshare_sup_overdues_on_so_supplier_and_so_hrid", unique: true
   end
 
   create_table "reshare_sup_stats", force: :cascade do |t|
@@ -1119,6 +1165,16 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "stst_from_status"
     t.string "stst_to_status"
     t.string "stst_message"
+  end
+
+  create_table "reshare_symbols", force: :cascade do |t|
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "sym_id"
+    t.string "sym_version"
+    t.string "sym_owner_fk"
+    t.string "sym_symbol"
+    t.index ["sym_id"], name: "index_reshare_symbols_on_sym_id", unique: true
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
