@@ -22,6 +22,3 @@ target_adapter:        csv
 target_model:          "Reshare::SupTatStat"
 truncate_before_load:  "no"
 incremental_filter_column: "stst_date_created"
-
-unique_keys: ["stst_req_id"]
-upsert: false

@@ -1,4 +1,4 @@
-load_sequence:         17
+load_sequence:         18
 
 # Source Config
 source_adapter:        postgres
@@ -8,7 +8,7 @@ column_mappings:
   "__origin": origin
 
   "sym_id": sym_id
-  "sym_version": sym_version
+  "version": sym_version
 
   "sym_owner_fk": sym_owner_fk
   "sym_symbol": sym_symbol

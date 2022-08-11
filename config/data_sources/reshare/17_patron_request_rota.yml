@@ -17,11 +17,11 @@ column_mappings:
   "prr_patron_request_fk": prr_patron_request_fk
   "prr_state_fk": prr_state_fk
   "prr_peer_symbol_fk": prr_peer_symbol_fk
-  
+
   "prr_lb_score": prr_lb_score
   "prr_lb_reason": prr_lb_reason
 
-export_file_name:      "reshare_patron_request_rotas.csv"
+export_file_name:      "reshare_patron_request_rota.csv"
 export_filter_date_sql: "__start > ?"
 
 # Target Config

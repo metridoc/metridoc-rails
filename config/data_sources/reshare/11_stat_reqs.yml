@@ -31,5 +31,5 @@ target_model:          "Reshare::StatReq"
 truncate_before_load:  "no"
 incremental_filter_column: "str_date_created"
 
-unique_keys: ["str_id"]
+unique_keys: ["str_supplier", "str_id"]
 upsert: false
