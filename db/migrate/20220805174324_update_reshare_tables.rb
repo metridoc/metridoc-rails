@@ -5,6 +5,9 @@ class UpdateReshareTables < ActiveRecord::Migration[5.2]
       # Rename the start at column, used in incremental loading
       t.rename :start_at, :last_updated
 
+      # Institutional ID for this interaction
+      t.column :origin, :string
+
       # Patron Information
       t.column :pr_hrid, :string
       t.column :pr_patron_type, :string
@@ -20,7 +23,9 @@ class UpdateReshareTables < ActiveRecord::Migration[5.2]
       t.column :pr_pick_shelving_location, :string
 
       # Bibliographic Information
+      t.column :pr_title, :string
       t.column :pr_local_call_number, :string
+      t.column :pr_selected_item_barcode, :string
       t.column :pr_oclc_number, :string
       t.column :pr_publisher, :string
       t.column :pr_place_of_pub, :string
@@ -98,6 +103,13 @@ class UpdateReshareTables < ActiveRecord::Migration[5.2]
     add_index :reshare_rtat_ships, :rts_req_id, unique: true
     add_index :reshare_rtat_recs, :rtre_req_id, unique: true
 
+    add_index :reshare_sup_tat_stats, [
+      :stst_req_id,
+      :stst_from_status,
+      :stst_to_status,
+      :stst_message,
+      :stst_supplier
+    ], unique: true, name: :stst_index
     add_index :reshare_stat_reqs, [:str_supplier, :str_id], unique: true
     add_index :reshare_stat_assis, [:sta_supplier, :sta_req_id], unique: true
     add_index :reshare_stat_fills, [:stf_supplier, :stf_req_id], unique: true

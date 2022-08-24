@@ -1,19 +1,19 @@
-load_sequence:         18
+load_sequence:         5
 
 # Source Config
 source_adapter:        postgres
-source_table:          "reshare_rs.symbol"
+source_table:          "reshare_rs.status"
 column_mappings:
   "__start": last_updated
   "__origin": origin
 
-  "sym_id": sym_id
-  "version": sym_version
+  "st_id": st_id
+  "st_version": st_version
 
-  "sym_owner_fk": sym_owner_fk
-  "sym_symbol": sym_symbol
+  "st_owner": st_owner
+  "st_code": st_code
 
-export_file_name:      "reshare_symbols.csv"
+export_file_name:      "reshare_status.csv"
 export_filter_date_sql: "__start > ?"
 
 # Target Config
@@ -22,5 +22,5 @@ target_model:          "Reshare::Symbol"
 truncate_before_load:  "no"
 incremental_filter_column: "last_updated"
 
-unique_keys: ["sym_id"]
+unique_keys: ["st_id"]
 upsert: true

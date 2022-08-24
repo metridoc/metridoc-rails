@@ -1,0 +1,50 @@
+load_sequence:         11
+
+# Target Configuration
+target_adapter:        native_sql
+target_model:          "Reshare::RtatShip"
+truncate_before_load:  "no"
+
+sql: |
+      INSERT INTO reshare_rtat_ships (
+        rts_requester,
+        rts_date_created,
+        rts_req_id,
+        rts_from_status,
+        rts_to_status
+      )
+      SELECT DISTINCT
+        rs_requester,
+        rs_date_created,
+        rs_req_id,
+        rs_from_status,
+        rs_to_status
+      FROM
+        reshare_req_stats
+  WHERE (rs_from_status = 'REQ_EXPECTS_TO_SUPPLY'
+      OR rs_from_status = 'REQ_CONDITIONAL_ANSWER_RECEIVED')
+  AND rs_to_status = 'REQ_SHIPPED';
+
+
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_derived.rtat_ship"
+column_mappings:
+  "rts_requester": rts_requester
+  "rts_date_created": rts_date_created
+  "rts_req_id": rts_req_id
+  "rts_from_status": rts_from_status
+  "rts_to_status": rts_to_status
+
+export_file_name:      "reshare_rtat_ships.csv"
+export_filter_date_sql: "rts_date_created > ?"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::RtatShip"
+truncate_before_load:  "no"
+incremental_filter_column: "rts_date_created"
+
+unique_keys: ["rts_req_id"]
+upsert: false

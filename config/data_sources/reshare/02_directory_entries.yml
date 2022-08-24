@@ -1,4 +1,4 @@
-load_sequence:         3
+load_sequence:         2
 
 # Source Config
 source_adapter:        postgres
