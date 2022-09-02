@@ -10,7 +10,6 @@ column_mappings:
   "st_id": st_id
   "st_version": st_version
 
-  "st_owner": st_owner
   "st_code": st_code
 
 export_file_name:      "reshare_status.csv"
@@ -18,7 +17,7 @@ export_filter_date_sql: "__start > ?"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Reshare::Symbol"
+target_model:          "Reshare::Status"
 truncate_before_load:  "no"
 incremental_filter_column: "last_updated"
 
