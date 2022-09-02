@@ -4,6 +4,5 @@ ActiveAdmin.register Reshare::Status do
     :origin,
     :st_id,
     :st_version,
-    :st_owner,
     :st_code
 end
