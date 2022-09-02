@@ -6,7 +6,7 @@ ActiveAdmin.register Reshare::PatronRequestAudit do
     :pra_version,
     :pra_date_created,
     :pra_patron_request_fk,
-    :pra_from_status,
-    :pra_to_status,
+    :pra_from_status_fk,
+    :pra_to_status_fk,
     :pra_message
 end
