@@ -21,6 +21,11 @@ body.active_admin {
       font-size: 18px;
     }
 
+    /* Set web links in the main content to Penn Red */
+    a {
+      color: #990000;
+    }
+
     .index_table, .panel_contents table {
       table-layout: auto !important;
       word-break: inherit;
