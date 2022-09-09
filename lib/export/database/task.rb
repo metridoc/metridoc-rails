@@ -30,6 +30,14 @@ module Export
         task_config["export_filter_date_sql"]
       end
 
+      def incremental_filter_column
+        @incremental_filter_column ||= task_config["incremental_filter_column"]
+      end
+
+      def class_name
+        @class_name ||= task_config["target_model"].constantize
+      end
+
       def export_filter_date_range_sql
         task_config["export_filter_date_range_sql"]
       end
@@ -73,12 +81,17 @@ module Export
         end
 
         earliest = table.earliest.to_date unless table.nil?
-        if export_filter_date_sql.present? && !earliest.nil?
-          if from_date.present?
-            validate_range_request('from', earliest, nil) unless earliest.nil?
-            scope = scope.where(export_filter_date_sql, from_date)
-          elsif to_date.present?
-            scope = scope.where(export_filter_date_sql, Date.today - 1.years)
+        if export_filter_date_sql.present?
+          if incremental_filter_column
+            latest_date = class_name.pluck(" MAX(#{ActiveRecord::Base.connection.quote_column_name(incremental_filter_column)}) AS latest_date").first
+            scope = scope.where(export_filter_date_sql, latest_date) if latest_date
+          elsif earliest.present?
+            if from_date.present?
+              validate_range_request('from', earliest, nil)
+              scope = scope.where(export_filter_date_sql, from_date)
+            elsif to_date.present?
+              scope = scope.where(export_filter_date_sql, Date.today - 1.years)
+            end
           end
         end
 

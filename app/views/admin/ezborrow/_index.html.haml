@@ -1,9 +1,34 @@
 = javascript_include_tag 'application'
 
-%ul
-  - resources.each do |resource|
-    %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+%section
+  %h2 Introduction
 
+  The #{link_to "PALCI", "https://palci.org/"} (Partnership for Academic Library
+  Collaboration and Innovation) Consortium provides an expedited
+  interlibrary loan service called EZBorrow.  The consortium consists of around
+  50 institutions in Pennsylvania, West Virginia, and New York. Hosted here
+  is the historical data for EZBorrow when it was managed by
+  #{link_to "Relais ILL", "https://www.oclc.org/en/relais-ill.html"} from
+  #{link_to "OCLC", "https://www.oclc.org/en/home.html"}. Since Fall 2021, the
+  EZBorrow service has been managed through an open-source community-owned
+  resource sharing solution called
+  #{link_to "Project Reshare", "https://projectreshare.org/"}
+  by #{link_to "Index Data", "https://www.indexdata.com/"}. That data is also
+  hosted in MetriDoc and can be found #{link_to "here", :admin_reshare}.
+
+%hr
+%section
+  %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li Coming soon...
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+
+%hr
 #data-viz
   %h2= t 'active_admin.ezborrow.columns_heading'
   #left-col

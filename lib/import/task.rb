@@ -116,6 +116,17 @@ module Import
         task_config["legacy_filter_date_field"]
       end
 
+      # fetch any unique keys specified in the task config file
+      def unique_keys
+        task_config["unique_keys"]
+      end
+
+      # Task config to set the upsert rule
+      # Default is false
+      def upsert
+        task_config["upsert"] | false
+      end
+
       def truncate
         filters = {}
         filters.merge!(institution_id: institution_id) if has_institution_id?
@@ -311,7 +322,19 @@ module Import
 
       def import_records(records)
         begin
-          result = class_name.import records
+          # Handle unique keys with specified duplicate behavior
+          result =
+            if unique_keys.present? and upsert
+              class_name.import records, on_duplicate_key_update: {
+                conflict_target: unique_keys,
+                columns: :all
+              }
+            elsif unique_keys.present?
+              class_name.import records, on_duplicate_key_ignore: true
+            else
+              class_name.import records
+            end
+
           log "Imported #{result.ids.size} records."
           log_validation_errors(result.failed_instances)
           return result.failed_instances.size
@@ -326,6 +349,7 @@ module Import
         log "Switching to individual mode"
         records.each do |record|
           begin
+            # save will update an existing record instead of adding a new one
             unless record.save
               log "Failed saving #{record.inspect} error: #{record.errors.full_messages.join(", ")}"
               n_errors += 1
