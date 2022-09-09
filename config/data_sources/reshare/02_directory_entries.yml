@@ -1,0 +1,28 @@
+load_sequence:         2
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.directory_entry"
+column_mappings:
+  "__origin": origin
+  "de_id": de_id
+  "version": version
+  "de_slug": de_slug
+  "de_name": de_name
+  "de_status_fk": de_status_fk
+  "de_parent": de_parent
+  "de_lms_location_code": de_lms_location_code
+  "__start": last_updated
+
+export_file_name:      "reshare_directory_entries.csv"
+export_filter_date_sql: "__start > ?"
+
+
+# Target Config
+target_adapter:        csv
+target_model:          "Reshare::DirectoryEntry"
+truncate_before_load:  "no"
+incremental_filter_column: "last_updated"
+
+unique_keys: ["origin", "de_id"]
+upsert: true
