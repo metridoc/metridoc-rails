@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_20_041810) do
+ActiveRecord::Schema.define(version: 2022_08_30_191141) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgstattuple"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|
@@ -945,38 +946,73 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.string "full_sql"
   end
 
-  create_table "reshare_consortial_views", force: :cascade do |t|
-    t.string "cv_requester"
-    t.string "cv_requester_nice_name"
-    t.datetime "cv_date_created"
-    t.datetime "cv_last_updated"
-    t.string "cv_supplier_nice_name"
-    t.string "cv_patron_request_fk"
-    t.string "cv_state_fk"
-    t.string "cv_code"
+  create_table "reshare_borrowing_turnarounds", force: :cascade do |t|
+    t.string "borrower"
+    t.string "request_id"
+    t.datetime "request_date"
+    t.datetime "shipped_date"
+    t.datetime "received_date"
+    t.decimal "time_to_ship"
+    t.decimal "time_to_receipt"
+    t.decimal "total_time"
+    t.index ["borrower", "request_id"], name: "borrowing_turnaround_index", unique: true
   end
 
   create_table "reshare_directory_entries", force: :cascade do |t|
     t.string "origin"
     t.string "de_id"
     t.bigint "version"
-    t.bigint "custom_properties_id"
     t.string "de_slug"
-    t.bigint "de_foaf_timestamp"
-    t.string "de_foaf_url"
     t.string "de_name"
     t.string "de_status_fk"
-    t.string "de_desc"
     t.string "de_parent"
     t.string "de_lms_location_code"
-    t.string "de_entry_url"
-    t.string "de_phone_number"
-    t.string "de_email_address"
-    t.string "de_contact_name"
-    t.string "de_type_rv_fk"
-    t.bigint "de_published_last_update"
-    t.string "de_branding_url"
-    t.datetime "start_at"
+    t.datetime "last_updated"
+    t.index ["origin", "de_id"], name: "index_reshare_directory_entries_on_origin_and_de_id", unique: true
+  end
+
+  create_table "reshare_lending_turnarounds", force: :cascade do |t|
+    t.string "lender"
+    t.string "request_id"
+    t.datetime "request_date"
+    t.datetime "filled_date"
+    t.datetime "shipped_date"
+    t.datetime "received_date"
+    t.decimal "time_to_fill"
+    t.decimal "time_to_ship"
+    t.decimal "time_to_receipt"
+    t.decimal "total_time"
+    t.index ["lender", "request_id"], name: "lending_turnaround_index", unique: true
+  end
+
+  create_table "reshare_patron_request_audits", force: :cascade do |t|
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "pra_id"
+    t.string "pra_version"
+    t.datetime "pra_date_created"
+    t.string "pra_patron_request_fk"
+    t.string "pra_from_status_fk"
+    t.string "pra_to_status_fk"
+    t.string "pra_message"
+    t.index ["pra_id"], name: "index_reshare_patron_request_audits_on_pra_id", unique: true
+  end
+
+  create_table "reshare_patron_request_rota", force: :cascade do |t|
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "prr_id"
+    t.string "prr_version"
+    t.datetime "prr_date_created"
+    t.datetime "prr_last_updated"
+    t.integer "prr_rota_position"
+    t.string "prr_directory_id_fk"
+    t.string "prr_patron_request_fk"
+    t.string "prr_state_fk"
+    t.string "prr_peer_symbol_fk"
+    t.integer "prr_lb_score"
+    t.string "prr_lb_reason"
+    t.index ["prr_id"], name: "index_reshare_patron_request_rota_on_prr_id", unique: true
   end
 
   create_table "reshare_patron_requests", force: :cascade do |t|
@@ -984,141 +1020,75 @@ ActiveRecord::Schema.define(version: 2022_07_20_041810) do
     t.bigint "pr_version"
     t.datetime "pr_date_created"
     t.string "pr_pub_date"
-    t.string "pr_edition"
-    t.datetime "start_at"
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "pr_hrid"
+    t.string "pr_patron_type"
+    t.string "pr_resolved_req_inst_symbol_fk"
+    t.string "pr_resolved_pickup_location_fk"
+    t.string "pr_pickup_location_slug"
+    t.string "pr_resolved_sup_inst_symbol_fk"
+    t.string "pr_pick_location_fk"
+    t.string "pr_pick_shelving_location"
+    t.string "pr_title"
+    t.string "pr_local_call_number"
+    t.string "pr_selected_item_barcode"
+    t.string "pr_oclc_number"
+    t.string "pr_publisher"
+    t.string "pr_place_of_pub"
+    t.string "pr_bib_record"
+    t.string "pr_state_fk"
+    t.integer "pr_rota_position"
+    t.boolean "pr_is_requester"
+    t.datetime "pr_due_date_from_lms"
+    t.datetime "pr_parsed_due_date_lms"
+    t.datetime "pr_due_date_rs"
+    t.datetime "pr_parsed_due_date_rs"
+    t.boolean "pr_overdue"
+    t.index ["pr_id"], name: "index_reshare_patron_requests_on_pr_id", unique: true
   end
 
-  create_table "reshare_req_overdues", force: :cascade do |t|
-    t.string "ro_requester"
-    t.string "ro_requester_nice_name"
-    t.string "ro_hrid"
-    t.string "ro_title"
-    t.string "ro_requester_sym"
-    t.text "ro_requester_url"
-    t.string "ro_supplier_sym"
-    t.string "ro_req_state"
-    t.string "ro_due_date_rs"
-    t.datetime "ro_return_shipped_date"
-    t.datetime "ro_last_updated"
+  create_table "reshare_status", force: :cascade do |t|
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "st_id"
+    t.string "st_version"
+    t.string "st_code"
+    t.index ["st_id"], name: "index_reshare_status_on_st_id", unique: true
   end
 
-  create_table "reshare_req_stats", force: :cascade do |t|
-    t.string "rs_requester"
-    t.string "rs_requester_nice_name"
-    t.string "rs_id"
-    t.string "rs_req_id"
-    t.datetime "rs_date_created"
-    t.string "rs_from_status"
-    t.string "rs_to_status"
-    t.string "rs_message"
+  create_table "reshare_symbols", force: :cascade do |t|
+    t.datetime "last_updated"
+    t.string "origin"
+    t.string "sym_id"
+    t.string "sym_version"
+    t.string "sym_owner_fk"
+    t.string "sym_symbol"
+    t.index ["sym_id"], name: "index_reshare_symbols_on_sym_id", unique: true
   end
 
-  create_table "reshare_rtat_recs", force: :cascade do |t|
-    t.string "rtre_requester"
-    t.datetime "rtre_date_created"
-    t.string "rtre_req_id"
-    t.string "rtre_status"
-  end
-
-  create_table "reshare_rtat_reqs", force: :cascade do |t|
-    t.string "rtr_requester"
-    t.string "rtr_requester_nice_name"
-    t.string "rtr_hrid"
-    t.string "rtr_title"
-    t.string "rtr_call_number"
-    t.string "rtr_barcode"
-    t.string "rtr_supplier"
-    t.string "rtr_supplier_nice_name"
-    t.datetime "rtr_date_created"
-    t.string "rtr_id"
-  end
-
-  create_table "reshare_rtat_ships", force: :cascade do |t|
-    t.string "rts_requester"
-    t.datetime "rts_date_created"
-    t.string "rts_req_id"
-    t.string "rts_from_status"
-    t.string "rts_to_status"
-  end
-
-  create_table "reshare_stat_assis", force: :cascade do |t|
-    t.string "sta_supplier"
-    t.datetime "sta_date_created"
-    t.string "sta_req_id"
-    t.string "sta_from_status"
-    t.string "sta_to_status"
-  end
-
-  create_table "reshare_stat_fills", force: :cascade do |t|
-    t.string "stf_supplier"
-    t.datetime "stf_date_created"
-    t.string "stf_req_id"
-    t.string "stf_from_status"
-    t.string "stf_to_status"
-  end
-
-  create_table "reshare_stat_recs", force: :cascade do |t|
-    t.string "stre_supplier"
-    t.datetime "stre_date_created"
-    t.string "stre_req_id"
-    t.string "stre_from_status"
-    t.string "stre_to_status"
-  end
-
-  create_table "reshare_stat_reqs", force: :cascade do |t|
-    t.string "str_supplier"
-    t.string "str_supplier_nice_name"
-    t.string "str_hrid"
-    t.string "str_title"
-    t.string "str_call_number"
-    t.string "str_barcode"
-    t.string "str_requester"
-    t.string "str_requester_nice_name"
-    t.datetime "str_date_created"
-    t.string "str_id"
-  end
-
-  create_table "reshare_stat_ships", force: :cascade do |t|
-    t.string "sts_supplier"
-    t.datetime "sts_date_created"
-    t.string "sts_req_id"
-    t.string "sts_from_status"
-    t.string "sts_to_status"
-  end
-
-  create_table "reshare_sup_overdues", force: :cascade do |t|
-    t.string "so_supplier"
-    t.string "so_supplier_nice_name"
-    t.string "so_hrid"
-    t.string "so_title"
-    t.string "so_requester_sym"
-    t.text "so_supplier_url"
-    t.string "so_supplier_sym"
-    t.string "so_res_state"
-    t.string "so_due_date_rs"
-    t.string "so_local_call_number"
-    t.string "so_item_barcode"
-    t.datetime "so_last_updated"
-  end
-
-  create_table "reshare_sup_stats", force: :cascade do |t|
-    t.string "ss_supplier"
-    t.string "ss_supplier_nice_name"
-    t.string "ss_id"
-    t.string "ss_req_id"
-    t.datetime "ss_date_created"
-    t.string "ss_from_status"
-    t.string "ss_to_status"
-    t.string "ss_message"
-  end
-
-  create_table "reshare_sup_tat_stats", force: :cascade do |t|
-    t.string "stst_supplier"
-    t.datetime "stst_date_created"
-    t.string "stst_req_id"
-    t.string "stst_from_status"
-    t.string "stst_to_status"
-    t.string "stst_message"
+  create_table "reshare_transactions", force: :cascade do |t|
+    t.string "borrower"
+    t.string "lender"
+    t.string "request_id"
+    t.string "borrower_id"
+    t.string "lender_id"
+    t.datetime "date_created"
+    t.datetime "borrower_last_updated"
+    t.datetime "lender_last_updated"
+    t.string "borrower_status"
+    t.string "lender_status"
+    t.string "title"
+    t.string "publication_date"
+    t.string "place_of_publication"
+    t.string "publisher"
+    t.string "call_number"
+    t.string "oclc_number"
+    t.string "barcode"
+    t.string "pick_location"
+    t.string "shelving_location"
+    t.string "pickup_location"
+    t.index ["borrower_id", "lender_id"], name: "transaction_index", unique: true
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|

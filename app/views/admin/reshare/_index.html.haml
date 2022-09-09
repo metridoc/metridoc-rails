@@ -1,5 +1,133 @@
 = javascript_include_tag 'application'
 
-%ul
-  - resources.each do |resource|
-    %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+%section
+  %h2 Introduction
+
+  The #{link_to "PALCI", "https://palci.org/"} (Partnership for Academic Library
+  Collaboration and Innovation) Consortium provides an expedited
+  interlibrary loan service called EZBorrow.  The consortium consists of around
+  50 institutions in Pennsylvania, West Virginia, and New York. The EZBorrow
+  service is managed through an open-source community-owned resource sharing
+  solution called #{link_to "Project Reshare", "https://projectreshare.org/"}
+  by #{link_to "Index Data", "https://www.indexdata.com/"}.  Before the
+  implementation of Project ReShare in August 2021, the data was managed by
+  #{link_to "Relais ILL", "https://www.oclc.org/en/relais-ill.html"} from
+  #{link_to "OCLC", "https://www.oclc.org/en/home.html"}.  A link to the
+  historical Relais data can be found in the Resources section of this page.
+
+
+%hr
+%section
+  %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li Coming soon...
+
+  %h3 Historical Data
+  %ul
+    %li #{link_to "Relais EZBorrow", :admin_ezborrow}
+
+  %h3 ReShare Data Tables
+
+  The #{link_to "source code", "https://github.com/openlibraryenvironment/mod-rs/tree/master/service/grails-app/domain/org/olf/rs"}
+  for the domain model is hosted on GitHub.  Below are some relevant details for
+  the portion of the data replicated in MetriDoc. Images can be opened as a new
+  tab when right clicking in order for a better view.
+  %br
+
+  %figure{:style => "text-align: center; margin: 0; width: 100%; padding: 12px 8px;"}
+    %figcaption ReShare Data Table Schema
+    =image_tag asset_path("ReshareSchema.png"), :alt => "ReShare Data Table Schema", :width => "100%", :title => "ReShare Data Table Schema"
+
+  %ul
+    %li
+      = link_to "Patron Requests", :admin_reshare_patron_requests
+      %ul
+        %li Describes the interaction between an institution (origin) and a request (pr_hrid).
+        %li Records are updated when a status changes.
+        %li Table contains a unique key of the pr_id.
+    %li
+      = link_to "Patron Request Audit", :admin_reshare_patron_request_audits
+      %ul
+        %li Historical record of the interaction between an institution (origin) and a request (pra_patron_request_fk).
+        %li Records are added when a status changes.
+        %li Table contains a unique key of the pra_id.
+    %li
+      = link_to "Patron Requests Rota", :admin_reshare_patron_request_rota
+      %ul
+        %li Describes the rota of institutional sources (origin) for a request (prr_patron_request_fk).
+        %li Records are updated when a status changes.
+        %li Table contains a unique key of the prr_id.
+    %li
+      = link_to "Directory Entry", :admin_reshare_directory_entries
+      %ul
+        %li Describes locations set up in the Library Management Systems for each institution (origin).
+        %li One institution can have many locations for patrons to collect their items.
+        %li The field de_parent traces the location to the parent institution.
+        %li Table contains a paired unique key of the de_id and the origin.
+    %li
+      = link_to "Symbol", :admin_reshare_symbols
+      %ul
+        %li Describes the symbolic name used in the patron request rota creation.
+        %li The field prr_peer_symbol_fk is the sym_id in the symbols table.
+        %li The field sym_owner_fk is the de_id in the directory entries table for the specified origin.
+        %li This lookup table connects a rota listing to an institution.
+        %li Table contains a unique key of the sym_id.
+    %li
+      = link_to "Status", :admin_reshare_status_index
+      %ul
+        %li A lookup table to the different states possible for a transaction.
+        %li The field st_id is the pr_state_fk in the reshare_patron_requests table.
+        %li The field st_id is the prr_state_fk in the reshare_patron_request_rota table.
+        %li The field st_id is the pra_from_status_fk and pra_to_status_fk in reshare_patron_request_audits.
+        %li The field st_code is the human readable status.
+        %li The status for borrowers will start with 'REQ'.
+        %li The status for lenders will start with 'RES'.
+        %li Table contains a unique key of the st_id.
+
+  %figure{:style => "text-align: center; margin: 0; width: 45%; padding: 12px 8px; display: inline-block; vertical-align: top;"}
+    %figcaption ReShare Borrowing Process Flow Chart
+    =image_tag asset_path("ReshareBorrowerProcess.png"), :alt => "ReShare Borrowing Process Flow Chart", :width => "100%"
+  %figure{:style => "text-align: center; margin: 0; width: 45%; padding: 12px 8px; display: inline-block; vertical-align: top;"}
+    %figcaption ReShare Lending Process Flow Chart
+    =image_tag asset_path("ReshareLenderProcess.png"), :alt => "ReShare Lending Process Flow Chart", :width => "100%"
+
+  %h3 Derived Views
+
+  The derived views are synthesized from the ReShare hosted tables.
+
+  %ul
+    %li
+      = link_to "Transaction", :admin_reshare_transactions
+      %ul
+        %li Joins the borrower to the requester.
+        %li Records are unique to the lender-borrower interaction.
+        %li Records are updated when the status changes.
+        %li Records contain bibliographical information.
+        %li This table will be most similar to the Relais Bibliography table.
+        %li This table is unique on the fields borrower_id and lender_id.
+    %li
+      = link_to "Borrowing Turnaround", :admin_reshare_borrowing_turnarounds
+      %ul
+        %li List of patron requests and their turnaround times from the point of view of the borrower.
+        %li Key points in the request are saved: request made, shipping, receipt.
+        %li Turnaround times are calculated when the item is received by the borrower.
+        %li This table is unique on the field request_id.
+    %li
+      = link_to "Lending Turnaround", :admin_reshare_lending_turnarounds
+      %ul
+        %li List of patron requests and their turnaround times from the point of view of the lender.
+        %li Key points in the request are saved: notification of request, promise to fulfill, shipping, receipt.
+        %li Turnaround times are calculated when the item is received by the borrower.
+        %li This table is unique on the field request_id.
+  %figure{:style => "text-align: center; margin: 0; width: 100%; padding: 12px 8px;"}
+    %figcaption Construction of Transaction View
+    =image_tag asset_path("ReshareTransactionView.png"), :alt => "Construction of Transaction View", :width => "100%"
+
+  %figure{:style => "text-align: center; margin: 0; width: 45%; padding: 12px 8px; display: inline-block; vertical-align: top;"}
+    %figcaption Construction of Borrowing Turnaround View
+    =image_tag asset_path("ReshareBorrowingTurnaroundView.png"), :alt => "Construction of Borrowing Turnaround View", :width => "100%"
+
+  %figure{:style => "text-align: center; margin: 0; width: 45%; padding: 12px 8px; display: inline-block; vertical-align: top;"}
+    %figcaption Construction of Lending Turnaround View
+    =image_tag asset_path("ReshareLendingTurnaroundView.png"), :alt => "Construction of Lending Turnaround View", :width => "100%"

@@ -316,12 +316,6 @@ ActiveAdmin.setup do |config|
         if: proc { authorized?(:read, 'Consultation') },
         parent: I18n.t('active_admin.resource_sharing')
 
-      # EZ Borrow (Relais - remove soon)
-      menu.add label: I18n.t("active_admin.ezborrow.ezborrow_menu"),
-        url: :admin_ezborrow_path,
-        if: proc{ authorized?(:read, "EzBorrow") },
-        parent: I18n.t("active_admin.resource_sharing")
-
       # EZ Proxy
       menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
         url: :admin_upenn_ezproxy_ezpaarse_jobs_path,
