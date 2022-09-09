@@ -41,7 +41,6 @@ sqls:
     lender AS (
     	SELECT
     		de.de_name AS lender,
-    		de.de_id AS lender_fk,
     		pr.pr_local_call_number,
         pr.pr_id,
     		pr.pr_pick_location_fk,
