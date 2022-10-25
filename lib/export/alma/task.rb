@@ -11,14 +11,9 @@ module Export
       # Add a requests limit
       url += task_config["limit"]
 
-      # Add the token, only if we aren't in test mode
-      unless token.empty? or test_mode?
+      # Add the token
+      unless token.empty?
         url += token
-      end
-
-      # Limit the api results if operating in test mode
-      if test_mode?
-        url += "&limit=100"
       end
 
       return url
