@@ -2,16 +2,25 @@ module Export
   class Alma::Task < Task
 
     # Build the url to connect with the API
-    def url(report_path)
-      url = task_config['alma_domain'] + report_path
+    def url(token = "")
+      url = task_config['alma_domain'] + task_config['report_path']
 
       # Add the api key to the url
       url += task_config["apikey_string"] + task_config["alma_apikey"]
+
+      # Add a requests limit
+      url += task_config["limit"]
+
+      # Add the token, only if we aren't in test mode
+      unless token.empty? or test_mode?
+        url += token
+      end
 
       # Limit the api results if operating in test mode
       if test_mode?
         url += "&limit=100"
       end
+
       return url
     end
 
@@ -24,7 +33,7 @@ module Export
     end
 
     # Connect and retrieve the information from the api endpoint
-    def connect(report_path)
+    def connect(report_path = "")
       response = nil
 
       # Open a connection to the url
@@ -48,8 +57,14 @@ module Export
       @document.remove_namespaces!
 
       # Pull out the resumption token and the indicator for last page
-      @resumption_token = @document.xpath('//ResumptionToken').first.content
-      @is_finished = @document.xpath('//IsFinished').first.content
+      resumption_token = @document.xpath('//ResumptionToken').first.content rescue ""
+      is_finished = @document.xpath('//IsFinished').first.content rescue ""
+
+      # Return the token value and the finished flag
+      {
+        token: resumption_token,
+        is_finished: is_finished
+      }
     end
 
     # This function extracts the column headers and writes them to the output file
@@ -73,6 +88,7 @@ module Export
 
     end
 
+    # Function will loop through xml data and write it to a CSV file
     def write_batch_data
       data = []
       # Loop through each row of data
@@ -84,7 +100,7 @@ module Export
         end
         data.append(row)
       end
-      puts "Fetched #{data.length()} rows"
+
       # Write the data to a csv file
       CSV.open(csv_file_path, 'a') do |csv|
         # Add each row by row
@@ -94,10 +110,11 @@ module Export
       end
     end
 
+    # Connect to the API and save the report to a CSV
     def save_report
 
       # Parse the result with Nokogiri
-      connect(task_config['report_path'])
+      response = connect
 
       # Add the column headers to the file
       write_column_headers
@@ -105,9 +122,12 @@ module Export
       # Append the first batch of data to the file
       write_batch_data
 
+      # Save the token for successive calls
+      token = "&token=" + response[:token] || ""
+
       # Loop until the end of the query
-      until @is_finished
-        connect(@resumption_token)
+      until response[:is_finished] === "true"
+        response = connect(token)
         write_batch_data
       end
 
