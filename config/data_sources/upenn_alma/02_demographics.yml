@@ -29,3 +29,6 @@ column_mappings:
   "Status Date": status_date
   "Status": status
   "User Group": user_group
+
+# Specify unique keys for the upload
+unique_keys: ["pennkey", "penn_id"]
