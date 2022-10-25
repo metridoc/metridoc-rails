@@ -12,6 +12,7 @@ source_adapter: "alma"
 # URL Encoded report path
 report_path: "path=%2Fshared%2FUniversity%20of%20Pennsylvania%2FReports%2FShared%20Reports%2FAlma%20Patron%20Demographics%20v3%20121721"
 apikey_string: "&apikey="
+limit: "&limit=1000"
 
 # API columns to MetriDoc column mapping
 column_mappings:
