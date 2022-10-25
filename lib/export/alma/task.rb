@@ -66,19 +66,24 @@ module Export
     def write_column_headers
 
       # Get the column headings
-      @column_mapping = {}
+      @column_names = {}
       # Access the schema
       @document.xpath('//element').each do |elem|
         # Extract the column name and the column heading
         column = elem.attributes["name"].value
         column_name = elem.attributes["columnHeading"].value
+
+        # Get the output csv header name
+        # If the column has no equivalent, just use the current heading
+        output_column_name = column_mappings[column_name] || column_name
+
         # Make a column mapping
-        @column_mapping[column] = column_name
+        @column_names[column] = output_column_name
       end
 
       # Add the headers to the csv file
       CSV.open(csv_file_path, 'w') do |csv|
-        csv << @column_mapping.values
+        csv << @column_names.values
       end
 
     end
@@ -90,7 +95,7 @@ module Export
       @document.xpath('//Row').each do |xml_row|
         row = []
         # Loop through each column value
-        @column_mapping.keys.each do |column|
+        @column_names.keys.each do |column|
           row.append(xml_row.xpath(column).text)
         end
         data.append(row)

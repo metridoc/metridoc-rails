@@ -30,6 +30,11 @@ module Export
       @source_adapter ||= task_config["source_adapter"]
     end
 
+    # Access any column mappings in the task configuration
+    def column_mappings
+      @column_mappings ||= task_config["column_mappings"]
+    end
+
     # Create a log job execution step entry
     def log_job_execution_step
       return @log_job_execution_step if @log_job_execution_step.present?
