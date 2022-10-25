@@ -17,10 +17,10 @@ limit: "&limit=1000"
 # API columns to MetriDoc column mapping
 column_mappings:
   "Email": email
-  "Identifier Value": penn_id
+  "Identifier Value": pennkey
   "First Name": first_name
   "Last Name": last_name
-  "Primary Identifier": pennkey
+  "Primary Identifier": penn_id
   "Statistical Category 1": statistical_category_1
   "Statistical Category 2": statistical_category_2
   "Statistical Category 3": statistical_category_3
