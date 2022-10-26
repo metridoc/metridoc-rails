@@ -72,11 +72,6 @@ module Export
       @to_date ||= Date.parse(task_config["to_date"]) rescue nil
     end
 
-    # Column Mappings between source and MetriDoc
-    def column_mappings
-      task_config['column_mappings']
-    end
-
     # Construct a list of statements to select specified columns
     def select_clause
       column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
