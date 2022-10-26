@@ -1,5 +1,7 @@
 ActiveAdmin.register UpennAlma::Demographic do
   menu false
+  actions :all, :except => [:new, :edit, :update, :destroy]
+
   permit_params :identifier_value,
     :status,
     :status_date,
