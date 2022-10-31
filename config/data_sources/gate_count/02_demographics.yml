@@ -1,0 +1,30 @@
+---
+load_sequence: 2
+target_model: "GateCount::CardSwipe"
+target_adapter: "native_sql"
+truncate_before_load: "no"
+sqls:
+  - |
+      UPDATE gate_count_card_swipes
+      SET (
+        statistical_category_1,
+        statistical_category_2,
+        statistical_category_3,
+        statistical_category_4,
+        statistical_category_5,
+        user_group,
+        school
+      ) = (
+        upenn_alma_demographics.statistical_category_1,
+        upenn_alma_demographics.statistical_category_2,
+        upenn_alma_demographics.statistical_category_3,
+        upenn_alma_demographics.statistical_category_4,
+        upenn_alma_demographics.statistical_category_5,
+        upenn_alma_demographics.user_group,
+        upenn_alma_demographics.school
+      )
+      FROM upenn_alma_demographics
+      WHERE
+        gate_count_card_swipes.user_group IS NULL
+        AND gate_count_card_swipes.card_num IS NOT NULL
+        AND upenn_alma_demographics.penn_id = gate_count_card_swipes.card_num;

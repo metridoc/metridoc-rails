@@ -1,6 +1,34 @@
 ---
 load_sequence: 2
+
 target_model: "UpennAlma::Demographic"
 target_adapter: "csv"
+
 truncate_before_load: "yes"
 file_name: "alma_patron_demographics.csv"
+
+# Flag for the Alma API
+source_adapter: "alma"
+# URL Encoded report path
+report_path: "path=%2Fshared%2FUniversity%20of%20Pennsylvania%2FReports%2FShared%20Reports%2FAlma%20Patron%20Demographics%20v3%20121721"
+apikey_string: "&apikey="
+limit: "&limit=1000"
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  "Email": email
+  "Identifier Value": pennkey
+  "First Name": first_name
+  "Last Name": last_name
+  "Primary Identifier": penn_id
+  "Statistical Category 1": statistical_category_1
+  "Statistical Category 2": statistical_category_2
+  "Statistical Category 3": statistical_category_3
+  "Statistical Category 4": statistical_category_4
+  "Statistical Category 5": statistical_category_5
+  "Status Date": status_date
+  "Status": status
+  "User Group": user_group
+
+# Specify unique keys for the upload
+unique_keys: ["pennkey", "penn_id"]

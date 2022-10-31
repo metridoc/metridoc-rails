@@ -3,124 +3,93 @@
 require 'fileutils'
 require 'net/sftp'
 module Export
-  module Sftp
-    MAX_CONNECTION_ATTEMPTS = 3
-    # sleep for 10 minutes between failed connection attempts
-    SLEEP_INTERVAL = 10 * 60
+  # Attempt 3 connections to the SFTP before failing the job
+  MAX_CONNECTION_ATTEMPTS = 3
+  # sleep for 10 minutes between failed connection attempts
+  SLEEP_INTERVAL = 10 * 60
 
-    class Task
-      def initialize(main_driver, task_file)
-        @main_driver, @task_file = main_driver, task_file
-      end
+  class Sftp::Task < Task
 
-      def task_config
-        return @task_config unless @task_config.blank?
+    # Construct a date stamped filename for the downloaded file
+    # This is file is archived
+    def export_file_path
+      require 'date'
+      today = Date.today.to_s
+      fname = today + '_' + File.split(task_config['source_path'])[1]
+      # Use standard temp dir
+      File.join(Dir.tmpdir, fname)
+    end
 
-        @task_config = @main_driver.global_config.merge(YAML.load(ERB.new(File.read(@task_file)).result))
-      end
+    # Construct a file name for the temporary file that is processed and
+    # ingested into MetriDoc
+    def import_file_path
+      File.join(task_config['import_folder'], task_config['file_name'])
+    end
 
-      def check_dir(path)
-        unless Dir.exist?(path)
-          log "Creating directory [#{path}]"
-          begin
-            Dir.mkdir(path)
-            true
-          rescue SystemCallError => e
-            log "Couldn't create path [#{path}]: #{e.message}"
-            false
-          end
+    # Function connects and downloads the file via sftp
+    def sftp_file
+      log "Downloading SFTP data [#{task_config['host']}]"
+
+      begin
+        Net::SSH.start(
+          task_config['host'],
+          task_config['username'],
+          :password => task_config['password'],
+          :compression => 'none'
+        ) do |ssh|
+          # Download the file from the source path into the export file path
+          ssh.sftp.download!(task_config['source_path'], export_file_path)
         end
-        true
-      end
 
-      def export_file_path
-        require 'date'
-        today = Date.today.to_s
-        fname = today + '_' + File.split(task_config['source_path'])[1]
-        # use standard temp dir
-        File.join(Dir.tmpdir, fname)
-      end
+      rescue SocketError => e
+        # Catch socket (communication errors)
+        # Sleep before retrying
+        log "SSH connection error ... retrying in #{SLEEP_INTERVAL / 60} minutes."
+        sleep SLEEP_INTERVAL
+        sleep 1
+        # Retry and count attempts
+        retry if attempts = (attempts || 0) + 1 and attempts <= MAX_CONNECTION_ATTEMPTS
 
-      def import_file_path
-        File.join(task_config['import_folder'], task_config['file_name'])
-      end
+        # Stop after maximum attempts
+        log "Maximum connection attempts (#{MAX_CONNECTION_ATTEMPTS}) met. Giving up. Error: [#{e}]"
+        raise "Maximum connection attempts met."
 
-      def copy_to_preprocess_dir
-        # create task_config['import_folder'] if it doesn't exist
-        if File.exist?(import_file_path)
-          # purge old file
-          FileUtils.remove_file(import_file_path)
-        end
-        log "Copying #{export_file_path} to #{import_file_path}"
-        begin
-          FileUtils.copy(export_file_path, import_file_path)
-          true
-        rescue Errno::ENOENT => e
-          log "Caught exception while attempting to copy #{export_file_path} to #{import_file_path}: [#{e}]"
-          false
-        end
-      end
-
-      def sftp_file
-        log "Downloading GateCount data [#{task_config['host']}]"
-        begin
-          Net::SSH.start(task_config['host'], task_config['username'], :password => task_config['password'], :compression => 'none') do |ssh|
-            ssh.sftp.download!(task_config['source_path'], export_file_path)
-          end
-          true
-        rescue SocketError => e
-          log "SSH connection error ... retrying in #{SLEEP_INTERVAL / 10} minutes."
-          sleep SLEEP_INTERVAL
-          sleep 1
-          retry if attempts = (attempts || 0) + 1 and attempts <= MAX_CONNECTION_ATTEMPTS
-          log "Maximum connection attempts (#{MAX_CONNECTION_ATTEMPTS}) met. Giving up. Error: [#{e}]"
-          false
-        rescue => someException
-          log "Encountered SSH connection error: #{someException.message}"
-        end
-      end
-
-      def execute
-        log_job_execution_step
-
-        result = sftp_file
-        return unless result == true
-
-        result = check_dir(task_config['import_folder'])
-        return unless result
-
-        copy_to_preprocess_dir
-      end
-
-      def source_adapter
-        task_config["source_adapter"]
-      end
-
-      def test_mode?
-        @main_driver.test_mode?
-      end
-
-      def log_job_execution_step
-        return @log_job_execution_step if @log_job_execution_step.present?
-
-        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
-        Log::JobExecutionStep.establish_connection dbconfig[environment]
-
-        @log_job_execution_step = Log::JobExecutionStep.create!(
-          job_execution_id: @main_driver.log_job_execution.id,
-          step_name: task_config["load_sequence"],
-          step_yml: task_config,
-          started_at: Time.now,
-          status: 'running'
-        )
-      end
-
-      def log(m)
-        log = "#{Time.now} - #{m}"
-        log_job_execution_step.log_line(log)
-        puts log
+      rescue => ex
+        # Catch generic errors
+        log "Encountered SSH connection error: #{ex.message}"
+        raise "Encountered SSH connection error."
       end
     end
+
+    # Execute the export step for this task
+    def execute
+      log_job_execution_step
+
+      # Download the file from the SFTP
+      sftp_file
+
+      # Make an export folder if it doesn't already exist
+      FileUtils.mkdir_p task_config["import_folder"]
+
+      # Remove previous file if exists
+      FileUtils.remove_file(import_file_path, :force => true)
+
+      # Move the date stamped file to a shared docker drive
+      # for further processing
+      log "Copying #{export_file_path} to #{import_file_path}"
+      FileUtils.copy(export_file_path, import_file_path)
+
+      # Mark the Step as successful
+      log_job_execution_step.set_status!("successful")
+      return true
+
+    rescue => ex
+      # In case of an error, mark the job as unsuccessful
+      log "Error => [#{ex.message}]"
+      log_job_execution_step.set_status!("failed")
+      return false
+    end
+
+
   end
 end

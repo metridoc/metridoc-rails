@@ -1,5 +1,7 @@
 ActiveAdmin.register Reshare::PatronRequest do
   menu false
+  actions :all, :except => [:new, :edit, :update, :destroy]
+
   permit_params :last_updated,
   :pr_id,
   :pr_hrid,

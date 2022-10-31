@@ -2,8 +2,8 @@ ActiveAdmin.register Ipeds::Directory, namespace: :ipeds do
   menu false
 
   # Define actions available
-  actions :all, except: [:edit, :destroy]
-
+  actions :all, :except => [:new, :edit, :update, :destroy]
+  
   # Define the filters to keep
   filter :unitid
   filter :instnm
