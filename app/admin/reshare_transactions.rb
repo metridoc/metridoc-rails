@@ -1,5 +1,7 @@
 ActiveAdmin.register Reshare::Transaction do
   menu false
+  actions :all, :except => [:new, :edit, :update, :destroy]
+
   permit_params :borrower,
   :lender,
   :request_id,

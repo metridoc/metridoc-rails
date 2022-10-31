@@ -5,6 +5,8 @@ ActiveAdmin.register Consultation::Interaction do
   end
 
   menu false
+  actions :all, :except => [:new, :edit, :update, :destroy]
+
   permit_params :submitted,
                 :consultation_or_instruction,
                 :staff_pennkey,

@@ -1,4 +1,4 @@
 ActiveAdmin.register Ipeds::Cipcode, namespace: :ipeds do
   menu false
-  actions :all, except: [:edit, :destroy]
+  actions :all, :except => [:new, :edit, :update, :destroy]
 end

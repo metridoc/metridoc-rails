@@ -1,4 +1,7 @@
 ---
 target_adapter: 'csv'
-import_folder: '/tmp/upenn_alma'
+export_folder: '/tmp/upenn_alma'
 institution_code: 'UPENN'
+
+alma_domain: "https://api-na.hosted.exlibrisgroup.com/almaws/v1/analytics/reports?"
+alma_apikey: '<%= ENV["ALMA_API_KEY"] %>'

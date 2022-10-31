@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_30_191141) do
+ActiveRecord::Schema.define(version: 2022_10_29_015332) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -410,6 +410,13 @@ ActiveRecord::Schema.define(version: 2022_08_30_191141) do
     t.string "card_num"
     t.string "first_name"
     t.string "last_name"
+    t.string "statistical_category_1"
+    t.string "statistical_category_2"
+    t.string "statistical_category_3"
+    t.string "statistical_category_4"
+    t.string "statistical_category_5"
+    t.text "user_group"
+    t.string "school"
     t.index ["affiliation_desc"], name: "index_gate_count_card_swipes_on_affiliation_desc"
     t.index ["center_desc"], name: "index_gate_count_card_swipes_on_center_desc"
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
@@ -1093,7 +1100,7 @@ ActiveRecord::Schema.define(version: 2022_08_30_191141) do
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
     t.string "pennkey", limit: 8, null: false
-    t.boolean "status"
+    t.string "status"
     t.date "status_date"
     t.string "statistical_category_1"
     t.string "statistical_category_2"
@@ -1154,6 +1161,13 @@ ActiveRecord::Schema.define(version: 2022_08_30_191141) do
     t.string "referer"
     t.string "session_id"
     t.string "resource_name"
+    t.string "statistical_category_1"
+    t.string "statistical_category_2"
+    t.string "statistical_category_3"
+    t.string "statistical_category_4"
+    t.string "statistical_category_5"
+    t.text "user_group"
+    t.string "school"
     t.index ["host"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_host"
     t.index ["mime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_mime"
     t.index ["platform"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform"
