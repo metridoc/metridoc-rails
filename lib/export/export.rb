@@ -44,7 +44,7 @@ module Export
         Sftp::Task.new(self, task_file)
       when "postgres"
         Database::Task.new(self, task_file)
-      when "mysql"
+      when "mssql"
         Database::Task.new(self, task_file)
       when "alma"
         Alma::Task.new(self, task_file)
