@@ -6,6 +6,6 @@ database:         '<%= ENV["UPENN_ILLIAD_MSSQL_DB"]   %>'
 username:         '<%= ENV["UPENN_ILLIAD_MSSQL_UID"]  %>'
 password:         '<%= ENV["UPENN_ILLIAD_MSSQL_PWD"]  %>'
 pool:             5
-timeout:          5000
+timeout:          120000
 export_folder:    '/tmp/upenn_illiad/'
 batch_size:       10000

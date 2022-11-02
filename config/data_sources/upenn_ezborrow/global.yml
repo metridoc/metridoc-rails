@@ -6,5 +6,5 @@ database:         '<%= ENV["UPENN_EZBORROW_MSSQL_DB"] %>'
 username:         '<%= ENV["UPENN_EZBORROW_MSSQL_UID"] %>'
 password:         '<%= ENV["UPENN_EZBORROW_MSSQL_PWD"] %>'
 pool:             5
-timeout:          5000
+timeout:          120000
 export_folder:    '/tmp/upenn_ezborrow/'
