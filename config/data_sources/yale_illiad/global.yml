@@ -6,6 +6,6 @@ database:         '<%= ENV["YALE_ILLIAD_MSSQL_DB"] %>'
 username:         '<%= ENV["YALE_ILLIAD_MSSQL_UID"] %>'
 password:         '<%= ENV["YALE_ILLIAD_MSSQL_PWD"] %>'
 pool:             5
-timeout:          5000
+timeout:          120000
 export_folder:    '/tmp/yale_illiad/'
 batch_size:       10000
