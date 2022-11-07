@@ -1,0 +1,61 @@
+load_sequence:         1
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.patron_request"
+column_mappings:
+  "__origin": origin
+  "pr_id": pr_id
+  "pr_version": pr_version
+  "pr_date_created": pr_date_created
+  "__start": last_updated
+
+  # Record Information
+  "pr_hrid": pr_hrid
+  "pr_patron_type": pr_patron_type
+
+  # Requesting Pick up information
+  "pr_resolved_req_inst_symbol_fk": pr_resolved_req_inst_symbol_fk
+  "pr_resolved_pickup_location_fk": pr_resolved_pickup_location_fk
+  "pr_pickup_location_slug": pr_pickup_location_slug
+
+  # Supplying Item Location
+  "pr_resolved_sup_inst_symbol_fk": pr_resolved_sup_inst_symbol_fk
+  "pr_pick_location_fk": pr_pick_location_fk
+  "pr_pick_shelving_location": pr_pick_shelving_location
+
+  # Bibliographic details
+  "pr_title": pr_title
+  "pr_local_call_number": pr_local_call_number
+  "pr_oclc_number": pr_oclc_number
+  "pr_publisher": pr_publisher
+  "pr_pub_date": pr_pub_date
+  "pr_place_of_pub": pr_place_of_pub
+  "pr_bib_record": pr_bib_record
+
+  # Event State
+  "pr_state_fk": pr_state_fk
+  "pr_rota_position": pr_rota_position
+  "pr_is_requester": pr_is_requester
+
+  # Add due dates?
+  "pr_due_date_from_lms": pr_due_date_from_lms
+  "pr_parsed_due_date_lms": pr_parsed_due_date_lms
+  "pr_due_date_rs": pr_due_date_rs
+  "pr_parsed_due_date_rs": pr_parsed_due_date_rs
+
+  # over due information?
+  "pr_overdue": pr_overdue
+
+export_file_name:      "reshare_patron_requests.csv"
+export_filter_date_sql: "__start > ?"
+
+
+# Target Config
+target_adapter:        csv
+target_model:          "Rsat::Borrowdirect::Reshare::PatronRequest"
+truncate_before_load:  "no"
+incremental_filter_column: "last_updated"
+
+unique_keys: ["pr_id"]
+upsert: true

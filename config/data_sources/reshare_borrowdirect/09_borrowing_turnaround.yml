@@ -1,0 +1,94 @@
+load_sequence:         9
+target_adapter:        'native_sql'
+target_model:          "Rsat::Borrowdirect::Reshare::BorrowingTurnaround"
+truncate_before_load:  "yes"
+sqls:
+  - |
+      WITH max_date AS (
+        SELECT
+          COALESCE (
+            MAX(request_date),
+            '1970-01-01'
+          ) AS max_date
+        FROM bd_reshare_borrowing_turnarounds
+      ),
+      history AS (
+      	SELECT
+      		de.de_name AS borrower,
+      		pra.pra_patron_request_fk AS request_id,
+      		MIN(
+      			CASE
+              WHEN s.st_code = 'REQ_VALIDATED'
+        			THEN pra.pra_date_created
+      			END
+      		) AS request_date,
+      		MIN(
+      			CASE
+              WHEN s.st_code = 'REQ_SHIPPED'
+        			THEN pra.pra_date_created
+      			END
+      		) AS shipped_date,
+      		MIN(
+      			CASE
+              WHEN s.st_code like 'REQ_CHECKED_IN'
+      			  THEN pra.pra_date_created
+      			END
+          ) AS received_date
+        FROM bd_reshare_patron_request_audits pra
+        JOIN bd_reshare_status s
+          ON pra.pra_to_status_fk = s.st_id
+      	JOIN bd_reshare_directory_entries de
+      		ON pra.origin = de.origin
+        WHERE pra.pra_date_created > (SELECT max_date FROM max_date)
+      		AND de.de_status_fk IS NOT NULL
+      		AND de.de_parent IS NULL
+      		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
+        GROUP BY de.de_name, pra.pra_patron_request_fk
+      )
+      INSERT INTO bd_reshare_borrowing_turnarounds (
+        borrower,
+        request_id,
+        request_date,
+        shipped_date,
+        received_date
+      )
+      SELECT
+        borrower,
+        request_id,
+        request_date,
+        shipped_date,
+        received_date
+      FROM history
+      WHERE COALESCE(request_date, shipped_date, received_date) IS NOT NULL
+      ON CONFLICT (borrower, request_id)
+      DO UPDATE
+      SET
+        shipped_date = LEAST(bd_reshare_borrowing_turnarounds.shipped_date, EXCLUDED.shipped_date),
+        received_date = LEAST(bd_reshare_borrowing_turnarounds.received_date, EXCLUDED.received_date);
+
+
+      UPDATE bd_reshare_borrowing_turnarounds
+      SET
+        time_to_ship = ROUND(
+          CAST (
+            EXTRACT(
+              EPOCH FROM (shipped_date - request_date)
+            ) / 24 / 3600
+            AS NUMERIC
+          ), 5),
+        time_to_receipt = ROUND(
+          CAST(
+            EXTRACT(
+              EPOCH FROM (received_date - shipped_date)
+            ) / 24 / 3600
+            AS NUMERIC
+          ), 5),
+        total_time = ROUND(
+          CAST(
+            EXTRACT(
+              EPOCH FROM (received_date - request_date)
+            ) / 24 / 3600
+            AS NUMERIC
+          ), 5)
+        WHERE total_time IS NULL
+          AND received_date IS NOT NULL ;

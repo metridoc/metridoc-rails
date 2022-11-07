@@ -1,0 +1,10 @@
+---
+institution_code: 'UPENN'
+host:             '<%= ENV["RESHARE_BORROWDIRECT_HOST"] %>'
+port:             '<%= ENV["RESHARE_BORROWDIRECT_PORT"] %>'
+database:         '<%= ENV["RESHARE_BORROWDIRECT_DB"] %>'
+username:         '<%= ENV["RESHARE_BORROWDIRECT_UID"] %>'
+password:         '<%= ENV["RESHARE_BORROWDIRECT_PWD"] %>'
+pool:             5
+timeout:          120000
+export_folder:    '/tmp/reshare_borrowdirect/'
