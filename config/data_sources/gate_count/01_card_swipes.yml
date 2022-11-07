@@ -1,4 +1,5 @@
 load_sequence:         1
+source_adapter:   'sftp'
 target_model:          "GateCount::CardSwipe"
 target_adapter:        "csv"
 truncate_before_load:  "no"
