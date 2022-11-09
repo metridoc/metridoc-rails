@@ -10,8 +10,11 @@ namespace: :rsat  do
       link_to('ReShare', :rsat_borrowdirect_reshare)
     ]
   end
-  
+
   menu false
   actions :all, :except => [:new, :edit, :update, :destroy]
+
+  # Set the title on the index page
+  index title: "Lending Turnarounds"
 
 end

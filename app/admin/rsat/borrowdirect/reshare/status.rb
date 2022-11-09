@@ -10,7 +10,7 @@ namespace: :rsat  do
       link_to('ReShare', :rsat_borrowdirect_reshare)
     ]
   end
-  
+
   menu false
   actions :all, :except => [:new, :edit, :update, :destroy]
 
@@ -19,4 +19,8 @@ namespace: :rsat  do
     :st_id,
     :st_version,
     :st_code
+
+  # Set the title on the index page
+  index title: "Status"
+
 end

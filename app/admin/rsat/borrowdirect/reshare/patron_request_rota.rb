@@ -10,7 +10,7 @@ namespace: :rsat  do
       link_to('ReShare', :rsat_borrowdirect_reshare)
     ]
   end
-  
+
   menu false
   actions :all, :except => [:new, :edit, :update, :destroy]
 
@@ -27,4 +27,8 @@ namespace: :rsat  do
     :prr_peer_symbol_fk,
     :prr_lb_score,
     :prr_lb_reason
+
+  # Set the title on the index page
+  index title: "Patron Request Rota"
+
 end

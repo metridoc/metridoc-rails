@@ -23,4 +23,8 @@ namespace: :rsat  do
     :pra_from_status_fk,
     :pra_to_status_fk,
     :pra_message
+
+  # Set the title on the index page
+  index title: "Patron Request Audits"
+
 end

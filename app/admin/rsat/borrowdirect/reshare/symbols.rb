@@ -10,7 +10,7 @@ namespace: :rsat do
       link_to('ReShare', :rsat_borrowdirect_reshare)
     ]
   end
-  
+
   menu false
   actions :all, :except => [:new, :edit, :update, :destroy]
 
@@ -20,4 +20,8 @@ namespace: :rsat do
     :sym_version,
     :sym_owner_fk,
     :sym_symbol
+
+  # Set the title on the index page
+  index title: "Symbols"
+
 end
