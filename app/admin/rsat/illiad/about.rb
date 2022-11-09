@@ -1,4 +1,5 @@
-ActiveAdmin.register_page "BorrowDirect", namespace: :rsat do
+ActiveAdmin.register_page "ILLiad", namespace: :rsat do
+  menu false
 
   breadcrumb do
     # Custom breadcrumb links
@@ -6,10 +7,8 @@ ActiveAdmin.register_page "BorrowDirect", namespace: :rsat do
       link_to('RSAT', :rsat_root)
     ]
   end
-
-  menu false
-
-  content title: "RSAT::BorrowDirect" do
+  
+  content title: "ILLiad" do
     render partial: 'index'
   end
 end

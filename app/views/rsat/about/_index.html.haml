@@ -1,9 +1,10 @@
 = javascript_include_tag 'application'
-%h1 RSAT
-%hr
-%section
-  %h2 Resources
-  %h3 Data Tables
+%h2 About
+%p
+  RSAT (Resource Sharing Assessment Tool) provides a unified platform for assessing resource sharing.
+  There are three sources currently implemented from different consortia.
+  These are:
   %ul
-    - resources.each do |resource|
-      %li= link_to resource.resource_name.human, "/rsat/#{resource.resource_name.param_key.pluralize}"
+    %li #{link_to "BorrowDirect", :rsat_borrowdirect} for the IPLC
+    %li #{link_to "EZBorrow", :rsat_ezborrow} for the PALCI Consortium
+    %li #{link_to "ILLiad", :rsat_illiad} for InterLibrary Loan through OCLC

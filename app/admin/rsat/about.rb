@@ -1,12 +1,12 @@
 ActiveAdmin.register_page "About", namespace: :rsat do
   menu false
 
-  content title: I18n.t("active_admin.reshare.reshare_menu") do
-    resource_collection = ActiveAdmin.application.namespaces[:rsat].resources
-    resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
-    resources = resources.select{|r| /^Rsat::Borrowdirect::Reshare::/.match(r.resource_name.name) }
-    resources = resources.sort{|a,b| a.resource_name.human <=> b.resource_name.human }
+  content title: "RSAT" do
 
-    render partial: 'index', locals: {resources: resources}
+    unless current_admin_user.authorized?
+      redirect_to :admin_root
+    end
+
+    render partial: 'index'
   end
 end
