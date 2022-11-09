@@ -77,7 +77,7 @@ ActiveAdmin.setup do |config|
   # because, by default, user gets redirected to Dashboard. If user
   # doesn't have access to Dashboard, he'll end up in a redirect loop.
   # Method provided here should be defined in application_controller.rb.
-  # config.on_unauthorized_access = :access_denied
+  config.on_unauthorized_access = :access_denied
 
   # == Current User
   #
@@ -492,6 +492,11 @@ ActiveAdmin.setup do |config|
 
   # Configuration for the IPEDS namespace
   config.namespace :ipeds do |admin|
+    build_default_menu(admin)
+  end
+
+  # Configuration for the RSAT namespace
+  config.namespace :rsat do |admin|
     build_default_menu(admin)
   end
 
