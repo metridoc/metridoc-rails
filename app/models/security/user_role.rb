@@ -24,7 +24,8 @@ class Security::UserRole < ApplicationRecord
                         "Reshare",
                         "UpennAlma",
                         "UpennEzproxy",
-                        "Ipeds"
+                        "Ipeds",
+                        "Rsat"
                       ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]
