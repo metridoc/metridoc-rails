@@ -4,11 +4,11 @@
   %h2 Resources
   %h3 Dashboards
   %ul
-    %li= link_to "BorrowDirect Relais Dashboard", "/admin/borrowdirect_dashboard"
+    %li= link_to "BorrowDirect Relais Dashboard", "/borrowdirect/borrowdirect_relais_dashboard"
   %h3 Data Tables
   %ul
     - resources.each do |resource|
-      %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+      %li= link_to resource.resource_name.human, "/borrowdirect/#{resource.resource_name.param_key.pluralize}"
 
 %hr
 
@@ -29,7 +29,7 @@ the database is being queried. |
 - libraries = [["All Libraries", -1]] + library_map_bd()
 
 %center
-  = form_tag({:controller => admin_borrowdirect_path,
+  = form_tag({:controller => borrowdirect_relais_path,
       :action => "statistics"},
       {:method => :post}) do
     %table{:style => "background-color:#DADADA"}
@@ -48,7 +48,7 @@ the database is being queried. |
   %h2= t 'active_admin.borrowdirect.columns_heading'
   #left-col
     %h3= t 'active_admin.borrowdirect.left_column_heading'
-    = pie_chart display_names_bd(Borrowdirect::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9]), download: true
+    = pie_chart display_names_bd(Borrowdirect::Relais::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9]), download: true
   #right-col
     %h3= t 'active_admin.borrowdirect.right_column_heading'
-    = bar_chart display_names_bd(Borrowdirect::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9]), download: true
+    = bar_chart display_names_bd(Borrowdirect::Relais::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9]), download: true

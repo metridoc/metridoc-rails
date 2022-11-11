@@ -1,4 +1,4 @@
-class Borrowdirect::Bibliography < Borrowdirect::Base
+class Borrowdirect::Relais::Bibliography < Borrowdirect::Relais::Base
 
   ransacker :borrower do
     Arel.sql("to_char(borrower, '9999999999')")

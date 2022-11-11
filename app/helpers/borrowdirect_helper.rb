@@ -3,9 +3,9 @@ module BorrowdirectHelper
   def display_names_bd(institution_ids)
     render_ids = []
     institution_ids.each do |id, amount|
-      render_ids << [Borrowdirect::Institution.find_by(library_id: id).nil? ?
+      render_ids << [Borrowdirect::Relais::Institution.find_by(library_id: id).nil? ?
                        "Unfilled" :
-                       "#{Borrowdirect::Institution.find_by(library_id: id)
+                       "#{Borrowdirect::Relais::Institution.find_by(library_id: id)
                                                    .institution_name} (#{id})",
                      amount]
     end
@@ -20,9 +20,9 @@ module BorrowdirectHelper
       return "All Libraries"
     end
 
-    return Borrowdirect::Institution.find_by(library_id: library_id).nil? ?
+    return Borrowdirect::Relais::Institution.find_by(library_id: library_id).nil? ?
              "Not supplied" :
-             "#{Borrowdirect::Institution.find_by(library_id: library_id)
+             "#{Borrowdirect::Relais::Institution.find_by(library_id: library_id)
                                          .institution_name}"
   end
 
@@ -30,7 +30,7 @@ module BorrowdirectHelper
   def library_map_bd()
     library_map = []
     # Loop through all member institutions
-    Borrowdirect::Institution.all.each do |lib|
+    Borrowdirect::Relais::Institution.all.each do |lib|
       # Skip the "Default" case
       next if lib.library_id == 0
       # Skip the CRL, OCLC, OORII, and RapidILL cases
@@ -118,7 +118,7 @@ module BorrowdirectHelper
                              get_borrowing:, get_summary:)
 
     # Distinct request numbers in bibliography
-    query = Borrowdirect::Bibliography.select(:request_number).distinct
+    query = Borrowdirect::Relais::Bibliography.select(:request_number).distinct
 
     options = {
       :library_id => library_id,
@@ -169,7 +169,7 @@ module BorrowdirectHelper
 
   def get_fill_rate_bd(options = {})
     # Distinct request numbers in bibliography
-    query = Borrowdirect::Bibliography.select(:request_number).distinct
+    query = Borrowdirect::Relais::Bibliography.select(:request_number).distinct
     # Only want to know about the current year
     query = query.where(request_date: options[:this_year])
 
@@ -202,7 +202,7 @@ module BorrowdirectHelper
 
   def get_library_turnaround_time(options = {})
     # Distinct request numbers in bibliography
-    query = Borrowdirect::Bibliography
+    query = Borrowdirect::Relais::Bibliography
     # Only want to know about the current year
     query = query.where(request_date: options[:this_year])
     # Set up the base restrictions

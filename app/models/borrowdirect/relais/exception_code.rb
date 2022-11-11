@@ -1,2 +1,2 @@
-class Borrowdirect::ExceptionCode < Borrowdirect::Base
+class Borrowdirect::Relais::ExceptionCode < Borrowdirect::Relais::Base
 end

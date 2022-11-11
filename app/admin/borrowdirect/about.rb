@@ -1,4 +1,5 @@
-ActiveAdmin.register_page "BorrowDirect", namespace: :borrowdirect do
+ActiveAdmin.register_page "About",
+namespace: :borrowdirect do
 
   menu false
 

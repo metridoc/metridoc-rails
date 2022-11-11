@@ -1,2 +1,2 @@
-class Borrowdirect::PatronType < Borrowdirect::Base
+class Borrowdirect::Relais::PatronType < Borrowdirect::Relais::Base
 end

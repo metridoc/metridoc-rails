@@ -1,5 +1,16 @@
-ActiveAdmin.register Borrowdirect::Bibliography do
+ActiveAdmin.register Borrowdirect::Relais::Bibliography,
+as: "Relais::Bibliography",
+namespace: :borrowdirect do
   menu false
+
+  breadcrumb do
+    # Custom breadcrumb links
+    [
+      link_to('BorrowDirect', :borrowdirect_root),
+      link_to('Relais', :borrowdirect_relais)
+    ]
+  end
+
   permit_params :request_number, :patron_id, :patron_type, :author, :title, :publisher, :publication_place, :publication_year, :edition, :lccn, :isbn, :isbn_2, :request_date, :process_date, :pickup_location, :borrower, :lender, :supplier_code, :call_number, :load_time, :oclc, :oclc_text, :bibliography_id, :version, :publication_date, :local_item_found
   actions :all, :except => [:new, :edit, :update, :destroy]
 
@@ -31,4 +42,6 @@ ActiveAdmin.register Borrowdirect::Bibliography do
   filter :publication_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :local_item_found, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
 
+  # Set the title on the index page
+  index title: "Bibliography"
 end

@@ -1,2 +1,2 @@
-class Borrowdirect::ShipDate < Borrowdirect::Base
+class Borrowdirect::Relais::ShipDate < Borrowdirect::Relais::Base
 end

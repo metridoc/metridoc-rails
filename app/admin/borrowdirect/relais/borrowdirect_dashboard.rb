@@ -1,8 +1,12 @@
-ActiveAdmin.register_page "Borrowdirect Dashboard" do
+ActiveAdmin.register_page "Borrowdirect Relais Dashboard",
+namespace: :borrowdirect do
 
   breadcrumb do
     # Custom breadcrumb links
-    [link_to('Admin', admin_root_path), link_to('BorrowDirect', admin_borrowdirect_path)]
+    [
+      link_to('BorrowDirect', :borrowdirect_root),
+      link_to('Relais', :borrowdirect_relais)
+    ]
   end
 
   # Do not add to top menu
@@ -16,14 +20,4 @@ ActiveAdmin.register_page "Borrowdirect Dashboard" do
       render partial: 'admin/borrowdirect/dashboard'
     end
   end
-
-  # Redefine ActiveAdmin::PageController::authorize_access
-  # This will restrict the page view to the correct users.
-  controller do
-    private
-    def authorize_access!
-      authorize! :read, "Borrowdirect"
-    end
-  end
-
 end

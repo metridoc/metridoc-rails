@@ -1,5 +1,16 @@
-ActiveAdmin.register Borrowdirect::CallNumber do
+ActiveAdmin.register Borrowdirect::Relais::CallNumber,
+as: "Relais::CallNumber",
+namespace: :borrowdirect do
   menu false
+
+  breadcrumb do
+    # Custom breadcrumb links
+    [
+      link_to('BorrowDirect', :borrowdirect_root),
+      link_to('Relais', :borrowdirect_relais)
+    ]
+  end
+
   permit_params :request_number, :holdings_seq, :supplier_code, :call_number, :process_date, :load_time, :call_number_id, :version
   actions :all, :except => [:new, :edit, :update, :destroy]
 
@@ -13,4 +24,6 @@ ActiveAdmin.register Borrowdirect::CallNumber do
   filter :call_number_id, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
   filter :version, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
 
+  # Set the title on the index page
+  index title: "CallNumber"
 end
