@@ -1,4 +1,4 @@
-ActiveAdmin.register_page "Relais",
+ActiveAdmin.register_page "Relais Statistics",
 namespace: :borrowdirect do
 
   breadcrumb do
@@ -17,7 +17,7 @@ namespace: :borrowdirect do
     # This is a sub div to the main_content div?? May not need
     div id: "borrowdirect_statistics" do
       # Direct path to dashboard template
-      render partial: 'statistics'
+      render partial: 'borrowdirect/relais/statistics'
     end
   end
 
