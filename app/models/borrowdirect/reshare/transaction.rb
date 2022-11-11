@@ -1,3 +1,3 @@
-class Rsat::Borrowdirect::Reshare::Transaction < Rsat::Borrowdirect::Reshare::Base
+class Borrowdirect::Reshare::Transaction < Borrowdirect::Reshare::Base
 
 end

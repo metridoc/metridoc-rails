@@ -1,3 +1,3 @@
-class Rsat::Borrowdirect::Reshare::LendingTurnaround < Rsat::Borrowdirect::Reshare::Base
+class Borrowdirect::Reshare::LendingTurnaround < Borrowdirect::Reshare::Base
 
 end

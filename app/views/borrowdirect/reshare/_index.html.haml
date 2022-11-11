@@ -4,7 +4,7 @@
   %h2 Data Tables
   %ul
     - resources.each do |resource|
-      %li= link_to resource.resource_name.human, "/rsat/#{resource.resource_name.param_key.pluralize}"
+      %li= link_to resource.resource_name.human, "/borrowdirect/#{resource.resource_name.param_key.pluralize}"
 
 %section
   %h2 ReShare Schema
@@ -21,32 +21,32 @@
 
   %ul
     %li
-      = link_to "Patron Requests", :rsat_borrowdirect_reshare_patron_requests
+      = link_to "Patron Requests", :borrowdirect_reshare_patron_requests
       %ul
         %li Describes the interaction between an institution (origin) and a request (pr_hrid).
         %li Records are updated when a status changes.
         %li Table contains a unique key of the pr_id.
     %li
-      = link_to "Patron Request Audit", :rsat_borrowdirect_reshare_patron_request_audits
+      = link_to "Patron Request Audit", :borrowdirect_reshare_patron_request_audits
       %ul
         %li Historical record of the interaction between an institution (origin) and a request (pra_patron_request_fk).
         %li Records are added when a status changes.
         %li Table contains a unique key of the pra_id.
     %li
-      = link_to "Patron Requests Rota", :rsat_borrowdirect_reshare_patron_request_rota
+      = link_to "Patron Requests Rota", :borrowdirect_reshare_patron_request_rota
       %ul
         %li Describes the rota of institutional sources (origin) for a request (prr_patron_request_fk).
         %li Records are updated when a status changes.
         %li Table contains a unique key of the prr_id.
     %li
-      = link_to "Directory Entry", :rsat_borrowdirect_reshare_directory_entries
+      = link_to "Directory Entry", :borrowdirect_reshare_directory_entries
       %ul
         %li Describes locations set up in the Library Management Systems for each institution (origin).
         %li One institution can have many locations for patrons to collect their items.
         %li The field de_parent traces the location to the parent institution.
         %li Table contains a paired unique key of the de_id and the origin.
     %li
-      = link_to "Symbol", :rsat_borrowdirect_reshare_symbols
+      = link_to "Symbol", :borrowdirect_reshare_symbols
       %ul
         %li Describes the symbolic name used in the patron request rota creation.
         %li The field prr_peer_symbol_fk is the sym_id in the symbols table.
@@ -54,7 +54,7 @@
         %li This lookup table connects a rota listing to an institution.
         %li Table contains a unique key of the sym_id.
     %li
-      = link_to "Status", :rsat_borrowdirect_reshare_statuses
+      = link_to "Status", :borrowdirect_reshare_statuses
       %ul
         %li A lookup table to the different states possible for a transaction.
         %li The field st_id is the pr_state_fk in the reshare_patron_requests table.
@@ -78,7 +78,7 @@
 
   %ul
     %li
-      = link_to "Transaction", :rsat_borrowdirect_reshare_transactions
+      = link_to "Transaction", :borrowdirect_reshare_transactions
       %ul
         %li Joins the borrower to the requester.
         %li Records are unique to the lender-borrower interaction.
@@ -87,14 +87,14 @@
         %li This table will be most similar to the Relais Bibliography table.
         %li This table is unique on the fields borrower_id and lender_id.
     %li
-      = link_to "Borrowing Turnaround", :rsat_borrowdirect_reshare_borrowing_turnarounds
+      = link_to "Borrowing Turnaround", :borrowdirect_reshare_borrowing_turnarounds
       %ul
         %li List of patron requests and their turnaround times from the point of view of the borrower.
         %li Key points in the request are saved: request made, shipping, receipt.
         %li Turnaround times are calculated when the item is received by the borrower.
         %li This table is unique on the field request_id.
     %li
-      = link_to "Lending Turnaround", :rsat_borrowdirect_reshare_lending_turnarounds
+      = link_to "Lending Turnaround", :borrowdirect_reshare_lending_turnarounds
       %ul
         %li List of patron requests and their turnaround times from the point of view of the lender.
         %li Key points in the request are saved: notification of request, promise to fulfill, shipping, receipt.

@@ -1,3 +1,3 @@
-class Rsat::Borrowdirect::Reshare::DirectoryEntry < Rsat::Borrowdirect::Reshare::Base
+class Borrowdirect::Reshare::DirectoryEntry < Borrowdirect::Reshare::Base
 
 end

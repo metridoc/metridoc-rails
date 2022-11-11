@@ -1,3 +1,3 @@
-class Rsat::Borrowdirect::Reshare::PatronRequestAudit < Rsat::Borrowdirect::Reshare::Base
+class Borrowdirect::Reshare::PatronRequestAudit < Borrowdirect::Reshare::Base
 
 end

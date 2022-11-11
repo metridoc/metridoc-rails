@@ -53,7 +53,7 @@ export_filter_date_sql: "__start > ?"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Rsat::Borrowdirect::Reshare::PatronRequest"
+target_model:          "Borrowdirect::Reshare::PatronRequest"
 truncate_before_load:  "no"
 incremental_filter_column: "last_updated"
 

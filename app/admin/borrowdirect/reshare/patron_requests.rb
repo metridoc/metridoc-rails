@@ -1,13 +1,12 @@
-ActiveAdmin.register Rsat::Borrowdirect::Reshare::PatronRequest,
-as: "Borrowdirect::Reshare::PatronRequest",
-namespace: :rsat  do
+ActiveAdmin.register Borrowdirect::Reshare::PatronRequest,
+as: "Reshare::PatronRequest",
+namespace: :borrowdirect  do
 
   breadcrumb do
     # Custom breadcrumb links
     [
-      link_to('RSAT', :rsat_root),
-      link_to('BorrowDirect', :rsat_borrowdirect),
-      link_to('ReShare', :rsat_borrowdirect_reshare)
+      link_to('BorrowDirect', :borrowdirect_root),
+      link_to('ReShare', :borrowdirect_reshare)
     ]
   end
 

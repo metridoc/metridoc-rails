@@ -1,3 +1,3 @@
-class Rsat::Borrowdirect::Reshare::Symbol < Rsat::Borrowdirect::Reshare::Base
+class Borrowdirect::Reshare::Symbol < Borrowdirect::Reshare::Base
 
 end
