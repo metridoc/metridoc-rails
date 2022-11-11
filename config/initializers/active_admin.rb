@@ -354,7 +354,7 @@ ActiveAdmin.setup do |config|
 
       # RSAT: Borrowdirect
       menu.add label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"),
-        url: :admin_borrowdirect_path,
+        url: :borrowdirect_root_path,
         if: proc{ authorized?(:read, "Borrowdirect") },
         parent: I18n.t("active_admin.resource_sharing")
 
@@ -485,19 +485,14 @@ ActiveAdmin.setup do |config|
     end
   end
 
-  # Admin namespace configuration (Primarily Set Up Menus)
-  config.namespace :admin do |admin|
-    build_default_menu(admin)
-  end
+  # List of namespaces that need menus
+  namespaces = [:admin, :ipeds, :rsat, :borrowdirect]
 
-  # Configuration for the IPEDS namespace
-  config.namespace :ipeds do |admin|
-    build_default_menu(admin)
-  end
-
-  # Configuration for the RSAT namespace
-  config.namespace :rsat do |admin|
-    build_default_menu(admin)
+  # Configure the menu for all namespaces
+  namespaces.each do |namespace|
+    config.namespace namespace do |space|
+      build_default_menu(space)
+    end
   end
 
   # == Sorting
