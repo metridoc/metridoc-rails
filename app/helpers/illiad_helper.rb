@@ -258,7 +258,7 @@ module IlliadHelper
     end
 
     # The length of the value is variable depending on the request made
-    value_length = output.values.first.length()
+    value_length = output.values.first.length() rescue 0
 
     # Fill in default for missing keys
     output_keys.each do |key|

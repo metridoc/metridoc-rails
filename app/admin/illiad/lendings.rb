@@ -1,4 +1,6 @@
-ActiveAdmin.register Illiad::Lending do
+ActiveAdmin.register Illiad::Lending,
+as: "Lending",
+namespace: :illiad do
   menu false
   permit_params :institution_id, :request_type, :status, :transaction_date, :transaction_number
   actions :all, :except => [:new, :edit, :update, :destroy]

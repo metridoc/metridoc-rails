@@ -1,8 +1,27 @@
 = javascript_include_tag 'application'
 
-%ul
-  - resources.each do |resource|
-    %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+%section
+  %h2 Introduction
+
+  The #{link_to "ILLiad", "https://www.oclc.org/en/illiad.html"} service is
+  provided by #{link_to "OCLC", "https://www.oclc.org/en/home.html"}.  ILLiad
+  manages several Interlibrary loan systems under one umbrella.  MetriDoc
+  provides data storage services for a select group of universities in the Ivy
+  Plus Library Confederation.
+
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards
+  %ul
+    %li Coming soon...
+
+  %h3 Data
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/illiad/#{resource.resource_name.param_key.pluralize}"
 
 %hr
 
@@ -25,7 +44,7 @@ the database is being queried. |
 - libraries = {"University of Pennsylvania" => 2}
 
 %center
-  = form_tag({:controller => admin_illiad_path,
+  = form_tag({:controller => illiad_about_path,
       :action => "statistics"},
       {:method => :post}) do
     %table{:style => "background-color:#DADADA"}

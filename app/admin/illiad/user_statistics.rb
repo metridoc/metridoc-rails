@@ -1,9 +1,5 @@
-ActiveAdmin.register_page "ILLiad User Statistics" do
-
-  breadcrumb do
-    # Custom breadcrumb links
-    [link_to('Admin', admin_root_path), link_to('ILLiad', admin_illiad_path)]
-  end
+ActiveAdmin.register_page "User Statistics",
+namespace: :illiad do
 
   # Do not add to top menu
   menu false
@@ -13,16 +9,7 @@ ActiveAdmin.register_page "ILLiad User Statistics" do
     # This is a sub div to the main_content div?? May not need
     div id: "illiad_user_statistics" do
       # Direct path to dashboard template
-      render partial: 'admin/illiad/user_statistics'
-    end
-  end
-
-  # Redefine ActiveAdmin::PageController::authorize_access
-  # This will restrict the page view to the correct users.
-  controller do
-    private
-    def authorize_access!
-      authorize! :read, "Illiad"
+      render partial: 'illiad/user_statistics'
     end
   end
 end

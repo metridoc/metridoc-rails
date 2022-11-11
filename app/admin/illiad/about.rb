@@ -1,15 +1,16 @@
-ActiveAdmin.register_page "Illiad" do
+ActiveAdmin.register_page "About",
+namespace: :illiad do
   menu false
 
   # Action need to get the redirect with parameters
   page_action :statistics, method: :post do
-    redirect_to "/admin/illiad_statistics?fiscal_year=#{params['fiscal_year']}&library_id=#{params['library_id']}"
+    redirect_to "/illiad/statistics?fiscal_year=#{params['fiscal_year']}&library_id=#{params['library_id']}"
   end
 
   content title: I18n.t("active_admin.illiad.illiad_menu") do
-    resource_collection = ActiveAdmin.application.namespaces[:admin].resources
+    resource_collection = ActiveAdmin.application.namespaces[:illiad].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
-    resources = resources.select{|r| /^Illiad::/.match(r.resource_name.name) }
+    resources = resources.select{|r| r.resource_name.name != "Comment" }
     resources = resources.sort{|a,b| a.resource_name.human <=> b.resource_name.human }
 
     render partial: 'index', locals: {resources: resources}
