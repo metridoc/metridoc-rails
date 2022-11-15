@@ -9,7 +9,7 @@ namespace: :ezborrow do
     ]
   end
 
-  content title: I18n.t("EzBorrow::ReShare") do
+  content title: "EzBorrow::ReShare" do
     resource_collection = ActiveAdmin.application.namespaces[:ezborrow].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
     resources = resources.select{|r| /^Reshare::/.match(r.resource_name.name) }

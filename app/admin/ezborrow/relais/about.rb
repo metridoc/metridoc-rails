@@ -9,7 +9,7 @@ namespace: :ezborrow do
     ]
   end
 
-  content title: I18n.t("EzBorrow::Relais") do
+  content title: "EzBorrow::Relais" do
     resource_collection = ActiveAdmin.application.namespaces[:ezborrow].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
     resources = resources.select{|r| /^Relais::/.match(r.resource_name.name) }

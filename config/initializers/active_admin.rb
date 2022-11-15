@@ -360,14 +360,14 @@ ActiveAdmin.setup do |config|
 
       # RSAT: ILLiad
       menu.add label: I18n.t("active_admin.illiad.illiad_menu"),
-        url: :admin_illiad_path,
+        url: :illiad_root_path,
         if: proc{ authorized?(:read, "Illiad") },
         parent: I18n.t("active_admin.resource_sharing")
 
       # RSAT: PALCI
       menu.add label: I18n.t("active_admin.reshare.reshare_menu"),
-        url: :admin_reshare_path,
-        if: proc{ authorized?(:read, "Reshare") },
+        url: :ezborrow_root_path,
+        if: proc{ authorized?(:read, "EzBorrow") },
         parent: I18n.t("active_admin.resource_sharing")
 
     end
@@ -486,7 +486,7 @@ ActiveAdmin.setup do |config|
   end
 
   # List of namespaces that need menus
-  namespaces = [:admin, :ipeds, :rsat, :borrowdirect]
+  namespaces = [:admin, :ipeds, :ezborrow, :borrowdirect, :illiad]
 
   # Configure the menu for all namespaces
   namespaces.each do |namespace|

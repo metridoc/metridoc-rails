@@ -1,12 +1,7 @@
-ActiveAdmin.register_page "EZBorrow", namespace: :rsat do
-  menu false
+ActiveAdmin.register_page "About",
+namespace: :ezborrow do
 
-  breadcrumb do
-    # Custom breadcrumb links
-    [
-      link_to('RSAT', :rsat_root)
-    ]
-  end
+  menu false
 
   content title: "EZBorrow" do
     render partial: 'index'

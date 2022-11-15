@@ -10,7 +10,7 @@ namespace: :ezborrow do
       link_to('Relais', :ezborrow_relais)
     ]
   end
-  
+
   permit_params :request_number, :min_ship_date
   actions :all, :except => [:new, :edit, :update, :destroy]
 
