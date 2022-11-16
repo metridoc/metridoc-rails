@@ -1,11 +1,23 @@
 = javascript_include_tag 'application'
 
 %section
-  %h2 Data Tables
+  %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li Coming soon...
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for BorrowDirect's Reshare data
+    begin with the prefix "bd_reshare_".
+
+  %h3 Data Tables
   %ul
     - resources.each do |resource|
       %li= link_to resource.resource_name.human, "/borrowdirect/#{resource.resource_name.param_key.pluralize}"
 
+%hr
 %section
   %h2 ReShare Schema
 

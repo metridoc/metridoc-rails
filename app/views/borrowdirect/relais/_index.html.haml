@@ -5,6 +5,13 @@
   %h3 Dashboards
   %ul
     %li= link_to "BorrowDirect Relais Dashboard", "/borrowdirect/relais_dashboard"
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for BorrowDirect's Relais data
+    begin with the prefix "borrowdirect_".
+
   %h3 Data Tables
   %ul
     - resources.each do |resource|
