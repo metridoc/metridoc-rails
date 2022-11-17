@@ -1,0 +1,128 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2023 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
+
+-# Get the lending table
+- lending_table, display_months = prepare_summary_table(fiscal_year, library_id, false)
+
+-# Number of columns to reserve for the months
+- n_month_columns = display_months.size * 2
+
+%h2= "Displaying BorrowDirect summary for the #{fiscal_year} fiscal year and #{get_library_name(library_id)}"
+
+<!-- Build the table -->
+%h3= "Items by Lending Institution"
+%table.statistics_summary
+  %thead
+    %tr
+      %th{:rowspan => 3}
+        %div.tooltip
+          Lending Institution
+          %span.tooltiptext Institution providing the item.
+      %th{:colspan => 3, :rowspan => 2}
+        %div.tooltip
+          Turnaround Time (days)
+          %span.tooltiptext Time between the request and receipt of the item.
+      %th{:colspan => 3, :rowspan => 2} Yearly Aggregate Statistics
+      %th{:colspan => n_month_columns}
+        %div.tooltip
+          Filled Items Per Month
+          %span.tooltiptext Number of successfully filled items in each month.
+    %tr
+      - display_months.each do |m|
+        %th{:colspan => 2}= Date::MONTHNAMES[m]
+    %tr
+      %th
+        %div.tooltip
+          Req-Rec
+          %span.tooltiptext Total time from request to receipt at borrowing institution.
+      %th
+        %div.tooltip
+          Req-Shp
+          %span.tooltiptext Time of processing at the lending institution.
+      %th
+        %div.tooltip
+          Shp-Rec
+          %span.tooltiptext Time of transit to the borrowing institution.
+      %th
+        %div.tooltip
+          Items
+          %span.tooltiptext Number of successfully filled items in the requested fiscal year.
+      %th
+        %div.tooltip
+          Fill Rate
+          %span.tooltiptext Rate of successfully filled items from all requests.
+      %th
+        %div.tooltip
+          Last Year
+          %span.tooltiptext Number of successfully filled items in the previous fiscal year.
+      -display_months.each do
+        %th FY #{fiscal_year}
+        %th FY #{fiscal_year - 1}
+  %tbody
+    - lending_table.each do |row|
+      %tr
+        - row.each do |cell|
+          %td= cell
+
+<!-- Get the borrowing table -->
+- borrowing_table, display_months = prepare_summary_table(fiscal_year, library_id, true)
+
+<!-- Build the table -->
+%h3= "Items by Borrowing Institution"
+%table.statistics_summary
+  %thead
+    %tr
+      %th{:rowspan => 3}
+        %div.tooltip
+          Borrowing Institution
+          %span.tooltiptext Institution requesting the item.
+      %th{:colspan => 3, :rowspan => 2}
+        %div.tooltip
+          Turnaround Time (days)
+          %span.tooltiptext Time between the request and receipt of the item.
+      %th{:colspan => 3, :rowspan => 2} Yearly Aggregate Statistics
+      %th{:colspan => n_month_columns}
+        %div.tooltip
+          Filled Items Per Month
+          %span.tooltiptext Number of successfully filled items in each month.
+    %tr
+      - display_months.each do |m|
+        %th{:colspan => 2}= Date::MONTHNAMES[m]
+    %tr
+      %th
+        %div.tooltip
+          Req-Rec
+          %span.tooltiptext Total time from request to receipt at borrowing institution.
+      %th
+        %div.tooltip
+          Req-Shp
+          %span.tooltiptext Time of processing at the lending institution.
+      %th
+        %div.tooltip
+          Shp-Rec
+          %span.tooltiptext Time of transit to the borrowing institution.
+      %th
+        %div.tooltip
+          Items
+          %span.tooltiptext Number of successfully filled items in the requested fiscal year.
+      %th
+        %div.tooltip
+          Fill Rate
+          %span.tooltiptext Rate of successfully filled items from all requests.
+      %th
+        %div.tooltip
+          Last Year
+          %span.tooltiptext Number of successfully filled items in the previous fiscal year.
+      -display_months.each do
+        %th FY #{fiscal_year}
+        %th FY #{fiscal_year - 1}
+  %tbody
+    - borrowing_table.each do |row|
+      %tr
+        - row.each do |cell|
+          %td= cell

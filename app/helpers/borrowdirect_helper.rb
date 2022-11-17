@@ -1,17 +1,5 @@
 module BorrowdirectHelper
 
-  def display_names_bd(institution_ids)
-    render_ids = []
-    institution_ids.each do |id, amount|
-      render_ids << [Borrowdirect::Relais::Institution.find_by(library_id: id).nil? ?
-                       "Unfilled" :
-                       "#{Borrowdirect::Relais::Institution.find_by(library_id: id)
-                                                   .institution_name} (#{id})",
-                     amount]
-    end
-    return render_ids
-  end
-
   # Note: you have to restart the server to get access
   # to any changes in the helper methods!
 
@@ -39,26 +27,6 @@ module BorrowdirectHelper
     end
     # Return a sorted map
     return library_map.sort
-  end
-
-  # Function to calculate the fiscal year ranges for
-  # both the requested year and the previous year
-  def fiscal_year_ranges_bd(fiscal_year)
-    start_date = Date.new(fiscal_year - 1, 7, 1)
-    end_date = [Date.today, Date.new(fiscal_year, 6, 30)].min
-    this_year = start_date..end_date
-    last_year = (start_date - 1.year)..(end_date - 1.year)
-    return this_year, last_year
-  end
-
-  # Function to specify the months to display
-  def display_months_bd(this_year)
-    # Calculate what the last month is
-    last_month = this_year.last.month
-    # Return an ordered array of the past months of the fiscal year
-    return last_month >= 7 ?
-             last_month.downto(7).to_a :
-             last_month.downto(1).to_a + 12.downto(7).to_a
   end
 
   # Method to construct the standard query to be used across all queries
@@ -301,7 +269,7 @@ module BorrowdirectHelper
   # and fiscal_year (default is 2021)
   def prepare_summary_table(fiscal_year = 2021, library_id = nil, get_borrowing = false)
 
-    this_year, last_year = fiscal_year_ranges_bd(fiscal_year)
+    this_year, last_year = fiscal_year_ranges(fiscal_year)
 
     options = {
       :this_year => this_year,
@@ -325,7 +293,7 @@ module BorrowdirectHelper
     current_monthly_items, previous_monthly_items = count_items_bd(**options)
 
     # Get the list of months to dynamically display
-    display_months = display_months_bd(this_year)
+    months = display_months(this_year)
 
     # The the list of libraries
     library_map = [["All Libraries", -1]] + library_map_bd()
@@ -345,7 +313,7 @@ module BorrowdirectHelper
       output_row << format_big_number_bd(previous_items, library_id)
 
       # Loop through the monthly information
-      display_months.each do |month|
+      months.each do |month|
         output_row << format_big_number_bd(current_monthly_items,
                                         [library_id, month])
         output_row << format_big_number_bd(previous_monthly_items,
@@ -356,7 +324,7 @@ module BorrowdirectHelper
       output_table << output_row
     end
 
-    return output_table, display_months
+    return output_table, months
 
   end
 

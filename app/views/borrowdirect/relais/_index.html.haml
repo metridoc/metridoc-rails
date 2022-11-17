@@ -55,7 +55,11 @@ the database is being queried. |
   %h2= t 'active_admin.borrowdirect.columns_heading'
   #left-col
     %h3= t 'active_admin.borrowdirect.left_column_heading'
-    = pie_chart display_names_bd(Borrowdirect::Relais::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9]), download: true
+    = pie_chart display_institution_names(Borrowdirect::Relais::Institution,
+    Borrowdirect::Relais::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9]),
+    download: true
   #right-col
     %h3= t 'active_admin.borrowdirect.right_column_heading'
-    = bar_chart display_names_bd(Borrowdirect::Relais::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9]), download: true
+    = bar_chart display_institution_names(Borrowdirect::Relais::Institution,
+    Borrowdirect::Relais::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9]),
+    download: true
