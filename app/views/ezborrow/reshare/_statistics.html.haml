@@ -6,9 +6,9 @@
 - institution = params[:institution].nil? ? 'University of Pennsylvania' : params[:institution]
 
 -# Get the lending summary table
-- lending_table = reshare_lending_summary(Borrowdirect::Reshare, institution, fiscal_year)
+- lending_table = reshare_lending_summary(Ezborrow::Reshare, institution, fiscal_year)
 -# Get the borrowing summary table
-- borrowing_table = reshare_borrowing_summary(Borrowdirect::Reshare, institution, fiscal_year)
+- borrowing_table = reshare_borrowing_summary(Ezborrow::Reshare, institution, fiscal_year)
 
 %section
   %h2 General Information
@@ -16,7 +16,7 @@
     The following tables provide estimates of basic statistics in resource sharing.
     Cells that are blank represent null values.
     For monthly breakdowns of successful fulfillment, please
-    #{link_to "click here", "/borrowdirect/reshare_monthly_statistics?fiscal_year=#{params['fiscal_year']}&institution=#{params['institution']}"}.
+    #{link_to "click here", "/ezborrow/reshare_monthly_statistics?fiscal_year=#{params['fiscal_year']}&institution=#{params['institution']}"}.
   %p
     For borrowing statistics, the All Institutions summary row contains the
     counts for the final state of the request. However, for the breakdown by institution,
@@ -31,7 +31,7 @@
 
 
 %section
-  %h2 Displaying BorrowDirect ReShare summary for:
+  %h2 Displaying EZBorrow ReShare summary for:
   %center
     %table
       %tbody

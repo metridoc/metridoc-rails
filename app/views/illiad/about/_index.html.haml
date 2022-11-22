@@ -71,8 +71,7 @@ the database is being queried. |
   %h2= t 'active_admin.illiad.columns_heading'
   #left-col
     %h3= t 'active_admin.illiad.left_column_heading'
-    = bar_chart display_institution_names(Institution,
-    Illiad::Borrowing.group(:institution_id).count),
+    = bar_chart display_illiad_institution_names(Illiad::Borrowing.group(:institution_id).count),
     download: true
   #right-col
     %h3= t 'active_admin.illiad.right_column_heading', date_range: "#{7.months.ago.strftime("%m/%d/%Y")} to #{1.month.ago.strftime("%m/%d/%Y")}"

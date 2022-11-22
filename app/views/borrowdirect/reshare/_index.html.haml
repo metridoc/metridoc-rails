@@ -19,6 +19,36 @@
 
 %hr
 %section
+  %h2 Fiscal Year Statistical Summary
+
+  %h2 BorrowDirect Fiscal Year Statistical Summary
+  To get the summary statistics for any year or library, select the fiscal year |
+  and the library name of interest. The default is set to the current year |
+  and the summary of all library borrowing and lending. Please be patient while |
+  the database is being queried. |
+
+  -# Get the range of fiscal years
+  - years = reshare_fiscal_year_range(Borrowdirect::Reshare::Transaction)
+
+  -# Get the list of libraries
+  - institutions = reshare_institution_names(Borrowdirect::Reshare)
+
+  %center
+    = form_tag({:controller => borrowdirect_reshare_path,
+        :action => "statistics"},
+        {:method => :post}) do
+      %table{:style => "background-color:#DADADA"}
+        %tr
+          %td Select fiscal year
+          %td= select_tag "fiscal_year", options_for_select(years)
+          %td{:rowspan => 2}= submit_tag "Submit"
+        %tr
+          %td Select Institution
+          %td= select_tag "institution", options_for_select(institutions)
+  %br
+
+%hr
+%section
   %h2 ReShare Schema
 
   The #{link_to "source code", "https://github.com/openlibraryenvironment/mod-rs/tree/master/service/grails-app/domain/org/olf/rs"}

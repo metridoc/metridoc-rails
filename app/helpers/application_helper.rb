@@ -49,4 +49,9 @@ module ApplicationHelper
     return render_ids
   end
 
+  # Function to get the table name prefix for a table
+  def table_name_prefix(model)
+    return model::Base.table_name_prefix rescue ""
+  end
+
 end

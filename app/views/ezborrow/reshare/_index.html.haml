@@ -16,7 +16,37 @@
   %h3 Data Tables
   %ul
     - resources.each do |resource|
-      %li= link_to resource.resource_name.human, "/borrowdirect/#{resource.resource_name.param_key.pluralize}"
+      %li= link_to resource.resource_name.human, "/ezborrow/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+%section
+  %h2 Fiscal Year Statistical Summary
+
+  %h2 EZBorrow Fiscal Year Statistical Summary
+  To get the summary statistics for any year or library, select the fiscal year |
+  and the library name of interest. The default is set to the current year |
+  and the summary of all library borrowing and lending. Please be patient while |
+  the database is being queried. |
+
+  -# Get the range of fiscal years
+  - years = reshare_fiscal_year_range(Ezborrow::Reshare::Transaction)
+
+  -# Get the list of libraries
+  - institutions = reshare_institution_names(Ezborrow::Reshare)
+
+  %center
+    = form_tag({:controller => ezborrow_reshare_path,
+        :action => "statistics"},
+        {:method => :post}) do
+      %table{:style => "background-color:#DADADA"}
+        %tr
+          %td Select fiscal year
+          %td= select_tag "fiscal_year", options_for_select(years)
+          %td{:rowspan => 2}= submit_tag "Submit"
+        %tr
+          %td Select Institution
+          %td= select_tag "institution", options_for_select(institutions)
+  %br
 
 %hr
 %section

@@ -9,6 +9,11 @@ namespace: :ezborrow do
     ]
   end
 
+  # Action need to get the redirect with parameters
+  page_action :statistics, method: :post do
+    redirect_to "/ezborrow/reshare_statistics?fiscal_year=#{params['fiscal_year']}&institution=#{params['institution']}"
+  end
+
   content title: "EzBorrow::ReShare" do
     resource_collection = ActiveAdmin.application.namespaces[:ezborrow].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }

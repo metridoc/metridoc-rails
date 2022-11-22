@@ -10,6 +10,11 @@ namespace: :borrowdirect do
 
   menu false
 
+  # Action need to get the redirect with parameters
+  page_action :statistics, method: :post do
+    redirect_to "/borrowdirect/reshare_statistics?fiscal_year=#{params['fiscal_year']}&institution=#{params['institution']}"
+  end
+
   content title: "BorrowDirect::ReShare" do
     resource_collection = ActiveAdmin.application.namespaces[:borrowdirect].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
