@@ -28,9 +28,9 @@ module RelaisHelper
     render_ids = []
     institution_ids.each do |id, amount|
       render_ids << [
-        model::Institution.find_by(library_id: id).nil? ?
+        model::Relais::Institution.find_by(library_id: id).nil? ?
         "Not Supplied" :
-        "#{model::Institution.find_by(library_id: id).institution_name} (#{id})",
+        "#{model::Relais::Institution.find_by(library_id: id).institution_name} (#{id})",
         amount
       ]
     end

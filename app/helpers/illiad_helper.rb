@@ -1,6 +1,6 @@
 module IlliadHelper
 
-  # Get the institution ids from the display_institution_names Table
+  # Get the institution ids from the Institution Table
   def display_illiad_institution_names(institution_ids)
     render_ids = {}
     institution_ids.each do |id, amount|
@@ -338,7 +338,7 @@ module IlliadHelper
   end
 
   # Method to check for a key and format the number appropriately
-  # This will be used for big integers (> 1000)
+  # This will be used for currencies
   def format_currency(input)
     output = "---"
     if input and input != 0

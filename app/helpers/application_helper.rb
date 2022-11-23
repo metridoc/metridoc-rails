@@ -35,20 +35,6 @@ module ApplicationHelper
       last_month.downto(1).to_a + 12.downto(7).to_a
   end
 
-  # Function to display names of institutions
-  def display_institution_names(model, institution_ids)
-    render_ids = []
-    institution_ids.each do |id, amount|
-      render_ids << [
-        model.find_by(library_id: id).nil? ?
-        "Not Supplied" :
-        "#{model.find_by(library_id: id).institution_name} (#{id})",
-        amount
-      ]
-    end
-    return render_ids
-  end
-
   # Function to get the table name prefix for a table
   def table_name_prefix(model)
     return model::Base.table_name_prefix rescue ""
