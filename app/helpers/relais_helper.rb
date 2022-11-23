@@ -1,4 +1,4 @@
-module BorrowdirectHelper
+module RelaisHelper
 
   # Note: you have to restart the server to get access
   # to any changes in the helper methods!
