@@ -5,14 +5,15 @@
 -# Access form option for library id input
 - library_id = params[:library_id].nil? ? nil : params[:library_id]
 - library_id = library_id.to_i < 0 ? nil : library_id
+- library_name = relais_library_name(Borrowdirect, library_id)
 
 -# Get the lending table
-- lending_table, display_months = prepare_summary_table(fiscal_year, library_id, false)
+- lending_table, display_months = relais_prepare_summary_table(Borrowdirect, fiscal_year, library_id, false)
 
 -# Number of columns to reserve for the months
 - n_month_columns = display_months.size * 2
 
-%h2= "Displaying BorrowDirect summary for the #{fiscal_year} fiscal year and #{get_library_name(library_id)}"
+%h2= "Displaying BorrowDirect summary for the #{fiscal_year} fiscal year and #{library_name}"
 
 <!-- Build the table -->
 %h3= "Items by Lending Institution"
@@ -70,7 +71,7 @@
           %td= cell
 
 <!-- Get the borrowing table -->
-- borrowing_table, display_months = prepare_summary_table(fiscal_year, library_id, true)
+- borrowing_table, display_months = relais_prepare_summary_table(Borrowdirect, fiscal_year, library_id, true)
 
 <!-- Build the table -->
 %h3= "Items by Borrowing Institution"

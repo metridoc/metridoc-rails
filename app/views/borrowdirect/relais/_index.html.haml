@@ -25,15 +25,12 @@ and the library name of interest. The default is set to the current year |
 and the summary of all library borrowing and lending. Please be patient while |
 the database is being queried. |
 
--# Calculate today's date
-- today = Date.today()
--# Find today's fiscal year
-- max_fiscal_year = today.mon > 6 ? today.year + 1 : today.year
--# Build the selection of possible fiscal years
-- years = max_fiscal_year.downto(2014).to_a.map {|year| [year.to_s, year]}
+-# Get the range of fiscal years
+- years = relais_fiscal_year_range(Borrowdirect)
+
 
 -# Get the list of libraries
-- libraries = [["All Libraries", -1]] + library_map_bd()
+- libraries = [["All Libraries", -1]] + relais_library_map(Borrowdirect)
 
 %center
   = form_tag({:controller => borrowdirect_relais_path,

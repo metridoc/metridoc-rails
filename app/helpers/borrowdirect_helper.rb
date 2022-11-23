@@ -3,22 +3,56 @@ module BorrowdirectHelper
   # Note: you have to restart the server to get access
   # to any changes in the helper methods!
 
-  def get_library_name(library_id)
+  # Function to calculate the range of fiscal ranges for
+  # the reshare model
+  def relais_fiscal_year_range(model)
+    # Find the maximum and minimum dates
+    maximum_date = model::Relais::Bibliography.maximum(:request_date)
+    minimum_date = model::Relais::Bibliography.minimum(:request_date)
+
+    # Find the starting and ending fiscal years
+    maximum_fiscal_year = maximum_date.mon > 6 ?
+      maximum_date.year + 1 : maximum_date.year
+    minimum_fiscal_year = minimum_date.mon > 6 ?
+      minimum_date.year + 1 : minimum_date.year
+
+    # Make an array of possible years
+    years = maximum_fiscal_year.downto(minimum_fiscal_year).to_a.map{
+      |year| [year.to_s, year]
+    }
+    return years
+  end
+
+  # Function to display names of institutions
+  def relais_institution_names(model, institution_ids)
+    render_ids = []
+    institution_ids.each do |id, amount|
+      render_ids << [
+        model::Institution.find_by(library_id: id).nil? ?
+        "Not Supplied" :
+        "#{model::Institution.find_by(library_id: id).institution_name} (#{id})",
+        amount
+      ]
+    end
+    return render_ids
+  end
+
+  def relais_library_name(model, library_id)
     if library_id.to_i < 0 or library_id.nil?
       return "All Libraries"
     end
 
-    return Borrowdirect::Relais::Institution.find_by(library_id: library_id).nil? ?
+    return model::Relais::Institution.find_by(library_id: library_id).nil? ?
              "Not supplied" :
-             "#{Borrowdirect::Relais::Institution.find_by(library_id: library_id)
+             "#{model::Relais::Institution.find_by(library_id: library_id)
                                          .institution_name}"
   end
 
   # Create an array of arrays that map the library symbol to the library id
-  def library_map_bd()
+  def relais_library_map(model)
     library_map = []
     # Loop through all member institutions
-    Borrowdirect::Relais::Institution.all.each do |lib|
+    model::Relais::Institution.all.each do |lib|
       # Skip the "Default" case
       next if lib.library_id == 0
       # Skip the CRL, OCLC, OORII, and RapidILL cases
@@ -32,7 +66,7 @@ module BorrowdirectHelper
   # Method to construct the standard query to be used across all queries
   # Options for the initial query, the library_id (if given),
   # if the request is for borrowing or for the all libraries summary.
-  def base_query_bd(input_query, options = {})
+  def relais_base_query(input_query, options = {})
 
     # Set up the default conditions
     library_id = options.fetch(:library_id, nil)
@@ -82,11 +116,11 @@ module BorrowdirectHelper
   # get_monthly: Boolean to query for monthly grouped counts
   # get_borrowing: Boolean to query for borrowing versus lending
   # get_summary: Boolean to query for the summary of all libraries
-  def count_library_items_bd(this_year:, last_year:, library_id:, get_monthly:,
+  def relais_count_library_items(model, this_year:, last_year:, library_id:, get_monthly:,
                              get_borrowing:, get_summary:)
 
     # Distinct request numbers in bibliography
-    query = Borrowdirect::Relais::Bibliography.select(:request_number).distinct
+    query = model::Relais::Bibliography.select(:request_number).distinct
 
     options = {
       :library_id => library_id,
@@ -96,7 +130,7 @@ module BorrowdirectHelper
     }
 
     # Construct standard query
-    query = base_query_bd(query, **options)
+    query = relais_base_query(query, **options)
 
     # Count all unique requests from this year and last year
     this_query = query.where(request_date: this_year).count
@@ -106,10 +140,11 @@ module BorrowdirectHelper
   end
 
   # Function to combine the results of the queries for item counts
-  def count_items_bd(options = {})
+  def relais_count_items(model, options = {})
 
     # Returns a hash of library id to number
-    this_by_library, last_by_library = count_library_items_bd(
+    this_by_library, last_by_library = relais_count_library_items(
+      model,
       **options.merge(:get_summary => false))
 
     # Get the grand total for all libraries
@@ -135,19 +170,23 @@ module BorrowdirectHelper
     return this_by_library, last_by_library
   end
 
-  def get_fill_rate_bd(options = {})
+  def relais_get_fill_rate(model, options = {})
     # Distinct request numbers in bibliography
-    query = Borrowdirect::Relais::Bibliography.select(:request_number).distinct
+    query = model::Relais::Bibliography.select(:request_number).distinct
     # Only want to know about the current year
     query = query.where(request_date: options[:this_year])
 
     # Returns a hash of library_id to number
     # Construct successful requests query
-    successful_requests = base_query_bd(query,
-                                     **options.merge(:get_successful => true)).count
+    successful_requests = relais_base_query(
+      query,
+      **options.merge(:get_successful => true)
+    ).count
     # Construct all requests query
-    all_requests = base_query_bd(query,
-                              **options.merge(:get_successful => false)).count
+    all_requests = relais_base_query(
+      query,
+      **options.merge(:get_successful => false)
+    ).count
 
     # Find the grand total, faster than another SQL query
     # Ruby on Rails doesn't have SQL rollup
@@ -168,16 +207,20 @@ module BorrowdirectHelper
     return fill_rate
   end
 
-  def get_library_turnaround_time(options = {})
+  def relais_get_library_turnaround_time(model, options = {})
+    # Get the table name prefix
+    # Get the prefix of the table for the reshare model
+    prefix = table_name_prefix(model::Relais)
+
     # Distinct request numbers in bibliography
-    query = Borrowdirect::Relais::Bibliography
+    query = model::Relais::Bibliography
     # Only want to know about the current year
     query = query.where(request_date: options[:this_year])
     # Set up the base restrictions
-    query = base_query_bd(query, **options)
+    query = relais_base_query(query, **options)
     query = query.joins("INNER JOIN
-      borrowdirect_min_ship_dates AS ship
-      ON borrowdirect_bibliographies.request_number = ship.request_number")
+      #{prefix}min_ship_dates AS ship
+      ON #{prefix}bibliographies.request_number = ship.request_number")
 
     # Extract booleans from options
     get_borrowing = options.fetch(:get_borrowing, false)
@@ -230,10 +273,12 @@ module BorrowdirectHelper
   end
 
   # Method to build the turnaround portion of the table
-  def get_turnaround_time(options = {})
-    by_library_req_to_rec, by_library_req_to_shp, by_library_shp_to_rec = get_library_turnaround_time(
+  def relais_get_turnaround_time(model, options = {})
+    by_library_req_to_rec, by_library_req_to_shp, by_library_shp_to_rec = relais_get_library_turnaround_time(
+      model,
       **options.merge(:get_summary => false))
-    all_libraries_req_to_rec, all_libraries_req_to_shp, all_libraries_shp_to_rec = get_library_turnaround_time(
+    all_libraries_req_to_rec, all_libraries_req_to_shp, all_libraries_shp_to_rec = relais_get_library_turnaround_time(
+      model,
       **options.merge(:get_summary => true))
 
     # Add the all library counts to the hash
@@ -246,7 +291,7 @@ module BorrowdirectHelper
 
   # Method to check for a key and format the number appropriately
   # This will be used for big integers (> 1000)
-  def format_into_days_bd(input_hash, test_key)
+  def relais_format_into_days(input_hash, test_key)
     output = "---"
     if input_hash.key?(test_key)
       output = sprintf('%.2f', input_hash[test_key] / 60 / 60 / 24)
@@ -256,7 +301,7 @@ module BorrowdirectHelper
 
   # Method to check for a key and format the number appropriately
   # This will be used for big integers (> 1000)
-  def format_big_number_bd(input_hash, test_key)
+  def relais_format_big_number(input_hash, test_key)
     output = "---"
     if input_hash.key?(test_key)
       output = ActiveSupport::NumberHelper.number_to_delimited(input_hash[test_key])
@@ -267,7 +312,7 @@ module BorrowdirectHelper
   # Method to prepare the full summary table.
   # Takes inputs of library_id (default is nil)
   # and fiscal_year (default is 2021)
-  def prepare_summary_table(fiscal_year = 2021, library_id = nil, get_borrowing = false)
+  def relais_prepare_summary_table(model, fiscal_year = 2021, library_id = nil, get_borrowing = false)
 
     this_year, last_year = fiscal_year_ranges(fiscal_year)
 
@@ -280,23 +325,23 @@ module BorrowdirectHelper
     }
 
     # Get the library turn around time
-    req_to_rec, req_to_shp, shp_to_rec = get_turnaround_time(**options)
+    req_to_rec, req_to_shp, shp_to_rec = relais_get_turnaround_time(model, **options)
 
     # Get the library fill rate
-    fill_rate = get_fill_rate_bd(**options)
+    fill_rate = relais_get_fill_rate(model, **options)
 
     # Get the yearly item count
-    current_items, previous_items = count_items_bd(**options)
+    current_items, previous_items = relais_count_items(model, **options)
 
     # Get the monthly item counts (do this last!)
     options[:get_monthly] = true
-    current_monthly_items, previous_monthly_items = count_items_bd(**options)
+    current_monthly_items, previous_monthly_items = relais_count_items(model, **options)
 
     # Get the list of months to dynamically display
     months = display_months(this_year)
 
     # The the list of libraries
-    library_map = [["All Libraries", -1]] + library_map_bd()
+    library_map = [["All Libraries", -1]] + relais_library_map(model)
 
     # Prepare the output table for display
     output_table = []
@@ -304,19 +349,19 @@ module BorrowdirectHelper
     library_map.each do |library_symbol, library_id|
       # Get the library_name and library_id
       output_row = [library_symbol]
-      output_row << format_into_days_bd(req_to_rec, library_id)
-      output_row << format_into_days_bd(req_to_shp, library_id)
-      output_row << format_into_days_bd(shp_to_rec, library_id)
-      output_row << format_big_number_bd(current_items, library_id)
+      output_row << relais_format_into_days(req_to_rec, library_id)
+      output_row << relais_format_into_days(req_to_shp, library_id)
+      output_row << relais_format_into_days(shp_to_rec, library_id)
+      output_row << relais_format_big_number(current_items, library_id)
       output_row << (fill_rate.key?(library_id) ?
                        fill_rate[library_id] : "---")
-      output_row << format_big_number_bd(previous_items, library_id)
+      output_row << relais_format_big_number(previous_items, library_id)
 
       # Loop through the monthly information
       months.each do |month|
-        output_row << format_big_number_bd(current_monthly_items,
+        output_row << relais_format_big_number(current_monthly_items,
                                         [library_id, month])
-        output_row << format_big_number_bd(previous_monthly_items,
+        output_row << relais_format_big_number(previous_monthly_items,
                                         [library_id, month])
       end
 
