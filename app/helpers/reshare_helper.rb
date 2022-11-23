@@ -46,29 +46,29 @@ module ReshareHelper
          COALESCE(
            #{prefix}transactions.borrower, 'All Institutions'
          ) AS borrower,
-         COUNT(#{prefix}transactions.request_id) AS total_requests,
-         COUNT(#{prefix}transactions.request_id) FILTER (
-           WHERE #{prefix}transactions.lender_status = 'RES_UNFILLED'
-         ) as unfilled,
-         COUNT(#{prefix}transactions.request_id) FILTER (
+         COUNT(DISTINCT #{prefix}transactions.request_id) AS total_requests,
+         COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
            WHERE #{prefix}transactions.lender_status = 'RES_COMPLETE'
          ) AS complete,
-         COUNT(#{prefix}transactions.request_id) FILTER (
+         COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
+           WHERE #{prefix}transactions.lender_status = 'RES_UNFILLED'
+         ) as unfilled,
+         COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
            WHERE #{prefix}transactions.lender_status = 'RES_CANCELLED'
          ) AS cancelled,
-         COUNT(#{prefix}transactions.request_id) FILTER (
+         COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
            WHERE #{prefix}transactions.lender_status NOT IN (
              'RES_UNFILLED', 'RES_COMPLETE', 'RES_CANCELLED'
            )
          ) AS pending,
          ROUND(
            CAST(
-             COUNT(#{prefix}transactions.request_id) FILTER (
+             COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
                WHERE #{prefix}transactions.lender_status = 'RES_COMPLETE'
              ) AS DECIMAL
            ) / NULLIF(
              CAST(
-               COUNT(#{prefix}transactions.request_id) FILTER (
+               COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
                  WHERE #{prefix}transactions.lender_status IN (
                    'RES_COMPLETE', 'RES_UNFILLED', 'RES_CANCELLED'
                  )
@@ -140,12 +140,12 @@ module ReshareHelper
         ) AS pending,
         ROUND(
           CAST(
-            COUNT(#{prefix}transactions.request_id) FILTER (
-              WHERE #{prefix}transactions.lender_status = 'RES_COMPLETE'
+            COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
+              WHERE #{prefix}transactions.borrower_status = 'REQ_REQUEST_COMPLETE'
             ) AS DECIMAL
           ) / NULLIF(
             CAST(
-              COUNT(#{prefix}transactions.request_id) FILTER (
+              COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
                 WHERE #{prefix}transactions.borrower_status IN (
                   'REQ_REQUEST_COMPLETE', 'REQ_END_OF_ROTA',
                   'REQ_CANCELLED', 'REQ_CANCEL_PENDING'
@@ -180,28 +180,28 @@ module ReshareHelper
         COUNT(
           DISTINCT #{prefix}transactions.request_id
         ) AS total_requests,
-        COUNT(#{prefix}transactions.request_id) FILTER (
+        COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
           WHERE #{prefix}transactions.lender_status = 'RES_COMPLETE'
         ) AS complete,
-        COUNT(#{prefix}transactions.request_id) FILTER (
+        COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
           WHERE #{prefix}transactions.lender_status = 'RES_UNFILLED'
         ) AS unfilled,
-        COUNT(#{prefix}transactions.request_id) FILTER (
+        COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
           WHERE #{prefix}transactions.lender_status = 'RES_CANCELLED'
         ) AS cancelled,
-        COUNT(#{prefix}transactions.request_id) FILTER (
+        COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
           WHERE #{prefix}transactions.lender_status NOT IN (
             'RES_COMPLETE', 'RES_UNFILLED', 'RES_CANCELLED'
           )
         ) AS pending,
         ROUND(
           CAST(
-            COUNT(#{prefix}transactions.request_id) FILTER (
+            COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
               WHERE #{prefix}transactions.lender_status = 'RES_COMPLETE'
             ) AS DECIMAL
           ) / NULLIF(
             CAST(
-              COUNT(#{prefix}transactions.request_id) FILTER (
+              COUNT(DISTINCT #{prefix}transactions.request_id) FILTER (
                 WHERE #{prefix}transactions.lender_status IN (
                   'RES_COMPLETE', 'RES_UNFILLED', 'RES_CANCELLED'
                 )
