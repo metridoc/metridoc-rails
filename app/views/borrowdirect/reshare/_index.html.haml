@@ -28,10 +28,10 @@
   the database is being queried. |
 
   -# Get the range of fiscal years
-  - years = reshare_fiscal_year_range(Borrowdirect::Reshare::Transaction)
+  - years = reshare_fiscal_year_range(Borrowdirect)
 
   -# Get the list of libraries
-  - institutions = reshare_institution_names(Borrowdirect::Reshare)
+  - institutions = reshare_institution_names(Borrowdirect)
 
   %center
     = form_tag({:controller => borrowdirect_reshare_path,

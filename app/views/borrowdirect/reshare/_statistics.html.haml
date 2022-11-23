@@ -6,9 +6,9 @@
 - institution = params[:institution].nil? ? 'University of Pennsylvania' : params[:institution]
 
 -# Get the lending summary table
-- lending_table = reshare_lending_summary(Borrowdirect::Reshare, institution, fiscal_year)
+- lending_table = reshare_lending_summary(Borrowdirect, institution, fiscal_year)
 -# Get the borrowing summary table
-- borrowing_table = reshare_borrowing_summary(Borrowdirect::Reshare, institution, fiscal_year)
+- borrowing_table = reshare_borrowing_summary(Borrowdirect, institution, fiscal_year)
 
 %section
   %h2 General Information

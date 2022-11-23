@@ -4,8 +4,8 @@ module ReshareHelper
   # the reshare model
   def reshare_fiscal_year_range(model)
     # Find the maximum and minimum dates
-    maximum_date = model.maximum(:date_created)
-    minimum_date = model.minimum(:date_created)
+    maximum_date = model::Reshare::Transaction.maximum(:date_created)
+    minimum_date = model::Reshare::Transaction.minimum(:date_created)
 
     # Find the starting and ending fiscal years
     maximum_fiscal_year = maximum_date.mon > 6 ?
@@ -24,7 +24,7 @@ module ReshareHelper
   # Create an array of library names
   def reshare_institution_names(model)
     # Get unique names where the parent is null
-    model::DirectoryEntry.select(:de_name)
+    model::Reshare::DirectoryEntry.select(:de_name)
     .where(de_parent: nil)
     .where.not(de_name: 'Ivy Plus Libraries Confederation')
     .group(:de_name)
@@ -38,10 +38,10 @@ module ReshareHelper
   def reshare_lending_summary(model, institution, fiscal_year)
 
     # Get the prefix of the table for the reshare model
-    prefix = table_name_prefix(model)
+    prefix = table_name_prefix(model::Reshare)
 
     # Get the rollup of lending attempts
-    model::Transaction.connection.select_all(
+    model::Reshare::Transaction.connection.select_all(
       "SELECT
          COALESCE(
            #{prefix}transactions.borrower, 'All Institutions'
@@ -105,10 +105,10 @@ module ReshareHelper
   # Average Total Time
   def reshare_borrowing_summary(model, institution, fiscal_year)
     # Get the prefix of the table for the reshare model
-    prefix = table_name_prefix(model)
+    prefix = table_name_prefix(model::Reshare)
 
     # Borrowing total summary is based on the borrower's status.
-    summary_row = model::Transaction.connection.select_all(
+    summary_row = model::Reshare::Transaction.connection.select_all(
       "SELECT
         'All Institutions' AS lender,
         COUNT(
@@ -174,7 +174,7 @@ module ReshareHelper
     # Fetch the summary rows by institution.
     # Logic is different to get accurate counts of how a lender interacts with
     # a borrower's request.
-    institution_rows = model::Transaction.connection.select_all(
+    institution_rows = model::Reshare::Transaction.connection.select_all(
       "SELECT
         #{prefix}transactions.lender,
         COUNT(
@@ -240,7 +240,7 @@ module ReshareHelper
     this_year, last_year = fiscal_year_ranges(fiscal_year)
 
     # Build the query to calculate monthly fulfillment
-    output_query = model::Transaction.select(:request_id).distinct
+    output_query = model::Reshare::Transaction.select(:request_id).distinct
     .where(lender_status: 'RES_COMPLETE')
     .where(borrower_status: 'REQ_REQUEST_COMPLETE')
     .where(date_created: this_year)

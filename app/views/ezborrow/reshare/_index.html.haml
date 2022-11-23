@@ -29,10 +29,10 @@
   the database is being queried. |
 
   -# Get the range of fiscal years
-  - years = reshare_fiscal_year_range(Ezborrow::Reshare::Transaction)
+  - years = reshare_fiscal_year_range(Ezborrow)
 
   -# Get the list of libraries
-  - institutions = reshare_institution_names(Ezborrow::Reshare)
+  - institutions = reshare_institution_names(Ezborrow)
 
   %center
     = form_tag({:controller => ezborrow_reshare_path,
