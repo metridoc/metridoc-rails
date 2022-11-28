@@ -1,0 +1,151 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2023 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- institution = params[:institution].nil? ? 'University of Pennsylvania' : params[:institution]
+
+-# Get the lending summary table
+- lending_table = reshare_lending_summary(Borrowdirect, institution, fiscal_year)
+-# Get the borrowing summary table
+- borrowing_table = reshare_borrowing_summary(Borrowdirect, institution, fiscal_year)
+
+%section
+  %h2 General Information
+  %p
+    The following tables provide estimates of basic statistics in resource sharing.
+    Cells that are blank represent null values.
+    For monthly breakdowns of successful fulfillment, please
+    #{link_to "click here", "/borrowdirect/reshare_monthly_statistics?fiscal_year=#{params['fiscal_year']}&institution=#{params['institution']}"}.
+  %p
+    For borrowing statistics, the All Institutions summary row contains the
+    counts for the final state of the request. However, for the breakdown by institution,
+    the counts are for the institution's interaction with a request.  This means
+    that if an institution passed on an item that another institution fulfilled,
+    it is counted as unfilled for that institution but filled in the All Institution
+    summary row.
+  %p
+    For lending statistics, all rows are the selected institution's
+    interactions with a request.  If the request was completed by another institution,
+    It will not be reflected in these counts.
+
+
+%section
+  %h2 Displaying BorrowDirect ReShare summary for:
+  %center
+    %table
+      %tbody
+        %tr
+          %th{:align => "right"} Institution:
+          %td=institution
+        %tr
+          %th Fiscal Year:
+          %td= "FY#{fiscal_year}"
+
+%section
+  %h2= "#{institution} Lending Statistics"
+
+  %table.statistics_summary
+    %thead
+      %tr
+        %th
+          %div.tooltip
+            Borrowing Institution
+            %span.tooltiptext Item Destination
+        %th
+          %div.tooltip
+            Requests
+            %span.tooltiptext Total number of Requests
+        %th
+          %div.tooltip
+            Filled
+            %span.tooltiptext Filled Loans
+        %th
+          %div.tooltip
+            Unfilled
+            %span.tooltiptext Unfilled Loans
+        %th
+          %div.tooltip
+            Cancelled
+            %span.tooltiptext Cancelled Loans
+        %th
+          %div.tooltip
+            Pending
+            %span.tooltiptext In Progress Loans
+        %th
+          %div.tooltip
+            Fill Rate
+            %span.tooltiptext Ratio of Filled Loans to the sum of Filled, Unfilled and Cancelled Loans
+        %th
+          %div.tooltip
+            Response Time
+            %span.tooltiptext Average Time from Request to Confirmation of Item in Days
+        %th
+          %div.tooltip
+            Fill Time
+            %span.tooltiptext Average Time from Confirmation of Item to Shipping in Days
+        %th
+          %div.tooltip
+            Shipping Time
+            %span.tooltiptext Average Time from Shipping to Receipt in Days
+        %th
+          %div.tooltip
+            Total Turnaround
+            %span.tooltiptext Average Time from Request to Receipt in Days
+    %tbody
+      - lending_table.each do |row|
+        %tr
+          - row.each do |cell|
+            %td= cell
+
+%section
+  %h2= "#{institution} Borrowing Statistics"
+
+  %table.statistics_summary
+    %thead
+      %tr
+        %th
+          %div.tooltip
+            Lending Institution
+            %span.tooltiptext Item Source
+        %th
+          %div.tooltip
+            Requests
+            %span.tooltiptext Total number of Requests
+        %th
+          %div.tooltip
+            Filled
+            %span.tooltiptext Filled Loans
+        %th
+          %div.tooltip
+            Unfilled
+            %span.tooltiptext Unfilled Loans
+        %th
+          %div.tooltip
+            Cancelled
+            %span.tooltiptext Cancelled Loans
+        %th
+          %div.tooltip
+            Pending
+            %span.tooltiptext In Progress Loans
+        %th
+          %div.tooltip
+            Fill Rate
+            %span.tooltiptext Ratio of Filled Loans to the sum of Filled, Unfilled and Cancelled Loans
+        %th
+          %div.tooltip
+            Fill Time
+            %span.tooltiptext Average Time from Request to Shipping in Days
+        %th
+          %div.tooltip
+            Shipping Time
+            %span.tooltiptext Average Time from Shipping to Receipt in Days
+        %th
+          %div.tooltip
+            Total Turnaround
+            %span.tooltiptext Average Time from Request to Receipt in Days
+    %tbody
+      - borrowing_table.each do |row|
+        %tr
+          - row.each do |cell|
+            %td= cell

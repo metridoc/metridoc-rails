@@ -1,0 +1,55 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  The BorrowDirect service provides expedited interlibrary loan service to the
+  #{link_to "Ivy Plus Library Confederation", "https://ivpluslibraries.org/"}
+  (IPLC). The BorrowDirect service is managed through an open-source
+  community-owned resource sharing solution called
+  #{link_to "Project Reshare", "https://projectreshare.org/"} by
+  #{link_to "Index Data", "https://www.indexdata.com/"}.  Before the
+  implementation of Project ReShare in Fall/Winter of 2022, the data was managed by
+  #{link_to "Relais ILL", "https://www.oclc.org/en/relais-ill.html"} from
+  #{link_to "OCLC", "https://www.oclc.org/en/home.html"}.
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards
+  %ul
+    %li= link_to "BorrowDirect Relais Dashboard", "/borrowdirect/relais_dashboard"
+
+  %h3 Data
+  %ul
+    %li #{link_to "Relais Data", :borrowdirect_relais} - before Winter 2022
+    %li #{link_to "ReShare Data", :borrowdirect_reshare} - since Winter 2022
+
+
+%hr
+%section
+  %h2 IPLC
+  The mission of the IPLC is:
+  %blockquote
+    For the benefit of current and future scholars globally, the Ivy Plus
+    Libraries Confederation leverages our collective assets to improve discovery
+    of and access to information, and its innovative use at scale for the
+    creation of new knowledge, and exercises collective action and leadership in
+    helping shape the discourse around scholarly communication, and the outcomes
+    of that discourse.
+
+  The Libraries of the IPLC are:
+  %ul
+    %li Brown University
+    %li University of Chicago
+    %li Columbia University
+    %li Cornell University
+    %li Dartmouth College
+    %li Duke University
+    %li Harvard University
+    %li Johns Hopkins University
+    %li Massachusetts Institute of Technology
+    %li University of Pennsylvania
+    %li Princeton University
+    %li Stanford University
+    %li Yale University

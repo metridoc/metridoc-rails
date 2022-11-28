@@ -13,5 +13,5 @@ export_file_name:      "institutions.csv"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Ezborrow::Institution"
+target_model:          "Ezborrow::Relais::Institution"
 truncate_before_load:  "yes"

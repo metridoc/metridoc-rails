@@ -41,6 +41,6 @@ export_filter_date_range_sql: "id_request.date_entered > ? AND id_request.date_e
 
 # Target Config
 target_adapter:        csv
-target_model:          "Ezborrow::Bibliography"
+target_model:          "Ezborrow::Relais::Bibliography"
 truncate_before_load:  "yes"
 legacy_filter_date_field: "request_date"

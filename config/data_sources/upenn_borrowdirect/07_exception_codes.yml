@@ -10,5 +10,5 @@ export_file_name:      "exception_codes.csv"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Borrowdirect::ExceptionCode"
+target_model:          "Borrowdirect::Relais::ExceptionCode"
 truncate_before_load:  "yes"

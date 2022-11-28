@@ -7,7 +7,7 @@ column_mappings:
   "id_audit.request_number": request_number
   "id_audit.time_stamp": ship_date
   "id_audit.exception_code": exception_code
-  "d.date_processed": process_date 
+  "d.date_processed": process_date
 join_tables:
   - "LEFT JOIN id_delivery d ON id_audit.request_number = d.request_number"
 filters:
@@ -18,6 +18,6 @@ export_filter_date_range_sql: "id_audit.time_stamp > ? AND id_audit.time_stamp <
 
 # Target Config
 target_adapter:        csv
-target_model:          "Ezborrow::ShipDate"
+target_model:          "Ezborrow::Relais::ShipDate"
 truncate_before_load:  "yes"
 legacy_filter_date_field: "ship_date"

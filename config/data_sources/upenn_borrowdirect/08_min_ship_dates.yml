@@ -1,6 +1,6 @@
 load_sequence:         8
 target_adapter:        "native_sql"
-target_model:          "Borrowdirect::MinShipDate"
+target_model:          "Borrowdirect::Relais::MinShipDate"
 truncate_before_load:  "yes"
 sqls:
   - |
@@ -11,7 +11,7 @@ sqls:
                         SELECT S.request_number, S.min_ship_date_shd FROM (
                           SELECT request_number, MIN(ship_date) as min_ship_date_shd
                           FROM borrowdirect_ship_dates shd
-                          where shd.ship_date is not null 
+                          where shd.ship_date is not null
                           group by shd.request_number
                         ) S
                         LEFT JOIN borrowdirect_min_ship_dates T ON T.request_number = S.request_number

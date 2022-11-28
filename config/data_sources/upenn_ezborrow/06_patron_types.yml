@@ -10,5 +10,5 @@ export_file_name:      "patron_types.csv"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Ezborrow::PatronType"
+target_model:          "Ezborrow::Relais::PatronType"
 truncate_before_load:  "yes"

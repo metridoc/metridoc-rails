@@ -13,5 +13,5 @@ export_file_name:      "institutions.csv"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Borrowdirect::Institution"
+target_model:          "Borrowdirect::Relais::Institution"
 truncate_before_load:  "yes"

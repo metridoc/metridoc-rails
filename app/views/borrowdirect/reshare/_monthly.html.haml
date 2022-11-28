@@ -1,0 +1,38 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2023 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- institution = params[:institution].nil? ? 'University of Pennsylvania' : params[:institution]
+
+-# Get the monthly tables
+-borrowing_monthly = reshare_monthly_fulfillment(Borrowdirect, institution, fiscal_year, TRUE)
+-lending_monthly = reshare_monthly_fulfillment(Borrowdirect, institution, fiscal_year, FALSE)
+
+%section
+  %h2= "#{institution} Monthly Lending Statistics FY#{fiscal_year}"
+
+  %table.statistics_summary
+    %thead
+      %tr
+        -lending_monthly.first.each do |cell|
+          %th= cell
+    %tbody
+      - lending_monthly.drop(1).each do |row|
+        %tr
+          - row.each do |cell|
+            %td= cell
+
+%section
+  %h2= "#{institution} Monthly Borrowing Statistics FY#{fiscal_year}"
+
+  %table.statistics_summary
+    %thead
+      %tr
+        -borrowing_monthly.first.each do |cell|
+          %th= cell
+    %tbody
+      - borrowing_monthly.drop(1).each do |row|
+        %tr
+          - row.each do |cell|
+            %td= cell

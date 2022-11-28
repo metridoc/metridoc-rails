@@ -1,0 +1,30 @@
+load_sequence:         6
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.patron_request_audit"
+column_mappings:
+  "__start": last_updated
+  "__origin": origin
+
+  "pra_id": pra_id
+  "pra_version": pra_version
+  "pra_date_created": pra_date_created
+
+  "pra_patron_request_fk": pra_patron_request_fk
+
+  "pra_from_status_fk": pra_from_status_fk
+  "pra_to_status_fk": pra_to_status_fk
+  "pra_message": pra_message
+
+export_file_name:      "reshare_patron_request_audit.csv"
+export_filter_date_sql: "__start > ?"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Borrowdirect::Reshare::PatronRequestAudit"
+truncate_before_load:  "no"
+incremental_filter_column: "last_updated"
+
+unique_keys: ["pra_id"]
+upsert: true

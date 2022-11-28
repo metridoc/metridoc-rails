@@ -1,0 +1,121 @@
+load_sequence:         7
+target_adapter:        'native_sql'
+target_model:          "Borrowdirect::Reshare::Transactions"
+truncate_before_load:  "no"
+sqls:
+  - |
+    WITH max_date AS (
+      SELECT
+        COALESCE (
+          MAX(borrower_last_updated),
+          '1970-01-01'
+        ) AS max_date
+      FROM bd_reshare_transactions
+    ),
+    borrower AS (
+    	SELECT
+    		de.de_name AS borrower,
+        pr.pr_id,
+        pr.pr_date_created,
+    		pr.pr_title,
+    		pr.pr_pickup_location_slug,
+    		pr.pr_selected_item_barcode,
+    		pr.pr_hrid,
+        s.st_code,
+        pr.pr_pub_date,
+        pr.pr_publisher,
+        pr.pr_place_of_pub,
+        pr.pr_oclc_number,
+        pr.last_updated
+    	FROM bd_reshare_patron_requests pr
+    	JOIN bd_reshare_directory_entries de
+    		ON pr.origin = de.origin
+    	JOIN bd_reshare_status s
+    		ON s.st_id = pr.pr_state_fk
+    	WHERE pr.pr_is_requester IS TRUE
+        AND pr.last_updated > (SELECT max_date FROM max_date)
+    		AND de.de_status_fk IS NOT NULL
+    		AND de.de_parent IS NULL
+    		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
+    ),
+    lender AS (
+    	SELECT
+    		de.de_name AS lender,
+    		pr.pr_local_call_number,
+        pr.pr_id,
+    		pr.pr_pick_location_fk,
+    		pr.pr_pick_shelving_location,
+    		pr.pr_hrid,
+    		s.st_code,
+        pr.last_updated
+    	FROM bd_reshare_patron_requests pr
+    	JOIN bd_reshare_directory_entries de
+    		ON pr.origin = de.origin
+    	JOIN bd_reshare_status s
+    		ON s.st_id = pr.pr_state_fk
+    	WHERE pr.pr_is_requester IS FALSE
+        AND pr.last_updated > (SELECT max_date FROM max_date)
+    		AND de.de_status_fk IS NOT NULL
+    		AND de.de_parent IS NULL
+    		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
+    )
+    INSERT INTO bd_reshare_transactions (
+      borrower,
+      lender,
+      request_id,
+      borrower_id,
+      lender_id,
+      date_created,
+      borrower_last_updated,
+      lender_last_updated,
+      borrower_status,
+      lender_status,
+      title,
+      publication_date,
+      place_of_publication,
+      publisher,
+      call_number,
+      oclc_number,
+      barcode,
+      pick_location,
+      shelving_location,
+      pickup_location
+    )
+    SELECT
+    	borrower.borrower,
+      lender.lender,
+    	borrower.pr_hrid,
+      borrower.pr_id,
+      lender.pr_id,
+      borrower.pr_date_created,
+      borrower.last_updated,
+      lender.last_updated,
+      borrower.st_code,
+      lender.st_code,
+    	borrower.pr_title,
+      borrower.pr_pub_date,
+      borrower.pr_place_of_pub,
+      borrower.pr_publisher,
+      lender.pr_local_call_number,
+      borrower.pr_oclc_number,
+      borrower.pr_selected_item_barcode,
+    	lender.pr_pick_location_fk,
+    	lender.pr_pick_shelving_location,
+    	borrower.pr_pickup_location_slug
+    FROM borrower
+    JOIN lender
+      ON borrower.pr_hrid = lender.pr_hrid
+    ON CONFLICT (borrower_id, lender_id)
+    DO UPDATE
+    SET
+      (
+        borrower_last_updated,
+        borrower_status,
+        lender_last_updated,
+        lender_status
+      ) = (
+        EXCLUDED.borrower_last_updated,
+        EXCLUDED.borrower_status,
+        EXCLUDED.lender_last_updated,
+        EXCLUDED.lender_status
+      );

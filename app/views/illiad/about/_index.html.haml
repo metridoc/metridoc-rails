@@ -1,0 +1,78 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+
+  The #{link_to "ILLiad", "https://www.oclc.org/en/illiad.html"} service is
+  provided by #{link_to "OCLC", "https://www.oclc.org/en/home.html"}.  ILLiad
+  manages several Interlibrary loan systems under one umbrella.  MetriDoc
+  provides data storage services for a select group of universities in the Ivy
+  Plus Library Confederation.
+
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards
+  %ul
+    %li Coming soon...
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Illiad data
+    begin with the prefix "illiad_".
+
+  %h3 Data
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/illiad/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+
+%h2 ILLiad Fiscal Year Statistical Summary
+To get the summary statistics for any year or library, select the fiscal year |
+and the library name of interest. The default is set to the current year |
+and the summary of all library borrowing and lending. Please be patient while |
+the database is being queried. |
+
+%center
+
+-# Calculate today's date
+- today = Date.today()
+-# Find today's fiscal year
+- max_fiscal_year = today.mon > 6 ? today.year + 1 : today.year
+-# Build the selection of possible fiscal years
+- years = max_fiscal_year.downto(2014).to_a.map {|year| [year.to_s, year]}
+
+-# Get the list of libraries (eventually)
+- libraries = {"University of Pennsylvania" => 2}
+
+%center
+  = form_tag({:controller => illiad_about_path,
+      :action => "statistics"},
+      {:method => :post}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select fiscal year
+        %td= select_tag "fiscal_year", options_for_select(years)
+        %td{:rowspan => 2}= submit_tag "Submit"
+      %tr
+        %td Select Institution
+        %td= select_tag "library_id", options_for_select(libraries)
+%br
+
+%hr
+
+%hr
+
+#data-viz
+  %h2= t 'active_admin.illiad.columns_heading'
+  #left-col
+    %h3= t 'active_admin.illiad.left_column_heading'
+    = bar_chart display_illiad_institution_names(Illiad::Borrowing.group(:institution_id).count),
+    download: true
+  #right-col
+    %h3= t 'active_admin.illiad.right_column_heading', date_range: "#{7.months.ago.strftime("%m/%d/%Y")} to #{1.month.ago.strftime("%m/%d/%Y")}"
+    = area_chart Illiad::Lending.group_by_day(:transaction_date, range: 7.months.ago..1.month.ago).count, download: true
