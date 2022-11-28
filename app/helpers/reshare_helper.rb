@@ -7,6 +7,11 @@ module ReshareHelper
     maximum_date = model::Reshare::Transaction.maximum(:date_created)
     minimum_date = model::Reshare::Transaction.minimum(:date_created)
 
+    # Return if no range found
+    if maximum_date.nil?
+      return [nil]
+    end
+
     # Find the starting and ending fiscal years
     maximum_fiscal_year = maximum_date.mon > 6 ?
       maximum_date.year + 1 : maximum_date.year

@@ -10,6 +10,11 @@ module RelaisHelper
     maximum_date = model::Relais::Bibliography.maximum(:request_date)
     minimum_date = model::Relais::Bibliography.minimum(:request_date)
 
+    # Return if no range found
+    if maximum_date.nil?
+      return [nil]
+    end
+
     # Find the starting and ending fiscal years
     maximum_fiscal_year = maximum_date.mon > 6 ?
       maximum_date.year + 1 : maximum_date.year
