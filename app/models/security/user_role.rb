@@ -34,7 +34,7 @@ class Security::UserRole < ApplicationRecord
     return true unless Security::UserRole.subject_secured?(subject)
 
     s = Security::UserRole.translate_subject_to_section(subject)
-    access_level = action == :read ? ['read-only', 'read-write'] : 'read-write'
+    access_level = action == :read || :statistics ? ['read-only', 'read-write'] : 'read-write'
 
     puts "checking: #{s} - #{access_level} - #{action.to_s}"
 
