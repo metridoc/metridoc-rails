@@ -21,6 +21,6 @@ export_filter_date_range_sql: "id_audit.time_stamp > ? AND id_audit.time_stamp <
 
 # Target Config
 target_adapter:        csv
-target_model:          "Borrowdirect::PrintDate"
+target_model:          "Borrowdirect::Relais::PrintDate"
 truncate_before_load:  "yes"
 legacy_filter_date_field: "print_date"

@@ -1,5 +1,7 @@
 module IlliadHelper
-  def display_names_ill(institution_ids)
+
+  # Get the institution ids from the Institution Table
+  def display_illiad_institution_names(institution_ids)
     render_ids = {}
     institution_ids.each do |id, amount|
       render_ids[Institution.find_by(id: id).nil? ?
@@ -258,7 +260,7 @@ module IlliadHelper
     end
 
     # The length of the value is variable depending on the request made
-    value_length = output.values.first.length()
+    value_length = output.values.first.length() rescue 0
 
     # Fill in default for missing keys
     output_keys.each do |key|
@@ -336,7 +338,7 @@ module IlliadHelper
   end
 
   # Method to check for a key and format the number appropriately
-  # This will be used for big integers (> 1000)
+  # This will be used for currencies
   def format_currency(input)
     output = "---"
     if input and input != 0

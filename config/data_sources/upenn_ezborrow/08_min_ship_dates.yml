@@ -1,6 +1,6 @@
 load_sequence:         8
 target_adapter:        "native_sql"
-target_model:          "Ezborrow::MinShipDate"
+target_model:          "Ezborrow::Relais::MinShipDate"
 truncate_before_load:  "yes"
 sqls:
   - |
@@ -10,8 +10,8 @@ sqls:
                         )
                         SELECT S.request_number, S.min_ship_date_shd FROM (
                           SELECT shd.request_number, MIN(shd.ship_date) AS min_ship_date_shd
-                          FROM ezborrow_ship_dates shd 
-                          WHERE shd.ship_date is not null 
+                          FROM ezborrow_ship_dates shd
+                          WHERE shd.ship_date is not null
                           GROUP BY shd.request_number
                         ) S
                         LEFT JOIN ezborrow_min_ship_dates T ON T.request_number = S.request_number

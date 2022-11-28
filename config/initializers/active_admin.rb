@@ -77,7 +77,7 @@ ActiveAdmin.setup do |config|
   # because, by default, user gets redirected to Dashboard. If user
   # doesn't have access to Dashboard, he'll end up in a redirect loop.
   # Method provided here should be defined in application_controller.rb.
-  # config.on_unauthorized_access = :access_denied
+  config.on_unauthorized_access = :access_denied
 
   # == Current User
   #
@@ -354,20 +354,20 @@ ActiveAdmin.setup do |config|
 
       # RSAT: Borrowdirect
       menu.add label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"),
-        url: :admin_borrowdirect_path,
+        url: :borrowdirect_root_path,
         if: proc{ authorized?(:read, "Borrowdirect") },
         parent: I18n.t("active_admin.resource_sharing")
 
       # RSAT: ILLiad
       menu.add label: I18n.t("active_admin.illiad.illiad_menu"),
-        url: :admin_illiad_path,
+        url: :illiad_root_path,
         if: proc{ authorized?(:read, "Illiad") },
         parent: I18n.t("active_admin.resource_sharing")
 
       # RSAT: PALCI
       menu.add label: I18n.t("active_admin.reshare.reshare_menu"),
-        url: :admin_reshare_path,
-        if: proc{ authorized?(:read, "Reshare") },
+        url: :ezborrow_root_path,
+        if: proc{ authorized?(:read, "EzBorrow") },
         parent: I18n.t("active_admin.resource_sharing")
 
     end
@@ -485,14 +485,14 @@ ActiveAdmin.setup do |config|
     end
   end
 
-  # Admin namespace configuration (Primarily Set Up Menus)
-  config.namespace :admin do |admin|
-    build_default_menu(admin)
-  end
+  # List of namespaces that need menus
+  namespaces = [:admin, :ipeds, :ezborrow, :borrowdirect, :illiad]
 
-  # Configuration for the IPEDS namespace
-  config.namespace :ipeds do |admin|
-    build_default_menu(admin)
+  # Configure the menu for all namespaces
+  namespaces.each do |namespace|
+    config.namespace namespace do |space|
+      build_default_menu(space)
+    end
   end
 
   # == Sorting

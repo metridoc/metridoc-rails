@@ -1,0 +1,62 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li= link_to "BorrowDirect Relais Dashboard", "/borrowdirect/relais_dashboard"
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for BorrowDirect's Relais data
+    begin with the prefix "borrowdirect_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/borrowdirect/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+
+%h2 BorrowDirect Fiscal Year Statistical Summary
+To get the summary statistics for any year or library, select the fiscal year |
+and the library name of interest. The default is set to the current year |
+and the summary of all library borrowing and lending. Please be patient while |
+the database is being queried. |
+
+-# Get the range of fiscal years
+- years = relais_fiscal_year_range(Borrowdirect)
+
+
+-# Get the list of libraries
+- libraries = [["All Libraries", -1]] + relais_library_map(Borrowdirect)
+
+%center
+  = form_tag({:controller => borrowdirect_relais_path,
+      :action => "statistics"},
+      {:method => :post}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select fiscal year
+        %td= select_tag "fiscal_year", options_for_select(years)
+        %td{:rowspan => 2}= submit_tag "Submit"
+      %tr
+        %td Select Institution
+        %td= select_tag "library_id", options_for_select(libraries)
+%br
+
+%hr
+
+#data-viz
+  %h2= t 'active_admin.borrowdirect.columns_heading'
+  #left-col
+    %h3= t 'active_admin.borrowdirect.left_column_heading'
+    = pie_chart relais_institution_names(Borrowdirect,
+    Borrowdirect::Relais::Bibliography.group(:borrower).count.sort_by {|k,v| v}.reverse[0..9]),
+    download: true
+  #right-col
+    %h3= t 'active_admin.borrowdirect.right_column_heading'
+    = bar_chart relais_institution_names(Borrowdirect,
+    Borrowdirect::Relais::Bibliography.group(:lender).count.sort_by {|k,v| v}.reverse[0..9]),
+    download: true

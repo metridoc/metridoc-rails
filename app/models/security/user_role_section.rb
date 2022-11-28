@@ -5,7 +5,9 @@ class Security::UserRoleSection < ApplicationRecord
   validates :section, presence: true
   validates :section, uniqueness: { scope: :user_role_id }, if: proc { |a| a.section.present? }
 
-  scope :of_section_access_level, -> (section, access_level) { where(section: section, access_level: access_level) }
+  scope :of_section_access_level, -> (section, access_level) {
+    where("lower(section) = ?", section.downcase).where(access_level: access_level)
+  }
 
   def section_name
     Security::UserRoleSection.section_humanized_name(section)

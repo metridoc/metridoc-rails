@@ -1,6 +1,6 @@
 load_sequence:         9
 target_adapter:        "native_sql"
-target_model:          "Borrowdirect::Bibliography"
+target_model:          "Borrowdirect::Relais::Bibliography"
 sqls:
   - |
                         UPDATE borrowdirect_bibliographies

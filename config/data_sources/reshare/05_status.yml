@@ -17,7 +17,7 @@ export_filter_date_sql: "__start > ?"
 
 # Target Config
 target_adapter:        csv
-target_model:          "Reshare::Status"
+target_model:          "Ezborrow::Reshare::Status"
 truncate_before_load:  "no"
 incremental_filter_column: "last_updated"
 

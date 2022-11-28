@@ -1,0 +1,91 @@
+= javascript_include_tag 'application'
+
+-# Access form option for the year
+- fiscal_year = params[:fiscal_year].nil? ? 2021 : params[:fiscal_year].to_i
+-# Access form option for library id input
+- library_id = params[:library_id].nil? ? nil : params[:library_id]
+- library_id = library_id.to_i < 0 ? nil : library_id
+
+- table = build_summary_table(fiscal_year, library_id)
+
+-# Monthly statistics path
+- monthly_path = "/illiad/monthly_statistics?"
+
+-# User statistics path
+- user_path = "/illiad/user_statistics?"
+
+-# Initial Query params
+- query_params = "fiscal_year=#{fiscal_year}&library_id=#{library_id}"
+
+%h2= "Displaying ILLiad summary for the #{fiscal_year} fiscal year and the University of Pennsylvania"
+
+%div{:style => "text-align: center;"}
+  = link_to("Monthly Breakdown", monthly_path + query_params,
+    html_options = {:style => "color: blue;text-decoration: underline;"})
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  = link_to("User Group Breakdown", user_path + query_params,
+    html_options = {:style => "color: blue;text-decoration: underline;"})
+
+<!-- Build the table -->
+- process_types.each do |p_k, p_v|
+  %hr
+  %h2{:style => "font-weight:bold;color:#011F5B"}= p_v
+  - request_types.each do |r_k, r_v|
+    %h3{:style => "color:#990000;text-align:center;font-weight:bold"}= r_v
+    %table.statistics_summary
+      %thead
+        %tr
+          %th
+            %div.tooltip
+              Fiscal Year
+              %span.tooltiptext Fiscal year runs to July 1
+          %th
+            %div.tooltip
+              Total Requests
+              %span.tooltiptext Count of unique transaction numbers requested in the fiscal year
+          %th
+            %div.tooltip
+              Fulfilled Requests
+              %span.tooltiptext Requests where the user has received access to item
+          %th Fulfilled Rate
+          %th
+            %div.tooltip
+              Unfulfilled Requests
+              %span.tooltiptext Requests cancelled by ILL staff
+          %th Unfulfilled Rate
+          %th
+            %div.tooltip
+              Pending Requests
+              %span.tooltiptext Outstanding requests that have not reached a final state
+          %th
+            %div.tooltip
+              Turnaround (days)
+              %span.tooltiptext Details at bottom of page
+          %th
+            %div.tooltip
+              Total Billing
+              %span.tooltiptext Total of charges and credits
+      %tbody
+        - table[[p_k.to_s,r_k.to_s]].each do |row|
+          %tr
+            - row.each do |cell|
+              %td= cell
+
+  %br
+
+%hr
+
+%h2 Turnaround times
+For Borrowing items, the turnaround time is defined as the difference in days |
+between the request's creation date and either the last "Delivered to Web" status |
+for Articles, or first "Awaiting Post Receipt Processing" for Books, indicating that |
+the borrowing institution has the item.
+%p
+For Lending items, the turnaround time is defined as the difference in days |
+between the request's creation date and either the "Request Finished", |
+"Request Conditionalized", or "Item Shipped" status, indicating that |
+the lending institution has fulfilled the item or was prepared to.
+%p
+For Doc Del items, the turnaround time is defined as the difference in days |
+between the request's creation date and the first instance of "Request Finished", |
+"Request Conditionalized", "Item Found", or "Delivered to Web".
