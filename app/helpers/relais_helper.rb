@@ -12,7 +12,7 @@ module RelaisHelper
 
     # Return if no range found
     if maximum_date.nil?
-      return ["No Data", nil]
+      return [nil]
     end
 
     # Find the starting and ending fiscal years
