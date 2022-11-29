@@ -13,7 +13,8 @@ sqls:
         statistical_category_4,
         statistical_category_5,
         user_group,
-        school
+        school,
+        pennkey
       ) = (
         upenn_alma_demographics.statistical_category_1,
         upenn_alma_demographics.statistical_category_2,
@@ -21,10 +22,11 @@ sqls:
         upenn_alma_demographics.statistical_category_4,
         upenn_alma_demographics.statistical_category_5,
         upenn_alma_demographics.user_group,
-        upenn_alma_demographics.school
+        upenn_alma_demographics.school,
+        upenn_alma_demographics.pennkey
       )
       FROM upenn_alma_demographics
       WHERE
-        gate_count_card_swipes.user_group IS NULL
+        gate_count_card_swipes.pennkey IS NULL
         AND gate_count_card_swipes.card_num IS NOT NULL
         AND upenn_alma_demographics.penn_id = gate_count_card_swipes.card_num;

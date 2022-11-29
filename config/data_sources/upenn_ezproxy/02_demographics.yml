@@ -13,7 +13,8 @@ sqls:
         statistical_category_4,
         statistical_category_5,
         user_group,
-        school
+        school,
+        penn_id
       ) = (
         upenn_alma_demographics.statistical_category_1,
         upenn_alma_demographics.statistical_category_2,
@@ -21,10 +22,11 @@ sqls:
         upenn_alma_demographics.statistical_category_4,
         upenn_alma_demographics.statistical_category_5,
         upenn_alma_demographics.user_group,
-        upenn_alma_demographics.school
+        upenn_alma_demographics.school,
+        upenn_alma_demographics.penn_id
       )
       FROM upenn_alma_demographics
       WHERE
-        upenn_ezproxy_ezpaarse_jobs.user_group IS NULL
+        upenn_ezproxy_ezpaarse_jobs.penn_id IS NULL
         AND upenn_ezproxy_ezpaarse_jobs.login IS NOT NULL
         AND upenn_alma_demographics.pennkey = upenn_ezproxy_ezpaarse_jobs.login;
