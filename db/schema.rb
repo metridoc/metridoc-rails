@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_06_205702) do
+ActiveRecord::Schema.define(version: 2022_11_29_183446) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -562,6 +562,7 @@ ActiveRecord::Schema.define(version: 2022_11_06_205702) do
     t.string "statistical_category_5"
     t.text "user_group"
     t.string "school"
+    t.text "pennkey"
     t.index ["affiliation_desc"], name: "index_gate_count_card_swipes_on_affiliation_desc"
     t.index ["center_desc"], name: "index_gate_count_card_swipes_on_center_desc"
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
@@ -1313,6 +1314,7 @@ ActiveRecord::Schema.define(version: 2022_11_06_205702) do
     t.string "statistical_category_5"
     t.text "user_group"
     t.string "school"
+    t.text "penn_id"
     t.index ["host"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_host"
     t.index ["mime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_mime"
     t.index ["platform"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform"
