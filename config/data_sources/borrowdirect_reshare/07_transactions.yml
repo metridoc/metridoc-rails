@@ -36,7 +36,9 @@ sqls:
         AND pr.last_updated > (SELECT max_date FROM max_date)
     		AND de.de_status_fk IS NOT NULL
     		AND de.de_parent IS NULL
-    		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
+    		AND de.de_name NOT IN (
+          'Business Library (Manhattanville)'
+        )
     ),
     lender AS (
     	SELECT
@@ -57,7 +59,9 @@ sqls:
         AND pr.last_updated > (SELECT max_date FROM max_date)
     		AND de.de_status_fk IS NOT NULL
     		AND de.de_parent IS NULL
-    		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
+    		AND de.de_name NOT IN (
+          'Business Library (Manhattanville)'
+        )
     )
     INSERT INTO bd_reshare_transactions (
       borrower,

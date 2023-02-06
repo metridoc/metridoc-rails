@@ -46,7 +46,9 @@ sqls:
         WHERE pra.pra_date_created > (SELECT max_date FROM max_date)
       		AND de.de_status_fk IS NOT NULL
       		AND de.de_parent IS NULL
-      		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
+      		AND de.de_name NOT IN (
+            'Business Library (Manhattanville)'
+          )
         GROUP BY de.de_name, pra.pra_patron_request_fk
       )
       INSERT INTO bd_reshare_lending_turnarounds (
