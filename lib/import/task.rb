@@ -44,9 +44,15 @@ module Import
         return @target_mappings = task_config['target_mappings'] if task_config['target_mappings'].present?
 
         if task_config["column_mappings"].present?
-          @target_mappings = task_config["column_mappings"].map{|column, target_column| {target_column.to_s.strip => target_column.to_s.strip} }.inject(:merge)
+          @target_mappings = task_config["column_mappings"].map{
+            |column, target_column| {
+              target_column.to_s.strip => target_column.to_s.strip
+              }
+            }.inject(:merge)
         else
-          @target_mappings = headers.map{|column| class_name.has_attribute?(column.underscore) ? {column.to_s.strip.underscore => column.to_s.strip.underscore} : nil }.compact.inject(:merge)
+          @target_mappings = headers.map{
+            |column| class_name.has_attribute?(column.underscore) ? {column.to_s.strip.underscore => column.to_s.strip.underscore} : nil
+          }.compact.inject(:merge)
         end
 
         return @target_mappings
@@ -207,9 +213,20 @@ module Import
       end
 
       def import_csv
+        # Get the header from the csv file
         headers = get_headers
 
-        unmatched_columns = headers.select { |column_name| class_name.columns_hash[column_name].blank? }
+        # Connect to the database and get the column information
+        # Any hidden columns will be picked up by this method
+        columns_hash = ActiveRecord::Base.connection.schema_cache.columns_hash(class_name.table_name)
+
+        # Query the class for any ignored columns
+        # If there are ignored columns, the upload must proceed in a different way
+        has_ignored_columns = class_name.ignored_columns.any?
+
+        # Search for unmached columns between the header and the target mapping
+        # Provide a warning for columns that will not be loaded
+        unmatched_columns = headers.select { |column_name| columns_hash[column_name].blank? }
         if unmatched_columns.present?
           log "!!WARNING!!: These columns are not processed: [#{unmatched_columns.join(", ")}]"
         end
@@ -237,35 +254,39 @@ module Import
 
               row_error = false
               attributes = {}
+              # Loop through all the columns for the row
               headers.each do |column_name|
-                next if class_name.columns_hash[column_name].blank?
+                # Skip the column if it is not part of the table structure
+                next if columns_hash[column_name].blank?
 
                 val = row[column_name.to_sym]
 
-                if class_name.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
+                # Skip rows with invalid integers, datetimes or dates.
+                if columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
                   log "Invalid integer [#{val}] in column: #{column_name} row: #{row.to_h}"
                   n_errors = n_errors + 1
                   row_error = true
                   next
                 end
-                if class_name.columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
+                if columns_hash[column_name].type == :datetime && !Util.valid_datetime?(val)
                   log "Invalid datetime [#{val}] in column: #{column_name} row: #{row.to_h}"
                   n_errors = n_errors + 1
                   row_error = true
                   next
                 end
-                if class_name.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
+                if columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
                   log "Invalid date [#{val}] in column: #{column_name} row: #{row.to_h}"
                   n_errors = n_errors + 1
                   row_error = true
                   next
                 end
 
+                # Skip rows where designated strings are too long
                 unless val.nil?
-                  if class_name.columns_hash[column_name].type == :string
+                  if columns_hash[column_name].type == :string
                     # if there isn't a length limit on the field, then keep going
-                    unless class_name.columns_hash[column_name].sql_type_metadata.limit.nil?
-                      if val.length > class_name.columns_hash[column_name].sql_type_metadata.limit
+                    unless columns_hash[column_name].sql_type_metadata.limit.nil?
+                      if val.length > columns_hash[column_name].sql_type_metadata.limit
                         log "Length of value [#{val}] exceeds maximum for column #{column_name} row: #{row.to_h}"
                         n_errors = n_errors + 1
                         row_error = true
@@ -275,20 +296,34 @@ module Import
                   end
                 end
 
-                val = Util.parse_datetime(val) if class_name.columns_hash[column_name].type == :datetime
-                val = Util.parse_datetime(val) if class_name.columns_hash[column_name].type == :date
+                # Parse the datetime into the appropriate formats
+                val = Util.parse_datetime(val) if columns_hash[column_name].type == :datetime
+                val = Util.parse_datetime(val) if columns_hash[column_name].type == :date
 
                 attributes[column_name] = val
               end
 
               next if row_error
 
-              # puts "attributes=#{attributes.inspect}"
+              # Add an institution identifier to the attributes list if necessary
               attributes.merge!(institution_id: institution_id) if has_institution_id?
-              records << class_name.new(attributes)
+
+              if has_ignored_columns
+                # Uploads with ignored columns must be made explicitly via SQL
+                # Pass the hash object rather than a model
+                records << attributes
+              else
+                # Typical imports require models to be passed
+                records << class_name.new(attributes)
+              end
 
               if records.size >= batch_size
-                n_errors += import_records(records)
+                if has_ignored_columns
+                  # Upload via sql commands
+                  n_errors += import_records_with_ignored_columns(class_name, records)
+                else
+                  n_errors += import_records(records)
+                end
                 records = []
               end
 
@@ -301,7 +336,11 @@ module Import
           csv.close
 
           if records.size > 0
-            n_errors += import_records(records)
+            if has_ignored_columns
+              n_errors += import_records_with_ignored_columns(class_name, records)
+            else
+              n_errors += import_records(records)
+            end
             records = []
           end
 
@@ -318,6 +357,87 @@ module Import
         end # ActiveRecord::Base.transaction
 
         return success
+      end
+
+      # Explicitly import via SQL models that contain ignored columns.
+      # This code is modified from the ActiveRecord-Import gem
+      def import_records_with_ignored_columns(class_name, records)
+        connection = ActiveRecord::Base.connection
+
+        # Extract column names from SQL instead of via model
+        column_names = connection.schema_cache.columns_hash(
+          class_name.table_name
+        ).keys
+
+        # Get a list of column names quoted
+        columns_sql = "(#{column_names.map { |name| connection.quote_column_name(name) }.join(',')})"
+        # Build the beginning of the insert command
+        insert_sql = "INSERT INTO #{class_name.quoted_table_name} #{columns_sql} VALUES "
+
+        # Build the options for handling of unique keys
+        options = {}
+        if unique_keys.present? and upsert
+          # Upsert Option for Duplicates
+          options[:on_duplicate_key_update] = {
+            conflict_target: unique_keys,
+            columns: column_names
+          }
+        elsif unique_keys.present?
+          # Ignore Duplicates
+          options[:on_duplicate_key_ignore] = true
+        end
+
+        # Pass the primary key flag to track the id sequence
+        options[:primary_key] = class_name.primary_key
+
+        # Create the post sql statements for upsert or ignore duplicates
+        post_sql_statements = connection.post_sql_statements(
+          class_name.quoted_table_name, options
+        )
+
+        # Get the prepared set of values for sql insertion
+        values_sql = construct_values_sql(class_name, records)
+
+        # Insert records
+        result = connection.insert_many( [insert_sql, post_sql_statements].flatten,
+          values_sql,
+          options,
+          "#{class_name} Create Many" )
+
+        log "Imported #{result.ids.size} records."
+        log_validation_errors(result.failed_instances)
+        return result.failed_instances.size
+      end
+
+      # Loosely based on values_sql_for_columns_and_attributes from
+      # ActiveRecord Import.
+      # Returns SQL the VALUES for an INSERT statement given the passed
+      # in +class_name+ and +records+.
+      def construct_values_sql(class_name, records)
+        # Connection gets called a *lot* in this high intensity loop.
+        # Reuse the same one w/in the loop, otherwise it would keep being
+        # re-retreived (= lots of time for large imports)
+        connection = ActiveRecord::Base.connection
+
+        # Get the list of column names
+        column_names = connection.schema_cache.columns_hash(
+          class_name.table_name
+        ).keys
+
+        # Transform the array of hashes into an array of (val0, val1, ...)
+        # for SQL import
+        records.map do |record|
+          values = column_names.map do |column_name|
+            if column_name == class_name.primary_key
+              # Fill in the id value from the sequential id table
+              connection.next_value_for_sequence(class_name.sequence_name)
+            else
+              # Get the column value from the record, using NULL as default
+              connection.quote(record.fetch(column_name, nil))
+            end
+          end
+          "(#{values.join(',')})"
+        end
       end
 
       def import_records(records)
