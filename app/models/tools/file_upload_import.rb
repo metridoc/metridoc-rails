@@ -11,6 +11,7 @@ class Tools::FileUploadImport < ApplicationRecord
   UPLOADABLE_MODELS = [ Alma::Circulation,
                         Ares::ItemUsage,
                         Consultation::Interaction,
+                        GeoData::CountryCode,
                         Keyserver::StatusTerm,
                         Keyserver::PlatformTerm,
                         Keyserver::ReasonTerm,
