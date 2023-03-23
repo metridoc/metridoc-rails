@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_11_29_183446) do
+ActiveRecord::Schema.define(version: 2023_03_21_174135) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -568,6 +568,20 @@ ActiveRecord::Schema.define(version: 2022_11_29_183446) do
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
     t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
     t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
+  end
+
+  create_table "geo_data_country_codes", force: :cascade do |t|
+    t.string "iso3166_1_alpha_3"
+    t.string "iso3166_1_numeric"
+    t.string "iso3166_alpha_2"
+    t.string "cldr_display_name"
+    t.string "unterm_english_short"
+    t.string "unterm_english_official"
+    t.string "region_name"
+    t.string "sub_region_name"
+    t.string "capital"
+    t.string "marc"
+    t.string "fips"
   end
 
   create_table "geo_data_zip_codes", force: :cascade do |t|
@@ -1315,6 +1329,7 @@ ActiveRecord::Schema.define(version: 2022_11_29_183446) do
     t.text "user_group"
     t.string "school"
     t.text "penn_id"
+    t.index ["datetime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_datetime"
     t.index ["host"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_host"
     t.index ["mime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_mime"
     t.index ["platform"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform"
