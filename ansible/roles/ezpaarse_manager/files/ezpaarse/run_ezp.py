@@ -133,7 +133,7 @@ class EzpaarseRunner:
         ezp_cmd += """  -H "Log-Format-ezproxy: %h||%{city}<[^|]*>||%{state}<[^|]*>||%{country}<[^|]*>||%{ezproxy-group}<[^|]*>||%u||%t||%m||%U||%s||%b||%{referer}<[^ ]+>||%{user-agent}<.*>||%{session-id}<[a-zA-Z0-9-]*>||%{cookies}<.*>||%{resource-name}<.*>" \
     -H "Crypted-Fields: none" \
     -H "Output-Fields: -user-agent,-cookies,-date,-ezpaarse_version,-ezpaarse_date,-middlewares_version,-middlewares_date,-platforms_version,-platforms_date,-city,-state,-country,-ezproxy-group,-publisher_name" \
-    -H "Geoip: geoip-country, geoip-region, geoip-city, geoip-latitude, geoip-longitude" -H "ezPAARSE-Middlewares: (only) filter, parser, deduplicator, enhancer, geolocalizer, on-campus-counter, qualifier" -H "Reject-Files: all"
+    -H "Geoip: geoip-country, geoip-region, geoip-city, geoip-latitude, geoip-longitude" -H "ezPAARSE-Middlewares: (only) filter, parser, deduplicator, enhancer, geolocalizer, on-campus-counter, qualifier" -H "Reject-Files: none"
         """
         ezp_cmd += self.current_file.as_posix()
         return shlex.split(ezp_cmd)
