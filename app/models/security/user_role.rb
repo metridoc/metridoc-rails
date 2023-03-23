@@ -24,6 +24,7 @@ class Security::UserRole < ApplicationRecord
                         "Reshare",
                         "UpennAlma",
                         "UpennEzproxy",
+                        "Ezproxy",
                         "Ipeds"
                       ]
 

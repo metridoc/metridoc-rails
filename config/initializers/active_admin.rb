@@ -318,8 +318,8 @@ ActiveAdmin.setup do |config|
 
       # EZ Proxy
       menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
-        url: :admin_upenn_ezproxy_ezpaarse_jobs_path,
-        if: proc{ authorized?(:read, "UpennEzproxy") },
+        url: :ezproxy_root_path,
+        if: proc{ authorized?(:read, "Ezproxy") },
         parent: I18n.t("active_admin.resource_sharing")
 
       # Gate Counts
@@ -486,7 +486,9 @@ ActiveAdmin.setup do |config|
   end
 
   # List of namespaces that need menus
-  namespaces = [:admin, :ipeds, :ezborrow, :borrowdirect, :illiad]
+  namespaces = [
+    :admin, :ipeds, :ezborrow, :borrowdirect, :illiad, :ezproxy
+  ]
 
   # Configure the menu for all namespaces
   namespaces.each do |namespace|
