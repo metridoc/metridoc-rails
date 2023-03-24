@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_21_174135) do
+ActiveRecord::Schema.define(version: 2023_03_24_200323) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -1335,14 +1335,6 @@ ActiveRecord::Schema.define(version: 2023_03_21_174135) do
     t.index ["platform"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform"
     t.index ["platform_name"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform_name"
     t.index ["rtype"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_rtype"
-  end
-
-  create_table "ups_zones", force: :cascade do |t|
-    t.string "from_prefix", null: false
-    t.string "to_prefix", null: false
-    t.integer "zone", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "user_role_sections", force: :cascade do |t|
