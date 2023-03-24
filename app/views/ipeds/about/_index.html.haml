@@ -26,7 +26,8 @@
   %h2 Resources
   %h3 Dashboards
   %ul
-    %li= link_to "Exploratory IPEDS Dashboard", "/ipeds/dashboard"
+    %li= link_to "Exploratory IPEDS Programs Dashboard", "/ipeds/dashboard"
+    %li= link_to "Exploratory IPEDS Completions Dashboard", "/ipeds/completions"
   %h3 Data Tables
   %ul
     - resources.each do |resource|
@@ -62,7 +63,7 @@
   %h3 STEM CIP Codes
   %p
     STEM CIP codes are designated by the Department of Homeland Security, which
-    announces any updates to the list. As a best practice, it is recommended 
+    announces any updates to the list. As a best practice, it is recommended
     that the lookup table is updated on an annual basis when new IPEDS data are
     imported.
 
