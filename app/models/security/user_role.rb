@@ -24,6 +24,7 @@ class Security::UserRole < ApplicationRecord
                         "Reshare",
                         "UpennAlma",
                         "UpennEzproxy",
+                        "Ezproxy",
                         "Ipeds"
                       ]
 
@@ -73,8 +74,7 @@ class Security::UserRole < ApplicationRecord
     end
 
     s = "Security" if s.to_s == "AdminUser"
-    # BUG: At this point GeoData::ZipCode will be processed to GeoData ... feature?
-    s = "SupplementalData" if s.to_s.in?(["UpsZone", "GeoData::ZipCode", "Institution"])
+    s = "SupplementalData" if s.to_s.in?(["GeoData", "Institution"])
 
     return s.to_s
   end

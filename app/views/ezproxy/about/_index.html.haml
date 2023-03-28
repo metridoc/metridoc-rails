@@ -1,0 +1,58 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  The Penn Libraries uses the EZProxy service in order to provide secure access
+  to e-resources to patrons via their pennkey credentials regardless of their
+  location.
+  For more details on the user interface, see the
+  #{link_to "LibGuide", "https://guides.library.upenn.edu/usingeresources/ezproxy"}
+  on this topic.
+  EZProxy is a service provided by OCLC.
+  See the #{link_to "OCLC website", "https://www.oclc.org/en/ezproxy.html"} for
+  more information about the EZProxy service.
+  %br
+  %br
+  The output of the EZProxy logs are run through an open source program called
+  ezPAARSE.
+  Details of the ezPAARSE process can be found on
+  #{link_to "their website", "https://www.ezpaarse.org/?lang=en"}.
+  ezPAARSE does a number of clean up processes including:
+  %ul
+    %li Removing bots
+    %li Deduplicating entries
+    %li Parsing the URL to extract relevant information.
+    %li
+      Enhancing the record with information found in publisher knowledge bases
+      (PKBs) from crosswalks with the eISSN, ISSN or DOI if present in the URL.
+    %li Enriching location data based on the IP address
+
+  Some caveats to the ezPAARSE procedure.
+  Only platforms defined in
+  #{link_to "the code", "https://github.com/ezpaarse-project/ezpaarse-platforms"}
+  are parsed.
+  The code is maintained by volunteers and may be slow to respond to a publisher
+  changing the construction of their website.
+  Certain platforms (typically the popular ones) are more complete than others.
+  The aggregated results from ezPAARSE should be considered as rough
+  approximations of the total usage.
+  %br
+  %br
+  The data is further enriched with demographic information through a crosswalk
+  with the user pennkey.
+  %br
+  %br
+  Note that the pennkey and the ip address are not available in the interface to
+  protect patron privacy.
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards
+  %ul
+    %li #{link_to "ezPAARSE Dashboard", "/ezproxy/statistics"}
+
+  %h3 Data
+  %ul
+    %li #{link_to "ezPAARSE Data", :ezproxy_ezpaarse_jobs}

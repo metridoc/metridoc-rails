@@ -1,0 +1,98 @@
+= javascript_include_tag 'application'
+
+- fiscal_year = 2023
+- this_year, last_year = fiscal_year_ranges(fiscal_year)
+- filtered_model = Ezproxy::EzpaarseJob.where(:datetime => this_year)
+%h2 EZPaarse Statistics Overview FY#{fiscal_year}
+
+%hr
+%section
+  %h3 Longitudinal Usage
+  NB: Time series plots are in the UTC timezone.
+  There is a 4-5 hour shift from the Eastern timezone depending on the time of year.
+
+  = area_chart filtered_model.group_by_day(:datetime).count(:id),
+    download: true,
+    thousands: ",",
+    xtitle: "Date", ytitle: "Number of Requests",
+    title: "EZProxy Daily Usage"
+
+  - days_of_the_week = {"0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday", "4": "Thursday", "5": "Friday", "6": "Saturday"}
+  - grouped_by_day = filtered_model.group_by_day_of_week(:datetime).count(:id).sort_by{|k,v| k}.to_h.transform_keys{ |k| days_of_the_week.fetch(k.to_s.to_sym)}
+  = column_chart grouped_by_day,
+    download: true,
+    thousands: ",",
+    xtitle: "Day of Week", ytitle: "Number of Requests",
+    title: "EZProxy Weekly Trends"
+
+  = column_chart filtered_model.group_by_hour_of_day(:datetime).count(:id),
+    download: true,
+    thousands: ",",
+    xtitle: "Hour of Day", ytitle: "Number of Requests",
+    title: "EZProxy Daily Trends"
+
+%hr
+%section
+  %h3 Resource Usage
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+    = bar_chart filtered_model.group(:mime).count(:id).sort_by{|k,v| -v}.to_h,
+      download: true,
+      thousands: ",",
+      xtitle: "Number of Requests", ytitle: "Return Format",
+      title: "Trends in Document Returns",
+      height: "800px",
+      library: {scales: { xAxes: [{id: 'x-axis',
+        type: "logarithmic",
+        ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+    = bar_chart filtered_model.group(:rtype).count(:id).sort_by{|k,v| -v}.to_h,
+      download: true,
+      thousands: ",",
+      xtitle: "Number of Requests", ytitle: "Return Type" ,
+      title: "Trends in Types of Documents",
+      height: "800px",
+      library: {scales: { xAxes: [{id: 'x-axis',
+        type: "logarithmic",
+        ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+  = bar_chart filtered_model.group(:platform_name).count.sort_by{|k,v| -v}.first(15).to_h,
+    download: true,
+    thousands: ",",
+    xtitle: "Number of Requests", ytitle: "Publisher Platform",
+    height: "400px",
+    title: "Top 15 Publisher Platforms"
+
+%hr
+%section
+  %h3 User Profiles
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px; "}
+    = bar_chart filtered_model.group(:user_group).count(:id).sort_by{|k,v| -v}.to_h,
+      download: true,
+      thousands: ",",
+      xtitle: "Number of Requests", ytitle: "User Category",
+      title: "Usage by User Category",
+      height: "800px",
+      library: {scales: { xAxes: [{id: 'x-axis',
+        type: "logarithmic",
+        ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+    = bar_chart filtered_model.group(:school).count(:id).sort_by{|k,v| -v}.to_h,
+      download: true,
+      thousands: ",",
+      xtitle: "Number of Requests", ytitle: "User Affiliation",
+      title: "Usage by Affiliation",
+      height: "800px",
+      library: {scales: { xAxes: [{id: 'x-axis',
+        type: "logarithmic",
+        ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+
+  = bar_chart filtered_model.group(:geoip_country).count(:id).sort_by{|k,v| -v}.first(15).to_h,
+    download: true,
+    thousands: ",",
+    xtitle: "Number of Requests", ytitle: "Country",
+    height: "400px",
+    title: "Top 15 Countries by User",
+    library: {scales: { xAxes: [{id: 'x-axis',
+      type: "logarithmic",
+      ticks: {maxRotation: 90, minRotation: 90}}]}}
