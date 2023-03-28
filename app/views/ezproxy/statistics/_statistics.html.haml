@@ -14,7 +14,7 @@
   = area_chart filtered_model.group_by_day(:datetime).count(:id),
     download: true,
     thousands: ",",
-    xtitle: "Date", ytitle: "Frequency",
+    xtitle: "Date", ytitle: "Number of Requests",
     title: "EZProxy Daily Usage"
 
   - days_of_the_week = {"0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday", "4": "Thursday", "5": "Friday", "6": "Saturday"}
@@ -22,13 +22,13 @@
   = column_chart grouped_by_day,
     download: true,
     thousands: ",",
-    xtitle: "Day of Week", ytitle: "Frequency",
+    xtitle: "Day of Week", ytitle: "Number of Requests",
     title: "EZProxy Weekly Trends"
 
   = column_chart filtered_model.group_by_hour_of_day(:datetime).count(:id),
     download: true,
     thousands: ",",
-    xtitle: "Hour of Day", ytitle: "Frequency",
+    xtitle: "Hour of Day", ytitle: "Number of Requests",
     title: "EZProxy Daily Trends"
 
 %hr
@@ -38,7 +38,7 @@
     = bar_chart filtered_model.group(:mime).count(:id).sort_by{|k,v| -v}.to_h,
       download: true,
       thousands: ",",
-      xtitle: "Frequency", ytitle: "Return Format",
+      xtitle: "Number of Requests", ytitle: "Return Format",
       title: "Trends in Document Returns",
       height: "800px",
       library: {scales: { xAxes: [{id: 'x-axis',
@@ -48,7 +48,7 @@
     = bar_chart filtered_model.group(:rtype).count(:id).sort_by{|k,v| -v}.to_h,
       download: true,
       thousands: ",",
-      xtitle: "Frequency", ytitle: "Return Type" ,
+      xtitle: "Number of Requests", ytitle: "Return Type" ,
       title: "Trends in Types of Documents",
       height: "800px",
       library: {scales: { xAxes: [{id: 'x-axis',
@@ -58,7 +58,7 @@
   = bar_chart filtered_model.group(:platform_name).count.sort_by{|k,v| -v}.first(15).to_h,
     download: true,
     thousands: ",",
-    xtitle: "Frequency", ytitle: "Publisher Platform",
+    xtitle: "Number of Requests", ytitle: "Publisher Platform",
     height: "400px",
     title: "Top 15 Publisher Platforms"
 
@@ -69,7 +69,7 @@
     = bar_chart filtered_model.group(:user_group).count(:id).sort_by{|k,v| -v}.to_h,
       download: true,
       thousands: ",",
-      xtitle: "Frequency", ytitle: "User Category",
+      xtitle: "Number of Requests", ytitle: "User Category",
       title: "Usage by User Category",
       height: "800px",
       library: {scales: { xAxes: [{id: 'x-axis',
@@ -79,7 +79,7 @@
     = bar_chart filtered_model.group(:school).count(:id).sort_by{|k,v| -v}.to_h,
       download: true,
       thousands: ",",
-      xtitle: "Frequency", ytitle: "User Affiliation",
+      xtitle: "Number of Requests", ytitle: "User Affiliation",
       title: "Usage by Affiliation",
       height: "800px",
       library: {scales: { xAxes: [{id: 'x-axis',
@@ -90,7 +90,7 @@
   = bar_chart filtered_model.group(:geoip_country).count(:id).sort_by{|k,v| -v}.first(15).to_h,
     download: true,
     thousands: ",",
-    xtitle: "Frequency", ytitle: "Country",
+    xtitle: "Number of Requests", ytitle: "Country",
     height: "400px",
     title: "Top 15 Countries by User",
     library: {scales: { xAxes: [{id: 'x-axis',
