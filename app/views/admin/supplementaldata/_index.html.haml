@@ -1,3 +1,78 @@
-%ul
-  - resources.each do |resource|
-    %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+%section
+  %h2 Introduction
+
+%section
+  %h2 Resources
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+    %li
+      Geographic Data
+      %ul
+        %li= link_to I18n.t("active_admin.geo_data.zip_codes"), "/admin/geo_data_zip_codes"
+        %li= link_to I18n.t("active_admin.geo_data.country_codes"), "/admin/geo_data_country_codes"
+
+%section
+  %h2 Sources
+
+  %h3 Institution
+  A mapping of the Ivies Plus Institutions to their zip codes.
+  This information is seeded into the database on creation.
+
+  %h3 Geographic Data
+
+  %h4= I18n.t("active_admin.geo_data.zip_codes")
+  Retrieve the zip code shape files by doing the following:
+  %ul
+    %li Go to the #{link_to "TIGER/Line Shapefiles", "https://www.census.gov/cgi-bin/geo/shapefiles/index.php"} page on census.gov.
+    %li Select the year (most recent).
+    %li Select the layer type as "Zip Code Tabulation Areas".
+    %li Download the linked zip file.
+
+  To process the zip file in a csv to upload into the database:
+  %ul
+    %li Unzip the file.
+    %li Use Python and the #{link_to "GeoPandas", "https://geopandas.org/en/stable/"} package to extract the longitude and latitude for each zip code. (Code below)
+    %li Import the simplified ZCTA file into the postgres database.
+
+  %div{class: "box"}
+    %pre{style: "background-color: #f5f5f5; border: 1px solid #999; padding: 20px"}
+      %code{class: "language-python line-numbers"}
+        <span style = "color: #008001; font-weight: bold;">import</span> geopandas <span style="color: #008001; font-weight: bold;">as</span> gpd
+        data <span style= "color: #aa22ff">=</span> gpd.<span style= "color: #0055aa">read_file</span>(<span style= "color: #ba2121">"/PATH/TO/tl_YEAR_us_zcta520.shp"</span>)
+        %span(style = "color: #417f80; font-style: italic")# Trim the data frame to only the columns of interest
+        df <span style= "color: #aa22ff">=</span> data[[<span style= "color: #ba2121">"ZCTA5CE20"</span>, <span style= "color: #ba2121">"INTPTLAT20"</span>, <span style= "color: #ba2121">"INTPTLON20"</span>]]
+        %span(style = "color: #417f80; font-style: italic")# Change the column names to match postgres table
+        df.<span style= "color: #0055aa">columns</span> <span style= "color: #aa22ff">=</span> [<span style= "color: #ba2121">"zip_code"</span>, <span style= "color: #ba2121">"latitude"</span>, <span style= "color: #ba2121">"longitude"</span>]
+        %span(style = "color: #417f80; font-style: italic")# Print the data to csv
+        df.<span style= "color: #0055aa">to_csv</span>(<span style= "color: #ba2121">"simplified_zcta.csv"</span>)
+
+  %h4= I18n.t("active_admin.geo_data.country_codes")
+  The data for the International codes was pulled from
+  #{link_to "datahub.io", "https://datahub.io/core/country-codes#data-cli"}.
+  This source compiled data from other internationally recognized sources listed below.
+
+  %ul
+    %li United Nations Protocol and Liaison Service
+    %li Unicode Common Local Data Repository (CLDR) Project
+    %li United Nations Department of Economic and Social Affairs Statistics Division (ISO)
+    %li Statoids.com
+    %li Geonames.org
+    %li Securities and Exchange Commission
+
+  After downloading the csv data file, the header names are adjusted to match the
+  column names in the database.  Then the csv file is uploaded using the File
+  Upload Tool.  Only a small number of columns are loaded into the database.
+
+  %ul
+    %li iso3166_1_alpha_3: Three letter country code
+    %li iso3166_1_numeric: Numeric country code
+    %li iso3166_alpha_2: Two letter country code
+    %li cldr_display_name: Common short country name
+    %li unterm_english_short: Protocol and Liaison Service short country name
+    %li unterm_english_official: Protocol and Liaison Service formal country name
+    %li region_name: Continent
+    %li sub_region_name: Subcontinental area
+    %li capital: Capital of the country
+    %li marc: Machine readable cataloging codes from the Library of Congress
+    %li fips: Federal Information Processing Standard country codes
