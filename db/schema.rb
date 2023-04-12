@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_03_24_200323) do
+ActiveRecord::Schema.define(version: 2023_03_30_200431) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -516,11 +516,85 @@ ActiveRecord::Schema.define(version: 2023_03_24_200323) do
     t.boolean "is_legacy", default: false, null: false
   end
 
+  create_table "ezpaarse_hourly_usages", force: :cascade do |t|
+    t.integer "fiscal_year"
+    t.datetime "date"
+    t.string "day_of_week"
+    t.integer "dow_index"
+    t.integer "hour_of_day"
+    t.integer "requests"
+    t.integer "sessions"
+  end
+
   create_table "ezpaarse_jobs", force: :cascade do |t|
     t.string "file_name"
     t.date "log_date"
     t.text "message"
     t.datetime "run_date"
+  end
+
+  create_table "ezpaarse_logs", force: :cascade do |t|
+    t.datetime "datetime"
+    t.string "login"
+    t.string "platform"
+    t.string "platform_name"
+    t.string "rtype"
+    t.string "mime"
+    t.string "print_identifier"
+    t.string "online_identifier"
+    t.string "title_id"
+    t.string "doi"
+    t.string "publication_title"
+    t.date "publication_date"
+    t.string "unitid"
+    t.string "domain"
+    t.boolean "on_campus"
+    t.string "geoip_country", limit: 4
+    t.string "geoip_region", limit: 4
+    t.string "geoip_city"
+    t.float "geoip_latitude"
+    t.float "geoip_longitude"
+    t.string "host"
+    t.string "method", limit: 8
+    t.string "url"
+    t.string "status", limit: 3
+    t.integer "size"
+    t.string "referer"
+    t.string "session_id"
+    t.string "resource_name"
+    t.string "statistical_category_1"
+    t.string "statistical_category_2"
+    t.string "statistical_category_3"
+    t.string "statistical_category_4"
+    t.string "statistical_category_5"
+    t.text "user_group"
+    t.string "school"
+    t.text "penn_id"
+    t.index ["datetime"], name: "index_ezpaarse_logs_on_datetime"
+    t.index ["host"], name: "index_ezpaarse_logs_on_host"
+    t.index ["mime"], name: "index_ezpaarse_logs_on_mime"
+    t.index ["platform"], name: "index_ezpaarse_logs_on_platform"
+    t.index ["platform_name"], name: "index_ezpaarse_logs_on_platform_name"
+    t.index ["rtype"], name: "index_ezpaarse_logs_on_rtype"
+  end
+
+  create_table "ezpaarse_platforms", force: :cascade do |t|
+    t.integer "fiscal_year"
+    t.string "platform_name"
+    t.string "rtype"
+    t.string "mime"
+    t.integer "requests"
+    t.integer "sessions"
+  end
+
+  create_table "ezpaarse_user_profiles", force: :cascade do |t|
+    t.integer "fiscal_year"
+    t.string "user_group"
+    t.string "school"
+    t.string "country"
+    t.string "state"
+    t.integer "requests"
+    t.integer "sessions"
   end
 
   create_table "file_upload_import_logs", force: :cascade do |t|
@@ -1290,51 +1364,6 @@ ActiveRecord::Schema.define(version: 2023_03_24_200323) do
     t.string "division"
     t.string "division_description"
     t.string "school"
-  end
-
-  create_table "upenn_ezproxy_ezpaarse_jobs", force: :cascade do |t|
-    t.datetime "datetime"
-    t.string "login"
-    t.string "platform"
-    t.string "platform_name"
-    t.string "rtype"
-    t.string "mime"
-    t.string "print_identifier"
-    t.string "online_identifier"
-    t.string "title_id"
-    t.string "doi"
-    t.string "publication_title"
-    t.date "publication_date"
-    t.string "unitid"
-    t.string "domain"
-    t.boolean "on_campus"
-    t.string "geoip_country", limit: 4
-    t.string "geoip_region", limit: 4
-    t.string "geoip_city"
-    t.float "geoip_latitude"
-    t.float "geoip_longitude"
-    t.string "host"
-    t.string "method", limit: 8
-    t.string "url"
-    t.string "status", limit: 3
-    t.integer "size"
-    t.string "referer"
-    t.string "session_id"
-    t.string "resource_name"
-    t.string "statistical_category_1"
-    t.string "statistical_category_2"
-    t.string "statistical_category_3"
-    t.string "statistical_category_4"
-    t.string "statistical_category_5"
-    t.text "user_group"
-    t.string "school"
-    t.text "penn_id"
-    t.index ["datetime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_datetime"
-    t.index ["host"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_host"
-    t.index ["mime"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_mime"
-    t.index ["platform"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform"
-    t.index ["platform_name"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_platform_name"
-    t.index ["rtype"], name: "index_upenn_ezproxy_ezpaarse_jobs_on_rtype"
   end
 
   create_table "user_role_sections", force: :cascade do |t|
