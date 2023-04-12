@@ -1,0 +1,34 @@
+---
+load_sequence: 5
+target_model: "Ezproxy::EzpaarseUserProfile"
+target_adapter: "native_sql"
+truncate_before_load: "yes"
+sqls:
+  - |
+      INSERT INTO ezpaarse_user_profiles
+        (
+          fiscal_year,
+          user_group,
+          school,
+          country,
+          state,
+          requests,
+          sessions
+        )
+      SELECT
+      	CASE
+      		WHEN DATE_PART('month', datetime) > 6
+          THEN DATE_PART('year', datetime) + 1
+          ELSE DATE_PART('year', datetime)
+      	END AS fiscal_year,
+      	user_group,
+      	school,
+      	geoip_country AS country,
+      	CASE
+      		WHEN geoip_country = 'US'
+      		THEN geoip_region
+        END AS state,
+      	COUNT(id) AS requests,
+      	COUNT(DISTINCT session_id) AS sessions
+      FROM ezpaarse_logs
+      GROUP BY 1, 2, 3, 4, 5;
