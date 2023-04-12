@@ -1,98 +1,351 @@
 = javascript_include_tag 'application'
 
+-# Fiscal Year Request and Session Totals
+- requests = Ezproxy::EzpaarseHourlyUsage.group(:fiscal_year).sum(:requests).sort_by{|k,v| k}
+- sessions = Ezproxy::EzpaarseHourlyUsage.group(:fiscal_year).sum(:sessions).sort_by{|k,v| k}
+- data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+
+= line_chart data,
+  download: true,
+  thousands: ",",
+  height: "400px",
+  discrete: true,
+  xtitle: "Fiscal Year (YTD)", ytitle: "Totals",
+  title: "EZProxy Yearly Trends"
+
+- top_10 = Ezproxy::EzpaarsePlatform.group(:platform_name).sum(:requests).sort_by{|k,v| -v}.first(10).to_h.keys
+- data = top_10.map{|v| {name: v,
+  data: Ezproxy::EzpaarsePlatform.where(:platform_name => v).group(:fiscal_year).sum(:requests).sort_by{|k,v| k}}}
+
+= line_chart data,
+  download: true,
+  thousands: ",",
+  height: "400px",
+  discrete: true,
+  xtitle: "Fiscal Year (YTD)", ytitle: "Number of Requests",
+  title: "Trends of the Top 10 Platforms"
+
+- top_10 = Ezproxy::EzpaarsePlatform.group(:mime).sum(:requests).sort_by{|k,v| -v}.first(10).to_h.keys
+- data = top_10.map{|v| {name: v,
+  data: Ezproxy::EzpaarsePlatform.where(:mime => v).group(:fiscal_year).sum(:requests).sort_by{|k,v| k}}}
+
+= line_chart data,
+  download: true,
+  thousands: ",",
+  height: "400px",
+  discrete: true,
+  xtitle: "Fiscal Year (YTD)", ytitle: "Number of Requests",
+  title: "Trends of the Top 10 Resource Types"
+
+- top_10 = Ezproxy::EzpaarseUserProfile.group(:user_group).sum(:requests).sort_by{|k,v| -v}.first(10).to_h.keys
+- data = top_10.map{|v| {name: v,
+  data: Ezproxy::EzpaarseUserProfile.where(:user_group => v).group(:fiscal_year).sum(:requests).sort_by{|k,v| k}}}
+
+= line_chart data,
+  download: true,
+  thousands: ",",
+  height: "400px",
+  discrete: true,
+  xtitle: "Fiscal Year (YTD)", ytitle: "Number of Requests",
+  title: "Trends of the Top 10 User Groups"
+
+- top_10 = Ezproxy::EzpaarseUserProfile.group(:school).sum(:requests).sort_by{|k,v| -v}.first(10).to_h.keys
+- data = top_10.map{|v| {name: v,
+  data: Ezproxy::EzpaarseUserProfile.where(:school => v).group(:fiscal_year).sum(:requests).sort_by{|k,v| k}}}
+
+= line_chart data,
+  download: true,
+  thousands: ",",
+  height: "400px",
+  discrete: true,
+  xtitle: "Fiscal Year (YTD)", ytitle: "Number of Requests",
+  title: "Trends of the Top 10 Affiliations"
+
+-# Set the fiscal year to the current year
 - fiscal_year = 2023
-- this_year, last_year = fiscal_year_ranges(fiscal_year)
-- filtered_model = Ezproxy::EzpaarseJob.where(:datetime => this_year)
+-# Define a color palette
+- colors = ["#3366CC", "#DC3912", "#FF9900", "#109618", "#990099",
+  "#3B3EAC", "#0099C6", "#DD4477", "#66AA00", "#B82E2E", "#316395",
+  "#994499", "#22AA99", "#AAAA11", "#6633CC", "#E67300", "#8B0707",
+  "#329262", "#5574A6", "#651067", "#329262", "#5574a6", "#3b3eac",
+  "#b77322", "#16d620", "#b91383", "#f4359e", "#9c5935", "#a9c413",
+  "#2a778d", "#668d1c", "#bea413", "#0c5922", "#743411", "#3366CC", "#DC3912",
+  "#FF9900", "#109618"]
 %h2 EZPaarse Statistics Overview FY#{fiscal_year}
 
 %hr
 %section
+  - filtered_model = Ezproxy::EzpaarseHourlyUsage.where(:fiscal_year => fiscal_year)
   %h3 Longitudinal Usage
-  NB: Time series plots are in the UTC timezone.
-  There is a 4-5 hour shift from the Eastern timezone depending on the time of year.
+  The following series of plots show the trends through time of the current fiscal year.
+  To note:
+  %ul
+    %li Times are in UTC, there is a 4-5 hour shift from the Eastern timezone based on time of year.
+    %li
+      Request counts are individual url requests that have been translated by ezPAARSE.
+      This should be used as an aggregated appoximation of usage.
+      The ezPAARSE program does not translate every single log recorded by EZProxy.
+    %li
+      A session is counted at the first instance of the session identifier in the logs.
 
-  = area_chart filtered_model.group_by_day(:datetime).count(:id),
+  - requests = filtered_model.group_by_day(:date).sum(:requests)
+  - sessions = filtered_model.group_by_day(:date).sum(:sessions)
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+  = line_chart data,
     download: true,
     thousands: ",",
-    xtitle: "Date", ytitle: "Number of Requests",
+    xtitle: "Date", ytitle: "Totals",
     title: "EZProxy Daily Usage"
 
-  - days_of_the_week = {"0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday", "4": "Thursday", "5": "Friday", "6": "Saturday"}
-  - grouped_by_day = filtered_model.group_by_day_of_week(:datetime).count(:id).sort_by{|k,v| k}.to_h.transform_keys{ |k| days_of_the_week.fetch(k.to_s.to_sym)}
-  = column_chart grouped_by_day,
+  - requests = filtered_model.group(:dow_index, :day_of_week).sum(:requests).sort_by{|k,v| k[0]}.to_h.transform_keys{|k| k[1]}
+  - sessions = filtered_model.group(:dow_index, :day_of_week).sum(:sessions).sort_by{|k,v| k[0]}.to_h.transform_keys{|k| k[1]}
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+  = column_chart data,
     download: true,
     thousands: ",",
-    xtitle: "Day of Week", ytitle: "Number of Requests",
+    dataset: {borderWidth: 0},
+    xtitle: "Day of Week", ytitle: "Totals",
     title: "EZProxy Weekly Trends"
 
-  = column_chart filtered_model.group_by_hour_of_day(:datetime).count(:id),
+  - requests = filtered_model.group(:hour_of_day).sum(:requests)
+  - sessions = filtered_model.group(:hour_of_day).sum(:sessions)
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+  = column_chart data,
     download: true,
     thousands: ",",
-    xtitle: "Hour of Day", ytitle: "Number of Requests",
-    title: "EZProxy Daily Trends"
+    dataset: {borderWidth: 0},
+    xtitle: "Hour of Day", ytitle: "Totals",
+    title: "EZProxy Hourly Trends"
 
 %hr
 %section
+  - filtered_model = Ezproxy::EzpaarsePlatform.where(:fiscal_year => fiscal_year)
   %h3 Resource Usage
-  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
-    = bar_chart filtered_model.group(:mime).count(:id).sort_by{|k,v| -v}.to_h,
-      download: true,
-      thousands: ",",
-      xtitle: "Number of Requests", ytitle: "Return Format",
-      title: "Trends in Document Returns",
-      height: "800px",
-      library: {scales: { xAxes: [{id: 'x-axis',
-        type: "logarithmic",
-        ticks: {maxRotation: 90, minRotation: 90}}]}}
+  The following section centers around resource usage.
+  %ul
+    %li
+      Publishers use different platforms to host their resources.
+      %ul
+        %li Some platforms represent multiple publishers.
+        %li The ezPAARSE program parses EZProxy logs based on the platform.
+    %li
+      Session count is aggregated on platform, return method and resource type.
+      %ul
+        %li Consider the session count an upper limit on the true number of sessions.
+    %li
+      The raw data can be used to extract more information on the usage of individual journals.
 
-    = bar_chart filtered_model.group(:rtype).count(:id).sort_by{|k,v| -v}.to_h,
-      download: true,
-      thousands: ",",
-      xtitle: "Number of Requests", ytitle: "Return Type" ,
-      title: "Trends in Types of Documents",
-      height: "800px",
-      library: {scales: { xAxes: [{id: 'x-axis',
-        type: "logarithmic",
-        ticks: {maxRotation: 90, minRotation: 90}}]}}
-
-  = bar_chart filtered_model.group(:platform_name).count.sort_by{|k,v| -v}.first(15).to_h,
+  - requests = filtered_model.group(:platform_name).sum(:requests).sort_by{|k,v| -v}.to_h
+  - sessions = filtered_model.group(:platform_name).sum(:sessions)
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+  = bar_chart data,
     download: true,
     thousands: ",",
-    xtitle: "Number of Requests", ytitle: "Publisher Platform",
-    height: "400px",
-    title: "Top 15 Publisher Platforms"
+    height: "3000px",
+    dataset: {borderWidth: 0},
+    xtitle: "Totals", ytitle: "Platform",
+    title: "Platform Usage"
+
+  - def resource_data (filtered_model, platform = nil)
+    - unless platform.nil?
+      - filtered_model = filtered_model.where(:platform_name => platform)
+    -# end
+    - method_order = filtered_model.group(:rtype).sum(:requests).sort_by{|k,v| -v}.map{|v| [v[0].nil? ? "Unknown" : v[0], []]}.to_h
+    - resource_order = filtered_model.group(:mime).sum(:requests).sort_by{|k,v| -v}.map{|v| [v[0].nil? ? "Unknown" : v[0], []]}.to_h
+
+    - request_groups = resource_order.map{|k,v| [k, method_order.keys.map{|x| [x, 0]}.to_h]}.to_h
+    - requests = filtered_model.group(:mime, :rtype).sum(:requests).map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+    - requests.each {|v| request_groups[v[0]][v[1]] = v[2]}
+
+    - session_groups = resource_order.map{|k,v| [k, method_order.keys.map{|x| [x, 0]}.to_h]}.to_h
+    - sessions = filtered_model.group(:mime, :rtype).sum(:sessions).map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+    - sessions.each {|v| session_groups[v[0]][v[1]] = v[2]}
+
+    - request_data = request_groups.map{|k, v| {name: k, stack: 'A', data: v }}
+    - session_data = session_groups.map{|k, v| {name: k, stack: 'A', data: v }}
+
+    - return [request_data, session_data]
+  -# end
+
+  - data = resource_data(filtered_model)
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+
+    = bar_chart data[0],
+      download: true,
+      thousands: ",",
+      height: "700px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Requests (Log10)", ytitle: "Resource Type",
+      title: "Usage by Resource Type",
+      library: {scales: { x: {stacked: true},
+        y: {stacked: true},
+        xAxes: [{id: 'x-axis',
+          type: "logarithmic",
+          ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+    = bar_chart data[1],
+      download: true,
+      thousands: ",",
+      height: "700px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Sessions (Log10)", ytitle: "Resource Type",
+      title: "Usage by Resource Type",
+      library: {scales: { x: {stacked: true},
+        y: {stacked: true},
+        xAxes: [{id: 'x-axis',
+          type: "logarithmic",
+          ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+  %hr
+  %h3 Top 5 Platform Usage Breakdowns
+  -# Get the top 5 platforms
+  - top_5_platforms = filtered_model.group(:platform_name).sum(:requests).sort_by{|k,v| -v}.to_h.keys.first(5)
+
+  - top_5_platforms.each do |platform|
+    %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+      - data = resource_data(filtered_model, platform)
+      = bar_chart data[0],
+        download: true,
+        colors: colors,
+        thousands: ",",
+        height: "500px",
+        dataset: {borderWidth: 0},
+        xtitle: "Number of Requests", ytitle: "Resource Type",
+        title: "Usage for #{platform} by Resouce Type",
+        library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+      = bar_chart data[1],
+        download: true,
+        colors: colors,
+        thousands: ",",
+        height: "500px",
+        dataset: {borderWidth: 0},
+        xtitle: "Number of Sessions", ytitle: "Resource Type",
+        title: "Usage for #{platform} by Resouce Type",
+        library: {scales: { x: {stacked: true}, y: {stacked: true}}}
 
 %hr
 %section
+  - filtered_model = Ezproxy::EzpaarseUserProfile.where(:fiscal_year => fiscal_year)
   %h3 User Profiles
-  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px; "}
-    = bar_chart filtered_model.group(:user_group).count(:id).sort_by{|k,v| -v}.to_h,
+  %ul
+    %li
+      Logs are further enriched with demographic information.
+      %ul
+        %li The school and user group are extracted from Alma on a weekly basis.
+        %li The information in Alma gets a major update three times a year.
+        %li The login id used for the EZProxy system is equivalent to the PennKey.
+    %li
+      The ezPAARSE program resolves the host ip address into geographic locations
+      %ul
+        %li The country is resolved into the ISO-3166 Alpha2 code.
+        %li The raw data also includes an estimated latitude and longitude.
+
+  After running the logs through ezPAARSE, the resolved logs were further enriched
+  with demographic information from Alma based on pennkey.  The geolocation is
+  based on the ip address of the request which may or may not represent the
+  physical location of the user depending on VPN status.
+
+  -# Get sorted lists of the schools and user groups by usage
+  - schools = filtered_model.group(:school).sum(:requests).sort_by{|k,v| -v}.map{|v| [v[0].nil? ? "Unknown" : v[0], []]}.to_h
+  - user_groups = filtered_model.group(:user_group).sum(:requests).sort_by{|k,v| -v}.map{|v| [v[0].nil? ? "Unknown" : v[0], []]}.to_h
+
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+
+    -# Create blank maps of maps (ex. {school: {group1: 0, group2: 0}})
+    - school_groups = schools.map{|k,v| [k, user_groups.keys.map{|x| [x, 0]}.to_h]}.to_h
+    -# Get the number of requests by school and user group
+    - requests = filtered_model.group(:school, :user_group).sum(:requests).map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+    -# Fill in the blank map
+    - requests.each {|v| school_groups[v[0]][v[1]] = v[2]}
+    -# Construct the data vector with name and stack label (dummy label)
+    - data = school_groups.map{|k, v| {name: k, stack: 'A', data: v }}
+    = bar_chart data,
       download: true,
+      colors: colors,
       thousands: ",",
-      xtitle: "Number of Requests", ytitle: "User Category",
-      title: "Usage by User Category",
-      height: "800px",
-      library: {scales: { xAxes: [{id: 'x-axis',
-        type: "logarithmic",
-        ticks: {maxRotation: 90, minRotation: 90}}]}}
+      height: "700px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Requests", ytitle: "User Group",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
 
-    = bar_chart filtered_model.group(:school).count(:id).sort_by{|k,v| -v}.to_h,
+    - school_groups = schools.map{|k,v| [k, user_groups.keys.map{|x| [x, 0]}.to_h]}.to_h
+    -# Get the number of sessions by school and user group
+    - sessions = filtered_model.group(:school, :user_group).sum(:sessions).map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+    -# Fill in the blank map
+    - sessions.each {|v| school_groups[v[0]][v[1]] = v[2]}
+    -# Construct the data vector with name and stack label (dummy label)
+    - data = school_groups.map{|k, v| {name: k, stack: 'A', data: v }}
+    = bar_chart data,
       download: true,
+      colors: colors,
       thousands: ",",
-      xtitle: "Number of Requests", ytitle: "User Affiliation",
-      title: "Usage by Affiliation",
-      height: "800px",
-      library: {scales: { xAxes: [{id: 'x-axis',
-        type: "logarithmic",
-        ticks: {maxRotation: 90, minRotation: 90}}]}}
+      height: "700px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Sessions", ytitle: "User Group",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
 
 
-  = bar_chart filtered_model.group(:geoip_country).count(:id).sort_by{|k,v| -v}.first(15).to_h,
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+
+    - group_schools = user_groups.map{|k,v| [k, schools.keys.map{|x| [x, 0]}.to_h]}.to_h
+    -# Get the number of requests by school and user group
+    - requests = filtered_model.group(:user_group, :school).sum(:requests).map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+    -# Fill in the blank map
+    - requests.each {|v| group_schools[v[0]][v[1]] = v[2]}
+    -# Construct the data vector with name and stack label (dummy label)
+    - data = group_schools.map{|k, v| {name: k, stack: 'A', data: v }}
+    = bar_chart data,
+      download: true,
+      colors: colors,
+      thousands: ",",
+      height: "1000px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Requests", ytitle: "Schools",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+    - group_schools = user_groups.map{|k,v| [k, schools.keys.map{|x| [x, 0]}.to_h]}.to_h
+    -# Get the number of requests by school and user group
+    - sessions = filtered_model.group(:user_group, :school).sum(:sessions).map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+    -# Fill in the blank map
+    - sessions.each {|v| group_schools[v[0]][v[1]] = v[2]}
+    -# Construct the data vector with name and stack label (dummy label)
+    - data = group_schools.map{|k, v| {name: k, stack: 'A', data: v }}
+    = bar_chart data,
+      download: true,
+      colors: colors,
+      thousands: ",",
+      height: "1000px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Sessions", ytitle: "Schools",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+  - requests = filtered_model.group(:country).sum(:requests).sort_by{|k,v| -v}.first(15).to_h
+  - sessions = filtered_model.group(:country).sum(:sessions).select{|k,v| requests.keys.include? k}
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+
+  = bar_chart data,
     download: true,
     thousands: ",",
-    xtitle: "Number of Requests", ytitle: "Country",
-    height: "400px",
-    title: "Top 15 Countries by User",
+    height: "500px",
+    dataset: {borderWidth: 0},
+    xtitle: "Totals (Log10)", ytitle: "Countries",
+    title: "Connections from the Top 10 Countries",
+    library: {scales: { xAxes: [{id: 'x-axis',
+      type: "logarithmic",
+      ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+  - requests = filtered_model.where(:country => "US").group(:state).sum(:requests).sort_by{|k,v| -v}.first(15).to_h
+  - sessions = filtered_model.where(:country => "US").group(:state).sum(:sessions).select{|k,v| requests.keys.include? k}
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+
+  = bar_chart data,
+    download: true,
+    thousands: ",",
+    height: "500px",
+    dataset: {borderWidth: 0},
+    xtitle: "Totals (Log10)", ytitle: "States",
+    title: "Connections from the Top 10 States",
     library: {scales: { xAxes: [{id: 'x-axis',
       type: "logarithmic",
       ticks: {maxRotation: 90, minRotation: 90}}]}}
