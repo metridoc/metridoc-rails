@@ -1,5 +1,5 @@
-ActiveAdmin.register Ezproxy::EzpaarseJob,
-as: "Ezpaarse Jobs",
+ActiveAdmin.register Ezproxy::EzpaarseLog,
+as: "Ezpaarse Logs",
 namespace: :ezproxy do
   menu false
 
