@@ -152,7 +152,7 @@ en:
       alma: "Alma Circulation"
       upennalma: "Alma Demographics"
       ipeds: "IPEDS Data"
-      upennezproxy: "EZProxy Logs"
+      ezproxy: "EZProxy Logs"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:

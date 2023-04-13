@@ -51,8 +51,15 @@
 
   %h3 Dashboards
   %ul
-    %li #{link_to "ezPAARSE Dashboard (beta - very slow to load)", "/ezproxy/statistics"}
+    %li #{link_to "ezPAARSE Aggregated Statistics", "/ezproxy/statistics"}
 
   %h3 Data
   %ul
-    %li #{link_to "ezPAARSE Data", :ezproxy_ezpaarse_jobs}
+    %li #{link_to "ezPAARSE Data", :ezproxy_ezpaarse_logs}
+    %li
+      Summary Tables
+      %ul
+        %li #{link_to "Longitudinal Usage", :ezproxy_ezpaarse_hourly_usages}
+        %li #{link_to "Platform Usage", :ezproxy_ezpaarse_platforms}
+        %li #{link_to "User Profiles", :ezproxy_ezpaarse_user_profiles}
+    %li #{link_to "ezPAARSE Import Logs", :ezproxy_ezpaarse_jobs}

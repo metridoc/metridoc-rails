@@ -1,0 +1,49 @@
+= javascript_include_tag 'application'
+
+- fiscal_year = 2023
+- model = Ezproxy::EzpaarseHourlyUsage.where(:fiscal_year => fiscal_year)
+
+%section
+  %h2 Longitudinal Usage
+  %ul
+    %li Times are in UTC, there is a 4-5 hour shift from the Eastern timezone based on time of year.
+    %li
+      Request counts are individual url requests that have been translated by ezPAARSE.
+      This should be used as an aggregated approximation of usage.
+      The ezPAARSE program does not translate every single log recorded by EZProxy.
+    %li
+      A session is counted at the first instance of the session identifier in the logs.
+
+%hr
+%section
+  %h3 Daily Usage for FY#{fiscal_year}
+  - data = ezproxy_requests_and_sessions(model, "date")
+  = line_chart data,
+    download: true,
+    thousands: ",",
+    xtitle: "Date",
+    ytitle: "Totals"
+
+%hr
+%section
+  %h3 Weekly Usage for FY#{fiscal_year}
+  - requests = model.group(:dow_index, :day_of_week).sum(:requests).sort_by{|k,v| k[0]}.to_h.transform_keys{|k| k[1]}
+  - sessions = model.group(:dow_index, :day_of_week).sum(:sessions).sort_by{|k,v| k[0]}.to_h.transform_keys{|k| k[1]}
+  - data = [{name: 'Requests', data: requests}, {name: 'Sessions', data: sessions}]
+  = column_chart data,
+    download: true,
+    thousands: ",",
+    dataset: {borderWidth: 0},
+    xtitle: "Day of Week",
+    ytitle: "Totals"
+
+%hr
+%section
+  %h3 Hourly Usage for FY#{fiscal_year}
+  - data = ezproxy_requests_and_sessions(model, "hour_of_day")
+  = column_chart data,
+    download: true,
+    thousands: ",",
+    dataset: {borderWidth: 0},
+    xtitle: "Hour of Day",
+    ytitle: "Totals"

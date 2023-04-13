@@ -1,6 +1,6 @@
 ---
 load_sequence: 1
-target_model: "UpennEzproxy::EzpaarseJob"
+target_model: "Ezproxy::EzpaarseLog"
 target_adapter: "csv"
 truncate_before_load: "no"
 file_name: "ezpaarse_out.csv"

@@ -1,0 +1,93 @@
+= javascript_include_tag 'application'
+
+- fiscal_year = 2023
+- model = Ezproxy::EzpaarseUserProfile.where(:fiscal_year => fiscal_year)
+
+%section
+  %h2 User Profiles
+  %ul
+    %li
+      Logs are further enriched with demographic information.
+      %ul
+        %li The school and user group are extracted from Alma on a weekly basis.
+        %li The information in Alma gets a major update three times a year.
+        %li The login id used for the EZProxy system is equivalent to the PennKey.
+    %li
+      The ezPAARSE program resolves the host ip address into geographic locations
+      %ul
+        %li The country is resolved into the ISO-3166 Alpha2 code.
+        %li The raw data also includes an estimated latitude and longitude.
+        %li If a user is using a VPN then their true location may not be recorded.
+
+%hr
+%section
+  %h3 User Demographics for FY#{fiscal_year}
+  - data = ezproxy_double_group(model, "school", "user_group")
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+    = bar_chart data[0],
+      download: true,
+      colors: ezproxy_colors,
+      thousands: ",",
+      height: "750px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Requests", ytitle: "User Groups",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+    = bar_chart data[1],
+      download: true,
+      colors: ezproxy_colors,
+      thousands: ",",
+      height: "750px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Sessions", ytitle: "User Groups",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+  - data = ezproxy_double_group(model, "user_group", "school")
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+    = bar_chart data[0],
+      download: true,
+      colors: ezproxy_colors,
+      thousands: ",",
+      height: "1000px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Requests", ytitle: "Schools",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+    = bar_chart data[1],
+      download: true,
+      colors: ezproxy_colors,
+      thousands: ",",
+      height: "1000px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Sessions", ytitle: "Schools",
+      library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+%hr
+%section
+  %h3 Top 15 Countries of Users FY#{fiscal_year}
+  - data = ezproxy_top_x_data(model, 15, "country")
+  = bar_chart data,
+    download: true,
+    thousands: ",",
+    height: "500px",
+    dataset: {borderWidth: 0},
+    xtitle: "Totals (Log10)", ytitle: "Countries",
+    title: "Connections from the Top 15 Countries",
+    library: {scales: { xAxes: [{id: 'x-axis',
+      type: "logarithmic",
+      ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+%hr
+%section
+  %h3 Top 15 US States of Users FY#{fiscal_year}
+  - data = ezproxy_top_x_data(model.where(:country => "US"), 15, "state")
+  = bar_chart data,
+    download: true,
+    thousands: ",",
+    height: "500px",
+    dataset: {borderWidth: 0},
+    xtitle: "Totals (Log10)", ytitle: "States",
+    title: "Connections from the Top 15 States",
+    library: {scales: { xAxes: [{id: 'x-axis',
+      type: "logarithmic",
+      ticks: {maxRotation: 90, minRotation: 90}}]}}
