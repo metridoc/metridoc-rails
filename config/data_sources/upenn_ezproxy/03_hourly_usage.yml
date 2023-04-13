@@ -1,0 +1,53 @@
+---
+load_sequence: 3
+target_model: "Ezproxy::EzpaarseHourlyUsage"
+target_adapter: "native_sql"
+truncate_before_load: "yes"
+sqls:
+  - |
+      INSERT INTO ezpaarse_hourly_usages
+        (
+          fiscal_year,
+          date,
+          day_of_week,
+          dow_index,
+          hour_of_day,
+          requests
+        )
+      SELECT
+        CASE
+          WHEN DATE_PART('month', datetime) > 6
+          THEN DATE_PART('year', datetime) + 1
+          ELSE DATE_PART('year', datetime)
+        END AS fiscal_year,
+      	DATE_TRUNC('day', datetime) AS date,
+      	TO_CHAR(datetime, 'Day') AS day_of_week,
+      	DATE_PART('dow', datetime) AS dow_index,
+        DATE_PART('hour', datetime) AS hour_of_day,
+      	COUNT(id) AS requests
+      FROM ezpaarse_logs
+      GROUP BY 1, 2, 3, 4, 5;
+
+
+      WITH session_start AS
+      (
+        SELECT
+          MIN(datetime) AS datetime,
+          session_id
+        FROM ezpaarse_logs
+        GROUP BY session_id
+      ),
+      session_count AS
+      (
+        SELECT
+          DATE_TRUNC('day', datetime) AS date,
+          DATE_PART('hour', datetime) AS hour_of_day,
+          COUNT(session_id) AS sessions
+        FROM session_start
+        GROUP BY 1, 2
+      )
+      UPDATE ezpaarse_hourly_usages
+      SET sessions = session_count.sessions
+      FROM session_count
+      WHERE ezpaarse_hourly_usages.date = session_count.date
+      AND ezpaarse_hourly_usages.hour_of_day = session_count.hour_of_day;

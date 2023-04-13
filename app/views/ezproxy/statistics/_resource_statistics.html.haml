@@ -1,0 +1,86 @@
+= javascript_include_tag 'application'
+
+- fiscal_year = 2023
+- model = Ezproxy::EzpaarsePlatform.where(:fiscal_year => fiscal_year)
+
+%section
+  %h2 Resource Usage
+  %ul
+    %li
+      Publishers use different platforms to host their resources.
+      %ul
+        %li Some platforms represent multiple publishers.
+        %li The ezPAARSE program parses EZProxy logs based on the platform.
+    %li
+      Session count is aggregated on platform, return method and resource type.
+      %ul
+        %li Consider the session count an upper limit on the true number of sessions.
+    %li
+      The raw data can be used to extract more information on the usage of individual journals.
+
+%hr
+%section
+  %h3 Total Resource Usage for FY#{fiscal_year}
+  - data = ezproxy_requests_and_sessions(model, "platform_name")
+  = bar_chart data,
+    download: true,
+    thousands: ",",
+    height: "3000px",
+    dataset: {borderWidth: 0},
+    xtitle: "Totals", ytitle: "Resource",
+    title: "Resource Usage"
+
+%hr
+%section
+  %h3 Resource Types for FY#{fiscal_year}
+  - data = ezproxy_double_group(model, "mime", "rtype")
+  %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+    = bar_chart data[0],
+      download: true,
+      thousands: ",",
+      height: "700px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Requests (Log10)", ytitle: "Resource Type",
+      title: "Requests by Resource Type",
+      library: {scales: { x: {stacked: true},
+        y: {stacked: true},
+        xAxes: [{id: 'x-axis',
+          type: "logarithmic",
+          ticks: {maxRotation: 90, minRotation: 90}}]}}
+
+    = bar_chart data[1],
+      download: true,
+      thousands: ",",
+      height: "700px",
+      dataset: {borderWidth: 0},
+      xtitle: "Number of Sessions (Log10)", ytitle: "Resource Type",
+      title: "Sessions by Resource Type",
+      library: {scales: { x: {stacked: true},
+        y: {stacked: true},
+        xAxes: [{id: 'x-axis',
+          type: "logarithmic",
+          ticks: {maxRotation: 90, minRotation: 90}}]}}
+%hr
+%section
+  %h3 Resource Types of the 5 Most Used Publisher Platforms for FY#{fiscal_year}
+  - top_5_platforms = ezproxy_top_x_data(model, 5, "platform_name")[0][:data].keys
+  - top_5_platforms.each do |platform|
+    %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
+      - data = ezproxy_double_group(model.where(:platform_name => platform), "mime", "rtype")
+      = bar_chart data[0],
+        download: true,
+        thousands: ",",
+        height: "300px",
+        dataset: {borderWidth: 0},
+        xtitle: "Number of Requests", ytitle: "Resource Type",
+        title: "Requests on #{platform} by Resource Type",
+        library: {scales: { x: {stacked: true}, y: {stacked: true}}}
+
+      = bar_chart data[1],
+        download: true,
+        thousands: ",",
+        height: "300px",
+        dataset: {borderWidth: 0},
+        xtitle: "Number of Sessions", ytitle: "Resource Type",
+        title: "Sessions for #{platform} by Resource Type",
+        library: {scales: { x: {stacked: true}, y: {stacked: true}}}

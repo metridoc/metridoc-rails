@@ -1,0 +1,29 @@
+---
+load_sequence: 4
+target_model: "Ezproxy::EzpaarsePlatform"
+target_adapter: "native_sql"
+truncate_before_load: "yes"
+sqls:
+  - |
+      INSERT INTO ezpaarse_platforms
+        (
+          fiscal_year,
+          platform_name,
+          rtype,
+          mime,
+          requests,
+          sessions
+        )
+      SELECT
+      	CASE
+      		WHEN DATE_PART('month', datetime) > 6
+          THEN DATE_PART('year', datetime) + 1
+          ELSE DATE_PART('year', datetime)
+      	END AS fiscal_year,
+      	platform_name,
+      	rtype,
+      	mime,
+      	COUNT(id) AS requests,
+      	COUNT(DISTINCT session_id) AS sessions
+      FROM ezpaarse_logs
+      GROUP BY 1, 2, 3, 4;
