@@ -328,6 +328,12 @@ ActiveAdmin.setup do |config|
         if: proc{ authorized?(:read, "GateCount") },
         parent: I18n.t("active_admin.resource_sharing")
 
+      # Gate Counts
+      menu.add label: I18n.t("active_admin.upenn.upenn_menu"),
+        url: :upenn_root_path,
+        if: proc{ authorized?(:read, "Upenn") },
+        parent: I18n.t("active_admin.resource_sharing")
+
       # IPEDS
       menu.add label: I18n.t("active_admin.ipeds.ipeds_menu"),
         url: :ipeds_root_path,
@@ -487,7 +493,7 @@ ActiveAdmin.setup do |config|
 
   # List of namespaces that need menus
   namespaces = [
-    :admin, :ipeds, :ezborrow, :borrowdirect, :illiad, :ezproxy
+    :admin, :ipeds, :ezborrow, :borrowdirect, :illiad, :ezproxy, :upenn
   ]
 
   # Configure the menu for all namespaces
