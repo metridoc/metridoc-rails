@@ -1,0 +1,89 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  The following collection of resources represents Institutional data extracted
+  from the University of Pennsylvania published data.
+
+%hr
+%section
+  %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li In Progress....
+  %h3 Data Tables
+  %ul
+    %li= link_to "Enrollment Data", upenn_enrollments_path
+
+
+%hr
+%section
+  %h2 Enrollment Data
+
+  %h3 Introduction
+  Each year the University of Pennsylvania's Institutional Research & Analysis
+  group publishes #{link_to "Quick Facts", "https://ira.upenn.edu/penn-numbers/quick-facts"}
+  about the University.  These facts contain a variety of information including
+  the number of students enrolled in each school.  A Python script was used to
+  scrape the data from the pdfs from each year since FY2010 and export it into
+  csv files.  The data is then uploaded through the File Upload tool into the
+  appropriate table.
+
+  %h3 Schema
+  %ul
+    %li user - The user or user subcategory.
+    %li school - The school or school subcategory.
+    %li value - The number of students enrolled or faculty employed.
+    %li fiscal_year - The fiscal or academic year of the data.
+
+  %h3 School Rollup Categories
+  %ul
+    %li Total - The total number from all schools.
+    %li
+      SAS -
+      %ul
+        %li Humanities
+        %li Social Science
+        %li Natural Science
+        %li Undecided
+        %li LPS
+    %li Some school names may vary in time. (e.g. Weitzman vs Design)
+
+  %h3 User Rollup Cateogories
+  %ul
+    %li
+      Enrollment Total
+      %ul
+        %li
+          Undergraduate Total
+          %ul
+            %li Traditional Undergraduate / Traditional
+            %li Other Undergraduate / Other
+        %li
+          Graduate Total (post 2014)
+          %ul
+            %li Research Master
+            %li Professional Master
+            %li PhD
+            %li Professional Doctorate
+            %li Other Graduate
+        %li
+          Graduate Total (pre 2014)
+          %ul
+            %li Research Masters
+            %li PhD
+            %li First Professional
+            %li First Professional/Dual Degree
+            %li Other Professional
+            %li Other Graduate
+    %li
+      Regular Faculty & Staff Total
+      %ul
+        %li
+          Standing Faculty Total
+          %ul
+            %li Tenure-Stream Total
+            %li Clinician Educators
+        %li Associated Faculty Total
+        %li Staff
+    %li University Other

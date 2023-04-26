@@ -27,7 +27,8 @@ class Tools::FileUploadImport < ApplicationRecord
                         Ipeds::CompletionSchema,
                         Ipeds::DirectorySchema,
                         Ipeds::StemCipcode,
-                        Ipeds::Cipcode
+                        Ipeds::Cipcode,
+                        Upenn::Enrollment
                       ]
 
   validates :target_model, presence: true

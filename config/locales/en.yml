@@ -101,6 +101,8 @@ en:
       reshare_menu: "RSAT: PALCI"
     ezproxy:
       ezproxy_menu: "EZProxy"
+    upenn:
+        upenn_menu: "Institutional Data"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"
@@ -250,6 +252,9 @@ en:
       alma/circulation:
         one: "Alma Circulation"
         other: "Alma Circulations"
+      upenn/enrollment:
+        one: "Institutional Enrollment"
+        other: "Institutional Enrollments"
       ares/item_usage:
         one: "Ares Item Usage"
         other: "Ares Item Usage"
