@@ -1,5 +1,8 @@
 FROM ezpaarseproject/ezpaarse:3.8.0
 
+# add archived package
+RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" | tee /etc/apt/sources.list
+
 # install gosu
 RUN set -eux; \
     apt-get update; \
