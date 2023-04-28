@@ -6,7 +6,6 @@ import datetime
 import subprocess
 import shlex
 import sys
-import linecache
 import csv
 from pathlib import Path
 import re
@@ -193,17 +192,14 @@ class CsvCombiner:
         if not output_dir.exists():
             output_dir.mkdir()
 
-    def set_csv_header(self, path):
-        self.csv_header = linecache.getline(path.as_posix(), 1).strip().replace('-', '_').split(';')
-
     def write_csv(self):
         for i in range(len(self.input_files)):
-            if i == 0:
-                self.set_csv_header(self.input_files[i])
             with self.input_files[i].open(encoding='utf-8-sig', newline='') as c:
                 r = csv.reader(c, delimiter=';')
                 for l in r:
                     if r.line_num == 1:
+                        if i == 0:
+                            self.csv_header = [x.strip().replace('-','_') for x in l]
                         continue
                     self.records.append(l)
             if CLEAN_UP_EZPAARSE_OUTPUT:
