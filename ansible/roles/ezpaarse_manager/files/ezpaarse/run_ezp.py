@@ -6,7 +6,6 @@ import datetime
 import subprocess
 import shlex
 import sys
-import linecache
 import csv
 from pathlib import Path
 import re
