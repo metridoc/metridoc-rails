@@ -181,8 +181,8 @@ class EzpaarseRunner:
 class CsvCombiner:
     def __init__(self, csv_input_path, csv_output_path):
         self.input_path = Path(csv_input_path).expanduser()
-        self.input_files = [x for x in self.input_path.glob('*.csv')]
         self.output_path = Path(csv_output_path)
+        self.input_files = [x for x in self.input_path.glob('*.csv') if x != self.output_path]
         self.check_output_dir()
         self.csv_header = ''
         self.records = []
