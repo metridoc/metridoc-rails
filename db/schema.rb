@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_04_25_171048) do
+ActiveRecord::Schema.define(version: 2023_05_07_191010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -156,6 +156,33 @@ ActiveRecord::Schema.define(version: 2023_04_25_171048) do
     t.string "de_lms_location_code"
     t.datetime "last_updated"
     t.index ["origin", "de_id"], name: "bd_directory_entry_index", unique: true
+  end
+
+  create_table "bd_reshare_host_lms_locations", force: :cascade do |t|
+    t.string "hll_id"
+    t.string "origin"
+    t.datetime "hll_date_created"
+    t.datetime "hll_last_updated"
+    t.integer "hll_version"
+    t.string "hll_code"
+    t.string "hll_name"
+    t.integer "hll_supply_preference"
+    t.string "hll_corresponding_de"
+    t.boolean "hll_hidden"
+    t.index ["hll_id"], name: "bd_reshare_location_index", unique: true
+  end
+
+  create_table "bd_reshare_host_lms_shelving_locations", force: :cascade do |t|
+    t.string "hlsl_id"
+    t.string "origin"
+    t.datetime "hlsl_date_created"
+    t.datetime "hlsl_last_updated"
+    t.integer "hlsl_version"
+    t.string "hlsl_code"
+    t.string "hlsl_name"
+    t.integer "hlsl_supply_preference"
+    t.boolean "hlsl_hidden"
+    t.index ["hlsl_id"], name: "bd_reshare_shelving_location_index", unique: true
   end
 
   create_table "bd_reshare_lending_turnarounds", force: :cascade do |t|
@@ -1210,6 +1237,33 @@ ActiveRecord::Schema.define(version: 2023_04_25_171048) do
     t.string "de_lms_location_code"
     t.datetime "last_updated"
     t.index ["origin", "de_id"], name: "index_reshare_directory_entries_on_origin_and_de_id", unique: true
+  end
+
+  create_table "reshare_host_lms_locations", force: :cascade do |t|
+    t.string "hll_id"
+    t.string "origin"
+    t.datetime "hll_date_created"
+    t.datetime "hll_last_updated"
+    t.integer "hll_version"
+    t.string "hll_code"
+    t.string "hll_name"
+    t.integer "hll_supply_preference"
+    t.string "hll_corresponding_de"
+    t.boolean "hll_hidden"
+    t.index ["hll_id"], name: "reshare_location_index", unique: true
+  end
+
+  create_table "reshare_host_lms_shelving_locations", force: :cascade do |t|
+    t.string "hlsl_id"
+    t.string "origin"
+    t.datetime "hlsl_date_created"
+    t.datetime "hlsl_last_updated"
+    t.integer "hlsl_version"
+    t.string "hlsl_code"
+    t.string "hlsl_name"
+    t.integer "hlsl_supply_preference"
+    t.boolean "hlsl_hidden"
+    t.index ["hlsl_id"], name: "reshare_shelving_location_index", unique: true
   end
 
   create_table "reshare_lending_turnarounds", force: :cascade do |t|
