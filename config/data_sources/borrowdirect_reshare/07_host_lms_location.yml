@@ -1,0 +1,31 @@
+load_sequence:         7
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.host_lms_location"
+column_mappings:
+  "__origin": origin
+
+  "hll_id": hll_id
+  "hll_version": hll_version
+  "hll_date_created": hll_date_created
+  "hll_last_updated": hll_last_updated
+
+  "hll_code": hll_code
+  "hll_name": hll_name
+
+  "hll_supply_preference": hll_supply_preference
+  "hll_corresponding_de": hll_corresponding_de
+  "hll_hidden": hll_hidden
+
+export_file_name:      "reshare_host_lms_location.csv"
+export_filter_date_sql: "__start > ?"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Borrowdirect::Reshare::HostLmsLocation"
+truncate_before_load:  "no"
+incremental_filter_column: "hll_last_updated"
+
+unique_keys: ["hll_id"]
+upsert: true

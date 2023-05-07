@@ -1,0 +1,30 @@
+load_sequence:         8
+
+# Source Config
+source_adapter:        postgres
+source_table:          "reshare_rs.host_lms_shelving_location"
+column_mappings:
+  "__origin": origin
+
+  "hlsl_id": hlsl_id
+  "hlsl_version": hlsl_version
+  "hlsl_date_created": hlsl_date_created
+  "hlsl_last_updated": hlsl_last_updated
+
+  "hlsl_code": hlsl_code
+  "hlsl_name": hlsl_name
+
+  "hlsl_supply_preference": hlsl_supply_preference
+  "hlsl_hidden": hlsl_hidden
+
+export_file_name:      "reshare_host_lms_shelving_location.csv"
+export_filter_date_sql: "__start > ?"
+
+# Target Config
+target_adapter:        csv
+target_model:          "Ezborrow::Reshare::HostLmsShelvingLocation"
+truncate_before_load:  "no"
+incremental_filter_column: "hlsl_last_updated"
+
+unique_keys: ["hlsl_id"]
+upsert: true
