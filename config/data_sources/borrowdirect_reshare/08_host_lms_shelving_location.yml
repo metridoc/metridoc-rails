@@ -2,7 +2,7 @@ load_sequence:         8
 
 # Source Config
 source_adapter:        postgres
-source_table:          "reshare_rs.host_lms_shelving_location"
+source_table:          "reshare_rs.host_lms_shelving_loc"
 column_mappings:
   "__origin": origin
 
