@@ -89,6 +89,19 @@
         %li The field de_parent traces the location to the parent institution.
         %li Table contains a paired unique key of the de_id and the origin.
     %li
+      = link_to "Host LMS Locations", :ezborrow_reshare_host_lms_locations
+      %ul
+        %li Describes pick locations set up in the Library Management Systems for each institution (origin).
+        %li Use to get the human readable name of the pick location.
+        %li One institution can have many locations from which items can be supplied.
+        %li Table contains a unique key of the hll_id.
+    %li
+      = link_to "Host LMS Shelving Locations", :ezborrow_reshare_host_lms_shelving_locations
+      %ul
+        %li Describes shelving locations set up in the Library Management Systems for each institution (origin).
+        %li One institution can have many shelves from which items can be supplied.
+        %li Table contains a unique key of the hlsl_id.
+    %li
       = link_to "Symbol", :ezborrow_reshare_symbols
       %ul
         %li Describes the symbolic name used in the patron request rota creation.
