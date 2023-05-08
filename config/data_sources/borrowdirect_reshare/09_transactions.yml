@@ -45,7 +45,7 @@ sqls:
     		de.de_name AS lender,
     		pr.pr_local_call_number,
         pr.pr_id,
-    		pr.pr_pick_location_fk,
+    		hll.hll_name AS pick_location,
     		pr.pr_pick_shelving_location,
     		pr.pr_hrid,
     		s.st_code,
@@ -55,6 +55,8 @@ sqls:
     		ON pr.origin = de.origin
     	JOIN bd_reshare_status s
     		ON s.st_id = pr.pr_state_fk
+      JOIN bd_reshare_host_lms_locations hll
+        ON hll.hll_id = pr.pr_pick_location_fk
     	WHERE pr.pr_is_requester IS FALSE
         AND pr.last_updated > (SELECT max_date FROM max_date)
     		AND de.de_status_fk IS NOT NULL
@@ -103,7 +105,7 @@ sqls:
       lender.pr_local_call_number,
       borrower.pr_oclc_number,
       borrower.pr_selected_item_barcode,
-    	lender.pr_pick_location_fk,
+    	lender.pick_location,
     	lender.pr_pick_shelving_location,
     	borrower.pr_pickup_location_slug
     FROM borrower
