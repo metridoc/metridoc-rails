@@ -1,6 +1,6 @@
-load_sequence:         7
+load_sequence:         9
 target_adapter:        'native_sql'
-target_model:          "Borrowdirect::Reshare::Transactions"
+target_model:          "Ezborrow::Reshare::Transactions"
 truncate_before_load:  "no"
 sqls:
   - |
@@ -10,7 +10,7 @@ sqls:
           MAX(borrower_last_updated),
           '1970-01-01'
         ) AS max_date
-      FROM bd_reshare_transactions
+      FROM reshare_transactions
     ),
     borrower AS (
     	SELECT
@@ -27,43 +27,41 @@ sqls:
         pr.pr_place_of_pub,
         pr.pr_oclc_number,
         pr.last_updated
-    	FROM bd_reshare_patron_requests pr
-    	JOIN bd_reshare_directory_entries de
+    	FROM reshare_patron_requests pr
+    	JOIN reshare_directory_entries de
     		ON pr.origin = de.origin
-    	JOIN bd_reshare_status s
+    	JOIN reshare_status s
     		ON s.st_id = pr.pr_state_fk
     	WHERE pr.pr_is_requester IS TRUE
         AND pr.last_updated > (SELECT max_date FROM max_date)
     		AND de.de_status_fk IS NOT NULL
     		AND de.de_parent IS NULL
-    		AND de.de_name NOT IN (
-          'Business Library (Manhattanville)'
-        )
+    		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
     ),
     lender AS (
     	SELECT
     		de.de_name AS lender,
     		pr.pr_local_call_number,
         pr.pr_id,
-    		pr.pr_pick_location_fk,
+    		hll.hll_name AS pick_location,
     		pr.pr_pick_shelving_location,
     		pr.pr_hrid,
     		s.st_code,
         pr.last_updated
-    	FROM bd_reshare_patron_requests pr
-    	JOIN bd_reshare_directory_entries de
+    	FROM reshare_patron_requests pr
+    	JOIN reshare_directory_entries de
     		ON pr.origin = de.origin
-    	JOIN bd_reshare_status s
+    	JOIN reshare_status s
     		ON s.st_id = pr.pr_state_fk
+      JOIN reshare_host_lms_locations hll
+        ON hll.hll_id = pr.pr_pick_location_fk
     	WHERE pr.pr_is_requester IS FALSE
         AND pr.last_updated > (SELECT max_date FROM max_date)
     		AND de.de_status_fk IS NOT NULL
     		AND de.de_parent IS NULL
-    		AND de.de_name NOT IN (
-          'Business Library (Manhattanville)'
-        )
+    		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
     )
-    INSERT INTO bd_reshare_transactions (
+    INSERT INTO reshare_transactions (
       borrower,
       lender,
       request_id,
@@ -103,8 +101,8 @@ sqls:
       lender.pr_local_call_number,
       borrower.pr_oclc_number,
       borrower.pr_selected_item_barcode,
-    	lender.pr_pick_location_fk,
-    	lender.pr_pick_shelving_location,
+    	lender.pick_location,
+      lender.pr_pick_shelving_location,
     	borrower.pr_pickup_location_slug
     FROM borrower
     JOIN lender
