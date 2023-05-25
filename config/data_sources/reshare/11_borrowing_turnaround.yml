@@ -1,6 +1,6 @@
-load_sequence:         9
+load_sequence:         11
 target_adapter:        'native_sql'
-target_model:          "Borrowdirect::Reshare::BorrowingTurnaround"
+target_model:          "Ezborrow::Reshare::BorrowingTurnaround"
 truncate_before_load:  "yes"
 sqls:
   - |
@@ -10,7 +10,7 @@ sqls:
             MAX(request_date),
             '1970-01-01'
           ) AS max_date
-        FROM bd_reshare_borrowing_turnarounds
+        FROM reshare_borrowing_turnarounds
       ),
       history AS (
       	SELECT
@@ -34,20 +34,18 @@ sqls:
       			  THEN pra.pra_date_created
       			END
           ) AS received_date
-        FROM bd_reshare_patron_request_audits pra
-        JOIN bd_reshare_status s
+        FROM reshare_patron_request_audits pra
+        JOIN reshare_status s
           ON pra.pra_to_status_fk = s.st_id
-      	JOIN bd_reshare_directory_entries de
+      	JOIN reshare_directory_entries de
       		ON pra.origin = de.origin
         WHERE pra.pra_date_created > (SELECT max_date FROM max_date)
       		AND de.de_status_fk IS NOT NULL
       		AND de.de_parent IS NULL
-      		AND de.de_name NOT IN (
-            'Business Library (Manhattanville)'
-          )
+      		AND de.de_name NOT IN ('South Charleston Campus Collection', 'Bobst Circulation Desk')
         GROUP BY de.de_name, pra.pra_patron_request_fk
       )
-      INSERT INTO bd_reshare_borrowing_turnarounds (
+      INSERT INTO reshare_borrowing_turnarounds (
         borrower,
         request_id,
         request_date,
@@ -65,11 +63,11 @@ sqls:
       ON CONFLICT (borrower, request_id)
       DO UPDATE
       SET
-        shipped_date = LEAST(bd_reshare_borrowing_turnarounds.shipped_date, EXCLUDED.shipped_date),
-        received_date = LEAST(bd_reshare_borrowing_turnarounds.received_date, EXCLUDED.received_date);
+        shipped_date = LEAST(reshare_borrowing_turnarounds.shipped_date, EXCLUDED.shipped_date),
+        received_date = LEAST(reshare_borrowing_turnarounds.received_date, EXCLUDED.received_date);
 
 
-      UPDATE bd_reshare_borrowing_turnarounds
+      UPDATE reshare_borrowing_turnarounds
       SET
         time_to_ship = ROUND(
           CAST (
