@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_07_191010) do
+ActiveRecord::Schema.define(version: 2023_05_25_210802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -1425,6 +1425,8 @@ ActiveRecord::Schema.define(version: 2023_05_07_191010) do
     t.string "school"
     t.integer "value"
     t.integer "fiscal_year"
+    t.string "user_parent"
+    t.string "school_parent"
   end
 
   create_table "user_role_sections", force: :cascade do |t|

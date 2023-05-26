@@ -24,10 +24,12 @@
   Each year the University of Pennsylvania's Institutional Research & Analysis
   group publishes #{link_to "Quick Facts", "https://ira.upenn.edu/penn-numbers/quick-facts"}
   about the University.  These facts contain a variety of information including
-  the number of students enrolled in each school.  A Python script was used to
+  the number of students enrolled in each school.  Also included are the numbers
+  of Faculty, Staff and other affiliates at the start of each year.  The count
+  is per person rather than totals of FTE. A Python script was used to
   scrape the data from the pdfs from each year since FY2010 and export it into
-  csv files.  The data is then uploaded through the File Upload tool into the
-  appropriate table.
+  csv files and hand scanned for errors.  The data is then uploaded through the
+  File Upload tool into the appropriate table.
 
   %h3 Schema
   %ul
@@ -35,6 +37,8 @@
     %li school - The school or school subcategory.
     %li value - The number of students enrolled or faculty employed.
     %li fiscal_year - The fiscal or academic year of the data.
+    %li user_parent - The parent category for the user.
+    %li school_parent - The parent category for the school.
 
   %h3 School Rollup Categories
   %ul
@@ -57,8 +61,8 @@
         %li
           Undergraduate Total
           %ul
-            %li Traditional Undergraduate / Traditional
-            %li Other Undergraduate / Other
+            %li Traditional Undergraduate
+            %li Other Undergraduate
         %li
           Graduate Total (post 2014)
           %ul
@@ -70,7 +74,7 @@
         %li
           Graduate Total (pre 2014)
           %ul
-            %li Research Masters
+            %li Research Master
             %li PhD
             %li First Professional
             %li First Professional/Dual Degree
@@ -83,7 +87,7 @@
           Standing Faculty Total
           %ul
             %li Tenure-Stream Total
-            %li Clinician Educators
+            %li Clinician Educators Total
         %li Associated Faculty Total
         %li Staff
     %li University Other
