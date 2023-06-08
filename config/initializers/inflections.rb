@@ -36,4 +36,10 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "Status"
   inflect.uncountable "status"
   inflect.uncountable "reshare_status"
+
+  # Ares Item History is uncountable
+  inflect.uncountable "ItemHistory"
+  inflect.uncountable "item_history"
+  inflect.uncountable "ares_item_history"
+  inflect.uncountable "cr_ares_item_history"
 end

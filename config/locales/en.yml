@@ -72,6 +72,8 @@ en:
       alma_menu: "Alma"
     ares:
       ares_menu: "Ares"
+    course_reserves:
+        course_reserves_menu: "Course Reserves"
     borrowdirect:
       borrowdirect_menu: "RSAT: BorrowDirect"
       columns_heading: "Example data visualizations"
