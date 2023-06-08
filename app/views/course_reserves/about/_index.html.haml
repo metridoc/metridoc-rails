@@ -1,0 +1,36 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    The Penn Libraries' Course Reserves service allows instructors to set aside
+    books, films, or sound recordings for class use, or to make articles or book
+    excerpts available electronically through Canvas. Reserve lists typically
+    include required and recommended course readings. For more information, see
+    #{link_to "Penn Libraries Course Reserves", "https://www.library.upenn.edu/page/course-reserves"}.
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    There are three data sources.  The first is termed Legacy and is of unknown
+    origin.  Additional tables were created in the Ares instance for a set of
+    "Legacy" tables. Some of the information was imported in the Ares tables,
+    but the Legacy tables are preserved here as a complete duplicate was not made.
+    #{link_to "Ares", "https://www.atlas-sys.com/ares"}, by
+    #{link_to "Atlas Systems", "https://www.atlas-sys.com/"},
+    was used from Spring 2010 through Spring 2023.
+    On May 22, 2023, the course reserve system was transferred to
+    #{link_to "Leganto", "https://exlibrisgroup.com/products/leganto-reading-list-management-system/"},
+    an #{link_to "ExLibris", "https://exlibrisgroup.com/"} product, a subsidiary
+    of #{link_to "Clarivate", "https://clarivate.com/"}.
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards
+  %ul
+    %li Someday ...
+
+  %h3 Data
+  %ul
+    %li #{link_to "Legacy", :course_reserves_legacy} - January 2010 to May 2016
+    %li #{link_to "Ares", :course_reserves_ares} - January 2010 to May 22, 2023
+    %li #{link_to "Leganto", :course_reserves_leganto} - May 22, 2023 to present
