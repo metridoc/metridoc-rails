@@ -136,7 +136,7 @@ en:
       read-only: "Read Only"
       read-write: "Read/Write"
     user_role_sections:
-      ares: "Ares"
+      coursereserves: "Course Reserves"
       borrowdirect: "Borrow Direct"
       consultation: "Consultation"
       ezborrow: "E-Z Borrow"
@@ -157,6 +157,7 @@ en:
       upennalma: "Alma Demographics"
       ipeds: "IPEDS Data"
       ezproxy: "EZProxy Logs"
+      upenn: "University of Pennsylvania Data"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:
