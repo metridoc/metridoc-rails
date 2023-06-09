@@ -1,0 +1,26 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    On May 22, 2023, the course reserve system was transferred to
+    #{link_to "Leganto", "https://exlibrisgroup.com/products/leganto-reading-list-management-system/"},
+    an #{link_to "ExLibris", "https://exlibrisgroup.com/"} product, a subsidiary
+    of #{link_to "Clarivate", "https://clarivate.com/"}.  The data model for
+    Metridoc is still in development. This location is a holding area for future
+    data.
+
+%section
+  %h2 Resources
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Leganto Course Reserves data
+    begin with the prefix "cr_leganto_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/course_reserves/#{resource.resource_name.param_key.pluralize}"
+
+%hr

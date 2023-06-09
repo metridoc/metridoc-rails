@@ -9,7 +9,6 @@ class Tools::FileUploadImport < ApplicationRecord
   after_create  :queue_process
 
   UPLOADABLE_MODELS = [ Alma::Circulation,
-                        Ares::ItemUsage,
                         Consultation::Interaction,
                         GeoData::CountryCode,
                         Keyserver::StatusTerm,

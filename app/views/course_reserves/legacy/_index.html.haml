@@ -1,0 +1,82 @@
+= javascript_include_tag 'application'
+%section
+  %h2 Introduction
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    The Penn Libraries' Course Reserves service allows instructors to set aside
+    books, films, or sound recordings for class use, or to make articles or book
+    excerpts available electronically through Canvas. Reserve lists typically
+    include required and recommended course readings. For more information, see
+    #{link_to "Penn Libraries Course Reserves", "https://www.library.upenn.edu/page/course-reserves"}.
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    The Legacy Course Reserve system pre-dates the Ares system.  However,
+    I was not able to find what system was used before Ares.
+    The Legacy tables contain course information from January 2010 through to
+    May 2016.  After May 2014, the system was phased out with the New Bolton Center
+    and Wharton being the final groups to switch to Ares.
+
+%hr
+%section
+  %h2 Resources
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Legacy Course Reserves data
+    begin with the prefix "cr_legacy_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/course_reserves/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+%section
+  %h2 Table structure
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    Two tables have been preserved from the Legacy data.
+    Only the instructors were listed for the courses which allowed the tables to
+    be simplified.
+
+  %h3 Course
+  %ul
+    %li Course ID - Integer identifier for the course within the system.
+    %li Course Code - DepartmentCourse Number-Course Section
+    %li Registrar Course Id - SRS_Department-Course Number-Course Section
+    %li Semester - Semester of the course.
+    %li Department - Full name of the department assigned to the course.
+    %li Name - Name of the course.
+    %li Default Pickup Site - Location for picking up items.
+    %li
+      Instructor information
+      %ul
+        %li Instructor Pennkey
+        %li Instructor Penn ID Number
+        %li Instructor Department
+        %li Instructor First Name
+        %li Instructor Last Name
+
+  %h3 Item
+  %ul
+    %li Item ID - Unique Item identifier within the system.
+    %li Course ID - Integer identifier for the course. Primary key to Course table.
+    %li
+      Location Details
+      %ul
+        %li Processing Location - Where the Item was processed or can be collected.
+        %li Location - Online URL link to digital item.
+        %li Call Number - Physical location of the item.
+        %li Item Barcode
+    %li
+      Bibliographic Information
+      %ul
+        %li Title - Full title of the resource.
+        %li Author
+        %li Publisher
+        %li Pub Place - Publishing Location.
+        %li Edition
+        %li Isxn - ISBN or ISSN.
+        %li Volume
+    %li
+      Document format
+      %ul
+        %li Document Type - Either a weblink or hard copy.
+        %li Item Format - Book or article.
