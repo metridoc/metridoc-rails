@@ -20,7 +20,6 @@ class Security::UserRole < ApplicationRecord
                         "Tools",
                         "Misc",
                         "Report",
-                        "Reshare",
                         "UpennAlma",
                         "Upenn",
                         "Ezproxy",
@@ -56,7 +55,9 @@ class Security::UserRole < ApplicationRecord
     case subject
     when ActiveAdmin::Page
       # Return the namespace of the page
-      s = subject.namespace_name
+      # Put the namespace into CamelCase rather than snake_case
+      # This will match with the class names
+      s = subject.namespace_name.to_s.camelize.downcase
     when Class
       # Return the class
       s = subject
