@@ -5,7 +5,6 @@ class Security::UserRole < ApplicationRecord
   accepts_nested_attributes_for :user_role_sections, allow_destroy: true, reject_if: proc {|attributes| attributes['section'].blank? }
 
   MANAGED_SECTIONS = [  "Security",
-                        "Ares",
                         "Alma",
                         "Borrowdirect",
                         "Consultation",
@@ -21,11 +20,11 @@ class Security::UserRole < ApplicationRecord
                         "Tools",
                         "Misc",
                         "Report",
-                        "Reshare",
                         "UpennAlma",
                         "Upenn",
                         "Ezproxy",
-                        "Ipeds"
+                        "Ipeds",
+                        "CourseReserves"
                       ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]
@@ -56,7 +55,9 @@ class Security::UserRole < ApplicationRecord
     case subject
     when ActiveAdmin::Page
       # Return the namespace of the page
-      s = subject.namespace_name
+      # Put the namespace into CamelCase rather than snake_case
+      # This will match with the class names
+      s = subject.namespace_name.to_s.camelize.downcase
     when Class
       # Return the class
       s = subject

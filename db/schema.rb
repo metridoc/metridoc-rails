@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_25_210802) do
+ActiveRecord::Schema.define(version: 2023_06_08_185940) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -115,22 +115,6 @@ ActiveRecord::Schema.define(version: 2023_05_25_210802) do
     t.string "last_name"
     t.string "preferred_email"
     t.string "penn_id_number"
-  end
-
-  create_table "ares_item_usages", force: :cascade do |t|
-    t.string "semester"
-    t.string "item_id"
-    t.datetime "date_time"
-    t.string "document_type"
-    t.string "item_format"
-    t.string "course_id"
-    t.boolean "digital_item"
-    t.string "course_number"
-    t.string "department"
-    t.integer "date_time_year"
-    t.integer "date_time_month"
-    t.integer "date_time_day"
-    t.integer "date_time_hour"
   end
 
   create_table "bd_reshare_borrowing_turnarounds", force: :cascade do |t|
@@ -445,6 +429,170 @@ ActiveRecord::Schema.define(version: 2023_05_25_210802) do
     t.index ["outcome"], name: "index_consultation_interactions_on_outcome"
     t.index ["patron_question"], name: "index_consultation_interactions_on_patron_question"
     t.index ["staff_pennkey"], name: "index_consultation_interactions_on_staff_pennkey"
+  end
+
+  create_table "cr_ares_course_users", force: :cascade do |t|
+    t.integer "course_id"
+    t.string "user_type"
+    t.string "username"
+    t.index ["course_id"], name: "cr_ares_course_users_course_id"
+    t.index ["user_type"], name: "cr_ares_course_users_user_type"
+  end
+
+  create_table "cr_ares_courses", force: :cascade do |t|
+    t.integer "course_id"
+    t.string "course_code"
+    t.string "external_course_id"
+    t.string "registrar_course_id"
+    t.string "department"
+    t.string "semester"
+    t.datetime "start_date"
+    t.datetime "stop_date"
+    t.decimal "course_enrollment"
+    t.string "name"
+    t.string "instructor"
+    t.string "default_pickup_site"
+    t.index ["course_id"], name: "cr_ares_courses_course_id"
+    t.index ["semester"], name: "cr_ares_courses_semester"
+  end
+
+  create_table "cr_ares_custom_drop_downs", force: :cascade do |t|
+    t.string "group_name"
+    t.string "label_name"
+    t.string "label_value"
+  end
+
+  create_table "cr_ares_item_history", force: :cascade do |t|
+    t.integer "item_id"
+    t.datetime "date_time"
+    t.string "entry"
+    t.string "username"
+    t.index ["item_id"], name: "cr_ares_item_history_item_id"
+    t.index ["username"], name: "cr_ares_item_history_username"
+  end
+
+  create_table "cr_ares_item_trackings", force: :cascade do |t|
+    t.integer "item_id"
+    t.datetime "tracking_date_time"
+    t.string "status"
+    t.string "username"
+    t.index ["item_id"], name: "cr_ares_item_trackings_item_id"
+    t.index ["username"], name: "cr_ares_item_trackings_username"
+  end
+
+  create_table "cr_ares_items", force: :cascade do |t|
+    t.integer "item_id"
+    t.integer "course_id"
+    t.string "pickup_location"
+    t.string "processing_location"
+    t.string "current_status"
+    t.datetime "current_status_date"
+    t.string "item_type"
+    t.boolean "digital_item"
+    t.string "location"
+    t.boolean "ares_document"
+    t.boolean "copyright_required"
+    t.boolean "copyright_obtained"
+    t.datetime "active_date"
+    t.datetime "inactive_date"
+    t.string "callnumber"
+    t.text "reason_for_cancellation"
+    t.boolean "proxy"
+    t.string "title"
+    t.string "author"
+    t.string "publisher"
+    t.string "pub_place"
+    t.string "pub_date"
+    t.string "edition"
+    t.string "isxn"
+    t.string "esp_number"
+    t.string "doi"
+    t.string "article_title"
+    t.string "volume"
+    t.string "issue"
+    t.string "journal_year"
+    t.string "journal_month"
+    t.string "shelf_location"
+    t.string "document_type"
+    t.string "item_format"
+    t.text "description"
+    t.string "editor"
+    t.string "item_barcode"
+    t.string "needed_by"
+    t.index ["course_id"], name: "cr_ares_items_course_id"
+    t.index ["item_id"], name: "cr_ares_items_item_id"
+  end
+
+  create_table "cr_ares_semesters", force: :cascade do |t|
+    t.string "semester"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.index ["semester"], name: "cr_ares_semesters_semester"
+  end
+
+  create_table "cr_ares_sites", force: :cascade do |t|
+    t.string "site_code"
+    t.string "site_name"
+    t.string "default_processing_site"
+    t.boolean "available_for_pickup"
+    t.boolean "available_for_processing"
+  end
+
+  create_table "cr_ares_users", force: :cascade do |t|
+    t.string "username"
+    t.string "last_name"
+    t.string "first_name"
+    t.string "library_id"
+    t.string "department"
+    t.string "status"
+    t.string "e_mail_address"
+    t.string "user_type"
+    t.datetime "last_login_date"
+    t.string "cleared"
+    t.datetime "expiration_date"
+    t.boolean "trusted"
+    t.string "auth_method"
+    t.boolean "course_email_default"
+    t.string "external_user_id"
+    t.index ["user_type"], name: "cr_ares_users_user_type"
+    t.index ["username"], name: "cr_ares_users_username"
+  end
+
+  create_table "cr_legacy_courses", force: :cascade do |t|
+    t.integer "course_id"
+    t.string "course_code"
+    t.string "registrar_course_id"
+    t.string "semester"
+    t.string "department"
+    t.string "name"
+    t.string "default_pickup_site"
+    t.string "instructor_pennkey"
+    t.integer "instructor_penn_id"
+    t.string "instructor_department"
+    t.string "instructor_first_name"
+    t.string "instructor_last_name"
+    t.index ["course_id"], name: "cr_legacy_courses_course_id"
+    t.index ["semester"], name: "cr_legacy_courses_semester"
+  end
+
+  create_table "cr_legacy_items", force: :cascade do |t|
+    t.string "item_id"
+    t.integer "course_id"
+    t.string "processing_location"
+    t.string "location"
+    t.string "callnumber"
+    t.string "title"
+    t.string "author"
+    t.string "publisher"
+    t.string "pub_place"
+    t.string "edition"
+    t.string "isxn"
+    t.string "volume"
+    t.string "document_type"
+    t.string "item_format"
+    t.string "item_barcode"
+    t.index ["course_id"], name: "cr_legacy_items_course_id"
+    t.index ["item_id"], name: "cr_legacy_items_item_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|

@@ -304,10 +304,10 @@ ActiveAdmin.setup do |config|
       menu.add label: I18n.t("active_admin.resource_sharing"),
         priority: 1
 
-      # Ares
-      menu.add label: I18n.t("active_admin.ares.ares_menu"),
-        url: :admin_ares_path,
-        if: proc{ authorized?(:read, "Ares") },
+      # Course Reserves
+      menu.add  label: I18n.t("active_admin.course_reserves.course_reserves_menu"),
+        url: :course_reserves_root_path,
+        if: proc{ authorized?(:read, "CourseReserves") },
         parent: I18n.t("active_admin.resource_sharing")
 
       # Consultation and Instruction
@@ -493,7 +493,8 @@ ActiveAdmin.setup do |config|
 
   # List of namespaces that need menus
   namespaces = [
-    :admin, :ipeds, :ezborrow, :borrowdirect, :illiad, :ezproxy, :upenn
+    :admin, :ipeds, :ezborrow, :borrowdirect,
+    :illiad, :ezproxy, :upenn, :course_reserves
   ]
 
   # Configure the menu for all namespaces

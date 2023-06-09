@@ -72,6 +72,8 @@ en:
       alma_menu: "Alma"
     ares:
       ares_menu: "Ares"
+    course_reserves:
+        course_reserves_menu: "Course Reserves"
     borrowdirect:
       borrowdirect_menu: "RSAT: BorrowDirect"
       columns_heading: "Example data visualizations"
@@ -134,27 +136,27 @@ en:
       read-only: "Read Only"
       read-write: "Read/Write"
     user_role_sections:
-      ares: "Ares"
-      borrowdirect: "Borrow Direct"
+      coursereserves: "Course Reserves"
+      borrowdirect: "RSAT: BorrowDirect"
       consultation: "Consultation"
-      ezborrow: "E-Z Borrow"
+      ezborrow: "RSAT: PALCI"
       gatecount: "Gate Counts"
-      illiad: "Illiad"
+      illiad: "RSAT: Illiad"
       keyserver: "Key Server"
       marc: "MARC Data"
       tools: "Tools"
       libraryprofile: "Participating Libraries"
-      supplementaldata: "RSAT Supplemental Data"
+      supplementaldata: "RSAT: Supplemental Data"
       log: "Log"
       bookkeeping: "Bookkeeping"
       security: "Security"
       misc: "Miscellaneous"
       report: "Reports"
-      reshare: "RSAT: PALCI"
       alma: "Alma Circulation"
       upennalma: "Alma Demographics"
       ipeds: "IPEDS Data"
       ezproxy: "EZProxy Logs"
+      upenn: "University of Pennsylvania Data"
     are_you_sure: "Are you sure?"
     file_upload_import:
       statuses:
