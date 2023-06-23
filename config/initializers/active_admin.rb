@@ -494,7 +494,8 @@ ActiveAdmin.setup do |config|
   # List of namespaces that need menus
   namespaces = [
     :admin, :ipeds, :ezborrow, :borrowdirect,
-    :illiad, :ezproxy, :upenn, :course_reserves
+    :illiad, :ezproxy, :upenn, :course_reserves,
+    :library_staff
   ]
 
   # Configure the menu for all namespaces
