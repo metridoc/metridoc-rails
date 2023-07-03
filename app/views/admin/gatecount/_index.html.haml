@@ -3,6 +3,8 @@
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
+    %li= link_to "Statistical Summary", "statistical_summary"
+
 
 #data-viz
   %h2= t 'active_admin.gatecount.columns_heading'
