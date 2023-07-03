@@ -16,7 +16,7 @@ ActiveAdmin.register_page "Statistical Summary" do
   controller do
     private
     def authorize_access!
-      authorize! :read, "Gate counts"
+      authorize! :read, "GateCount"
     end
   end
 
