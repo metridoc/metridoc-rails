@@ -1,8 +1,8 @@
 ActiveAdmin.register_page "Statistical Summary" do
 
-  #breadcrumb do
-  #  [link_to('Admin',admin_root_path), link_to('Gate Counts',admin_gatecount_path)]
-  #end
+  breadcrumb do
+    [link_to('Admin',admin_root_path), link_to('Gate Counts',admin_gatecount_path)]
+  end
 
   #Don't add to the top menu
   menu false
