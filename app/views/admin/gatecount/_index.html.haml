@@ -12,5 +12,7 @@
     %h3= t 'active_admin.gatecount.left_column_heading'
     = pie_chart GateCount::CardSwipe.group(:door_name).count.sort_by {|k,v| v}.reverse[0..9], download: true
   #right-col
-    %h3= t 'active_admin.gatecount.right_column_heading', date_range: "#{10.weeks.ago.midnight.strftime("%m/%d/%Y")} to #{6.weeks.ago.midnight.strftime("%m/%d/%Y")}"
-    = area_chart GateCount::CardSwipe.group_by_day(:swipe_date, range: 10.weeks.ago.midnight..6.weeks.ago.midnight).count, download: true
+   -# %h3= t 'active_admin.gatecount.right_column_heading', date_range: "#{10.weeks.ago.midnight.strftime("%m/%d/%Y")} to #{6.weeks.ago.midnight.strftime("%m/%d/%Y")}"
+   -# = area_chart GateCount::CardSwipe.group_by_day(:swipe_date, range: 10.weeks.ago.midnight..6.weeks.ago.midnight).count, download: true
+    %h3=t 'active_admin.gatecount.right_column_heading'
+    =line_chart GateCount::CardSwipe.group_by_month(:swipe_date, download: true)
