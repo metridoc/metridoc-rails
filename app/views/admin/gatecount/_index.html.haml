@@ -23,4 +23,4 @@
 
 %h2= t 'active_admin.gatecount.columns_heading'
 #single-col
-  =column_chart GateCount::CardSwipe.where(school:"College of Arts & Sciences").group_by_week(:swipe_date).count, download: true
+  =column_chart GateCount::CardSwipe.where(school:"College of Arts & Sciences")..where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').group_by_week(:swipe_date).count, download: true
