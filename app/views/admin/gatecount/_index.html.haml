@@ -13,4 +13,6 @@
     = pie_chart GateCount::CardSwipe.group(:door_name).count.sort_by {|k,v| v}.reverse[0..9], download: true
   #right-col
     %h3= t 'active_admin.gatecount.right_column_heading'
-    = line_chart GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN".or(GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR")).group(:door_name).where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group_by_month(:swipe_date).count, min: 0, max: 20000, xmin: "2022-07-01", xmax: "2023-06-30", xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
+    = line_chart [{name: "BioTech" data: GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group_by_month(:swipe_date).count, min: 0, max: 20000, xmin: "2022-07-01"}, {name: "Furness" data:GateCount::CardSwipe.where(door_name: \
+"GateCount::CardSwipe.where(door_name: FURNESS TURNSTILE_ \
+#*FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group_by_month(:swipe_date)}],  min: 0, max: 20000, xmin: "2022-07-01", xmax: "2023-06-30", xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
