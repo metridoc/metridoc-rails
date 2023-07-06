@@ -23,4 +23,4 @@
 
 %h2= t 'active_admin.gatecount.columns_heading'
 #single-col
-  =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").group_by(:school).count, download: true
+  =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
