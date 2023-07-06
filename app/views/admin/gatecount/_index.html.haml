@@ -17,7 +17,7 @@
 #left-col
   %h3 Graduate Students
   =pie_chart GateCount::CardSwipe.where(user_group:"Grad Student").where.not("school=? OR school = ?","Penn Libraries","School of Social Policy & Practice").group(:school).count, library: { pieSliceText: 'value-and-percentage', plotOptions: {pie: {dataLabels: {enabled: true,format: '{point.name}:
-{point.percentage:.1f} %',}}}}, download: true
+{point.percentage:.1f} %'}}}}, download: true
 #right-col
   %h3 Undergraduate Students
   =pie_chart GateCount::CardSwipe.where(user_group:"Undergraduate Student").where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count, suffix: "%", download: true
