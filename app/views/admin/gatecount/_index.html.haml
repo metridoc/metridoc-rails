@@ -21,3 +21,6 @@
   %h3 Undergraduate Students
   =pie_chart GateCount::CardSwipe.where(user_group:"Undergraduate Student").where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count, download: true
 
+%h2= t 'active_admin.gatecount.columns_heading'
+  #single-col
+  column_chart GateCount::CardSwipe.where(school:"College of Arts & Sciences").group_by_week(:swipe_date).count, download: true
