@@ -17,9 +17,10 @@
 
 %h2 Percentage of Gate Counts By School
 #data-viz
-    #left-col
-      %h3 Graduate Students
-          =pie_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
-      %h3 Undergraduate Students
-          =pie_chart GateCount::CardSwipe.where(user_group:"Undergraduate Student").group(:school).count, download: true
+#left-col
+  %h3 Graduate Students
+  =pie_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
+#right-col
+  %h3 Undergraduate Students
+  =pie_chart GateCount::CardSwipe.where(user_group:"Undergraduate Student").group(:school).count, download: true
 
