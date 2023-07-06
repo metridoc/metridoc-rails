@@ -21,6 +21,10 @@
   %h3 Undergraduate Students
   =pie_chart GateCount::CardSwipe.where(user_group:"Undergraduate Student").where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count, download: true
 
-%h2= t 'active_admin.gatecount.columns_heading'
+%h2= Percentage of Graduate Students Using the Library
 #single-col
   =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
+
+%h2= Percentage of Gate Counts Per Library (Undergraduate Students)
+#single-col
+  =column_chart GateCount::CardSwipe.where(user_group:"Undergraduate Student").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').group('school').count, download: true
