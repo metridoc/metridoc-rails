@@ -28,7 +28,7 @@
 
 %h2 Percentage of Graduate Students Using the Library
 #single-col
-  =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
+  =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").where.not("school=? OR school = ?","Penn Libraries","School of Social Policy & Practice").group(:school).count, download: true
 
 -school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
 
