@@ -36,9 +36,9 @@
 
 -school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
 
--school_names.each {|i| all_nums[0][i]=biotech_table.where("school=?", i).count}
--school_names.each {|i| all_nums[1][i]=biotech_table.where("school=?", i).count}
--school_names.each {|i| all_nums[2][i]=biotech_table.where("school=?", i).count}
+-school_names.each {|i| all_nums[0][i]=biotech_table.where("school=?", #{i}).count}
+-school_names.each {|i| all_nums[1][i]=van_pelt_table.where("school=?", #{i}).count}
+-school_names.each {|i| all_nums[2][i]=furness_table.where("school=?", #{i}).count}
 
 %h2 Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
