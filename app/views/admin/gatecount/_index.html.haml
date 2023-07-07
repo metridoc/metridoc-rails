@@ -32,16 +32,18 @@
 -total_vp=van_pelt_table.count
 -total_furn=furness_table.count
 
-=all_nums=Array.new(3) {Array.new(4)}
+-bio_percents=Hash.new
+-vp_percents=Hash.new
+-furn_percents=Hash.new
 
 -school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
 
 -school_index=[0,1,2,3]
 
--school_index.each {|i| all_nums[0][i]=(biotech_table.where("school=?", school_names[i]).count).fdiv(total_bio)}
--school_index.each {|i| all_nums[1][i]=(van_pelt_table.where("school=?", school_names[i]).count).fdiv(total_vp)}
--school_index.each {|i| all_nums[2][i]=(furness_table.where("school=?", school_names[i]).count).fdiv(total_furn)}
+-school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where("school=?", school_names[i]).count).fdiv(total_bio)}
+-school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where("school=?", school_names[i]).count).fdiv(total_vp)}
+-school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where("school=?", school_names[i]).count).fdiv(total_furn)}
 
 %h2 Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
-  =column_chart [{name: "BioTech", data: all_nums[0]}, {name: "Van Pelt", data: all_nums[1]}, {name: "Furness", data: all_nums[2]}], download: true
+  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
