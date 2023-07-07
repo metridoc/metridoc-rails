@@ -25,11 +25,11 @@
 #single-col
   =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
 
-=return GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').count
+-return Num_Bio=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').count
 
-=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
+Num_VP=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
 
-=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').count
+Num_Furn==GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').count
 
 -All_nums=Array.new(3) {Array.new(4)} 
 
