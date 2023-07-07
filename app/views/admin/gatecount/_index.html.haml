@@ -41,9 +41,9 @@
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where("school=?", school_names[i]).count).fdiv(school_pop[i])}
--school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where("school=?", school_names[i]).count).fdiv(school_pop[i])}
--school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
 
 %h2 Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
