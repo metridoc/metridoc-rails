@@ -5,12 +5,15 @@
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
     %li= link_to "Statistical Summary", "statistical_summary"
 
+furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00'
 
 #data-viz
   %h2= t 'active_admin.gatecount.columns_heading'
   #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group_by_month(:swipe_date).count}, {name: "Furness", data: GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group_by_month(:swipe_date).count},{name: "Van Pelt", data: GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
+    = line_chart [{name: "BioTech", data: biotech_table.group_by_month(:swipe_date).count}, {name: "Furness", data: furness_table.group_by_month(:swipe_date).count},{name: "Van Pelt", data: van_pelt_table.group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
 
 %h2 Percentage of Gate Counts By School
 #data-viz
@@ -25,20 +28,18 @@
 #single-col
   =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").group(:school).count, download: true
 
-=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').count
+total_bio=biotech_table.count
+total_vp=van_pelt_table.count
+total_furn=furness_table.count
 
-=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").count
+=test_array=Array.new(3) {Array.new(4)}
 
-=GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').count
+-school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
 
--test=GateCount::CardSwipe.select(:school).where(user_group: 'Undergraduate Student').where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
-
--test_3=GateCount::CardSwipe.select(:school).where(user_group: 'Undergraduate Student').where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
-
-=test_array=Array.new(4)
-
-=school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
+-school_names.each {|i| All_nums[0][i]=biotech_table.where("school=?", i).count}
+-school_names.each {|i| All_nums[1][i]=biotech_table.where("school=?", i).count}
+-school_names.each {|i| All_nums[2][i]=biotech_table.where("school=?", i).count}
 
 %h2 Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
-  =column_chart [{name: "BioTech", data: GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count}, {name: "Furness", data: GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count},{name: "Van Pelt", data: GateCount::CardSwipe.where(user_group: 'Undergraduate Student').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').group(:school).count}], download: true
+  =column_chart [{name: "BioTech", data: biotech_table.where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count}, {name: "Furness", data: furness_table.where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count},{name: "Van Pelt", data: van_pelt_table.where("school=? OR school=? OR school=? OR school=?","College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing").group(:school).count}], download: true
