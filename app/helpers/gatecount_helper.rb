@@ -1,4 +1,4 @@
-module GateCount_helper
+module GatecountHelper
 
   #def
 
