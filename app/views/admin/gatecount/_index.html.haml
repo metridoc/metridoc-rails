@@ -37,9 +37,9 @@
 
 -school_index.each {|i| school_pop[i]=GateCount::CardSwipe.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count}
 
-bio_percents=[0,0,0,0]
-vp_percents=[0,0,0,0]
-furn_percents=[0,0,0,0]
+-bio_percents=[0,0,0,0]
+-vp_percents=[0,0,0,0]
+-furn_percents=[0,0,0,0]
 
 -school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where("school=?", school_names[i]).count).fdiv(school_pop[i])}
 -school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where("school=?", school_names[i]).count).fdiv(school_pop[i])}
