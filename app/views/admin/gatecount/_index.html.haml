@@ -33,7 +33,7 @@
 
 - test=GateCount::CardSwipe.select(:school).where(user_group: 'Undergraduate Student').where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
-= Num_Furn=test.where(school: "College of Arts & Sciences").count
+=test.where(school: "College of Arts & Sciences").count
 
 %h2 Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
