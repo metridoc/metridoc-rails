@@ -35,7 +35,7 @@
 
 -test_2=GateCount::CardSwipe.select(:school).where(user_group: 'Undergraduate Student').where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
-=test_3=test.where(school:"College of Arts & Sciences").count/(test.where(school:"College of Arts & Sciences").count+test_2.where(school:"College of Arts & Sciences").count)
+=test_3=test.where(school:"College of Arts & Sciences").count
 
 %h2 Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
