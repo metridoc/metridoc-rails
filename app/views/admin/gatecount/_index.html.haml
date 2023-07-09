@@ -46,11 +46,6 @@
   %h3 Biotech Commons
   =pie_chart bio_percents, download: true
 
-%h2 Furness
-#data-viz
-#single-col
-  =pie_chart furn_percents, download: true
-
 %h2 Percentage of Graduate Students Using the Library
 #single-col
   =column_chart GateCount::CardSwipe.where(user_group:"Grad Student").where.not("school=? OR school = ?","Penn Libraries","School of Social Policy & Practice").group(:school).count, download: true
