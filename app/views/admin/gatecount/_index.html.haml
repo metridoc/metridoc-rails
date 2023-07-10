@@ -67,6 +67,44 @@
 #single-col
   =column_chart grad_bar_percents, download: true
 
+#data-viz
+  #single-col
+    %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
+    =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
+
+-school_pop=[7135, 1758, 1777, 580]
+
+-undergrad_bar_percents=Hash.new
+
+-school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i]).round(2)}
+
+%h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
+#data-viz
+#single-col
+  =column_chart undergrad_bar_percents, download: true
+
+%h2{style: "text-align:center;"} Percentage of Gate Counts By School
+#data-viz
+#single-col
+  %h3{style: "text-align:center;"} Undergraduate Students
+  =pie_chart undergrad_percents, download: true
+
+-school_pop=[0,0,0,0]
+
+-school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
+
+-bio_percents=Hash.new
+-vp_percents=Hash.new
+-furn_percents=Hash.new
+
+-school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+
+%h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
+#single-col
+  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
+
 %h2{style: "text-align:left;"} Grad Student Population 
 
 %table{align: "left", border: "1", cellpadding: "5"}
@@ -234,41 +272,3 @@
       %td{align: "right"} Replace
       %td{align: "right"} Replace
       %td{align: "right"} 663
-
-#data-viz
-  #left-col
-    %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
-    =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
-
--school_pop=[7135, 1758, 1777, 580]
-
--undergrad_bar_percents=Hash.new
-
--school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i]).round(2)}
-
-%h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
-#data-viz
-#single-col
-  =column_chart undergrad_bar_percents, download: true
-
-%h2{style: "text-align:center;"} Percentage of Gate Counts By School
-#data-viz
-#single-col
-  %h3{style: "text-align:center;"} Undergraduate Students
-  =pie_chart undergrad_percents, download: true
-
--school_pop=[0,0,0,0]
-
--school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
-
--bio_percents=Hash.new
--vp_percents=Hash.new
--furn_percents=Hash.new
-
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
--school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
--school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
-
-%h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
-#single-col
-  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
