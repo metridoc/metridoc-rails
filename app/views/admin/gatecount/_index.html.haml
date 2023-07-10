@@ -9,9 +9,9 @@
 -biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
--undergrad_gen_table=GateCount::CardSwipe.where(user_group:"Undergraduate Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
+-undergrad_gen_table=GateCount::CardSwipe.where(user_group:"Undergraduate Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL" )
 
--grad_gen_table=GateCount::CardSwipe.where(user_group:"Grad Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
+-grad_gen_table=GateCount::CardSwipe.where(user_group:"Grad Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
 
 -grad_percents=Hash.new
 -undergrad_percents=Hash.new
@@ -69,8 +69,6 @@
 -school_pop=[7135, 1758, 1777, 580]
 
 -undergrad_bar_percents=Hash.new
-
-=undergrad_gen_table.where(school:"College of Arts & Sciences").distinct(:card_num).count
 
 -school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i]).round(2)}
 
