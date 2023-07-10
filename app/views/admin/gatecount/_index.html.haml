@@ -25,6 +25,10 @@
 -school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count)}
 -grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count)}
 
+%hr
+Fiscal Year 2023 School Population Statistics
+%hr
+
 %h2 Percentage of Gate Counts By School
 #data-viz
 #left-col
