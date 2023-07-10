@@ -57,16 +57,27 @@
 
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
 
--grad_school_index.each {|i| grad_school_pop[i]=grad_gen_table.where("school=?", grad_school_names[i]).count}
-
 -grad_bar_percents=Hash.new
 
--grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).distinct(:card_num).count).fdiv(grad_school_pop[i])}
+-grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).distinct(:card_num).count).fdiv(grad_school_pop[i]).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
 #single-col
   =column_chart grad_bar_percents, download: true
+
+-school_pop=[7135, 1758, 1777, 580]
+
+-school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
+
+-undergrad_bar_percents=Hash.new
+
+-school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).distinct(:card_num).count).fdiv(school_pop[i]).round(2)}
+
+%h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
+#data-viz
+#single-col
+  =column_chart undergrad_bar_percents, download: true
 
 %h2{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
 #data-viz
