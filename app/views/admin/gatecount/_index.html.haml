@@ -125,10 +125,10 @@
   %tbody
     %tr
       %td College of Arts & Sciences
-      %td{align: "right"} grad_2018.select(:value).where(school: "SAS")
-      %td{align: "right"} grad_2019.select(:value).where(school: "SAS")
-      %td{align: "right"} grad_2022.select(:value).where(school: "SAS")
-      %td{align: "right"} grad_2023.select(:value).where(school: "SAS")
+      %td{align: "right"} =grad_2018.select(:value).where(school: "SAS")
+      %td{align: "right"} =grad_2019.select(:value).where(school: "SAS")
+      %td{align: "right"} =grad_2022.select(:value).where(school: "SAS")
+      %td{align: "right"} =grad_2023.select(:value).where(school: "SAS")
     %tr
       %td The Wharton School
       %td{align: "right"} Replace
