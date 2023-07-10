@@ -25,6 +25,14 @@
 -school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count).round(2)}
 -grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count).round(2)}
 
+-bio_percents=Hash.new
+-vp_percents=Hash.new
+-furn_percents=Hash.new
+
+-grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count).round(2)}
+
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
 %hr
@@ -38,14 +46,6 @@
 #right-col
   %h3{style: "text-align:center;"} Furness
   =pie_chart furn_percents, download: true
-
--bio_percents=Hash.new
--vp_percents=Hash.new
--furn_percents=Hash.new
-
--grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count).round(2)}
--grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count).round(2)}
--grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
