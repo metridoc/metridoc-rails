@@ -42,9 +42,9 @@
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count)}
--grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count)}
--grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count)}
+-grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
@@ -81,9 +81,9 @@
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
--school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
--school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
