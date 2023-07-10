@@ -4,11 +4,16 @@
 -biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
+-van_pelt_one=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY TURN1_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-van_pelt_two=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY TURN2_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-van_pelt_three=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-van_pelt_four=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+
 -arts_and_sciences=GateCount::CardSwipe.where(school:"College of Arts & Sciences").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
 
 #data-viz
   %h2="Gate Counts Over Time"
   #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: biotech_table.group_by_month(:swipe_date).count}, {name: "Furness", data: furness_table.group_by_month(:swipe_date).count},{name: "Van Pelt", data: van_pelt_table.group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
+    = line_chart [{name: "BioTech", data: biotech_table.group_by_month(:swipe_date).count}, {name: "Furness", data: furness_table.group_by_month(:swipe_date).count},{name: "Van Pelt 1", data: van_pelt_one.group_by_month(:swipe_date).count},{name: "Van Pelt 2", data: van_pelt_two.group_by_month(:swipe_date).count},{name: "Van Pelt 3", data: van_pelt_three.group_by_month(:swipe_date).count},{name: "Van Pelt 4", data: van_pelt_four.group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
 
