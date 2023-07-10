@@ -64,6 +64,11 @@
 #single-col
   =column_chart grad_bar_percents, download: true
 
+%h2 Percentage of Medical Graduate Students Using the Library
+#data-viz
+#single-col
+  =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
+
 -school_pop=[0,0,0,0]
 
 -school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
