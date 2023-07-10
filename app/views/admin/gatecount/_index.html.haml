@@ -105,7 +105,7 @@
 #single-col
   =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
 
--grad_enroll=model::UpennEnrollments.where(user:"Graduate Total")
+-grad_enroll=UpennEnrollment.where(user:"Graduate Total")
 
 -grad_2018=grad_enroll.where(fiscal_year:2018)
 -grad_2019=grad_enroll.where(fiscal_year:2019)
