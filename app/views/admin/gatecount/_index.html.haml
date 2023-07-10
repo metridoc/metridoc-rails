@@ -55,7 +55,7 @@
 
 -grad_bar_percents=Hash.new
 
--grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_school_pop[i])}
+-grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).distinct(:card_num).count).fdiv(grad_school_pop[i])}
 
 %h2 Percentage of Graduate Students Using the Library
 #single-col
