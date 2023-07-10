@@ -105,6 +105,13 @@
 #single-col
   =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
 
+-grad_enroll=upenn_enrollments.where(user:"Graduate Total")
+
+-grad_2018=grad_enroll.where(fiscal_year:2018)
+-grad_2019=grad_enroll.where(fiscal_year:2019)
+-grad_2022=grad_enroll.where(fiscal_year:2021)
+-grad_2023=grad_enroll.where(fiscal_year:2022)
+
 %h2{style: "text-align:left;"} Grad Student Population 
 
 %table{align: "left", border: "1", cellpadding: "5"}
