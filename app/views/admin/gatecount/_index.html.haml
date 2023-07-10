@@ -32,10 +32,10 @@
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
 #left-col
-  %h3 Graduate Students
+  %h32{style: "text-align:center;"} Graduate Students
   =pie_chart grad_percents, download: true
 #right-col
-  %h3 Undergraduate Students
+  %h32{style: "text-align:center;"} Undergraduate Students
   =pie_chart undergrad_percents, download: true
 
 -bio_percents=Hash.new
@@ -49,10 +49,10 @@
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
 #left-col
-  %h3 Van Pelt
+  %h32{style: "text-align:center;"} Van Pelt
   =pie_chart vp_percents, download: true
 #right-col
-  %h3 Biotech Commons
+  %h32{style: "text-align:center;"} Biotech Commons
   =pie_chart bio_percents, download: true
 
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
