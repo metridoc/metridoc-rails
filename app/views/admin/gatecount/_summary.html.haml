@@ -5,7 +5,7 @@
 -van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
 -van_pelt_one=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY TURN1_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
--van_pelt_two=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY TURN1_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-van_pelt_two=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY TURN2_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -van_pelt_three=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -van_pelt_four=GateCount::CardSwipe.where(door_name: "VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
