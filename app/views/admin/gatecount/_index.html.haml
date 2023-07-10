@@ -28,7 +28,7 @@
 
 -grad_school_pop=[0,0,0,0,0,0,0,0,0,0,0,0]
 
--grad_school_index.each {|i| grad_school_pop[i]=grad_gen_table.where("school=?", school_names[i]).count}
+-grad_school_index.each {|i| grad_school_pop[i]=grad_gen_table.where("school=?", grad_school_names[i]).count}
 
 -bio_percents=Hash.new
 -vp_percents=Hash.new
