@@ -51,6 +51,11 @@
   %h3 Biotech Commons
   =pie_chart bio_percents, download: true
 
+#single-col
+  %h3 Furness
+  =pie_chart furn_percents, download: true
+
+
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
 
 -grad_school_index.each {|i| grad_school_pop[i]=grad_gen_table.where("school=?", grad_school_names[i]).count}
