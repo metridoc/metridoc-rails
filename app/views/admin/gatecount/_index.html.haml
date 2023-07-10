@@ -151,6 +151,11 @@
       %td{align: "right"} Replace
       %td{align: "right"} 663
 
+%h2{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
+#data-viz
+#single-col
+  =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
+
 -school_pop=[7135, 1758, 1777, 580]
 
 -undergrad_bar_percents=Hash.new
@@ -161,11 +166,6 @@
 #data-viz
 #single-col
   =column_chart undergrad_bar_percents, download: true
-
-%h2{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
-#data-viz
-#single-col
-  =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
