@@ -22,8 +22,8 @@
 -school_index=[0,1,2,3]
 -grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
 
--school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count)}
--grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count)}
+-school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count).round(2)}
+-grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count).round(2)}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
