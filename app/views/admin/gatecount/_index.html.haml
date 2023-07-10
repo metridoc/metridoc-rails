@@ -51,7 +51,8 @@
   %h3 Biotech Commons
   =pie_chart bio_percents, download: true
 
-#left-col
+%hr
+#single-col
   %h3 Furness
   =pie_chart furn_percents, download: true
 
@@ -64,7 +65,6 @@
 
 -grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).distinct(:card_num).count).fdiv(grad_school_pop[i])}
 
-%hr
 %h2 Percentage of Graduate Students Using the Library
 #data-viz
 #single-col
