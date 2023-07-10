@@ -68,8 +68,6 @@
 
 -school_pop=[7135, 1758, 1777, 580]
 
--school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
-
 -undergrad_bar_percents=Hash.new
 
 -school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).distinct(:card_num).count).fdiv(school_pop[i]).round(2)}
