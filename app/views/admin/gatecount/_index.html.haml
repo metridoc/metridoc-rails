@@ -109,8 +109,8 @@
 
 -grad_2018=grad_enroll.where(fiscal_year:2018)
 -grad_2019=grad_enroll.where(fiscal_year:2019)
--grad_2022=grad_enroll.where(fiscal_year:2021)
--grad_2023=grad_enroll.where(fiscal_year:2022)
+-grad_2022=grad_enroll.where(fiscal_year:2022)
+-grad_2023=grad_enroll.where(fiscal_year:2023)
 
 %h2{style: "text-align:left;"} Grad Student Population 
 
@@ -125,10 +125,10 @@
   %tbody
     %tr
       %td College of Arts & Sciences
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 2168
+      %td{align: "right"} grad_2018.select(:value).where(school: "SAS")
+      %td{align: "right"} grad_2019.select(:value).where(school: "SAS")
+      %td{align: "right"} grad_2022.select(:value).where(school: "SAS")
+      %td{align: "right"} grad_2023.select(:value).where(school: "SAS")
     %tr
       %td The Wharton School
       %td{align: "right"} Replace
