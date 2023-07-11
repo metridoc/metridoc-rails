@@ -6,7 +6,7 @@ module GatecountHelper
   def library_table(library,fiscal_year,student_type)
     if library="Furness"
       output_table=GateCount::CardSwipe.connection.select_all(
-        "SELECT COUNT(DISTINCT card_num), COUNT (card_num) FROM gate_count_card_swipes
+        "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes FROM gate_count_card_swipes
                WHERE door_name='FURNESS TURNSTILE_ *FUR'
                AND user_group='#{student_type}'
                AND swipe_date BETWEEN '#{fiscal_year-1}-07-01'
@@ -14,7 +14,7 @@ module GatecountHelper
                GROUP BY school;")
     elsif library="Biotech"
       output_table=GateCount::CardSwipe.connection.select_all(
-          "SELECT COUNT(DISTINCT card_num), COUNT (card_num) FROM gate_count_card_swipes
+          "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes FROM gate_count_card_swipes
                WHERE door_name='BIO LIBRARY TURNSTILE GATE_*JSN'
                AND user_group='#{student_type}'
                AND swipe_date BETWEEN '#{fiscal_year-1}-07-01'
@@ -22,7 +22,7 @@ module GatecountHelper
                GROUP BY school;")
     elsif library="Van Pelt"
       output_table=GateCount::CardSwipe.connection.select_all(
-          "SELECT COUNT(DISTINCT card_num), COUNT (card_num) FROM  gate_count_card_swipes
+          "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes FROM  gate_count_card_swipes
                WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
                OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
                OR door_name='VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL'
@@ -33,7 +33,7 @@ module GatecountHelper
                GROUP BY school;") 
     else
       output_table=GateCount::CardSwipe.connection.select_all(
-          "SELECT COUNT(DISTINCT card_num), COUNT (card_num)  FROM  gate_count_card_swipes
+          "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes  FROM  gate_count_card_swipes
                WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
                OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
                OR door_name='VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL'
