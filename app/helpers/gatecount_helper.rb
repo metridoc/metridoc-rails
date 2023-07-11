@@ -22,4 +22,6 @@ module GatecountHelper
 
     end
     
-end
+  end
+
+end  
