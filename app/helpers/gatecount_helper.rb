@@ -4,7 +4,6 @@ module GatecountHelper
 #Student type= "Grad Student" or "Undergraduate Student"
   
   def library_table
-    if library="Furness"
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            school,
@@ -24,8 +23,6 @@ module GatecountHelper
          WHERE
            user_group='Grad Student' OR 'Undergraduate Student'
            AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;"
-
-    end
     
     return output_table.to_a
 
