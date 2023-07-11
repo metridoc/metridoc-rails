@@ -56,7 +56,7 @@ module GatecountHelper
     #output_table.each do |row|
       #row[]
 
-    puts output_table.rows
+    puts output_table.to_a
     
     return output_table, all_counts
 
