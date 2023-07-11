@@ -51,14 +51,20 @@ module GatecountHelper
     end
 
     #Get the full gate counts:
-    all_counts=[0,0,0,0,0,0,0,0,0,0,0,0]
+    all_counts=0
     
     #output_table.each do |row|
       #row[]
 
     puts output_table.columns
+
+    output_table.each do |row|
+      all_counts=all_counts+row
+    end
+
+    puts all_counts
     
-    return output_table.columns
+    return output_table.columns, all_counts
 
   end
 
