@@ -5,37 +5,33 @@
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
     %li= link_to "Statistical Summary", "statistical_summary"
 
--biotech_grad, bio_grad_counts=library_table("Biotech",2023,"Grad Student")
--vp_grad, vp_grad_counts=library_table("Van Pelt",2023,"Grad Student")
--furn_grad, furn_grad_counts=library_table("Furness",2023,"Grad Student")
+-furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
--biotech_undergrad, bio_under_counts=library_table("Biotech",2023,"Undergraduate Student")
--vp_undergrad, vp_under_counts=library_table("Van Pelt",2023,"Undergraduate Student")
--furn_undergrad, furn_under_counts=library_table("Furness",2023,"Undergraduate Student")
+-undergrad_gen_table=GateCount::CardSwipe.where(user_group:"Undergraduate Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
 
--undergrad_gen, under_counts=library_table("All",2023,"Undergraduate Student")
--grad_gen, grad_counts=library_table("All",2023,"Grad Student")
+-grad_gen_table=GateCount::CardSwipe.where(user_group:"Grad Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
 
 -grad_percents=Hash.new
 -undergrad_percents=Hash.new
 
 -school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
-
 -grad_school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
 -school_index=[0,1,2,3]
 -grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
 
--school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen[school_names[i]]).fdiv(under_counts).round(2)}
--grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen[grad_school_names[i]]).fdiv(grad_counts).round(2)}
+-school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count).round(2)}
+-grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count).round(2)}
 
 -bio_percents=Hash.new
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_grad[grad_school_names]).fdiv(bio_grad_counts).round(2)}
--grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(vp_grad[grad_school_names]).fdiv(vp_grad_counts).round(2)}
--grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furn_grad[grad_school_names[i]]).fdiv(furn_grad_counts).round(2)}
+-grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count).round(2)}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
@@ -64,34 +60,23 @@
 
 -grad_bar_percents=Hash.new
 
--grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen[grad_school_names[i]].select(:card_num).distinct.count).fdiv(grad_school_pop[i]).round(2)}
+-grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).select(:card_num).distinct.count).fdiv(grad_school_pop[i]).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
 #single-col
   =column_chart grad_bar_percents, download: true
 
-med_school_names=["The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing"]
-
-med_school_index=[0,1,2,3,4]
-
--med_vp=Hash.new
--med_bio=Hash.new
-
--med_school_index.each {|i| med_bio[med_school_names[i]]=biotech_grad[med_school_names[i]]}
-
--med_school_index.each {|i| med_vp[med_school_names[i]]=vp_grad[med_school_names[i]]}
-
 #data-viz
   #single-col
     %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
-    =column_chart [{name: "BioTech", data: med_bio}, {name: "Van Pelt", data: med_vp}], stacked: true, download: true
+    =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
 
 -school_pop=[7135, 1758, 1777, 580]
 
 -undergrad_bar_percents=Hash.new
 
--school_index.each {|i| undergrad_bar_percents[school_names[i]]=((undergrad_gen[school_names[i]]).select(:card_num).distinct.count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i]).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
 #data-viz
@@ -106,23 +91,184 @@ med_school_index=[0,1,2,3,4]
 
 -school_pop=[0,0,0,0]
 
--school_index.each {|i| school_pop[i]=undergrad_gen_table[school_names[i]]}
+-school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
 
 -bio_percents=Hash.new
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_undergrad[school_names[i]]).fdiv(school_pop[i]).round(2)}
--school_index.each {|i| vp_percents[school_names[i]]=(vp_undergrad[school_names[i]]).fdiv(school_pop[i]).round(2)}
--school_index.each {|i| furn_percents[school_names[i]]=(furn_undergrad[school_names[i]]).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
   =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
 
--grad_enroll=Upenn::Enrollment.where(user:"Graduate Total")
+%h2{style: "text-align:left;"} Grad Student Population 
 
--grad_2018=grad_enroll.where(fiscal_year:2018)
--grad_2019=grad_enroll.where(fiscal_year:2019)
--grad_2022=grad_enroll.where(fiscal_year:2022)
--grad_2023=grad_enroll.where(fiscal_year:2023)
+%table{align: "left", border: "1", cellpadding: "5"}
+  %thead
+    %tr
+      %td College
+      %td 2017-2018
+      %td 2018-2019
+      %td 2021-2022
+      %td 2022-2023
+  %tbody
+    %tr
+      %td College of Arts & Sciences
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2168
+    %tr
+      %td The Wharton School
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2398
+    %tr
+      %td Annenberg School for Communication
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 68
+    %tr
+      %td School of Dental Medicine
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 789
+    %tr
+      %td School of Design
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 768
+    %tr
+      %td School of Education
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 1664
+    %tr
+      %td School of Engineering
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 4140
+    %tr
+      %td Law School
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 993
+    %tr
+      %td School of Medicine
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2122
+    %tr
+      %td Veterinary School
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 571
+    %tr
+      %td School of Nursing
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 607
+    %tr
+      %td School of Social Policy
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 663
+
+%h2{style: "text-align:right;"} Percentages of Grad Students Attending the Libraries
+
+%table{align: "right", border: "1", cellpadding: "5"}
+  %thead
+    %tr
+      %td College
+      %td 2017-2018
+      %td 2018-2019
+      %td 2021-2022
+      %td 2022-2023
+  %tbody
+    %tr
+      %td College of Arts & Sciences
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2168
+    %tr
+      %td The Wharton School
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2398
+    %tr
+      %td Annenberg School for Communication
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 68
+    %tr
+      %td School of Dental Medicine
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 789
+    %tr
+      %td School of Design
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 768
+    %tr
+      %td School of Education
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 1664
+    %tr
+      %td School of Engineering
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 4140
+    %tr
+      %td Law School
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 993
+    %tr
+      %td School of Medicine
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2122
+    %tr
+      %td Veterinary School
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 571
+    %tr
+      %td School of Nursing
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 607
+    %tr
+      %td School of Social Policy
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 663
