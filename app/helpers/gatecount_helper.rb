@@ -3,62 +3,31 @@ module GatecountHelper
 #Library options are "Van Pelt", "Biotech", "Furness", "All"
 #Student type= "Grad Student" or "Undergraduate Student"
   
-  def library_table(library,fiscal_year,student_type)
+  def library_table
     if library="Furness"
       output_table=GateCount::CardSwipe.connection.select_all(
-        "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes FROM gate_count_card_swipes
-               WHERE door_name='FURNESS TURNSTILE_ *FUR'
-               AND user_group='#{student_type}'
-               AND swipe_date BETWEEN '#{fiscal_year-1}-07-01'
-               AND '#{fiscal_year}-06-30'
-               GROUP BY school;")
-    elsif library="Biotech"
-      output_table=GateCount::CardSwipe.connection.select_all(
-          "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes FROM gate_count_card_swipes
-               WHERE door_name='BIO LIBRARY TURNSTILE GATE_*JSN'
-               AND user_group='#{student_type}'
-               AND swipe_date BETWEEN '#{fiscal_year-1}-07-01'
-               AND '#{fiscal_year}-06-30'
-               GROUP BY school;")
-    elsif library="Van Pelt"
-      output_table=GateCount::CardSwipe.connection.select_all(
-          "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes FROM  gate_count_card_swipes
-               WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
-               OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
-               OR door_name='VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL'
-               OR door_name='VAN PELT LIBRARY ADA DOOR_ *VPL')
-               AND user_group='#{student_type}'
-               AND swipe_date BETWEEN '#{fiscal_year-1}-07-01'
-               AND '#{fiscal_year}-06-30'
-               GROUP BY school;") 
-    else
-      output_table=GateCount::CardSwipe.connection.select_all(
-          "SELECT school, COUNT(DISTINCT card_num) AS Num_People, COUNT (card_num) AS Num_swipes  FROM  gate_count_card_swipes
-               WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
-               OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
-               OR door_name='VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL'
-               OR door_name='VAN PELT LIBRARY ADA DOOR_ *VPL'
-               OR door_name='FURNESS TURNSTILE_ *FUR'
-               OR door_name='BIO LIBRARY TURNSTILE GATE_*JSN')
-               AND user_group='#{student_type}'
-               AND swipe_date BETWEEN '#{fiscal_year-1}-07-01'
-               AND '#{fiscal_year}-06-30'
-               GROUP BY school;")
-      
-    #Will need to put options for:
-    #1) Gate counts per school
+        "SELECT
+           school,
+           user_group,
+           CASE
+             WHEN door_name LIKE 'VAN PELT%'
+               THEN 'Van Pelt'
+             WHEN door_name LIKE 'FURNESS%'
+               THEN 'Furness'
+             WHEN door_name LIKE 'BIO%'
+               THEN 'Biotech'
+           END AS library,
+           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+           COUNT(card_num) AS num_swipes, 
+           COUNT(DISTINCT card_num) AS num_people  
+         FROM gate_count_card_swipes 
+         WHERE
+           user_group='Grad Student' OR 'Undergraduate Student'
+           AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;"
 
     end
-
-    #Get the full gate counts:
-    all_counts=0
     
-    #output_table.each do |row|
-      #row[]
-
-    puts output_table.to_a
-    
-    return output_table, all_counts
+    return output_table.to_a
 
   end
 
