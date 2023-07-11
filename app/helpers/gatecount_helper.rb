@@ -56,7 +56,7 @@ module GatecountHelper
     #output_table.each do |row|
       #row[]
 
-    puts output_table[school:"College of Arts & Sciences"]
+    puts output_table[0]
     
     return output_table, all_counts
 
