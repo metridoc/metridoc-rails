@@ -5,16 +5,27 @@
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
     %li= link_to "Statistical Summary", "statistical_summary"
 
-biotech_grad, bio_grad_counts=library_table("Biotech",2023,"Grad Student")
-vp_grad, vp_grad_counts=library_table("Van Pelt",2023,"Grad Student")
-furn_grad, furn_grad_counts=library_table("Furness",2023,"Grad Student")
+bio_grad_counts=15
+vp_grad_counts=20
+furn_grad_counts=25
 
-biotech_undergrad, bio_under_counts=library_table("Biotech",2023,"Undergraduate Student")
-vp_undergrad, vp_under_counts=library_table("Van Pelt",2023,"Undergraduate Student")
-furn_undergrad, furn_under_counts=library_table("Furness",2023,"Undergraduate Student")
+bio_under_counts=30
+vp_under_counts=35
+furn_under_counts=15
 
-undergrad_gen, under_counts=library_table("All",2023,"Undergraduate Student")
-grad_gen, grad_counts=library_table("All",2023,"Grad Student")
+under_counts=3000
+grad_counts=3000
+
+biotech_grad=library_table("Biotech",2023,"Grad Student")
+vp_grad=library_table("Van Pelt",2023,"Grad Student")
+furn_grad=library_table("Furness",2023,"Grad Student")
+
+biotech_undergrad=library_table("Biotech",2023,"Undergraduate Student")
+vp_undergrad=library_table("Van Pelt",2023,"Undergraduate Student")
+furn_undergrad=library_table("Furness",2023,"Undergraduate Student")
+
+undergrad_gen=library_table("All",2023,"Undergraduate Student")
+grad_gen=library_table("All",2023,"Grad Student")
 
 -grad_percents=Hash.new
 -undergrad_percents=Hash.new
