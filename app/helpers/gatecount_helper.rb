@@ -5,7 +5,7 @@ module GatecountHelper
   
   def library_table(library,fiscal_year,student_type)
     if library="Furness"
-      output_table=GateCount::CardSwipe.find_by_sql(
+      output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT COUNT(DISTINCT card_num), COUNT (card_num) FROM gate_count_card_swipes
                WHERE door_name='FURNESS TURNSTILE_ *FUR'
                AND user_group='#{student_type}'
@@ -13,7 +13,7 @@ module GatecountHelper
                AND '#{fiscal_year}-06-30'
                GROUP BY school;")
     elsif library="Biotech"
-      output_table=GateCount::CardSwipe.find_by_sql(
+      output_table=GateCount::CardSwipe.connection.select_all(
           "SELECT COUNT(DISTINCT card_num), COUNT (card_num) FROM gate_count_card_swipes
                WHERE door_name='BIO LIBRARY TURNSTILE GATE_*JSN'
                AND user_group='#{student_type}'
@@ -21,7 +21,7 @@ module GatecountHelper
                AND '#{fiscal_year}-06-30'
                GROUP BY school;")
     elsif library="Van Pelt"
-      output_table=GateCount::CardSwipe.find_by_sql(
+      output_table=GateCount::CardSwipe.connection.select_all(
           "SELECT COUNT(DISTINCT card_num), COUNT (card_num) FROM  gate_count_card_swipes
                WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
                OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
@@ -32,7 +32,7 @@ module GatecountHelper
                AND '#{fiscal_year}-06-30'
                GROUP BY school;") 
     else
-      output_table=GateCount::CardSwipe.find_by_sql(
+      output_table=GateCount::CardSwipe.connection.select_all(
           "SELECT COUNT(DISTINCT card_num), COUNT (card_num)  FROM  gate_count_card_swipes
                WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
                OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
