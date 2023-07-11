@@ -24,7 +24,7 @@ module GatecountHelper
 
     end
     
-    return output table
+    return output_table
 
   end
 
