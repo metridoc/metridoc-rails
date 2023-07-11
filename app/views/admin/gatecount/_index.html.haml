@@ -97,7 +97,7 @@
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| bio_percents[school_names[i]]=(library_table("Biotech",2023).where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
 -school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
 -school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
 
@@ -125,10 +125,10 @@
   %tbody
     %tr
       %td College of Arts & Sciences
-      %td{align: "right"} = return grad_2018.select(:value).where(school: "SAS")
-      %td{align: "right"} =grad_2019.select(:value).where(school: "SAS")
-      %td{align: "right"} =grad_2022.select(:value).where(school: "SAS")
-      %td{align: "right"} =grad_2023.select(:value).where(school: "SAS")
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} Replace
+      %td{align: "right"} 2168
     %tr
       %td The Wharton School
       %td{align: "right"} Replace
