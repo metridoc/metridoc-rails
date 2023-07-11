@@ -5,7 +5,7 @@ module GatecountHelper
   
   def library_table(library,fiscal_year,student_type)
     if library="Furness"
-      output_table=GateCount::CardSwipe.connection.select_all(
+      output_table=GateCount::CardSwipe.find_by_sql(
           "SELECT COUNT (school) FROM gate_count_card_swipes
                WHERE door_name='FURNESS TURNSTILE_ *FUR'
                AND user_group='#{student_type}'
@@ -13,7 +13,7 @@ module GatecountHelper
                AND '#{fiscal_year}-06-30'
                GROUP BY school;")
     elsif library="Biotech"
-      output_table=GateCount::CardSwipe.connection.select_all(
+      output_table=GateCount::CardSwipe.find_by_sql(
           "SELECT COUNT (school) FROM gate_count_card_swipes
                WHERE door_name='BIO LIBRARY TURNSTILE GATE_*JSN'
                AND user_group='#{student_type}'
@@ -21,7 +21,7 @@ module GatecountHelper
                AND '#{fiscal_year}-06-30'
                GROUP BY school;")
     elsif library="Van Pelt"
-      output_table=GateCount::CardSwipe.connection.select_all(
+      output_table=GateCount::CardSwipe.find_by_sql(
           "SELECT COUNT (school) FROM  gate_count_card_swipes
                WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
                OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
@@ -32,7 +32,7 @@ module GatecountHelper
                AND '#{fiscal_year}-06-30'
                GROUP BY school;") 
     else
-      output_table=GateCount::CardSwipe.connection.select_all(
+      output_table=GateCount::CardSwipe.find_by_sql(
           "SELECT COUNT (school) FROM  gate_count_card_swipes
                WHERE (door_name='VAN PELT LIBRARY TURN1_ *VPL'
                OR door_name='VAN PELT LIBRARY TURN2_ *VPL'
@@ -46,7 +46,7 @@ module GatecountHelper
                GROUP BY school;")
       
     #Will need to put options for:
-    #1) Gate counts total and for unique count
+    #1) Gate counts per school and for unique count
 
     end
 
@@ -56,15 +56,9 @@ module GatecountHelper
     #output_table.each do |row|
       #row[]
 
-    puts output_table.columns
-
-    output_table.each do |row|
-      all_counts=all_counts+row['count']
-    end
-
-    puts all_counts
+    puts output_table
     
-    return output_table.columns, all_counts
+    return output_table, all_counts
 
   end
 
