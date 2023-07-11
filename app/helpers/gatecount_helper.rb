@@ -59,7 +59,7 @@ module GatecountHelper
     puts output_table.columns
 
     output_table.each do |row|
-      all_counts=all_counts+row
+      all_counts=all_counts+row['count']
     end
 
     puts all_counts
