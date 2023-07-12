@@ -4,7 +4,7 @@ module GatecountHelper
 #Student type= "Grad Student" or "Undergraduate Student"
   
   def library_table
-      output_table=GateCount::CardSwipe.find_sql(
+      output_table=GateCount::CardSwipe.find_by_sql(
         "SELECT
            school,
            user_group,
