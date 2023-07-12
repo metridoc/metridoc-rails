@@ -21,7 +21,7 @@ module GatecountHelper
            COUNT(DISTINCT card_num) AS num_people  
          FROM gate_count_card_swipes 
          WHERE
-           user_group='Grad Student' OR 'Undergraduate Student'
+           user_group='Grad Student' OR user_group='Undergraduate Student'
            AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;")
 
     puts pop_stats.where(school: "College of Arts & Sciences")
