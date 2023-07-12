@@ -29,16 +29,16 @@
 -school_index=[0,1,2,3]
 -grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
 
--school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count).round(2)}
--grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count).round(2)}
+-school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count)}
+-grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count)}
 
 -bio_percents=Hash.new
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count).round(2)}
--grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count).round(2)}
--grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count).round(2)}
+-grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count)}
+-grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count)}
+-grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count)}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
@@ -48,31 +48,31 @@
 #data-viz
 #left-col
   %h3{style: "text-align:center;"} Graduate Students
-  =pie_chart grad_percents, download: true
+  =pie_chart grad_percents, round: 2, download: true
 %h2{style: "text-align:right"} Percentage of Gate Counts By Graduate School Per Library
 #right-col
   %h3{style: "text-align:center;"} Furness
-  =pie_chart furn_percents, download: true
+  =pie_chart furn_percents, round: 2, download: true
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
 #left-col
   %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart vp_percents, download: true
+  =pie_chart vp_percents, round: 2, download: true
 #right-col
   %h3{style: "text-align:center;"} Biotech Commons
-  =pie_chart bio_percents, download: true
+  =pie_chart bio_percents, round: 2, download: true
 
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
 
 -grad_bar_percents=Hash.new
 
--grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).select(:card_num).distinct.count).fdiv(grad_school_pop[i]).round(2)}
+-grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).select(:card_num).distinct.count).fdiv(grad_school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
 #single-col
-  =column_chart grad_bar_percents, download: true
+  =column_chart grad_bar_percents, round: 2, download: true
 
 #data-viz
   #single-col
@@ -83,12 +83,12 @@
 
 -undergrad_bar_percents=Hash.new
 
--school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
 #data-viz
 #single-col
-  =column_chart undergrad_bar_percents, download: true
+  =column_chart undergrad_bar_percents, round: 2, download: true
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
@@ -104,13 +104,13 @@
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
--school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
--school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i]).round(2)}
+-school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
-  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], download: true
+  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, download: true
 
 -enroll_schools=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
                'Nursing','SP2']
