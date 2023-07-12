@@ -28,18 +28,18 @@ module GatecountHelper
 
   end
 
-  def enrollment_table(user_group,first_year,last_year)
-    pop_table=Upenn::Enrollment.connection.select_all(
-      "SELECT
-         school
-         value
-         fiscal_year
-       FROM upenn_enrollments
-         WHERE user_group='Graduate Total'
-           AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
-    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",last_year,first_year)
+  #def enrollment_table(user_group,first_year,last_year)
+  #  pop_table=Upenn::Enrollment.connection.select_all(
+  #    "SELECT
+  #       school
+  #       value
+  #       fiscal_year
+  #     FROM upenn_enrollments
+  #       WHERE user_group='Graduate Total'
+  #         AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
+  #  OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",last_year,first_year)
 
-  pop_table.rows
+  #pop_table.rows
     
   #def undergrad_counts(input_table,fiscal_year)
     
