@@ -41,30 +41,30 @@ module GatecountHelper
 
   #pop_table.rows
     
-  #def undergrad_stats(input_table,fiscal_year,library)
-  #  undergrad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||#h["user_group"] == "Grad Student"}
-  #  if library="All"
-  #     return undergrad_values
-  #  elsif library="Biotech"
-  #     undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pel#t" || h["library"] == "Furness"}
-  #  elsif library="Furness"
-  #     undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pel#t" || h["library"] == "Biotech"}
-  #  else
-  #     undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Furness#" || h["library"] == "Biotech"}
-  #  end
-  #end
+  def undergrad_stats(input_table,fiscal_year,library)
+    undergrad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||#h["user_group"] == "Grad Student"}
+    if library="All"
+       return undergrad_values
+    elsif library="Biotech"
+       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pel#t" || h["library"] == "Furness"}
+    elsif library="Furness"
+       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pel#t" || h["library"] == "Biotech"}
+    else
+       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Furness#" || h["library"] == "Biotech"}
+    end
+  end
     
-  #def grad_stats(input_table,fiscal_year,library)
-  #  grad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||h["us#er_group"] == "Undergraduate Student"}
-  #  if library="All"
-  #     return grad_values
-  #  elsif library="Biotech"
-  #     grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" ||# h["library"] == "Furness"}
-  #  elsif library="Furness"
-  #     grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" ||# h["library"] == "Biotech"}
-  #  else
-  #     grad_values=grad_values.delete_if{|h| h["library"] == "Furness" || #h["library"] == "Biotech"}
-  #  end
-  #end
+  def grad_stats(input_table,fiscal_year,library)
+    grad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||h["us#er_group"] == "Undergraduate Student"}
+    if library="All"
+       return grad_values
+    elsif library="Biotech"
+       grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" ||# h["library"] == "Furness"}
+    elsif library="Furness"
+       grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" ||# h["library"] == "Biotech"}
+    else
+       grad_values=grad_values.delete_if{|h| h["library"] == "Furness" || #h["library"] == "Biotech"}
+    end
+  end
   
 end  
