@@ -27,7 +27,7 @@ module GatecountHelper
 
       pop_stats=output_table.to_a
     
-    return output_table
+    return output_table.to_a
 
   end
 
