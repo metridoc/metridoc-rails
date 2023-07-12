@@ -22,15 +22,26 @@ module GatecountHelper
          FROM gate_count_card_swipes 
          WHERE
            user_group='Grad Student' OR user_group='Undergraduate Student'
-           AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;")
-
-
-      pop_stats=output_table.to_a
-
-      puts pop_stats.pluck("school")
+           AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;").
       
     return output_table.to_a
 
+    pop_stats=[]
+      
+    pop_stats << output_table.columns
+
+    output_table.each
+       pop_stats << row
+    end
+
+    puts pop_stats[0]
+  
   end
 
+  #def undergrad_counts(input_table,fiscal_year)
+    
+
+    
+  #def graduate_counts(input_table,fiscal_year)
+  
 end  
