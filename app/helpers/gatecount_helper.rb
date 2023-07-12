@@ -43,28 +43,38 @@ module GatecountHelper
     
   def undergrad_stats(input_table,fiscal_year,library)
     undergrad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||h["user_group"] == "Grad Student"}
-    if library="All"
-       return undergrad_values
-    elsif library="Biotech"
+    if library="Biotech"
        undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
     elsif library="Furness"
        undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
     else
-       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+      undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+    return undergrad_values
     end
   end
     
   def grad_stats(input_table,fiscal_year,library)
     grad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||h["user_group"] == "Undergraduate Student"}
-    if library="All"
-       return grad_values
-    elsif library="Biotech"
+    if library="Biotech"
        grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
     elsif library="Furness"
        grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
     else
-       grad_values=grad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+      grad_values=grad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+    return grad_values
     end
+  end
+
+   def gen_stats(input_table,fiscal_year,library)
+    gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
+    if library="Biotech"
+       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
+    elsif library="Furness"
+       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
+    elif library="Van Pelt"
+       gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+    end
+    return gen_values
   end
   
 end  
