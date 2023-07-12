@@ -4,7 +4,7 @@ module GatecountHelper
 #Student type= "Grad Student" or "Undergraduate Student"
   
   def library_table
-      output_table=GateCount::CardSwipe.connection.select_all(
+      output_table=GateCount::CardSwipe.select(
         "SELECT
            school,
            user_group,
@@ -24,24 +24,29 @@ module GatecountHelper
            user_group='Grad Student' OR user_group='Undergraduate Student'
            AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;")
       
-    return output_table.to_a
+    return output_table.where(school:'College of Arts & Sciences')
 
-    pop_stats=[]
-      
-    pop_stats << output_table.columns
-
-    output_table.rows.each do
-       pop_stats << row
-    end
-
-    puts pop_stats[0]
-  
   end
 
+  def enrollment_table(user_group,first_year,last_year)
+    pop_table=Upenn::Enrollment.connection.select_all(
+      "SELECT
+         school
+         value
+         fiscal_year
+       FROM upenn_enrollments
+         WHERE user_group='Graduate Total'
+           AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
+    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",last_year,first_year)
+
+  pop_table.rows
+    
   #def undergrad_counts(input_table,fiscal_year)
     
-
+  #end
     
   #def graduate_counts(input_table,fiscal_year)
+
+  #end
   
 end  
