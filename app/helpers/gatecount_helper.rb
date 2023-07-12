@@ -27,7 +27,7 @@ module GatecountHelper
 
       pop_stats=output_table.to_a
 
-      puts pop_stats[0][:school]
+      puts pop_stats[0]["school"]
 
       puts pop_stats.pluck(:fiscal_year)
       
