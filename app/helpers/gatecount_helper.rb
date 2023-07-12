@@ -30,7 +30,7 @@ module GatecountHelper
       
     pop_stats << output_table.columns
 
-    output_table.each
+    output_table.each do
        pop_stats << row
     end
 
