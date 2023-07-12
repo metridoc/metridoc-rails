@@ -51,6 +51,7 @@ module GatecountHelper
       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
     return undergrad_values
     end
+
   end
     
   def grad_stats(input_table,fiscal_year,library)
@@ -63,18 +64,34 @@ module GatecountHelper
       grad_values=grad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
     return grad_values
     end
+    
   end
 
-   def gen_stats(input_table,fiscal_year,library)
-    gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
-    if library="Biotech"
-       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
-    elsif library="Furness"
-       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
-    elif library="Van Pelt"
-       gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+  def gen_stats(input_table,fiscal_year,library)
+   gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
+   if library="Biotech"
+      gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
+   elsif library="Furness"
+      gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
+   elif library="Van Pelt"
+      gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
     end
-    return gen_values
+    
   end
-  
+
+
+  #def calc_percents(input_table,type)
+  #  if type=="Counts"
+  #   num_swipes=input_table.pluck("num_swipes").sum
+  #   percents=
+     
+  # elsif type=="People"  
+  #   all_people=input_table.pluck("num_people").sum
+  #   percents=
+       
+  # end
+   
+  # return percents
+  #end
+   
 end  
