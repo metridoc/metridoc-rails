@@ -5,9 +5,9 @@
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
     %li= link_to "Statistical Summary", "statistical_summary"
 
--undergrad_table=undergrad_stats(library_table,2023)
+-undergrad_table=undergrad_stats(library_table,2023,"All")
 
--grad_table=grad_stats(library_table,2023)
+-grad_table=grad_stats(library_table,2023,"All")
 
 -furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
