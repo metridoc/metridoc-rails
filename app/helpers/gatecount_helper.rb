@@ -27,7 +27,7 @@ module GatecountHelper
 
     pop_stats=output_table
       
-    puts pop_stats.where(school: "College of Arts & Sciences")
+    puts pop_stats[0]
     
     return pop_stats
 
