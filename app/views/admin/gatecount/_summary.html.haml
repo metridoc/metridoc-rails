@@ -10,7 +10,8 @@
   %h2="Gate Counts Over Time"
   #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: biotech_table.group_by_month(:swipe_date).count}, {name: "Furness", data: furness_table.group_by_month(:swipe_date).count},{name: "Van Pelt", data: van_pelt_table.group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, download: true
+    = line_chart [{name: "BioTech", data: biotech_table.group_by_month(:swipe_date).count}, {name: "Furness", data: furness_table.group_by_month(:swipe_date).count},{name: "Van Pelt", data: van_pelt_table.group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 
