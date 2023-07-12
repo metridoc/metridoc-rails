@@ -4,7 +4,7 @@ module GatecountHelper
 #Student type= "Grad Student" or "Undergraduate Student"
   
   def library_table
-      output_table=GateCount::CardSwipe.select(
+      output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            school,
            user_group,
@@ -23,9 +23,9 @@ module GatecountHelper
          WHERE
            user_group='Grad Student' OR user_group='Undergraduate Student'
            AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;")
-      
-    puts output_table.where(school:'College of Arts & Sciences')
 
+      pop_stats=output_table.to_a
+      return pop_stats
   end
 
   #def enrollment_table(user_group,first_year,last_year)
@@ -41,11 +41,12 @@ module GatecountHelper
 
   #pop_table.rows
     
-  #def undergrad_counts(input_table,fiscal_year)
-    
+  #def undergrad_stats(input_table,fiscal_year)
+  #  undergrad_year=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
+  #  undergrad_values=undergrad_year.delete_if{|h| h["user_group"] == "Grad Student"}
   #end
     
-  #def graduate_counts(input_table,fiscal_year)
+  #def grad_stats(input_table,fiscal_year)
 
   #end
   
