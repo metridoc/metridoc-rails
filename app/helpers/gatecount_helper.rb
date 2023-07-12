@@ -27,7 +27,7 @@ module GatecountHelper
 
     pop_stats=output_table
       
-    puts pop_stats[0]
+    puts pop_stats[:school]
     
     return pop_stats
 
