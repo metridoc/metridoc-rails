@@ -52,11 +52,6 @@
 #single-col
   =column_chart calc_percents(van_pelt_table,"People","Grad Student"), round: 2, download: true
 
-#data-viz
-  #single-col
-    %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
-    =column_chart [{name: "BioTech", data: biotech_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}, {name: "Van Pelt", data: van_pelt_table.where(user_group:"Grad Student").where("school=? OR school = ? OR school = ? OR school = ? OR school = ?","The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing").group(:school).count}], stacked: true, download: true
-
 -school_pop=[7135, 1758, 1777, 580]
 
 -undergrad_bar_percents=Hash.new
