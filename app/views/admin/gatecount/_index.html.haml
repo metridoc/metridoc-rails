@@ -7,10 +7,6 @@
 
 -test_table=gen_stats(library_table,2023,"All")
 
--furness_table=gen_stats(library_table,2023,"All")
--biotech_table=gen_stats(library_table,2023,"Biotech")
--van_pelt_table=gen_stats(library_table,2023,"Van Pelt")
-
 -furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
@@ -28,16 +24,9 @@
 -school_index=[0,1,2,3]
 -grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
 
--school_index.each {|i| undergrad_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).count).fdiv(undergrad_gen_table.count)}
--grad_school_index.each {|i| grad_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).count).fdiv(grad_gen_table.count)}
-
--bio_percents=Hash.new
--vp_percents=Hash.new
--furn_percents=Hash.new
-
--grad_school_index.each {|i| bio_percents[grad_school_names[i]]=(biotech_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(biotech_table.where(user_group:"Grad Student").count)}
--grad_school_index.each {|i| vp_percents[grad_school_names[i]]=(van_pelt_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(van_pelt_table.where(user_group:"Grad Student").count)}
--grad_school_index.each {|i| furn_percents[grad_school_names[i]]=(furness_table.where(user_group:"Grad Student").where("school=?", grad_school_names[i]).count).fdiv(furness_table.where(user_group:"Grad Student").count)}
+-furness_table=gen_stats(library_table,2023,"All")
+-biotech_table=gen_stats(library_table,2023,"Biotech")
+-van_pelt_table=gen_stats(library_table,2023,"Van Pelt")
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
@@ -51,16 +40,16 @@
 %h2{style: "text-align:right"} Percentage of Gate Counts By Graduate School Per Library
 #right-col
   %h3{style: "text-align:center;"} Furness
-  =pie_chart furn_percents, round: 2, download: true
+  =pie_chart  calc_percents(furness_table,"Counts","Grad Student"), round: 2, download: true
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
 #left-col
   %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart vp_percents, round: 2, download: true
+  =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
 #right-col
   %h3{style: "text-align:center;"} Biotech Commons
-  =pie_chart bio_percents, round: 2, download: true
+  =pie_chart calc_percents(bio_table,"Counts","Grad Student"), round: 2, download: true
 
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
 
