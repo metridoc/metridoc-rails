@@ -77,7 +77,7 @@ module GatecountHelper
 
     puts percents_array
     
-    return percents_array
+    return [percents_array]
   end
    
 end  
