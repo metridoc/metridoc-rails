@@ -7,10 +7,6 @@
 
 -test_table=gen_stats(library_table,2023,"All")
 
--furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
--biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
--van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
-
 -undergrad_gen_table=GateCount::CardSwipe.where(user_group:"Undergraduate Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
 
 -grad_gen_table=GateCount::CardSwipe.where(user_group:"Grad Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
@@ -50,6 +46,10 @@
 #right-col
   %h3{style: "text-align:center;"} Biotech Commons
   =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, download: true
+
+-furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
 
