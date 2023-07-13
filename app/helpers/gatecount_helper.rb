@@ -27,7 +27,7 @@ module GatecountHelper
       return output_table.to_a
   end
 
-  def enrollment_table#(user,fiscal_year)
+  def enrollment_table #(user,fiscal_year)
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
          school
