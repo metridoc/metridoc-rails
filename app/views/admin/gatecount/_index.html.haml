@@ -36,14 +36,14 @@
   =pie_chart  calc_percents(furness_table,"Counts","Grad Student"), round: 2, download: true
 
 #right-col
-  %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
+  %h3{style: "text-align:center;"} Biotech Commons
+  =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, download: true
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
 #single-col
-  %h3{style: "text-align:center;"} Biotech Commons
-  =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, download: true
+  %h3{style: "text-align:center;"} Van Pelt
+  =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
 
 -furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
 -biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
