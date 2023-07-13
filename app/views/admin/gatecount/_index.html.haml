@@ -34,14 +34,10 @@
   %h3{style: "text-align:center;"} Van Pelt
   =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
 
--grad_school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
-
 -grad_enroll=enrollment_table
 
 -grad_enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
                'Nursing','SP2']
-
--grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
 
 -grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
 
@@ -66,10 +62,6 @@
   #single-col
     %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
     =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, download: true
-
--school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
-
--school_index=[0,1,2,3]
 
 -school_pop=[7135, 1758, 1777, 580]
 
