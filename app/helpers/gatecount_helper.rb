@@ -87,7 +87,6 @@ module GatecountHelper
       percents=copy_table.pluck("num_swipes")
     elsif type=="Individuals"
       percents=copy_table.pluck("num_people")
-      puts percents
     end
 
     schools=copy_table.pluck("school")
@@ -97,6 +96,8 @@ module GatecountHelper
     percent_index=(0..percents.length-1).to_a
 
     percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+
+    puts percent_array
     
     return percents_array
   end
