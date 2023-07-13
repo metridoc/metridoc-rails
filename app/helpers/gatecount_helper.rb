@@ -55,7 +55,7 @@ module GatecountHelper
    #Need to actually combine the values...but not sure that we want this...
    #else library=="All"
    #  puts "All Libraries"
-   #return gen_values
+   return gen_values
    end
     
   end
