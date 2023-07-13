@@ -63,8 +63,7 @@ module GatecountHelper
   end
 
   def calc_percents(input_table,type,user_group)
-    copy_table=input_table
-    copy_table.delete_if{|h| h["user_group"] != user_group}
+    copy_table=input_table.select{|h| h["user_group"] == user_group}
     if type=="Counts"
      num_swipes=copy_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
