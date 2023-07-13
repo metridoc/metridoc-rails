@@ -43,7 +43,8 @@ module GatecountHelper
     
 
   def gen_stats(input_table,fiscal_year,library)
-   gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
+   #Delete unnecessary data and data from wrong schools:
+   gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year || |h| h["school"]!="Penn Libraries" || |h| h["fiscal_year"]!="Social Policy & Practice" || |h| h["fiscal_year"]!= }
    if library="Biotech"
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
    elsif library="Furness"
