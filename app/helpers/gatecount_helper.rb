@@ -58,11 +58,11 @@ module GatecountHelper
     input_table.delete_if{|h| h["user_group"] != user_group}
     if type=="Counts"
      num_swipes=input_table.pluck("num_swipes")
-     percents=num_swipes/num_swipes.sum
+     percents=(num_swipes).fidiv(num_swipes.sum)
      
     elsif type=="People"  
      all_people=input_table.pluck("num_people")
-     percents=all_people/all_people.sum       
+     percents=(all_people).fdiv(all_people.sum)       
     end
 
     schools=input_table.pluck("school")
