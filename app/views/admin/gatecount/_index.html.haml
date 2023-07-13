@@ -32,6 +32,12 @@
   %h3{style: "text-align:center;"} Biotech Commons
   =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, download: true
 
+%h2{style: "text-align:center;"} Percentage of Gate Counts By School
+#data-viz
+#single-col
+  %h3{style: "text-align:center;"} Undergraduate Students
+  =pie_chart calc_percents(van_pelt_table,"Counts","Undergraduate Student"), round: 2,  download: true
+
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
 #single-col
@@ -58,9 +64,6 @@
 #data-viz
 #single-col
   =column_chart calc_percents(van_pelt_table,"People","Undergraduate Student"), round: 2, download: true
-
-=puts "Example"
-=puts van_pelt_table
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
