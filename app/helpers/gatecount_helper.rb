@@ -53,7 +53,8 @@ module GatecountHelper
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
    elif library="Van Pelt"
       gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
-    end
+   return gen_values
+   end
     
   end
 
