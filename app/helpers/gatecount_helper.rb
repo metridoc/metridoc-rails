@@ -64,7 +64,7 @@ module GatecountHelper
     elsif type=="People"  
       num_people=input_table.pluck("num_people")
       all_people=num_people.sum
-      percents=num_people.map {|x|  (x).fdiv(all_people}       
+      percents=num_people.map {|x|  (x).fdiv(all_people)}       
     end
 
     schools=input_table.pluck("school")
