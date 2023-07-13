@@ -52,7 +52,9 @@ module GatecountHelper
    elsif library=="Furness"
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
    elsif library=="Van Pelt"
-      gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+     gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+   else library=="All"
+     puts "All Libraries"
    return gen_values
    end
     
@@ -79,8 +81,6 @@ module GatecountHelper
 
     #This puts it back into an array of hashes, which is *not* what I want!
     percent_index.each {|i| percents_array << [schools[i], percents[i]]}
-
-    puts percents_array
     
     return percents_array
   end
