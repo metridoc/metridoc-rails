@@ -97,7 +97,7 @@ module GatecountHelper
 
     percent_index.each {|i| percents_array[schools[i]] = percents[i]}
 
-    puts percent_array
+    puts percents_array
     
     return percents_array
   end
