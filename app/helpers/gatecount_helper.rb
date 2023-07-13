@@ -27,15 +27,15 @@ module GatecountHelper
       return output_table.to_a
   end
 
-  def enrollment_table #(user,fiscal_year)
+  def enrollment_table(user,fiscal_year)
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
-         school
+         school,
          value
-       FROM upenn_enrollments")
-        # WHERE user_group=?
-        #   AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
-        #   OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))")#,user,fiscal_year,fiscal_year-1)
+       FROM upenn_enrollments
+         WHERE user_group=?
+           AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
+           OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
     schools=pop_table.to_a.pluck('school')
     value=pop_table.to_a.pluck('value')
