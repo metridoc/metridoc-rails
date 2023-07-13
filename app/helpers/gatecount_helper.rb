@@ -87,6 +87,7 @@ module GatecountHelper
       percents=copy_table.pluck("num_swipes")
     elsif type=="Individuals"
       percents=copy_table.pluck("num_people")
+      puts percents
     end
 
     schools=copy_table.pluck("school")
