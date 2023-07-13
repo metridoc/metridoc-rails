@@ -5,6 +5,8 @@
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
     %li= link_to "Statistical Summary", "statistical_summary"
 
+-test_table=gen_stats(library_table,2023,"All")
+
 -furness_table=gen_stats(library_table,2023,"All")
 -biotech_table=gen_stats(library_table,2023,"Biotech")
 -van_pelt_table=gen_stats(library_table,2023,"Van Pelt")
@@ -45,7 +47,7 @@
 #data-viz
 #left-col
   %h3{style: "text-align:center;"} Graduate Students
-  =pie_chart grad_percents, round: 2, download: true
+  =pie_chart calc_percents(gen_table,"Grad Student"), round: 2, download: true
 %h2{style: "text-align:right"} Percentage of Gate Counts By Graduate School Per Library
 #right-col
   %h3{style: "text-align:center;"} Furness

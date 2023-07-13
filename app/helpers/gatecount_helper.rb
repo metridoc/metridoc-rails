@@ -41,31 +41,6 @@ module GatecountHelper
 
   #pop_table.rows
     
-  def undergrad_stats(input_table,fiscal_year,library)
-    undergrad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||h["user_group"] == "Grad Student"}
-    if library="Biotech"
-       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
-    elsif library="Furness"
-       undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
-    else
-      undergrad_values=undergrad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
-    return undergrad_values
-    end
-
-  end
-    
-  def grad_stats(input_table,fiscal_year,library)
-    grad_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year ||h["user_group"] == "Undergraduate Student"}
-    if library="Biotech"
-       grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
-    elsif library="Furness"
-       grad_values=grad_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
-    else
-      grad_values=grad_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
-    return grad_values
-    end
-    
-  end
 
   def gen_stats(input_table,fiscal_year,library)
    gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
@@ -79,19 +54,26 @@ module GatecountHelper
     
   end
 
-
-  #def calc_percents(input_table,type)
-  #  if type=="Counts"
-  #   num_swipes=input_table.pluck("num_swipes").sum
-  #   percents=
+  def calc_percents(input_table,type,user_group)
+    input_table.delete_if{|h| h["user_group"] != user_group}
+    if type=="Counts"
+     num_swipes=input_table.pluck("num_swipes")
+     percents=num_swipes/num_swipes.sum
      
-  # elsif type=="People"  
-  #   all_people=input_table.pluck("num_people").sum
-  #   percents=
-       
-  # end
-   
-  # return percents
-  #end
+    elsif type=="People"  
+     all_people=input_table.pluck("num_people")
+     percents=all_people/all_people.sum       
+    end
+
+    schools=input_table.pluck("school")
+    
+    percents_array=[]
+
+    percent_index=(0..percents.length-1).to_a
+    
+    percent_index.each {|i| percents_array << Hash.new{:school: schools[i] , percent: percents[i]}
+    
+    return percents_array
+  end
    
 end  
