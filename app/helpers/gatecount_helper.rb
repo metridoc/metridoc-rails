@@ -72,7 +72,10 @@ module GatecountHelper
     elsif type=="People"  
       num_people=copy_table.pluck("num_people")
       all_people=num_people.sum
-      percents=num_people.map {|x|  (x).fdiv(all_people)}       
+      percents=num_people.map {|x|  (x).fdiv(all_people)}
+
+    elsif type=="Raw Counts"
+      percents=copy_table.pluck("num_swipes")
     end
 
     schools=copy_table.pluck("school")
