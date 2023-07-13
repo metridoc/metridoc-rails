@@ -52,6 +52,7 @@ module GatecountHelper
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
    elsif library=="Van Pelt"
      gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+     puts gen_values
    #Need to actually combine the values...but not sure that we want this...
    #else library=="All"
    #  puts "All Libraries"
