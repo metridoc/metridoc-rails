@@ -42,8 +42,9 @@ module GatecountHelper
   end  
 
   def gen_stats(input_table,fiscal_year,library)
-   #Delete unnecessary data and data from wrong schools:
-    gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
+    #Delete unnecessary data and data from wrong schools:
+    copy_table=input_table
+    gen_values=copy_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
     #This breaks it for some reason...
     #|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
    if library=="Biotech"
@@ -62,7 +63,8 @@ module GatecountHelper
   end
 
   def calc_percents(input_table,type,user_group)
-    input_table.delete_if{|h| h["user_group"] != user_group}
+    copy_table=input_table
+    copy_table.delete_if{|h| h["user_group"] != user_group}
     if type=="Counts"
      num_swipes=input_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
