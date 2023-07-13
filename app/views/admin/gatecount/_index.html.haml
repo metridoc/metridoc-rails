@@ -71,7 +71,17 @@
     %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
     =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, download: true
 
+-school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
+
+-school_index=[0,1,2,3]
+
 -school_pop=[7135, 1758, 1777, 580]
+
+-undergrad_people=calc_percents(van_pelt_table,"Individuals","Undergraduate Student")
+
+-undergrad_bar_percents=Hash.new
+
+-school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_people[school_names[i]]).fdiv(school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
 #data-viz
@@ -89,10 +99,6 @@
 -undergrad_furn=calc_percents(furness_table,"Raw Counts","Undergraduate Student")
 
 -all_undergrad=[undergrad_vp,undergrad_bio,undergrad_furn]
-
--school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
-
--school_index=[0,1,2,3]
 
 -school_pop=[0,0,0,0]
 
