@@ -52,9 +52,6 @@
 #single-col
   =column_chart calc_percents(van_pelt_table,"People","Grad Student"), round: 2, download: true
 
--van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
-
-
 #data-viz
   #single-col
     %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
@@ -76,6 +73,9 @@
 #single-col
   %h3{style: "text-align:center;"} Undergraduate Students
   =pie_chart calc_percents(van_pelt_table, "People", "Undergraduate Student"), round: 2,  download: true
+
+-van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+
 
 -school_pop=[0,0,0,0]
 
