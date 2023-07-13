@@ -50,7 +50,7 @@
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
 #single-col
-  =column_chart grad_bar_percents, round: 2, dataset: {borderwidth: 0}, download: true
+  =column_chart grad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
 
 -med_bio=calc_percents(biotech_table,"Raw Counts","Grad Student")
 -vp_bio=calc_percents(van_pelt_table,"Raw Counts","Grad Student")
@@ -61,7 +61,7 @@
 #data-viz
   #single-col
     %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
-    =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, dataset: {borderwidth: 0}, download: true
+    =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, dataset: {borderWidth: 0}, download: true
 
 -school_pop=[7135, 1758, 1777, 580]
 
@@ -74,7 +74,7 @@
 %h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
 #data-viz
 #single-col
-  =column_chart undergrad_bar_percents, round: 2, dataset: {borderwidth: 0}, download: true
+  =column_chart undergrad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
@@ -102,4 +102,4 @@
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
-  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, dataset: {borderwidth: 0}, download: true
+  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, dataset: {borderWidth: 0}, download: true
