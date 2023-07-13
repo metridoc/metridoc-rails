@@ -28,19 +28,19 @@ module GatecountHelper
       return pop_stats
   end
 
-  #def enrollment_table(user_group,first_year,last_year)
-  #  pop_table=Upenn::Enrollment.connection.select_all(
-  #    "SELECT
-  #       school
-  #       value
-  #       fiscal_year
-  #     FROM upenn_enrollments
-  #       WHERE user_group='Graduate Total'
-  #         AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
-  #  OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",last_year,first_year)
+  def enrollment_table(user,fiscal_year)
+    pop_table=Upenn::Enrollment.connection.select_all(
+      "SELECT
+         school
+         value
+       FROM upenn_enrollments
+         WHERE user_group=?
+           AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
+    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
-  #pop_table.rows
-    
+    return pop_table.to_a
+
+  end  
 
   def gen_stats(input_table,fiscal_year,library)
    #Delete unnecessary data and data from wrong schools:
@@ -53,9 +53,10 @@ module GatecountHelper
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
    elsif library=="Van Pelt"
      gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
-   else library=="All"
-     puts "All Libraries"
-   return gen_values
+   #Need to actually combine the values...but not sure that we want this...
+   #else library=="All"
+   #  puts "All Libraries"
+   #return gen_values
    end
     
   end
@@ -66,7 +67,8 @@ module GatecountHelper
      num_swipes=input_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
      percents=num_swipes.map {|x|  (x).fdiv(all_swipes)}
-     
+
+    #These are not the right numbers...need the enrollments table! 
     elsif type=="People"  
       num_people=input_table.pluck("num_people")
       all_people=num_people.sum
