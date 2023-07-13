@@ -5,10 +5,6 @@
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
     %li= link_to "Statistical Summary", "statistical_summary"
 
--undergrad_gen_table=GateCount::CardSwipe.where(user_group:"Undergraduate Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
-
--grad_gen_table=GateCount::CardSwipe.where(user_group:"Grad Student").where(affiliation_desc:"STUDENT").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL", "BIO LIBRARY TURNSTILE GATE_ *JSN", "FURNESS TURNSTILE_ *FUR" )
-
 -school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
 -grad_school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
