@@ -66,18 +66,18 @@ module GatecountHelper
     copy_table=input_table
     copy_table.delete_if{|h| h["user_group"] != user_group}
     if type=="Counts"
-     num_swipes=input_table.pluck("num_swipes")
+     num_swipes=copy_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
      percents=num_swipes.map {|x|  (x).fdiv(all_swipes)}
 
     #These are not the right numbers...need the enrollments table! 
     elsif type=="People"  
-      num_people=input_table.pluck("num_people")
+      num_people=copy_table.pluck("num_people")
       all_people=num_people.sum
       percents=num_people.map {|x|  (x).fdiv(all_people)}       
     end
 
-    schools=input_table.pluck("school")
+    schools=copy_table.pluck("school")
     
     percents_array=[]
 
