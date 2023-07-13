@@ -32,10 +32,10 @@ module GatecountHelper
       "SELECT
          school
          value
-       FROM upenn_enrollments
-         WHERE user_group=?
-           AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
-           OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))")#,user,fiscal_year,fiscal_year-1)
+       FROM upenn_enrollments")
+        # WHERE user_group=?
+        #   AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
+        #   OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))")#,user,fiscal_year,fiscal_year-1)
 
     schools=pop_table.to_a.pluck('school')
     value=pop_table.to_a.pluck('value')
