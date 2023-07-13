@@ -58,7 +58,7 @@ module GatecountHelper
   end
 
   def calc_percents(input_table,type,user_group)
-    input_table.delete_if{|h| h["user_group"] != user_group}
+    input_table.delete_if{|h| h["user_group"] != user_group|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
     if type=="Counts"
      num_swipes=input_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
