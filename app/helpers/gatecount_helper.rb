@@ -77,12 +77,11 @@ module GatecountHelper
 
     schools=copy_table.pluck("school")
     
-    percents_array=[]
+    percents_array=Hash.new
 
     percent_index=(0..percents.length-1).to_a
 
-    #This puts it back into an array of hashes, which is *not* what I want!
-    percent_index.each {|i| percents_array << [schools[i], percents[i]]}
+    percent_index.each {|i| percents_array << schools[i] => percents[i]}
     
     return percents_array
   end
