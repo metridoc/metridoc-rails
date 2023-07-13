@@ -24,8 +24,7 @@ module GatecountHelper
            user_group='Grad Student' OR user_group='Undergraduate Student'
            AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3, 4;")
 
-      pop_stats=output_table.to_a
-      return pop_stats
+      return output_table.to_a
   end
 
   def enrollment_table(user,fiscal_year)
@@ -36,7 +35,7 @@ module GatecountHelper
        FROM upenn_enrollments
          WHERE user_group=?
            AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
-    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
+           OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
     return pop_table.to_a
 
