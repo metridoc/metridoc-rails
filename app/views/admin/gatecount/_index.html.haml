@@ -38,16 +38,28 @@
   %h3{style: "text-align:center;"} Van Pelt
   =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
 
--grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
+-grad_school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+
+-grad_enroll=enrollment_table("Grad Student",2023)
+
+-grad_enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
+               'Nursing','SP2']
+
+grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
+grad_school_pop=[0,0,0,0,0,0,0,0,0,0,0,0]
 
 -grad_bar_percents=Hash.new
 
--grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_gen_table.where("school=?", grad_school_names[i]).select(:card_num).distinct.count).fdiv(grad_school_pop[i])}
+-grad_people=calc_percents(van_pelt_table,"People","Grad Student")
+
+-grad_school_index.each {|i| grad_school_pop[i]=grad_enroll[grad_enroll_names[i]]}
+
+-grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_people[grad_school_names[i]]).fdiv(grad_school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
 #single-col
-  =column_chart calc_percents(van_pelt_table,"People","Grad Student"), round: 2, download: true
+  =column_chart grad_bar_percents, round: 2, download: true
 
 -med_bio=calc_percents(biotech_table,"Raw Counts","Grad Student")
 -vp_bio=calc_percents(van_pelt_table,"Raw Counts","Grad Student")
@@ -98,6 +110,3 @@
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col
   =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, download: true
-
--enroll_schools=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
-               'Nursing','SP2']
