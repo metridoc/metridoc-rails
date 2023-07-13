@@ -30,7 +30,7 @@
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
 %hr
 
-%h2{style: "text-align:right"} Percentage of Gate Counts By Graduate School Per Library
+%h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 #left-col
   %h3{style: "text-align:center;"} Furness
   =pie_chart  calc_percents(furness_table,"Counts","Grad Student"), round: 2, download: true
@@ -41,7 +41,7 @@
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By Graduate School Per Library
 #data-viz
-#right-col
+#single-col
   %h3{style: "text-align:center;"} Biotech Commons
   =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, download: true
 
