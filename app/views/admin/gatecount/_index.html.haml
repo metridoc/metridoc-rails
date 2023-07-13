@@ -54,10 +54,6 @@
 
 -school_pop=[7135, 1758, 1777, 580]
 
--undergrad_bar_percents=Hash.new
-
--school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_gen_table.where("school=?", school_names[i]).select(:card_num).distinct.count).fdiv(school_pop[i])}
-
 %h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
 #data-viz
 #single-col
