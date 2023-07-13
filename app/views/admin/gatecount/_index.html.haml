@@ -73,23 +73,27 @@
   %h3{style: "text-align:center;"} Undergraduate Students
   =pie_chart calc_percents(van_pelt_table,"Counts","Undergraduate Student"), round: 2,  download: true
 
--furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-undergrad_bio=calc_percents(biotech_table,"Raw Counts","Undergraduate Student")
+-undergrad_vp=calc_percents(van_pelt_table,"Raw Counts","Undergraduate Student")
+-undergrad_furn=calc_percents(furness_table,"Raw Counts","Undergraduate Student")
 
--biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-All_undergrad=[calc_percents(undergrad_vp,undergrad_bio,undergrad_furn]
 
--van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-school_names=["College of Arts & Sciences","The Wharton School","School of Engineering and Applied Science","School of Nursing"]
+
+-school_index=[0,1,2,3]
 
 -school_pop=[0,0,0,0]
 
--school_index.each {|i| school_pop[i]=undergrad_gen_table.where("school=?", school_names[i]).count}
+-school_index.each {|i| school_pop[i]=All_undergrad.pluck(school_names[i]).sum}
 
 -bio_percents=Hash.new
 -vp_percents=Hash.new
 -furn_percents=Hash.new
 
--school_index.each {|i| bio_percents[school_names[i]]=(biotech_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
--school_index.each {|i| vp_percents[school_names[i]]=(van_pelt_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
--school_index.each {|i| furn_percents[school_names[i]]=(furness_table.where(user_group:"Undergraduate Student").where("school=?", school_names[i]).count).fdiv(school_pop[i])}
+-school_index.each {|i| bio_percents[school_names[i]]=(undergrad_bio[school_names[i]]).fdiv(school_pop[i])}
+-school_index.each {|i| vp_percents[school_names[i]]=(undergrad_vp[school_names[i]]).fdiv(school_pop[i])}
+-school_index.each {|i| furn_percents[school_names[i]]=(undergrad_furn[school_names[i]]).fdiv(school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
 #single-col

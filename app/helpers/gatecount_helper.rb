@@ -37,8 +37,17 @@ module GatecountHelper
            AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
            OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
-    return pop_table.to_a
+    schools=pop_table.to_a.pluck('school')
+    value=pop_table.to_a.pluck('value')
 
+    enrollments_array=Hash.new
+    
+    value_index=(0..value.length-1).to_a
+
+    value_index.each {|i| enrollments_array[schools[i]] = value[i]}
+
+    return enrollments_array
+    
   end  
 
   def gen_stats(input_table,fiscal_year,library)
@@ -66,16 +75,18 @@ module GatecountHelper
     if type=="Counts"
      num_swipes=copy_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
-     percents=num_swipes.map {|x|  (x).fdiv(all_swipes)}
+     percents=num_swipes.map {|x| (x).fdiv(all_swipes)}
 
     #These are not the right numbers...need the enrollments table! 
     elsif type=="People"  
       num_people=copy_table.pluck("num_people")
       all_people=num_people.sum
-      percents=num_people.map {|x|  (x).fdiv(all_people)}
+      percents=num_people.map {|x| (x).fdiv(all_people)}
 
     elsif type=="Raw Counts"
       percents=copy_table.pluck("num_swipes")
+    elsif type=="Individuals"
+      percents=copy_table.pluck("num_people")
     end
 
     schools=copy_table.pluck("school")
