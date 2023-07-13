@@ -47,11 +47,11 @@ module GatecountHelper
     gen_values=input_table.delete_if{|h| h["fiscal_year"]!=fiscal_year}
     #This breaks it for some reason...
     #|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
-   if library="Biotech"
+   if library=="Biotech"
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
-   elsif library="Furness"
+   elsif library=="Furness"
       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
-   elif library="Van Pelt"
+   elsif library=="Van Pelt"
       gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
    return gen_values
    end
