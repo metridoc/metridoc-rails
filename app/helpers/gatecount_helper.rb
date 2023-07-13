@@ -71,7 +71,7 @@ module GatecountHelper
 
     percent_index=(0..percents.length-1).to_a
     
-    percent_index.each {|i| percents_array << Hash.new{:school: schools[i] , percent: percents[i]}
+    percent_index.each {|i| percents_array << Hash.new{"school" => schools[i] , "percent" => percents[i]}
     
     return percents_array
   end
