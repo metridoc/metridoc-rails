@@ -72,8 +72,9 @@ module GatecountHelper
     percents_array=[]
 
     percent_index=(0..percents.length-1).to_a
-    
-    percent_index.each {|i| percents_array << { schools[i] => percents[i]}}
+
+    #This puts it back into an array of hashes, which is *not* what I want!
+    percent_index.each {|i| percents_array << [schools[i], percents[i]]}
 
     puts percents_array
     
