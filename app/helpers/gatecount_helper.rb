@@ -177,7 +177,7 @@ module GatecountHelper
       return count_array
       
       if time_frame=="All"
-         years=copy_table.pluck("fiscal_year")
+         years=time
         
          year_range=(years.min.to_i..years.max.to_i).to_a
 
@@ -188,7 +188,7 @@ module GatecountHelper
          for i in year_index
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
              fiscal_year_month=fiscal_year_data.pluck('month')
-             fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
+             fiscal_year_counts=count
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
