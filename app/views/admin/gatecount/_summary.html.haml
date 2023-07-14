@@ -65,8 +65,7 @@
     %tr
       %td Month
       -for i in year_index
-        -first_year=year_range[i]
-        -next_year=year_range[i]+1
+        -fiscal_year=year_range[i]
         %td="#{first_year}-#{next_year}"
   %tbody
     -for m in month_range
