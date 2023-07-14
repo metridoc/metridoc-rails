@@ -54,7 +54,7 @@
 
 -month_range=(0..11).to_a
 
--year_range=[2017,2018,2019,2020,2021,2022,2023]
+-year_range=[2018,2019,2020,2021,2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
 
@@ -65,8 +65,8 @@
     %tr
       %td Month
       -for i in year_index
-        -first_year=year_range[i]
-        -next_year=year_range[i]+1
+        -first_year=year_range[i]-1
+        -next_year=year_range[i]
         %td="#{first_year}-#{next_year}"
   %tbody
     -for m in month_range
