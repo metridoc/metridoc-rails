@@ -173,8 +173,6 @@ module GatecountHelper
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
       count_index.each {|i| count_array[time[i]] = count[i]}
-
-      return count_array
       
       if time_frame=="All"
          years=time
@@ -201,7 +199,8 @@ module GatecountHelper
          puts all_data
          
       end
-      
+
+      return count_array
   end
    
 end
