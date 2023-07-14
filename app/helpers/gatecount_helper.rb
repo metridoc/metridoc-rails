@@ -148,7 +148,7 @@ module GatecountHelper
       copy_table=input_table
 
       #if Monthly, the input table has already been filtered for fiscal year.
-      if type=="Monthly"
+      if time_frame=="Monthly"
         
         time=copy_table.pluck("month")
 
@@ -160,10 +160,10 @@ module GatecountHelper
       
       if count_type=="Counts"
            
-            count=copy_table.pluck("num_swipes")
+         count=copy_table.pluck("num_swipes")
 
       else
-            count=copy_table.pluck("num_people")
+         count=copy_table.pluck("num_people")
 
       end
       
