@@ -171,7 +171,7 @@ module GatecountHelper
 
       count_index=(0..count.length-1).to_a
 
-      count_index.each {|i| count_array[time[i]] = percents[i]}
+      count_index.each {|i| count_array[time[i]] = count[i]}
     
       return count_array
     
