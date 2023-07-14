@@ -158,7 +158,7 @@ module GatecountHelper
         time=copy_table.pluck("week")
       elsif time_frame=="Monthly"
         time=copy_table.pluck("month")    
-      else time_frame=="Yearly"
+      else 
         time=copy_table.pluck("fiscal_year")
       #   months=copy_table.pluck("month")
       end
