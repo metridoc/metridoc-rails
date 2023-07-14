@@ -62,7 +62,7 @@ module GatecountHelper
            DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
            EXTRACT(week from swipe_date) AS week,
            card_num,
-           COUNT(card_num) AS num_swipes, 
+           COUNT(card_num) AS num_swipes,
            COUNT(DISTINCT card_num) AS num_people
          FROM gate_count_card_swipes 
            WHERE school='College of Arts & Sciences'
@@ -86,9 +86,7 @@ module GatecountHelper
     value=pop_table.to_a.pluck('value')
 
     enrollments_array=Hash.new
-    
     value_index=(0..value.length-1).to_a
-
     value_index.each {|i| enrollments_array[schools[i]] = value[i]}
 
     return enrollments_array
@@ -145,9 +143,7 @@ module GatecountHelper
     schools=copy_table.pluck("school")
     
     percents_array=Hash.new
-
     percent_index=(0..percents.length-1).to_a
-
     percent_index.each {|i| percents_array[schools[i]] = percents[i]}
     
     return percents_array
@@ -158,27 +154,72 @@ module GatecountHelper
     
       copy_table=input_table
 
-      #if Monthly, the input table has already been filtered for fiscal year.
-      if time_frame=="Monthly"
-        time=copy_table.pluck("month")
-      else
-        time=copy_table.pluck('fiscal_year')
+      if time_frame=="Weekly"
+        time=copy_table.pluck("week")
+      elsif time_frame=="Monthly"
+        time=copy_table.pluck("month")    
+      elsif time_frame="Yearly"
+         time=copy_table.pluck("fiscal_year")
+      #else
+      #   years=copy_table.pluck("fiscal_year")
+      #   months=copy_table.pluck("month")
       end
       
       if count_type=="Counts"
          count=copy_table.pluck("num_swipes")
-      else
+      elsif count_type=="People"
          count=copy_table.pluck("num_people")
       end
       
       count_array=Hash.new
-
       count_index=(0..count.length-1).to_a
-
       count_index.each {|i| count_array[time[i]] = count[i]}
-    
-      return count_array
-    
+
+      #Need to get each bin for the frequency data:
+      #if count_type=="Frequency"
+      #   count=copy_table.pluck("num_swipes")
+      #   people=copy_table.pluck("num_people")
+
+      #   num_users=people.sum
+         
+      #   single_user=count.select{|h| h["count"] == user_group}
+      #   medium_user=
+      #   freq_user=
+         
+         #Need to remember to return as a percentage of the college of arts and sciences population
+      #   total_pop=9303
+         
+      #   percents_zero.(num_users-single_user).fdiv(total_pop)
+      #   percents_one=(single_user).fdiv(total_pop)
+      #   percents_two=(medium_user).fdiv(total_pop)
+      #   percents_three=(freq_user).fdiv(total_pop)
+
+      #   freq_info=[percents_zero,percents_one,percents_two,percents_three]
+
+      #   return freq_info
+      
+      if time_frame="All"
+         year_range=years.min..years.max
+
+         year_index=0..year_range.length-1
+
+         all_data=[]
+
+         for i in year_index
+             fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
+             fiscal_year_month=fiscal_year_data.pluck('month')
+             fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
+
+             fiscal_array=Hash.new
+             fiscal_index=(0..fiscal_year_counts.length-1).to_a
+             fiscal_index.each {|i| fiscal_array[fiscal_year_month[i]] = fiscal_year_counts[i]}
+             all_data << fiscal_array
+         end
+
+         return all_data
+      else
+         return count_array  
+        
   end
    
 end
