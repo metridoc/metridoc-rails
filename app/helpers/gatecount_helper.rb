@@ -39,10 +39,11 @@ module GatecountHelper
            END AS library,
            DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
            EXTRACT(month from swipe_date) AS month,
-           COUNT(card_num) AS num_swipes, 
-           COUNT(DISTINCT card_num) AS num_people  
+           swipe_date,
+           COUNT(card_num) as num_swipes
+           COUNT(DISTINCt card_num) as num_people 
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1, 2, 3;")
+           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1;")
 
       return output_table.to_a
   end
@@ -116,13 +117,13 @@ module GatecountHelper
 
     if user_group=="All"
 
-       months=copy_table.pluck("month")
+       time=copy_table.pluck("swipe_date")
     
        percents_array=Hash.new
 
        percent_index=(0..percents.length-1).to_a
 
-       percent_index.each {|i| percents_array[months[i]] = percents[i]}
+       percent_index.each {|i| percents_array[time[i]] = percents[i]}
     
        return percents_array
     else
