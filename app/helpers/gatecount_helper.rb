@@ -199,7 +199,7 @@ module GatecountHelper
       if time_frame="All"
          years=copy_table.pluck("fiscal_year")
         
-         year_range=(years.min..years.max).to_a
+         year_range=(years.min.to_i..years.max.to_i).to_a
 
          year_index=(0..year_range.length-1).to_a
 
