@@ -176,7 +176,7 @@ module GatecountHelper
 
       return count_array
       
-      if time_frame="All"
+      if time_frame=="All"
          years=copy_table.pluck("fiscal_year")
         
          year_range=(years.min.to_i..years.max.to_i).to_a
