@@ -176,7 +176,7 @@ module GatecountHelper
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
       if time_frame=="Monthly"
-         count_index.each {|i| count_array[month_names[time[i].to_i]-1] = count[i]}
+         count_index.each {|i| count_array[month_names[time[i].to_i-1]] = count[i]}
       else
          count_index.each {|i| count_array[time[i]] = count[i]}
       end
@@ -197,7 +197,7 @@ module GatecountHelper
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
-             fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i]-1] = fiscal_year_counts[i]}
+             fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
              all_data << fiscal_array
          end
 
