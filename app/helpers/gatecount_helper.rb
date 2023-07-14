@@ -39,10 +39,11 @@ module GatecountHelper
            END AS library,
            DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
            EXTRACT(month from swipe_date) AS month,
-           swipe_date,
-           card_num AS num_swipes
+           COUNT(card_num) AS num_swipes, 
+           COUNT(DISTINCT card_num) AS num_people
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN');")
+           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN'
+         GROUP BY 1,2,3);")
 
       return output_table.to_a
   end
@@ -89,23 +90,7 @@ module GatecountHelper
      #  puts "All Libraries"
     end
    
-    if input_table=time_table
-
-    counts=input_table.pluck("card_num")
-
-    dates=input_table.pluck("swipe_date")
-     
-    time_array=Hash.new
-
-    time_index=(0..time_array.length-1).to_a
-
-    time_index.each {|i| time_array[dates[i]] = card_num[i]}
-
-    return gen_values.to_a
-   
-    else
     return gen_values
-    end
     
   end
 
@@ -155,6 +140,40 @@ module GatecountHelper
     
        return percents_array
     end
+    
+  end
+
+  def time_counts(input_table,time_frame,count_type)
+    
+      copy_table=input_table
+
+      #if Monthly, the input table has already been filtered for fiscal year.
+      if type=="Monthly"
+        
+        time=copy_table.pluck("month")
+
+      else
+
+        time=copy_table.pluck('fiscal_year')
+
+      end
+      
+      if count_type=="Counts"
+           
+            count=copy_table.pluck("num_swipes")
+
+      else
+            count=copy_table.pluck("num_people")
+
+      end
+      
+      count_array=Hash.new
+
+      count_index=(0..count.length-1).to_a
+
+      count_index.each {|i| count_array[time[i]] = percents[i]}
+    
+      return count_array
     
   end
    

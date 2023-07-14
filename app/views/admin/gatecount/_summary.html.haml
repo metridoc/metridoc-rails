@@ -1,20 +1,16 @@
 = javascript_include_tag 'application'
 
--furness_table=gen_stats(time_table,2023,"Furness")
--biotech_table=gen_stats(time_table,2023,"Biotech")
--van_pelt_table=gen_stats(time_table,2023,"Van Pelt")
-
--furn_2023_counts=furness_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
--vp_2023_counts=van_pelt_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
--bio_2023_counts=biotech_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
-
 -furn_yearly=gen_stats(time_table,"All","Furness")
 -bio_yearly=gen_stats(time_table,"All","Biotech")
 -vp_yearly=gen_stats(time_table,"All","Van Pelt")
 
--furn_yearly_counts=furn_yearly.group_by_year {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
--vp_yearly_counts=vp_yearly.group_by_year {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
--bio_yearly_counts=bio_yearly.group_by_year {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
+-bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
+-vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
+
+-furn_yearly_people=time_counts(furn_yearly,"Yearly","People")
+-bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
+-vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
 
 -arts_and_sciences=GateCount::CardSwipe.where(school:"College of Arts & Sciences").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
 
@@ -25,13 +21,30 @@
 
 #data-viz
   #single-col
+    %h2 Number of Visitors Per Fiscal Year Per Library
+    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
+-furness_2023_table=gen_stats(time_table,2023,"Furness")
+-biotech_2023_table=gen_stats(time_table,2023,"Biotech")
+-vp_2023_table=gen_stats(time_table,2023,"Van Pelt")
+
+-furn_2023_counts=time_counts(furness_2023_table,"Monthly","Counts")
+-vp_2023_counts=time_counts(vp_2023_table,"Monthly","Counts")
+-bio_2023_counts=time_counts(biotech_2023_table,"Monthly","Counts")
+
+-furn_2023_people=time_counts(furness_2023_table,"Monthly","People")
+-vp_2023_counts=time_counts(vp_2023_table,"Monthly","People")
+-bio_2023_counts=time_counts(biotech_2023_table,"Monthly","People")
+
+#data-viz
+  #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_counts}, {name: "Furness", data: furn_2023_counts},{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 #data-viz
   #single-col
     %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: bio_2023_counts}, {name: "Furness", data: furn_2023_counts},{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true   
+    = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true   
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 
