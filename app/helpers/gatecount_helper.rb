@@ -90,7 +90,7 @@ module GatecountHelper
     
   end
 
-  def calc_percents(input_table,type,user_group)
+  def calc_percents(input_table,type_counts,user_group)
     if user_group != "All"
       copy_table=input_table.select{|h| h["user_group"] == user_group}
     elsif
@@ -114,17 +114,27 @@ module GatecountHelper
       percents=copy_table.pluck("num_people")
     end
 
-    schools=copy_table.pluck("school")
+    if user_group=="All"
+
+       months=copy_table.pluck("month")
     
-    percents_array=Hash.new
+       percents_array=Hash.new
 
-    percent_index=(0..percents.length-1).to_a
+       percent_index=(0..percents.length-1).to_a
 
-    percent_index.each {|i| percents_array[schools[i]] = percents[i]}
-
-    puts percents_array
+       percent_index.each {|i| percents_array[months[i]] = percents[i]}
     
-    return percents_array
+       return percents_array
+    else
+       schools=copy_table.pluck("school")
+    
+       percents_array=Hash.new
+
+       percent_index=(0..percents.length-1).to_a
+
+       percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+    
+       return percents_array
   end
    
 end
