@@ -188,15 +188,16 @@ module GatecountHelper
              fiscal_year_month=fiscal_year_data.pluck('month')
              fiscal_year_counts=count
 
+             month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
+
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
-             fiscal_index.each {|i| fiscal_array[fiscal_year_month[i]] = fiscal_year_counts[i]}
+             fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i]]} = fiscal_year_counts[i]}
              all_data << fiscal_array
          end
 
+         puts all_data                                                                        
          return all_data
-
-         puts all_data
          
       end
 
