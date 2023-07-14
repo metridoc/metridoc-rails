@@ -9,12 +9,12 @@
 #data-viz
   #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Raw Counts","All")}, {name: "Furness", data: calc_percents(furness_table,"Raw Counts","All},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Raw Counts","All}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Raw Counts","All")}, {name: "Furness", data: calc_percents(furness_table,"Raw Counts","All")},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Raw Counts","All")}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 #data-viz
   #single-col
     %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Individuals","All")}, {name: "Furness", data: calc_percents(furness_table,"Individuals","All},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Individuals","All}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Individuals","All")}, {name: "Furness", data: calc_percents(furness_table,"Individuals","All")},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Individuals","All")}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 
