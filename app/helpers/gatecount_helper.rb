@@ -169,10 +169,16 @@ module GatecountHelper
       elsif count_type=="People"
          count=input_table.pluck("num_people")
       end
+
+      
+      month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
       
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
-      count_index.each {|i| count_array[time[i]] = count[i]}
+      if time_frame=="Monthly"
+         count_index.each {|i| count_array[month_names[time[i].to_i]] = count[i]}
+      else
+         count_index.each {|i| count_array[time[i]] = count[i]}
       
       if time_frame=="All"
          years=time
@@ -187,8 +193,6 @@ module GatecountHelper
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
              fiscal_year_month=fiscal_year_data.pluck('month')
              fiscal_year_counts=count
-
-             month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
