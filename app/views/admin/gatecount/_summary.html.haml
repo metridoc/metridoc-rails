@@ -22,7 +22,7 @@
 #data-viz
   #single-col
     %h2 Number of Visitors Per Fiscal Year Per Library
-    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
 
 -furness_2023_table=gen_stats(time_table,2023,"Furness")
 -biotech_2023_table=gen_stats(time_table,2023,"Biotech")
@@ -44,7 +44,7 @@
 #data-viz
   #single-col
     %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true   
+    = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 
