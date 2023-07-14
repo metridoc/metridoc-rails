@@ -40,8 +40,8 @@ module GatecountHelper
            DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
            EXTRACT(month from swipe_date) AS month,
            swipe_date,
-           COUNT(card_num) as num_swipes
-           COUNT(DISTINCt card_num) as num_people 
+           COUNT(card_num) as num_swipes,
+           COUNT(DISTINCT card_num) as num_people 
          FROM gate_count_card_swipes 
            WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')         GROUP BY 1;")
 
