@@ -13,12 +13,12 @@
 #data-viz
   #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Raw Counts","All").group_by_month("swipe_date").count}, {name: "Furness", data: calc_percents(furness_table,"Raw Counts","All").group_by_month(:"swipe_date").count},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Raw Counts","All").group_by_month("swipe_date").count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: bio_2023_counts, {name: "Furness", data: furn_2023_counts,{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 #data-viz
   #single-col
     %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Individuals","All").group_by_month(:swipe_date).count}, {name: "Furness", data: calc_percents(furness_table,"Individuals","All").group_by_month(:swipe_date).count},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Individuals","All").group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: bio_2023_counts, {name: "Furness", data: furn_2023_counts,{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true   
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 
