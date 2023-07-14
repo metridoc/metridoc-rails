@@ -47,6 +47,30 @@ module GatecountHelper
 
       return output_table.to_a
   end
+
+   def frequency_table
+      output_table=GateCount::CardSwipe.connection.select_all(
+        "SELECT
+           CASE
+             WHEN door_name LIKE 'VAN PELT%'
+               THEN 'Van Pelt'
+             WHEN door_name LIKE 'FURNESS%'
+               THEN 'Furness'
+             WHEN door_name LIKE 'BIO%'
+               THEN 'Biotech'
+           END AS library,
+           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+           EXTRACT(week from swipe_date) AS week,
+           card_num,
+           COUNT(card_num) AS num_swipes, 
+           COUNT(DISTINCT card_num) AS num_people
+         FROM gate_count_card_swipes 
+           WHERE school=='College of Arts & Sciences'
+              door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
+         GROUP BY 1,2,3,4;")
+
+      return output_table.to_a
+  end
   
   def enrollment_table #(user,fiscal_year)
     pop_table=Upenn::Enrollment.connection.select_all(
@@ -118,28 +142,15 @@ module GatecountHelper
       percents=copy_table.pluck("num_people")
     end
 
-    if user_group=="All"
-
-       time=copy_table.pluck("swipe_date")
+    schools=copy_table.pluck("school")
     
-       percents_array=Hash.new
+    percents_array=Hash.new
 
-       percent_index=(0..percents.length-1).to_a
+    percent_index=(0..percents.length-1).to_a
 
-       percent_index.each {|i| percents_array[time[i]] = percents[i]}
+    percent_index.each {|i| percents_array[schools[i]] = percents[i]}
     
-       return percents_array
-    else
-       schools=copy_table.pluck("school")
-    
-       percents_array=Hash.new
-
-       percent_index=(0..percents.length-1).to_a
-
-       percent_index.each {|i| percents_array[schools[i]] = percents[i]}
-    
-       return percents_array
-    end
+    return percents_array
     
   end
 
@@ -149,22 +160,15 @@ module GatecountHelper
 
       #if Monthly, the input table has already been filtered for fiscal year.
       if time_frame=="Monthly"
-        
         time=copy_table.pluck("month")
-
       else
-
         time=copy_table.pluck('fiscal_year')
-
       end
       
       if count_type=="Counts"
-           
          count=copy_table.pluck("num_swipes")
-
       else
          count=copy_table.pluck("num_people")
-
       end
       
       count_array=Hash.new
