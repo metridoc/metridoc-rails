@@ -173,8 +173,6 @@ module GatecountHelper
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
       count_index.each {|i| count_array[time[i]] = count[i]}
-
-      puts count_array
       
       if time_frame="All"
          years=copy_table.pluck("fiscal_year")
@@ -197,9 +195,9 @@ module GatecountHelper
          end
 
          return all_data
-       else
-         return count_array  
-       end
+      elsif (time_frame=="Monthly" || time_frame=="Yearly" || time_frame=="Weekly")
+        return count_array  
+      end
       
   end
    
