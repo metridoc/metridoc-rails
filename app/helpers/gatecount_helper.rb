@@ -179,6 +179,7 @@ module GatecountHelper
          count_index.each {|i| count_array[month_names[time[i].to_i]] = count[i]}
       else
          count_index.each {|i| count_array[time[i]] = count[i]}
+      end
       
       if time_frame=="All"
          years=time
