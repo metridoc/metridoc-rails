@@ -50,6 +50,10 @@
 
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
 
+-month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+-month_range=(0,11).to_a
+
 -year_range=[2017,2018,2019,2020,2021,2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
@@ -65,73 +69,8 @@
         -next_year=year_range[i]+1
         %td="#{first_year}-#{next_year}"
   %tbody
+   -for m in month_range
     %tr
-      %td January
+      %td month_names[m]
       -for i in year_index
-        %td{align: "right"}=vp_all_counts[i]["January"]
-    %tr
-      %td February
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 2398
-    %tr
-      %td March
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 68
-    %tr
-      %td April
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 789
-    %tr
-      %td May
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 768
-    %tr
-      %td June
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 1664
-    %tr
-      %td July
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 4140
-    %tr
-      %td August
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 993
-    %tr
-      %td September
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 2122
-    %tr
-      %td October
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 571
-    %tr
-      %td November
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 607
-    %tr
-      %td December
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 663
+        %td{align: "right"}=vp_all_counts[i][month_names[m]]
