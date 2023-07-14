@@ -161,13 +161,13 @@ module GatecountHelper
       elsif time_frame=="Yearly" 
         time=copy_table.pluck("fiscal_year")
       elsif time_frame=="All"
-        time=copy_table.pluck("fiscal_year")
+        time=input_table.pluck("fiscal_year")
       end
       
       if count_type=="Counts"
          count=copy_table.pluck("num_swipes")
       elsif count_type=="People"
-         count=copy_table.pluck("num_people")
+         count=input_table.pluck("num_people")
       end
       
       count_array=Hash.new
