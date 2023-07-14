@@ -193,7 +193,7 @@ module GatecountHelper
          for i in year_index
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
              fiscal_year_month=fiscal_year_data.pluck('month')
-             fiscal_year_counts=count
+             fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
@@ -233,4 +233,7 @@ end
       #   freq_info=[percents_zero,percents_one,percents_two,percents_three]
 
       #   return freq_info
+#      -for i in year_index
+#        -data=vp_all_counts[i][month_names[m]]
+#        %td="#{data}"
       
