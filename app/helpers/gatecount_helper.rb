@@ -171,7 +171,7 @@ module GatecountHelper
       end
 
       
-      month_names=["July","August","September","October","November","December","January","February","March","April","May","June"]
+      month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
       
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
