@@ -1,17 +1,20 @@
 = javascript_include_tag 'application'
 
--furness_table=GateCount::CardSwipe.where(door_name: "FURNESS TURNSTILE_ *FUR").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
--biotech_table=GateCount::CardSwipe.where(door_name: "BIO LIBRARY TURNSTILE GATE_ *JSN").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
--van_pelt_table=GateCount::CardSwipe.where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL").where(swipe_date: '2022-07-01 00:00:00'..'2023-06-30 00:00:00')
+-furness_table=gen_stats(time_table,2023,"Furness")
+-biotech_table=gen_stats(time_table,2023,"Biotech")
+-van_pelt_table=gen_stats(time_table,2023,"Van Pelt")
 
 -arts_and_sciences=GateCount::CardSwipe.where(school:"College of Arts & Sciences").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
 
 #data-viz
-  %h2="Gate Counts Over Time"
   #single-col
     %h2 Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: biotech_table.group_by_month(:swipe_date).count}, {name: "Furness", data: furness_table.group_by_month(:swipe_date).count},{name: "Van Pelt", data: van_pelt_table.group_by_month(:swipe_date).count}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Raw Counts","All")}, {name: "Furness", data: calc_percents(furness_table,"Raw Counts","All},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Raw Counts","All}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
+#data-viz
+  #single-col
+    %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
+    = line_chart [{name: "BioTech", data: calc_percents(biotech_table,"Individuals","All")}, {name: "Furness", data: calc_percents(furness_table,"Individuals","All},{name: "Van Pelt", data: calc_percents(van_pelt_table,"Individuals","All}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 
