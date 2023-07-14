@@ -163,8 +163,6 @@ module GatecountHelper
       elsif time_frame=="All"
         time=copy_table.pluck("fiscal_year")
       end
-
-      puts time
       
       if count_type=="Counts"
          count=copy_table.pluck("num_swipes")
@@ -175,6 +173,8 @@ module GatecountHelper
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
       count_index.each {|i| count_array[time[i]] = count[i]}
+
+      puts count_array
       
       if time_frame="All"
          years=copy_table.pluck("fiscal_year")
