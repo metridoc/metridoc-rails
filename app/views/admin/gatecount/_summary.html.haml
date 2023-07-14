@@ -5,10 +5,23 @@
 -van_pelt_table=gen_stats(time_table,2023,"Van Pelt")
 
 -furn_2023_counts=furness_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
--vp_2023_counts=biotech_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
--bio_2023_counts=van_pelt_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-vp_2023_counts=van_pelt_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-bio_2023_counts=biotech_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+
+-furn_yearly=gen_stats(time_table,"All","Furness")
+-bio_yearly=gen_stats(time_table,"All","Biotech")
+-vp_yearly=gen_stats(time_table,"All","Van Pelt")
+
+-furn_yearly_counts=furn_yearly.group_by_year {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-vp_yearly_counts=vp_yearly.group_by_year {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-bio_yearly_counts=bio_yearly.group_by_year {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
 
 -arts_and_sciences=GateCount::CardSwipe.where(school:"College of Arts & Sciences").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
+
+#data-viz
+  #single-col
+    %h2 Card Swipes Per Fiscal Year Per Library
+    = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_yearly_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 #data-viz
   #single-col

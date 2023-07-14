@@ -72,37 +72,40 @@ module GatecountHelper
 
   def gen_stats(input_table,fiscal_year,library)
     #Delete unnecessary data and data from wrong schools:
-    gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
+    gen_values=input_table
+    if fiscal_year.is_a? Integer
+       gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
+    end
     #This breaks it for some reason...
     #|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
-   if library=="Biotech"
-      gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
-   elsif library=="Furness"
-      gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
-   elsif library=="Van Pelt"
-     gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+    if library=="Biotech"
+       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
+    elsif library=="Furness"
+       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
+    elsif library=="Van Pelt"
+       gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
    #Need to actually combine the values...but not sure that we want this...
    #else library=="All"
      #  puts "All Libraries"
-   end
+    end
    
-   if input_table=time_table
+    if input_table=time_table
 
-   counts=input_table.pluck("card_num")
+    counts=input_table.pluck("card_num")
 
-   dates=input_table.pluck("swipe_date")
+    dates=input_table.pluck("swipe_date")
      
-   time_array=Hash.new
+    time_array=Hash.new
 
-   time_index=(0..time_array.length-1).to_a
+    time_index=(0..time_array.length-1).to_a
 
-   time_index.each {|i| time_array[dates[i]] = card_num[i]}
+    time_index.each {|i| time_array[dates[i]] = card_num[i]}
 
-   return gen_values.to_a
+    return gen_values.to_a
    
-   else
-   return gen_values
-   end
+    else
+    return gen_values
+    end
     
   end
 
