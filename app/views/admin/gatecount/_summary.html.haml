@@ -4,9 +4,9 @@
 -biotech_table=gen_stats(time_table,2023,"Biotech")
 -van_pelt_table=gen_stats(time_table,2023,"Van Pelt")
 
--furn_2023_counts=furness_table.group_by_month(:swipe_date).to_h { |k, v| [k, v.count]}
--vp_2023_counts=biotech_table.group_by_month(:swipe_date).to_h { |k, v| [k, v.count]}
--bio_2023_counts=van_pelt_table.group_by_month(:swipe_date).to_h { |k, v| [k, v.count]}
+-furn_2023_counts=furness_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-vp_2023_counts=biotech_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
+-bio_2023_counts=van_pelt_table.group_by_month {|c| c["swipe_date"]}.to_h { |k, v| [k, v.count]}
 
 -arts_and_sciences=GateCount::CardSwipe.where(school:"College of Arts & Sciences").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
 
