@@ -197,6 +197,9 @@ module GatecountHelper
          end
 
          return all_data
+
+         puts all_data
+         
       end
       
   end
