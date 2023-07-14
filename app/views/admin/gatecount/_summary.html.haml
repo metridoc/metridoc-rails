@@ -70,7 +70,9 @@
         %td="#{first_year}-#{next_year}"
   %tbody
   -for m in month_range
-    %tr
-      %td month_names[m]
+   %tr
+      -column_title=month_names[m]
+      %td="#{column_title}"
       -for i in year_index
-        %td{align: "right"}=vp_all_counts[i][month_names[m]]
+        -data=vp_all_counts[i][month_names[m]]
+        %td{align: "right"}="#{data}"
