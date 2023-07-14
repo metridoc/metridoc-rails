@@ -219,7 +219,8 @@ module GatecountHelper
          return all_data
       else
          return count_array  
-        
+      end
+      
   end
    
 end
