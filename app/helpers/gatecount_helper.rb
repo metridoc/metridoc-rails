@@ -93,6 +93,8 @@ module GatecountHelper
   def calc_percents(input_table,type,user_group)
     if user_group != "All"
       copy_table=input_table.select{|h| h["user_group"] == user_group}
+    elsif
+      copy_table=input_table
     end
     
     if type=="Counts"
