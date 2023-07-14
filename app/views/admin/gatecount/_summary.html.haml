@@ -67,10 +67,8 @@
   %tbody
     %tr
       %td January
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} Replace
-      %td{align: "right"} 2168
+      -for i in year_index
+       %td{align: "right"}=vp_all_counts[i]["January"]
     %tr
       %td February
       %td{align: "right"} Replace
