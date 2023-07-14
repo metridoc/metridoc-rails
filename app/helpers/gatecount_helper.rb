@@ -163,6 +163,8 @@ module GatecountHelper
       elsif time_frame=="All"
         time=copy_table.pluck("fiscal_year")
       end
+
+      puts time
       
       if count_type=="Counts"
          count=copy_table.pluck("num_swipes")
