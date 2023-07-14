@@ -158,9 +158,10 @@ module GatecountHelper
         time=copy_table.pluck("week")
       elsif time_frame=="Monthly"
         time=copy_table.pluck("month")    
-      else 
+      elsif time_frame=="Yearly" 
         time=copy_table.pluck("fiscal_year")
-      #   months=copy_table.pluck("month")
+      elsif time_frame=="All"
+        time=copy_table.pluck("fiscal_year")
       end
       
       if count_type=="Counts"
@@ -172,29 +173,6 @@ module GatecountHelper
       count_array=Hash.new
       count_index=(0..count.length-1).to_a
       count_index.each {|i| count_array[time[i]] = count[i]}
-
-      #Need to get each bin for the frequency data:
-      #if count_type=="Frequency"
-      #   count=copy_table.pluck("num_swipes")
-      #   people=copy_table.pluck("num_people")
-
-      #   num_users=people.sum
-         
-      #   single_user=count.select{|h| h["count"] == user_group}
-      #   medium_user=
-      #   freq_user=
-         
-         #Need to remember to return as a percentage of the college of arts and sciences population
-      #   total_pop=9303
-         
-      #   percents_zero.(num_users-single_user).fdiv(total_pop)
-      #   percents_one=(single_user).fdiv(total_pop)
-      #   percents_two=(medium_user).fdiv(total_pop)
-      #   percents_three=(freq_user).fdiv(total_pop)
-
-      #   freq_info=[percents_zero,percents_one,percents_two,percents_three]
-
-      #   return freq_info
       
       if time_frame="All"
          years=copy_table.pluck("fiscal_year")
@@ -224,3 +202,27 @@ module GatecountHelper
   end
    
 end
+
+      #Need to get each bin for the frequency data:
+      #if count_type=="Frequency"
+      #   count=copy_table.pluck("num_swipes")
+      #   people=copy_table.pluck("num_people")
+
+      #   num_users=people.sum
+         
+      #   single_user=count.select{|h| h["count"] == user_group}
+      #   medium_user=
+      #   freq_user=
+         
+         #Need to remember to return as a percentage of the college of arts and sciences population
+      #   total_pop=9303
+         
+      #   percents_zero.(num_users-single_user).fdiv(total_pop)
+      #   percents_one=(single_user).fdiv(total_pop)
+      #   percents_two=(medium_user).fdiv(total_pop)
+      #   percents_three=(freq_user).fdiv(total_pop)
+
+      #   freq_info=[percents_zero,percents_one,percents_two,percents_three]
+
+      #   return freq_info
+      
