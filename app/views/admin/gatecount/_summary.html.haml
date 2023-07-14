@@ -68,4 +68,9 @@
         -first_year=year_range[i]
         -next_year=year_range[i]+1
         %td="#{first_year}-#{next_year}"
-
+  %tbody
+    -for m in month_range
+      %tr
+      -column_title=month_names[m]
+        %td="#{column_title}"
+  
