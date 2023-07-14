@@ -12,8 +12,6 @@
 -bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
 -vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
 
--arts_and_sciences=GateCount::CardSwipe.where(school:"College of Arts & Sciences").where(swipe_date: '2023-01-01 00:00:00'..'2023-06-30 00:00:00').where("door_name = ? OR door_name = ? OR door_name = ? OR door_name = ?","VAN PELT LIBRARY TURN1_ *VPL","VAN PELT LIBRARY TURN2_ *VPL","VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL","VAN PELT LIBRARY ADA DOOR_ *VPL")
-
 #data-viz
   #single-col
     %h2 Card Swipes Per Fiscal Year Per Library
@@ -45,6 +43,9 @@
   #single-col
     %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
+
+-arts_sciences=gen_stats(freq_table,2023,"Van Pelt")
+
 
 %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
 

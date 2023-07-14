@@ -48,7 +48,7 @@ module GatecountHelper
       return output_table.to_a
   end
 
-   def frequency_table
+   def freq_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            CASE
