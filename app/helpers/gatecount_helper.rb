@@ -185,7 +185,8 @@ module GatecountHelper
       end
 
       if time_frame=="Monthly"
-         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
+        temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
+      end
       
       if time_frame=="All"
          years=time
