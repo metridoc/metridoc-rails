@@ -77,7 +77,7 @@
   =column_chart undergrad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
 
 -undergrad_vp=calc_percents(van_pelt_table,"Counts","Undergraduate Student")
--undergrad_vp.delete_if{|h| h["school"] == "Perelman School of Medicine"|| h["school"] == "Graduate School of Education"|| h["school"] == "College of Arts & Sciences,The Wharton School"}
+-undergrad_vp.delete_if{|h| h["school"] != "College of Arts & Sciences" || h["school"] != "School of Engineering and Applied Science"|| h["school"] != "The Wharton School" || h["school"] != "School of Nursing"}
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
