@@ -173,13 +173,19 @@ module GatecountHelper
       
       month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
       
+      temp_array=Hash.new
       count_array=Hash.new
+
+      temp_index=[6,7,8,9,10,11,0,1,2,3,4,5]
       count_index=(0..count.length-1).to_a
       if time_frame=="Monthly"
-         count_index.each {|i| count_array[month_names[time[i].to_i-1]] = count[i]}
+         count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
       else
          count_index.each {|i| count_array[time[i]] = count[i]}
       end
+
+      if time_frame=="Monthly"
+         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
       
       if time_frame=="All"
          years=time
