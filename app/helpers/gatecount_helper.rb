@@ -190,6 +190,22 @@ module GatecountHelper
       if time_frame=="Monthly"
         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
       end
+
+      if time_frame=="Yearly"
+         years=time
+        
+         year_range=(years.min.to_i..years.max.to_i).to_a
+
+         year_index=(0..year_range.length-1).to_a
+         
+         for i in year_index
+             year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
+             year_counts=year_data.pluck('num_swipes').sum
+             
+             count_array["#{year_range[i]}",year_range[i]]=year_counts
+         end
+         
+      end
       
       if time_frame=="All"
          years=time
