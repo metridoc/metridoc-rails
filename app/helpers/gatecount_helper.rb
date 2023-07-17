@@ -178,12 +178,14 @@ module GatecountHelper
 
       temp_index=[6,7,8,9,10,11,0,1,2,3,4,5]
       count_index=(0..count.length-1).to_a
+
       if time_frame=="Monthly"
          count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
       else
          count_index.each {|i| count_array[time[i]] = count[i]}
       end
 
+      #Reordering to the fiscal year:
       if time_frame=="Monthly"
         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
       end
