@@ -194,9 +194,9 @@ module GatecountHelper
       if time_frame=="Yearly"
          years=time
         
-         year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
+         year_range=[2017,2018,2019,2020,2021,2022,2023]
 
-         year_index=[0,1,2,3,4,5,6,7]
+         year_index=[0,1,2,3,4,5,6]
          
          for i in year_index
              year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
