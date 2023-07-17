@@ -77,13 +77,17 @@
   =column_chart undergrad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
 
 -undergrad_vp=calc_percents(van_pelt_table,"Counts","Undergraduate Student")
--undergrad_vp.delete_if{|h| h["school"] != "College of Arts & Sciences" && h["school"] != "School of Engineering and Applied Science" && h["school"] != "The Wharton School" && h["school"] != "School of Nursing"}
+
+-undergrad_pie=Hash.new
+
+-school_index.each {|i| undergrad_pie[school_names[i]]=(undergrad_vp[school_names[i]])}
+
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts By School
 #data-viz
 #single-col
   %h3{style: "text-align:center;"} Undergraduate Students
-  =pie_chart undergrad_vp, round: 2,  download: true
+  =pie_chart undergrad_pie, round: 2,  download: true
 
 -undergrad_bio=calc_percents(biotech_table,"Raw Counts","Undergraduate Student")
 -undergrad_vp=calc_percents(van_pelt_table,"Raw Counts","Undergraduate Student")
