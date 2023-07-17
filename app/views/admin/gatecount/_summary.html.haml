@@ -12,14 +12,10 @@
 -bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
 -vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
 
--vp_gen_table=gen_stats(time_table,"All","Van Pelt")
-
--vp_all_counts=time_counts(vp_gen_table,"All","Counts")
-
 #data-viz
   #single-col
     %h2 Card Swipes Per Fiscal Year Per Library
-    = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_all_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_yearly_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 #data-viz
   #single-col
