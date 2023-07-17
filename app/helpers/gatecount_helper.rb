@@ -202,7 +202,7 @@ module GatecountHelper
              year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
              year_counts=year_data.pluck('num_swipes').sum
              
-             count_array["#{year_range[i]}",year_range[i]]=year_counts
+             count_array["#{year_range[i]}"]=year_counts
          end
          
       end
