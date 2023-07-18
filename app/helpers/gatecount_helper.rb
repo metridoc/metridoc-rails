@@ -222,15 +222,15 @@ module GatecountHelper
 
          yearly_data=Hash.new
 
-         for i in year_index
-             fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
+         for y in year_index
+             fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
              fiscal_year_month=fiscal_year_data.pluck('month')
              fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
              if time_frame=="Yearly"
-                fiscal_index.each {|i| yearly_data["#{year_range[i]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
+                fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
                 fiscal_array["Total"]=fiscal_year_counts.sum
