@@ -146,32 +146,32 @@
 
 -year_index=(0..year_range.length-1).to_a
 
-%section
 
-  %h2{style: "text-align:center;"} Biotech Monthly Gate Counts
 
-  %table{align: "center", border: "1", cellpadding: "5"}
-    %thead
+%h2{style: "text-align:center;"} Biotech Monthly Gate Counts
+
+%table{align: "center", border: "1", cellpadding: "5"}
+  %thead
+    %tr
+      %td Fiscal Year
+      %td 2017
+      %td 2018
+      %td 2019
+      %td 2020
+      %td 2021
+      -for i in year_index
+        -fiscal_year=year_range[i]
+        %td="#{fiscal_year}"
+  %tbody
+    -for m in month_range
       %tr
-        %td Fiscal Year
-        %td 2017
-        %td 2018
-        %td 2019
-        %td 2020
-        %td 2021
-        -for i in year_index
-          -fiscal_year=year_range[i]
-          %td="#{fiscal_year}"
-    %tbody
-      -for m in month_range
-        %tr
-        -column_title=month_names[m]
-        %td="#{column_title}"
-        %td=bio_2017[m]
-        %td=bio_2018[m]
-        %td=bio_2019[m]
-        %td=bio_2020[m]
-        %td=bio_2021[m]
-        -for i in year_index
-          -data=bio_all_counts[i][month_names[m]]
-          %td="#{data}"
+      -column_title=month_names[m]
+      %td="#{column_title}"
+      %td=bio_2017[m]
+      %td=bio_2018[m]
+      %td=bio_2019[m]
+      %td=bio_2020[m]
+      %td=bio_2021[m]
+      -for i in year_index
+        -data=bio_all_counts[i][month_names[m]]
+        %td="#{data}"
