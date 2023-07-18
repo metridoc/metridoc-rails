@@ -245,10 +245,6 @@ module GatecountHelper
 
          week_range=Array (1..52)
          week_index=Array (0..51)
-
-         puts "This is a test"
-         print week_range
-         print week_index
          
          percents_zero=Hash.new
          percents_single=Hash.new
@@ -282,8 +278,8 @@ module GatecountHelper
             percents_medium["#{week_range[i]}"]=(medium_user).fdiv(total_pop)
             percents_freq["#{week_range[i]}"]=(freq_user).fdiv(total_pop)
 
-         return percents_zero,percents_single,percents_medium,percents_freq
          end
+         return percents_zero,percents_single,percents_medium,percents_freq
       end
 
       return count_array
