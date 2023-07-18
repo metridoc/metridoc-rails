@@ -243,12 +243,11 @@ module GatecountHelper
          people=copy_table.pluck("num_people")
          num_users=people.sum
 
-         week_range=(time.min.to_i..time.max.to_i).to_a
+         week_range=(1..52).to_a
          week_index=(0..week_range.length-1).to_a
 
          puts "This is a test"
-         puts time
-         puts week_range
+         puts week_index
          
          percents_zero=Hash.new
          percents_single=Hash.new
