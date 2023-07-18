@@ -205,8 +205,8 @@ module GatecountHelper
              year_counts=year_data.pluck('num_swipes').sum
              
              count_array["#{year_range[i]}"]=year_counts
+             
          end
-         puts count_array
       end
       
       if time_frame=="All"
