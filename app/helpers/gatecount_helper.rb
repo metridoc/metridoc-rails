@@ -256,13 +256,15 @@ module GatecountHelper
           for i in week_index
             week_data=copy_table.select{|h| h["week"] == week_range[i]}
             card_num=week_data.pluck('card_num')
+
+            test_array=card_num.uniq
             
-            single_user=card_num.uniq.length
+            single_user=test_array.length
             puts single_user
             medium_user=0
             freq_user=0
           
-            for x in card_num.uniq
+            for x in test_array
                  if card_num.count(x) >= 2 && card_num.count(x) <= 3
                     medium_user=medium_user+1
                  elsif card_num.count(x) > 3
