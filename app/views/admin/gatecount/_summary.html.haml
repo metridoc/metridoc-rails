@@ -67,7 +67,7 @@
 
 -month_range=(0..12).to_a
 
--year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
+-year_range=[2017,2018,2019,2020,2021,2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
 
@@ -85,8 +85,8 @@
       %tr
       -column_title=month_names[m]
       %td="#{column_title}"
-      -for i in year_index
-        -data=vp_all_counts[i][month_names[m]]
+      -for y in year_index
+        -data=vp_all_counts[y+1][month_names[m]]
         %td="#{data}"
 
 -furn_gen_table=gen_stats(time_table,"All","Furness")
