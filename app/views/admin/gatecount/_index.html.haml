@@ -8,11 +8,12 @@
 
 %h3 Dashboards
 
+%ul
+
 %li= link_to "Overview", "gate_counts_overview"
 %li= link_to "Populations & Penetration", "population_penetration"
 
 %h3 Tables
-
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
