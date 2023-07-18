@@ -186,8 +186,6 @@ module GatecountHelper
 
       if time_frame=="Monthly"
          count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
-      else
-         count_index.each {|i| count_array[time[i]] = count[i]}
       end
 
       #Reordering to the fiscal year:
