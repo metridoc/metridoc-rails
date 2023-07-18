@@ -260,7 +260,7 @@ module GatecountHelper
             test_array=card_num.uniq
             
             single_user=test_array.length
-            puts test_array
+            puts card_num
             medium_user=0
             freq_user=0
           
