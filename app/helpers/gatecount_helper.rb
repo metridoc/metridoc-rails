@@ -245,15 +245,15 @@ module GatecountHelper
          people=copy_table.pluck("num_people")
          num_users=people.sum
 
-          week_range=(time.min.to_i..time.max.to_i).to_a
-          week_index=(0..week_range.length-1).to_a
+         week_range=(time.min.to_i..time.max.to_i).to_a
+         week_index=(0..week_range.length-1).to_a
 
-          percents_zero=Hash.new
-          percents_single=Hash.new
-          percents_medium=Hash.new
-          percents_freq=Hash.new
+         percents_zero=Hash.new
+         percents_single=Hash.new
+         percents_medium=Hash.new
+         percents_freq=Hash.new
           
-          for i in week_index
+         for i in week_index
             week_data=copy_table.select{|h| h["week"] == week_range[i]}
             card_num=week_data.pluck('card_num')
 
@@ -281,8 +281,8 @@ module GatecountHelper
             percents_medium["#{week_range[i]}"]=(medium_user).fdiv(total_pop)
             percents_freq["#{week_range[i]}"]=(freq_user).fdiv(total_pop)
 
-          return percents_zero,percents_single,percents_medium,percents_freq
-          end
+         return percents_zero,percents_single,percents_medium,percents_freq
+         end
       end
             
   end
