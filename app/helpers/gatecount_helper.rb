@@ -72,7 +72,7 @@ module GatecountHelper
            WHERE school='College of Arts & Sciences'
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
               AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
-         GROUP BY 1,2,3,4;")
+         GROUP BY 1,2,3;")
 
       return output_table.to_a
   end
