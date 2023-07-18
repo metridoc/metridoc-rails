@@ -68,6 +68,7 @@ module GatecountHelper
            card_num
          FROM gate_count_card_swipes 
            WHERE school='College of Arts & Sciences'
+              AND (EXTRACT(week from swipe_date) >= 26 AND EXTRACT(week from swipe_date <= 52)
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
               AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')")
 
@@ -243,8 +244,8 @@ module GatecountHelper
 
          puts "Library Users number #{num_users}"
 
-         week_range=Array (1..52)
-         week_index=Array (0..51)
+         week_range=(time.min.to_i..time.max.to_i).to_a
+         week_index=(0..week_range.length-1).to_a
          
          percents_zero=Hash.new
          percents_single=Hash.new
