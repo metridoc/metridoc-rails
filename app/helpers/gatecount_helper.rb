@@ -171,7 +171,9 @@ module GatecountHelper
       if count_type=="Counts"
          count=copy_table.pluck("num_swipes")
       elsif count_type=="People"
-         count=input_table.pluck("num_people")
+        count=input_table.pluck("num_people")
+      elsif count_type=="Frequency"
+        count=input_table.pluck("num_people")
       end
 
       
