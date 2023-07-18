@@ -266,7 +266,7 @@ module GatecountHelper
             freq_user=0
           
             for x in test_array
-                 if card_num.count(x) >= 2 && card_num.count(x) <= 3
+                 if card_num.count(x) >= 2 || card_num.count(x) <= 3
                     medium_user=medium_user+1
                  elsif card_num.count(x) > 3
                     freq_user=freq_user+1
