@@ -244,7 +244,7 @@ module GatecountHelper
          num_users=people.sum
 
          week_range=(1..52).to_a
-         week_index=(0..week_range.length-1).to_a
+         week_index=(0..51).to_a
 
          puts "This is a test"
          puts week_index
