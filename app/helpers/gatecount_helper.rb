@@ -258,6 +258,7 @@ module GatecountHelper
             card_num=week_data.pluck('card_num')
             
             single_user=card_num.uniq.sum
+            puts single_user
             medium_user=0
             freq_user=0
           
