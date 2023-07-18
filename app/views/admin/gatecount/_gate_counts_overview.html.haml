@@ -1,0 +1,173 @@
+= javascript_include_tag 'application'
+
+-furn_yearly=gen_stats(time_table,"All","Furness")
+-bio_yearly=gen_stats(time_table,"All","Biotech")
+-vp_yearly=gen_stats(time_table,"All","Van Pelt")
+
+-furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
+-bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
+-vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
+
+-furn_yearly_people=time_counts(furn_yearly,"Yearly","People")
+-bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
+-vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
+
+-#bio_yearly_counts["2016"]=106119
+-#bio_yearly_counts["2017"]=102840
+-#bio_yearly_counts["2018"]=97496
+-#bio_yearly_counts["2019"]=107031
+-#bio_yearly_counts["2020"]=85856
+
+-bio_year=[2016,2017,2018,2019,2020,2021]
+-month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
+
+-bio_2016=[10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
+-bio_2017=[7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
+-bio_2018=[6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
+-bio_2019=[7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
+-bio_2020=[9271,8631,12122,13036,9764,9624,7683,11430,4295,0,0,0,85856]
+-bio_2021=[0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+-month_range=(0..11).to_a
+-bio_year_index=(0..bio_year.length-1).to_a
+
+-#for y in bio_year_index
+-#Make this less manual later...will affect charts though!
+-for m in month_range
+  -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2016[m]
+  -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m]
+  -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2018[m]
+  -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2019[m]
+  -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m]
+  -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m]
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
+    = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_yearly_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
+    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
+
+-furness_2023_table=gen_stats(time_table,2023,"Furness")
+-biotech_2023_table=gen_stats(time_table,2023,"Biotech")
+-vp_2023_table=gen_stats(time_table,2023,"Van Pelt")
+
+-furn_2023_counts=time_counts(furness_2023_table,"Monthly","Counts")
+-vp_2023_counts=time_counts(vp_2023_table,"Monthly","Counts")
+-bio_2023_counts=time_counts(biotech_2023_table,"Monthly","Counts")
+
+-furn_2023_people=time_counts(furness_2023_table,"Monthly","People")
+-vp_2023_people=time_counts(vp_2023_table,"Monthly","People")
+-bio_2023_people=time_counts(biotech_2023_table,"Monthly","People")
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library Fiscal Year 2023
+    = line_chart [{name: "BioTech", data: bio_2023_counts}, {name: "Furness", data: furn_2023_counts},{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library Fiscal Year 2023
+    = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
+
+-sas_gen_table=gen_stats(freq_table,2023,"Van Pelt")
+-percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency")
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
+    = column_chart [{name: "No Visits", data: percents_zero}, {name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, stacked: true, download: true   
+
+-vp_gen_table=gen_stats(time_table,"All","Van Pelt")
+-vp_all_counts=time_counts(vp_gen_table,"All","Counts")
+
+-month_names=["July","August","September","October","November","December","January","February","March","April","May","June","Total"]
+
+-month_range=(0..12).to_a
+
+-year_range=[2017,2018,2019,2020,2021,2022,2023]
+
+-year_index=(0..year_range.length-1).to_a
+
+%h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
+
+%table{align: "left", border: "1", cellpadding: "5"}
+  %thead
+    %tr
+      %td Fiscal Year
+      -for i in year_index
+        -fiscal_year=year_range[i]
+        %td="#{fiscal_year}"
+  %tbody
+    -for m in month_range
+      %tr
+      -column_title=month_names[m]
+      %td="#{column_title}"
+      -for y in year_index
+        -data=vp_all_counts[y+1][month_names[m]]
+        %td="#{data}"
+
+-furn_gen_table=gen_stats(time_table,"All","Furness")
+
+-furn_all_counts=time_counts(furn_gen_table,"All","Counts")
+
+-year_range=[2020,2021,2022,2023]
+
+-year_index=(0..year_range.length-1).to_a
+
+%h2{style: "text-align:right;"} Furness Monthly Gate Counts
+
+%table{align: "right", border: "1", cellpadding: "5"}
+  %thead
+    %tr
+      %td Fiscal Year
+      -for i in year_index
+        -fiscal_year=year_range[i]
+        %td="#{fiscal_year}"
+  %tbody
+    -for m in month_range
+      %tr
+      -column_title=month_names[m]
+      %td="#{column_title}"
+      -for y in year_index
+        -data=furn_all_counts[y+1][month_names[m]]
+        %td="#{data}"
+
+-bio_gen_table=gen_stats(time_table,"All","Biotech")
+
+-bio_all_counts=time_counts(bio_gen_table,"All","Counts")
+
+-year_range=[2022,2023]
+
+-year_index=(0..year_range.length-1).to_a
+
+%h2{style: "text-align:center;"} Biotech Monthly Gate Counts
+
+%table{align: "center", border: "1", cellpadding: "5"}
+  %thead
+    %tr
+      %td Fiscal Year
+      %td 2017
+      %td 2018
+      %td 2019
+      %td 2020
+      %td 2021
+      -for i in year_index
+        -fiscal_year=year_range[i]
+        %td="#{fiscal_year}"
+  %tbody
+    -for m in month_range
+      %tr
+      -column_title=month_names[m]
+      %td="#{column_title}"
+      %td=bio_2017[m]
+      %td=bio_2018[m]
+      %td=bio_2019[m]
+      %td=bio_2020[m]
+      %td=bio_2021[m]
+      -for i in year_index
+        -data=bio_all_counts[i][month_names[m]]
+        %td="#{data}"
