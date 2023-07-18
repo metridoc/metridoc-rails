@@ -258,9 +258,11 @@ module GatecountHelper
             card_num=week_data.pluck('card_num')
 
             test_array=card_num.uniq
+
+            puts "This is a test"
             
             single_user=test_array.length
-            puts card_num
+
             medium_user=0
             freq_user=0
           
