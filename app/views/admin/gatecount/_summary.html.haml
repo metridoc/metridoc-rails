@@ -59,8 +59,9 @@
     = column_chart [{name: "No Visits", data: percents_zero}, {name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, stacked: true, download: true   
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
-
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
+
+-puts vp_all_counts
 
 -month_names=["July","August","September","October","November","December","January","February","March","April","May","June","Total"]
 
@@ -92,8 +93,6 @@
 
 -furn_all_counts=time_counts(furn_gen_table,"All","Counts")
 
--puts furn_all_counts
-
 -year_range=[2020,2021,2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
@@ -112,7 +111,8 @@
       %tr
       -column_title=month_names[m]
       %td="#{column_title}"
-      -for y in year_index
+-for y in year_index
+        -#Manually set the data population to start at the correct year.
         -data=furn_all_counts[y+1][month_names[m]]
         %td="#{data}"
 
@@ -123,8 +123,6 @@
 -year_range=[2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
-
--puts bio_all_counts
 
 -bio_2016=[10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
 -bio_2017=[7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
