@@ -248,6 +248,9 @@ module GatecountHelper
          week_range=(time.min.to_i..time.max.to_i).to_a
          week_index=(0..week_range.length-1).to_a
 
+         puts "This is a test"
+         puts week_index
+         
          percents_zero=Hash.new
          percents_single=Hash.new
          percents_medium=Hash.new
@@ -258,8 +261,6 @@ module GatecountHelper
             card_num=week_data.pluck('card_num')
 
             test_array=card_num.uniq
-
-            puts "This is a test"
             
             single_user=test_array.length
 
