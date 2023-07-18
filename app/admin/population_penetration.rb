@@ -1,7 +1,7 @@
 ActiveAdmin.register_page "Population & Penetration" do
 
   breadcrumb do
-    [link_to('Admin',admin_root_path), link_to('Gate Counts',admin_gatecount_path)]
+    [link_to('Admin',admin_root_path), link_to('Populations & Penetration',admin_gatecount_path)]
   end
 
   #Don't add to the top menu
