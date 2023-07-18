@@ -236,8 +236,6 @@ module GatecountHelper
          
       end
 
-      return count_array
-
        #Need to get each bin for the frequency data:
       if count_type=="Frequency"
          freq_info=[]
@@ -287,6 +285,8 @@ module GatecountHelper
          return percents_zero,percents_single,percents_medium,percents_freq
          end
       end
+
+      return count_array
             
   end
    
