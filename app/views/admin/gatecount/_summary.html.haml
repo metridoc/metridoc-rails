@@ -96,7 +96,7 @@
 
 -year_range=[2020,2021,2022,2023]
 
--year_index=(1..year_range.length-1).to_a
+-year_index=(0..year_range.length-1).to_a
 
 %h2{style: "text-align:right;"} Furness Monthly Gate Counts
 
@@ -113,7 +113,7 @@
       -column_title=month_names[m]
       %td="#{column_title}"
       -for y in year_index
-        -data=furn_all_counts[y][month_names[m]]
+        -data=furn_all_counts[y+1][month_names[m]]
         %td="#{data}"
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
