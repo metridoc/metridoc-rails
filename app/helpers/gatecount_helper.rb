@@ -65,14 +65,11 @@ module GatecountHelper
            END AS library,
            DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
            EXTRACT(week from swipe_date) AS week,
-           card_num,
-           COUNT(card_num) AS num_swipes,
-           COUNT(DISTINCT card_num) AS num_people
+           card_num
          FROM gate_count_card_swipes 
            WHERE school='College of Arts & Sciences'
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
-              AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
-         GROUP BY 1,2,3,4;")
+              AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')")
 
       return output_table.to_a
   end
@@ -174,7 +171,7 @@ module GatecountHelper
       elsif count_type=="People"
         count=input_table.pluck("num_people")
       elsif count_type=="Frequency"
-        count=input_table.pluck("num_people")
+        count=input_table.pluck("card_num")
       end
 
       
@@ -266,9 +263,6 @@ module GatecountHelper
             freq_user=0
           
             for x in test_array
-                 if i==1
-                    puts card_num.count(x)
-                 end
                  if card_num.count(x) >= 2 || card_num.count(x) <= 3
                     medium_user=medium_user+1
                  elsif card_num.count(x) > 3
