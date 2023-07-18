@@ -128,6 +128,7 @@
 -bio_2018=[6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
 -bio_2019=[7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
 -bio_2020=[9271,8631,12122,13036,9764,9624,7683,11430,4295,0,0,0,85856]
+-bio_2021=[0,0,0,0,0,0,0,0,0,0,0,0,0]
 
 %h2{style: "text-align:center;"} Biotech Monthly Gate Counts
 
@@ -135,11 +136,11 @@
   %thead
     %tr
       %td Fiscal Year
-      %td 2016
       %td 2017
       %td 2018
       %td 2019
       %td 2020
+      %td2021
       -for i in year_index
         -fiscal_year=year_range[i]
         %td="#{fiscal_year}"
@@ -148,11 +149,11 @@
       %tr
       -column_title=month_names[m]
       %td="#{column_title}"
-      %td=bio_2016[m]
       %td=bio_2017[m]
       %td=bio_2018[m]
       %td=bio_2019[m]
       %td=bio_2020[m]
+      %td=bio_2021[m]
       -for i in year_index
         -data=bio_all_counts[i][month_names[m]]
         %td="#{data}"
