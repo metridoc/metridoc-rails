@@ -243,6 +243,8 @@ module GatecountHelper
          people=copy_table.pluck("num_people")
          num_users=people.sum
 
+         puts "Library Users number #{num_users}"
+
          week_range=Array (1..52)
          week_index=Array (0..51)
          
