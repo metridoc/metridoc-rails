@@ -247,7 +247,7 @@ module GatecountHelper
          week_index=(0..week_range.length-1).to_a
 
          puts "This is a test"
-         puts week_index
+         puts week_range
          
          percents_zero=Hash.new
          percents_single=Hash.new
