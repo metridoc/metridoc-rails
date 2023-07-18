@@ -257,7 +257,7 @@ module GatecountHelper
             week_data=copy_table.select{|h| h["week"] == week_range[i]}
             card_num=week_data.pluck('card_num')
             
-            single_user=card_num.uniq.sum
+            single_user=card_num.uniq.length
             puts single_user
             medium_user=0
             freq_user=0
