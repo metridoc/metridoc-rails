@@ -252,7 +252,7 @@ module GatecountHelper
          percents_single=Hash.new
          percents_medium=Hash.new
          percents_freq=Hash.new
-          
+         
          for i in week_index
             week_data=copy_table.select{|h| h["week"] == week_range[i]}
             card_num=week_data.pluck('card_num')
@@ -260,7 +260,7 @@ module GatecountHelper
             test_array=card_num.uniq
             
             single_user=test_array.length
-            puts single_user
+            puts test_array
             medium_user=0
             freq_user=0
           
