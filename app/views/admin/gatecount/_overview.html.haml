@@ -92,23 +92,25 @@
 
 -year_index=(0..year_range.length-1).to_a
 
-%h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
+%section
 
-%table{align: "left", border: "1", cellpadding: "5"}
-  %thead
-    %tr
-      %td Fiscal Year
-      -for i in year_index
-        -fiscal_year=year_range[i]
-        %td="#{fiscal_year}"
-  %tbody
-    -for m in month_range
+  %h2{style: "text-align:left;"} Van Pelt Monthly Gate Counts
+
+  %table{align: "left", border: "1", cellpadding: "5"}
+    %thead
       %tr
-      -column_title=month_names[m]
-      %td="#{column_title}"
-      -for y in year_index
-        -data=vp_all_counts[y+1][month_names[m]]
-        %td="#{data}"
+        %td Fiscal Year
+        -for i in year_index
+          -fiscal_year=year_range[i]
+          %td="#{fiscal_year}"
+    %tbody
+      -for m in month_range
+        %tr
+        -column_title=month_names[m]
+        %td="#{column_title}"
+        -for y in year_index
+          -data=vp_all_counts[y+1][month_names[m]]
+          %td="#{data}"
 
 -furn_gen_table=gen_stats(time_table,"All","Furness")
 
