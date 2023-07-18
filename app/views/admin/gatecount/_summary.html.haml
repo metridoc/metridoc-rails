@@ -43,12 +43,12 @@
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"} Card Swipes Per Fiscal Year Per Library
+    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_yearly_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"} Number of Visitors Per Fiscal Year Per Library
+    %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
 
 -furness_2023_table=gen_stats(time_table,2023,"Furness")
