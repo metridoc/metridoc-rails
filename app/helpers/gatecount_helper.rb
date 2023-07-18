@@ -247,6 +247,7 @@ module GatecountHelper
          week_index=(0..week_range.length-1).to_a
 
          puts "This is a test"
+         puts time
          puts week_range
          
          percents_zero=Hash.new
@@ -273,7 +274,6 @@ module GatecountHelper
                  end
             end  
 
-            puts medium_user
          #Need to remember to return as a percentage of the college of arts and sciences population
             total_pop=9303
             
