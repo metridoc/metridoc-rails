@@ -12,6 +12,9 @@
 -bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
 -vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
 
+-bio_yearly_counts["2016"]=106119
+-bio_yearly_counts["2017"]=102840
+-bio_yearly_counts["2018"]=97496
 -bio_yearly_counts["2019"]=107031
 -bio_yearly_counts["2020"]=85856
 
@@ -119,6 +122,9 @@
 
 -year_index=(0..year_range.length-1).to_a
 
+-bio_2016=[10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
+-bio_2017=[7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
+-bio_2018=[6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
 -bio_2019=[7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
 -bio_2020=[9271,8631,12122,13036,9764,9624,7683,11430,4295,0,0,0,85856]
 
@@ -128,6 +134,9 @@
   %thead
     %tr
       %td Fiscal Year
+      %td 2016
+      %td 2017
+      %td 2018
       %td 2019
       %td 2020
       -for i in year_index
@@ -138,6 +147,9 @@
       %tr
       -column_title=month_names[m]
       %td="#{column_title}"
+      %td=bio_2016[m]
+      %td=bio_2017[m]
+      %td=bio_2018[m]
       %td=bio_2019[m]
       %td=bio_2020[m]
       -for i in year_index
