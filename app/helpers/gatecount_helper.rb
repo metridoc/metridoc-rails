@@ -177,6 +177,8 @@ module GatecountHelper
 
       
       month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
+
+      month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
       
       temp_array=Hash.new
       count_array=Hash.new
@@ -193,23 +195,23 @@ module GatecountHelper
         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
       end
 
-      if time_frame=="Yearly"
-         years=time
+      #if time_frame=="Yearly"
+      #   years=time
         
-         year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
+      #   year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
 
-         year_index=[0,1,2,3,4,5,6,7]
+      #   year_index=[0,1,2,3,4,5,6,7]
          
-         for i in year_index
-             year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
-             year_counts=year_data.pluck('num_swipes').sum
+      #   for i in year_index
+      #       year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
+      #       year_counts=year_data.pluck('num_swipes').sum
              
-             count_array["#{year_range[i]}"]=year_counts
+      #       count_array["#{year_range[i]}"]=year_counts
              
-         end
-      end
+      #   end
+      #end
       
-      if time_frame=="All"
+      if time_frame=="All" || time_frame=="Yearly"
          years=time
         
          year_range=(years.min.to_i..years.max.to_i).to_a
@@ -218,6 +220,8 @@ module GatecountHelper
 
          all_data=[]
 
+         yearly_data=Hash.new
+
          for i in year_index
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
              fiscal_year_month=fiscal_year_data.pluck('month')
@@ -225,13 +229,21 @@ module GatecountHelper
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
-             fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
-             fiscal_array["Total"]=fiscal_year_counts.sum
-             all_data << fiscal_array
+             if time_frame=="Yearly"
+                fiscal_index.each {|i| yearly_data["#{year_range[i]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
+             elsif time_frame=="All"
+                fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
+                fiscal_array["Total"]=fiscal_year_counts.sum
+                all_data << fiscal_array
+             end
+             
          end
-         
-         return all_data
-         
+
+         if time_frame=="All"
+            return all_data
+         elsif time_frame=="Yearly"  
+            return yearly_data
+         end
       end
 
        #Need to get each bin for the frequency data:
