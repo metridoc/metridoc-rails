@@ -269,7 +269,7 @@ module GatecountHelper
                  end
             end  
 
-            print medium_user
+            puts medium_user
          #Need to remember to return as a percentage of the college of arts and sciences population
             total_pop=9303
             
