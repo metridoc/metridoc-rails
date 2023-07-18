@@ -276,8 +276,8 @@ module GatecountHelper
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
-            percents_medium["Week #{week_range[i]}"]=(medium_user).fdiv(total_pop)
-            percents_freq["Week #{week_range[i]}"]=(freq_user).fdiv(total_pop)
+            percents_medium["#{week_range[i]}"]=(medium_user).fdiv(total_pop)
+            percents_freq["#{week_range[i]}"]=(freq_user).fdiv(total_pop)
 
           return percents_zero,percents_single,percents_medium,percents_freq
           end
