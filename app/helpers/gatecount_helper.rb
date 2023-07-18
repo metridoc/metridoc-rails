@@ -256,6 +256,9 @@ module GatecountHelper
             card_num=week_data.pluck('card_num')
 
             test_array=card_num.uniq
+
+            puts card_num.length
+            puts test_array.length
             
             single_user=test_array.length
 
