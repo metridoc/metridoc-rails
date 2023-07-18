@@ -264,6 +264,7 @@ module GatecountHelper
             for x in card_num.uniq
                  if card_num.count(x) >= 2 && card_num.count(x) <= 3
                     medium_user=medium_user+1
+                 elsif card_num.count(x) > 3
                     freq_user=freq_user+1
                  end
             end  
