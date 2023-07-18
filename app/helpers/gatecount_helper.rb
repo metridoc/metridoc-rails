@@ -241,8 +241,8 @@ module GatecountHelper
       if count_type=="Frequency"
          freq_info=[]
 
-         people=copy_table.pluck("num_people")
-         num_users=people.sum
+         people=copy_table.pluck("card_num").uniq
+         num_users=people.count
 
          puts "Library Users number #{num_users}"
 
