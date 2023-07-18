@@ -44,7 +44,13 @@
     %h2 Number of Visitors Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
 
--sas=gen_stats(freq_table,2023,"Van Pelt")
+-sas_gen_table=gen_stats(freq_table,2023,"Van Pelt")
+-percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency")
+
+#data-viz
+  #single-col
+    %h2 Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Fiscal Year 2023
+    = line_chart [{name: "No Visits", data: percents_zero}, {name: "Single Visit", data: percents_one},{name: "Medium Visits", data: perents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Year", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:10}, download: true   
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 

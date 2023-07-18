@@ -229,40 +229,56 @@ module GatecountHelper
              fiscal_array["Total"]=fiscal_year_counts.sum
              all_data << fiscal_array
          end
-
-         puts all_data                                                                        
+         
          return all_data
          
       end
 
       return count_array
+
+       #Need to get each bin for the frequency data:
+      if count_type=="Frequency"
+         freq_info=[]
+
+         people=copy_table.pluck("num_people")
+         num_users=people.sum
+
+          week_range=(time.min.to_i..time.max.to_i).to_a
+          week_index=(0..week_range.length-1).to_a
+
+          percents_zero=Hash.new
+          percents_single=Hash.new
+          percents_medium=Hash.new
+          percents_freq=Hash.new
+          
+          for i in week_index
+            week_data=copy_table.select{|h| h["week"] == week_range[i]}
+            card_num=week_data.pluck('card_num')
+            
+            single_user=card_num.uniq.sum
+            medium_user=0
+            freq_user=0
+          
+            for x in card_num.uniq:
+                 if card_num.count(x) >= 2 && card_num.count(x) <= 3:
+                    medium_user=medium_user+1
+                    freq_user=freq_user+1
+                 end
+            end  
+         
+         #Need to remember to return as a percentage of the college of arts and sciences population
+            total_pop=9303
+
+            freq_hash=Hash.new
+            
+            percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
+            percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
+            percents_medium["Week #{week_range[i]}"]=(medium_user).fdiv(total_pop)
+            percents_freq["Week #{week_range[i]}"]=(freq_user).fdiv(total_pop)
+
+          return percents_zero,percents_single,percents_medium,percents_freq
+          end
+            
   end
    
 end
-
-      #Need to get each bin for the frequency data:
-      #if count_type=="Frequency"
-      #   count=copy_table.pluck("num_swipes")
-      #   people=copy_table.pluck("num_people")
-
-      #   num_users=people.sum
-         
-      #   single_user=count.select{|h| h["count"] == user_group}
-      #   medium_user=
-      #   freq_user=
-         
-         #Need to remember to return as a percentage of the college of arts and sciences population
-      #   total_pop=9303
-         
-      #   percents_zero.(num_users-single_user).fdiv(total_pop)
-      #   percents_one=(single_user).fdiv(total_pop)
-      #   percents_two=(medium_user).fdiv(total_pop)
-      #   percents_three=(freq_user).fdiv(total_pop)
-
-      #   freq_info=[percents_zero,percents_one,percents_two,percents_three]
-
-      #   return freq_info
-#      -for i in year_index
-#        -data=vp_all_counts[i][month_names[m]]
-#        %td="#{data}"
-      
