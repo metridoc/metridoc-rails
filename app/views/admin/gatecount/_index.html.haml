@@ -5,10 +5,10 @@
 %hr
 
 %h2 Resources
-Dashboards
+%h3=Dashboards
 %li= link_to "Overview", "gate_counts_overview"
 %li= link_to "Populations & Penetration", "population_penetration"
-Tables
+%h3=Tables
 %ul
   - resources.each do |resource|
   %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
