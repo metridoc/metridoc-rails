@@ -61,8 +61,6 @@
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
 
--puts vp_all_counts
-
 -month_names=["July","August","September","October","November","December","January","February","March","April","May","June","Total"]
 
 -month_range=(0..12).to_a
@@ -122,6 +120,8 @@
 -year_range=[2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
+
+-puts bio_all_counts
 
 -bio_2016=[10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
 -bio_2017=[7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
