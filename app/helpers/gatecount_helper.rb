@@ -278,6 +278,7 @@ module GatecountHelper
 
           return percents_zero,percents_single,percents_medium,percents_freq
           end
+      end
             
   end
    
