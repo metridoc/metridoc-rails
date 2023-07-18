@@ -268,11 +268,10 @@ module GatecountHelper
                     freq_user=freq_user+1
                  end
             end  
-         
+
+            print medium_user
          #Need to remember to return as a percentage of the college of arts and sciences population
             total_pop=9303
-
-            freq_hash=Hash.new
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
