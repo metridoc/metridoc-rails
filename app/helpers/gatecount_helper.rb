@@ -208,6 +208,7 @@ module GatecountHelper
              
              count_array["#{year_range[i]}"]=year_counts
          end
+         return count_array
       end
       
       if time_frame=="All"
