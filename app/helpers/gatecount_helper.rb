@@ -194,22 +194,6 @@ module GatecountHelper
       if time_frame=="Monthly"
         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
       end
-
-      #if time_frame=="Yearly"
-      #   years=time
-        
-      #   year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
-
-      #   year_index=[0,1,2,3,4,5,6,7]
-         
-      #   for i in year_index
-      #       year_data=copy_table.select{|h| h["fiscal_year"] == year_range[i]}
-      #       year_counts=year_data.pluck('num_swipes').sum
-             
-      #       count_array["#{year_range[i]}"]=year_counts
-             
-      #   end
-      #end
       
       if time_frame=="All" || time_frame=="Yearly"
          years=time
@@ -226,16 +210,22 @@ module GatecountHelper
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
              fiscal_year_month=fiscal_year_data.pluck('month')
              fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
+             fiscal_year_people=fiscal_year_data.pluck('num_people')
 
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
-             if time_frame=="Yearly"
-                fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
+             if time_frame=="Yearly" && count_type=="Counts"
+               fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]} 
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
                 fiscal_array["Total"]=fiscal_year_counts.sum
                 all_data << fiscal_array
              end
+             
+             fiscal_index=(0..fiscal_year_people.length-1).to_a
+             if time_frame=="Yearly" && count_type=="People"
+               fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_people[i]}
+             end  
              
          end
 
