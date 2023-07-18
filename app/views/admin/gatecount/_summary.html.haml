@@ -50,7 +50,7 @@
 #data-viz
   #single-col
     %h2 Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Fiscal Year 2023
-    = line_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Year", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:10}, download: true   
+    = line_chart [ {name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Year", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:10}, download: true   
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 
