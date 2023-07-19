@@ -197,6 +197,7 @@ module GatecountHelper
                 fiscal_data["#{year_range[y]}"] = fiscal_year_people
              end
          end
+         puts fiscal_data
          return fiscal_data
       end
                                                                      
