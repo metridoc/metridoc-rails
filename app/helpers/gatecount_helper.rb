@@ -324,7 +324,7 @@ module GatecountHelper
 
      all_data=[]
   
-     for l in (0..input_data_length-1).to_a
+     for l in (0..input_data.length-1).to_a
          months=["January","February","March","April","May","June","July","August","September","October","November","December","Total"]
          month_data=Hash.new
          
@@ -334,7 +334,7 @@ module GatecountHelper
              percent_change=(new_data-old_data).fdiv(new_data)
              month_data[months[m]]=percent_change
          end
-
+         all_data["Statistics"]="% Change"
          all_data << month_data
          
       end
