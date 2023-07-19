@@ -112,7 +112,7 @@
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
--#vp_percent_change=percent_change(vp_all_counts)
+-vp_percent_change=percent_change(vp_all_counts)
 
 -month_names=["Statistics","July","August","September","October","November","December","January","February","March","April","May","June","Total"]
 
@@ -140,9 +140,9 @@
         %td="#{column_title}"
         -for y in year_index
           -data_one=vp_all_counts[y+1][month_names[m]]
-          -#data_two=vp_percent_change[y+1][month_names[m]]
+          -data_two=vp_percent_change[y+1][month_names[m]]
           %td="#{data_one}"
-          -#%td="#{data_two}"
+          %td="#{data_two}"
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
 
