@@ -94,10 +94,15 @@
 -sas_gen_table=gen_stats(freq_table,2023,"Van Pelt")
 -percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency")
 
+-pop_baseline={"1":100,"26":100}
+-user_baseline={"1":0.7,"2":0.7}
+
+new Chartkick.ColumnChart("chart",[{"name": "Single Visit", "data": percents_single},{"name": "Medium Visits", "data": percents_medium}, {"name":"Freq Visits", "data": percents_freq},{"name": "Population Baseline","data":pop_baseline},{"name":"User Baseline", "data":user_baseline}], { library: { series: { 0: { color: "red"}, 1: { type: "line", color: "yellow" }, 2: { type: "line", color: "blue" },  3: { type: "line", color: "black" }, 4: { type: "line", color: "gray" } } } }  );
+
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
-    = column_chart [{name: "No Visits", data: percents_zero}, {name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, stacked: true, download: true   
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, stacked: true, download: true   
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
