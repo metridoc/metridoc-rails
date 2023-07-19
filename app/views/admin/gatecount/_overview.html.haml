@@ -163,7 +163,7 @@
         %td{:colspan => 2}=2021
         -for i in year_index
           -fiscal_year=year_range[i]
-          %td="#{fiscal_year}"
+          %td{:colspan=2}="#{fiscal_year}"
     %tbody
       -for m in month_range
         %tr
