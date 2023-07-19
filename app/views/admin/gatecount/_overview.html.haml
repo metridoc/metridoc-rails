@@ -12,13 +12,13 @@
 -bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
 -vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
 
--furn_fiscal_counts=time_counts(furn_yearly,"Fiscal_Year","Counts")
--bio_fiscal_counts=time_counts(bio_yearly,"Fiscal_Year","Counts")
--vp_fiscal_counts=time_counts(vp_yearly,"Fiscal_Year","Counts")
+-#furn_fiscal_counts=time_counts(furn_yearly,"Fiscal_Year","Counts")
+-#bio_fiscal_counts=time_counts(bio_yearly,"Fiscal_Year","Counts")
+-#vp_fiscal_counts=time_counts(vp_yearly,"Fiscal_Year","Counts")
 
--furn_fiscal_people=time_counts(furn_yearly,"Fiscal_Year","People")
--bio_fiscal_people=time_counts(bio_yearly,"Fiscal_Year","People")
--vp_fiscal_people=time_counts(vp_yearly,"Fiscal_Year","People")
+-#furn_fiscal_people=time_counts(furn_yearly,"Fiscal_Year","People")
+-#bio_fiscal_people=time_counts(bio_yearly,"Fiscal_Year","People")
+-#vp_fiscal_people=time_counts(vp_yearly,"Fiscal_Year","People")
 
 -#bio_yearly_counts["2016"]=106119
 -#bio_yearly_counts["2017"]=102840
@@ -58,17 +58,6 @@
   #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
-
-#data-viz
-  #single-col
-    %h2{style: "text-align:center;"} Card Swipes Per Year Per Library 2016-2023
-    = line_chart [{name: "BioTech", data: bio_fiscal_counts}, {name: "Furness", data: furn_fiscal_counts},{name: "Van Pelt", data: vp_fiscal_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
-
-#data-viz
-  #single-col
-    %h2{style: "text-align:center;"} Number of Visitors Per Year Per Library 2016-2023
-    = line_chart [{name: "BioTech", data: bio_fiscal_people}, {name: "Furness", data: furn_fiscal_people},{name: "Van Pelt", data: vp_fiscal_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
-
 
 -furness_2023_table=gen_stats(time_table,2023,"Furness")
 -biotech_2023_table=gen_stats(time_table,2023,"Biotech")
