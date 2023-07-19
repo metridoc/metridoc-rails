@@ -314,5 +314,31 @@ module GatecountHelper
       return count_array
             
   end
-   
+
+  def percent_change(input_data)
+  #Might be able to add to calc_percents function...
+
+  #Need to read in the array of hashes, compare that month data to the comp_year, then output an array of hashes of the differences
+
+     data_length=input_data.length
+
+     all_data=[]
+  
+     for l in (0..input_data_length-1).to_a
+         months=["January","February","March","April","May","June","July","August","September","October","November","December","Total"]
+         month_data=Hash.new
+         
+         for m in (0..months.length-1).to_a
+             old_data=input_data[l][months[m]]
+             new_data=input_data[data_length-1][months[m]]
+             percent_change=(new_data-old_data).fdiv(new_data)
+             month_data[months[m]]=percent_change
+         end
+
+         all_data << month_data
+         
+      end
+
+      return all_data
+  end
 end
