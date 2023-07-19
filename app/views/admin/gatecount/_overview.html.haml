@@ -102,7 +102,7 @@
         %td Fiscal Year
         -for i in year_index
           -fiscal_year=year_range[i]
-          %td="#{fiscal_year}"
+          %td{:colspan => 2}="#{fiscal_year}"
     %tbody
       -for m in month_range
         %tr
@@ -156,14 +156,14 @@
     %thead
       %tr
         %td Fiscal Year
-        %td{:colspan => 2}=2017 
-        %td{:colspan => 2}=2018
-        %td{:colspan => 2}=2019
-        %td{:colspan => 2}=2020
-        %td{:colspan => 2}=2021
+        %td=2017 
+        %td=2018
+        %td=2019
+        %td=2020
+        %td=2021
         -for i in year_index
           -fiscal_year=year_range[i]
-          %td{:colspan => 2}="#{fiscal_year}"
+          %td="#{fiscal_year}"
     %tbody
       -for m in month_range
         %tr
