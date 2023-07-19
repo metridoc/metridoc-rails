@@ -244,6 +244,7 @@ module GatecountHelper
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
                 fiscal_array["Total"]=fiscal_year_counts.sum
+                fiscal_array["Statistics"]="Count"
                 all_data << fiscal_array
              end
              
