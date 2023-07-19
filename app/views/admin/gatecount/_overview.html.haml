@@ -108,7 +108,7 @@
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
-    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, stacked: true, download: true   
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: 0.7, stacked: true, download: true   
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
