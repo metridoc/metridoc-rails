@@ -134,34 +134,6 @@
           -data=vp_all_counts[y+1][month_names[m]]
           %td="#{data}"
 
--furn_gen_table=gen_stats(time_table,"All","Furness")
-
--furn_all_counts=time_counts(furn_gen_table,"All","Counts")
-
--year_range=[2020,2021,2022,2023]
-
--year_index=(0..year_range.length-1).to_a
-
-%section
-
-  %h2{style: "text-align:right;"} Furness Monthly Gate Counts
-
-  %table{align: "right", border: "1", cellpadding: "5"}
-    %thead
-      %tr
-        %td Fiscal Year
-        -for i in year_index
-          -fiscal_year=year_range[i]
-          %td="#{fiscal_year}"
-    %tbody
-      -for m in month_range
-        %tr
-        -column_title=month_names[m]
-        %td="#{column_title}"
-        -for y in year_index
-          -data=furn_all_counts[y+1][month_names[m]]
-          %td="#{data}"
-
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
 
 -bio_all_counts=time_counts(bio_gen_table,"All","Counts")
@@ -198,4 +170,32 @@
         %td=bio_2021[m]
         -for i in year_index
           -data=bio_all_counts[i][month_names[m]]
+          %td="#{data}"
+
+-furn_gen_table=gen_stats(time_table,"All","Furness")
+
+-furn_all_counts=time_counts(furn_gen_table,"All","Counts")
+
+-year_range=[2020,2021,2022,2023]
+
+-year_index=(0..year_range.length-1).to_a
+
+%section
+
+  %h2{style: "text-align:right;"} Furness Monthly Gate Counts
+
+  %table{align: "right", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Fiscal Year
+        -for i in year_index
+          -fiscal_year=year_range[i]
+          %td="#{fiscal_year}"
+    %tbody
+      -for m in month_range
+        %tr
+        -column_title=month_names[m]
+        %td="#{column_title}"
+        -for y in year_index
+          -data=furn_all_counts[y+1][month_names[m]]
           %td="#{data}"
