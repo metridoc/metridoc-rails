@@ -102,7 +102,9 @@
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
 
--month_names=["Counts","July","August","September","October","November","December","January","February","March","April","May","June","Total"]
+-vp_all_counts["Statistics"]="Count"
+
+-month_names=["Statistics","July","August","September","October","November","December","January","February","March","April","May","June","Total"]
 
 -month_range=(0..12).to_a
 
@@ -122,7 +124,6 @@
           -fiscal_year=year_range[i]
           %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
       %tbody
-      %td Statistics
       -for m in month_range
         %tr
         -column_title=month_names[m]
