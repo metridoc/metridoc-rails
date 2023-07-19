@@ -140,7 +140,7 @@
         %td="#{column_title}"
         -for y in year_index
           -data_one=vp_all_counts[y+1][month_names[m]]
-          -data_two=vp_percent_change[y+1][month_names[m]].round(2)
+          -data_two=vp_percent_change[y+1][month_names[m]]
           %td="#{data_one}"
           %td="#{data_two}"
 
