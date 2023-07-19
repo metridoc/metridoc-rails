@@ -179,15 +179,15 @@
 
 %section
 
-  %h2{style: "text-align:right;"} Furness Monthly Gate Counts
+  %h2{style: "text-align:center;"} Furness Monthly Gate Counts
 
-  %table{align: "right", border: "1", cellpadding: "5"}
+  %table{align: "center", border: "1", cellpadding: "5"}
     %thead
       %tr
         %td Fiscal Year
         -for i in year_index
           -fiscal_year=year_range[i]
-          %td="#{fiscal_year}"
+          %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
     %tbody
       -for m in month_range
         %tr
