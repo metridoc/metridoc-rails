@@ -120,7 +120,7 @@
         %td Fiscal Year
         -for i in year_index
           -fiscal_year=year_range[i]
-          %td{:colspan => 2}="#{fiscal_year}"
+          %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
       %tbody
       %td Statistics
       -for m in month_range
