@@ -110,11 +110,11 @@
         -column_title=month_names[m]
         %td="#{column_title}"
         -for y in year_index
-         %td Total
+          %td Total
           -data=vp_all_counts[y+1][month_names[m]]
-         %td="#{data}"
-          -for y in year_index
-         %td % Change
+          %td="#{data}"
+        -for y in year_index
+          %td % Change
           -data=vp_all_counts[y+1][month_names[m]]
           %td="#{data}"
 
