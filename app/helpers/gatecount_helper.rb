@@ -336,7 +336,7 @@ module GatecountHelper
              percent_change=(new_data-old_data).fdiv(new_data)
              month_data[months[m]]=percent_change
          end
-         all_data["Statistics"]="% Change"
+         month_data["Statistics"]="% Change"
          all_data << month_data
          
       end
