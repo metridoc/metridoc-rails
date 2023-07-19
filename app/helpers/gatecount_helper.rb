@@ -331,6 +331,8 @@ module GatecountHelper
          for m in (0..months.length-1).to_a
              old_data=input_data[l][months[m]]
              new_data=input_data[data_length-1][months[m]]
+             puts new_data
+             puts old_data
              percent_change=(new_data-old_data).fdiv(new_data)
              month_data[months[m]]=percent_change
          end
