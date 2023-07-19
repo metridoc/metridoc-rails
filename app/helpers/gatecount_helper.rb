@@ -335,6 +335,7 @@ module GatecountHelper
                 percent_change=nil
              else  
                 percent_change=(new_data-old_data).fdiv(new_data)
+             end
              month_data[months[m]]=percent_change
          end
          month_data["Statistics"]="% Change"
