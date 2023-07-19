@@ -175,30 +175,30 @@ module GatecountHelper
         count=input_table.pluck("card_num")
       end
 
-      #if time_frame="Fiscal_Year"
-      #   years=time
+      if time_frame="Fiscal_Year"
+         years=time
         
-      #   year_range=(years.min.to_i..years.max.to_i).to_a
+         year_range=(years.min.to_i..years.max.to_i).to_a
 
-      #   year_index=(0..year_range.length-1).to_a
+         year_index=(0..year_range.length-1).to_a
 
-      #   all_data=[]
+         all_data=[]
 
-      #   yearly_data=Hash.new
+         fiscal_data=Hash.new
 
-      #   for y in year_index
-      #       fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
-      #       fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
-      #       fiscal_year_people=fiscal_year_data.pluck('num_people')
+         for y in year_index
+             fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
+             fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
+             fiscal_year_people=fiscal_year_data.pluck('num_people')
              
-      #       if count_type=="Counts"
-      #          yearly_data["#{year_range[y]}"] = fiscal_year_counts
-      #       elsif count_type=="People"
-      #          yearly_data["#{year_range[y]}"] = fiscal_year_people
-      #       end
-      #   end
-      #   return yearly_data
-      #end
+             if count_type=="Counts"
+                fiscal_data["#{year_range[y]}"] = fiscal_year_counts
+             elsif count_type=="People"
+                fiscal_data["#{year_range[y]}"] = fiscal_year_people
+             end
+         end
+         return fiscal_data
+      end
                                                                      
       month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
 
