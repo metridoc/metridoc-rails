@@ -102,7 +102,7 @@
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
 
--vp_all_counts["Statistics"]=count
+-vp_all_counts["Statistics"]="Count"
 
 -month_names=["Statistics","July","August","September","October","November","December","January","February","March","April","May","June","Total"]
 
@@ -133,7 +133,10 @@
           %td="#{data}"
         -for y in year_index
           -data=vp_all_counts[y+1][month_names[m]]
-          %td="#{data}"
+          -if m==0
+            %td=data
+          -else
+            %td="#{data}"
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
 
