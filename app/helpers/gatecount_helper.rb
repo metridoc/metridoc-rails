@@ -188,8 +188,8 @@ module GatecountHelper
 
          for y in year_index
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
-             fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
-             fiscal_year_people=fiscal_year_data.pluck('num_people')
+             fiscal_year_counts=fiscal_year_data.pluck('num_swipes').sum
+             fiscal_year_people=fiscal_year_data.pluck('num_people').sum
              
              if count_type=="Counts"
                 fiscal_data["#{year_range[y]}"] = fiscal_year_counts
