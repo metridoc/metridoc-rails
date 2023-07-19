@@ -175,7 +175,7 @@ module GatecountHelper
         count=input_table.pluck("card_num")
       end
 
-      if time_frame="Fiscal_Year"
+      if time_frame=="Fiscal_Year"
          years=time
         
          year_range=(years.min.to_i..years.max.to_i).to_a
