@@ -323,7 +323,7 @@ module GatecountHelper
 
      all_data=[]
   
-     for l in (1..input_data.length-1).to_a
+     for l in (0..input_data.length-1).to_a
          months=["January","February","March","April","May","June","July","August","September","October","November","December","Total"]
          month_data=Hash.new
          
