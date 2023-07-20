@@ -107,7 +107,7 @@ module GatecountHelper
         end
         enrollments_array << yearly_enroll
     end
-    puts enrollments_array[-1]
+    puts schools[i]
     return enrollments_array
     
   end  
