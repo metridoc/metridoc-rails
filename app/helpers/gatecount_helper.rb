@@ -55,7 +55,7 @@ module GatecountHelper
    def freq_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
-           school
+           school,
            CASE
              WHEN door_name LIKE 'VAN PELT%'
                THEN 'Van Pelt'
