@@ -342,7 +342,7 @@ module GatecountHelper
          
       end
 
-      puts all_data 
+      
       return all_data
   end
 end
