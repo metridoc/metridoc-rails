@@ -88,6 +88,8 @@ module GatecountHelper
        #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
     enrollments_array=[]
+
+    puts pop_table.to_a
     
     schools=pop_table.to_a.pluck('school')
     fiscal_year=pop_table.to_a.pluck('fiscal_year')
