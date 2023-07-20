@@ -106,7 +106,8 @@ module GatecountHelper
             yearly_enroll[schools[i]] = value[i]
             enrollments_array << yearly_enroll
         end
-            
+
+    end
     return enrollments_array
     
   end  
