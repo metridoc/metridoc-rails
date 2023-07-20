@@ -55,6 +55,7 @@ module GatecountHelper
    def freq_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
+           school
            CASE
              WHEN door_name LIKE 'VAN PELT%'
                THEN 'Van Pelt'
@@ -78,8 +79,10 @@ module GatecountHelper
   def enrollment_table #(user,fiscal_year)
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
+         user,
          school,
-         value
+         value,
+         fiscal_year
        FROM upenn_enrollments;")
        #  WHERE user_group=?
        #    AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
@@ -96,7 +99,7 @@ module GatecountHelper
     
   end  
 
-  def gen_stats(input_table,fiscal_year,library)
+  def gen_stats(input_table,fiscal_year,library,school_type)
     #Delete unnecessary data and data from wrong schools:
     gen_values=input_table
     if fiscal_year.is_a? Integer
@@ -112,9 +115,13 @@ module GatecountHelper
        gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
    #Need to actually combine the values...but not sure that we want this...
    #else library=="All"
-     #  puts "All Libraries"
+       #  puts "All Libraries         
     end
-   
+
+    if school != "All"
+       gen_values=gen_values.delete_if{|h| h["school"] != school_type}
+    end
+    
     return gen_values
     
   end
@@ -341,8 +348,6 @@ module GatecountHelper
          all_data << month_data
          
       end
-
-      
       return all_data
   end
 end

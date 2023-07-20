@@ -1,8 +1,12 @@
 = javascript_include_tag 'application'
 
--furn_yearly=gen_stats(time_table,"All","Furness")
--bio_yearly=gen_stats(time_table,"All","Biotech")
--vp_yearly=gen_stats(time_table,"All","Van Pelt")
+-school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+
+-school_pop=[9303,4156,68,789,768,1664,5917,993,2122,571,1187,663]
+
+-furn_yearly=gen_stats(time_table,"All","Furness","All")
+-bio_yearly=gen_stats(time_table,"All","Biotech","All")
+-vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
 
 -furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
@@ -69,9 +73,9 @@
     %h2{style: "text-align:center;"} Number of Visitors Per Year Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_fiscal_people}, {name: "Furness", data: furn_fiscal_people},{name: "Van Pelt", data: vp_fiscal_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
 
--furness_2023_table=gen_stats(time_table,2023,"Furness")
--biotech_2023_table=gen_stats(time_table,2023,"Biotech")
--vp_2023_table=gen_stats(time_table,2023,"Van Pelt")
+-furness_2023_table=gen_stats(time_table,2023,"Furness","All")
+-biotech_2023_table=gen_stats(time_table,2023,"Biotech","All")
+-vp_2023_table=gen_stats(time_table,2023,"Van Pelt","All")
 
 -furn_2023_counts=time_counts(furness_2023_table,"Monthly","Counts")
 -vp_2023_counts=time_counts(vp_2023_table,"Monthly","Counts")
@@ -91,7 +95,7 @@
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
 
--sas_gen_table=gen_stats(freq_table,2023,"Van Pelt")
+-sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
 -percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency")
 
 -pop_baseline={"1":1,"26":1}
@@ -112,7 +116,7 @@
 
 Note that the y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--vp_gen_table=gen_stats(time_table,"All","Van Pelt")
+-vp_gen_table=gen_stats(time_table,"All","Van Pelt","All")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
 -vp_percent_change=percent_change(vp_all_counts)
 
@@ -160,7 +164,7 @@ Note that the y-scale of the plot above is set to the percent of the college pop
             %td{:align => "center"}="#{data_one}"
             %td{:align => "center"}="#{data_two}"
 
--bio_gen_table=gen_stats(time_table,"All","Biotech")
+-bio_gen_table=gen_stats(time_table,"All","Biotech","All")
 -bio_counts=time_counts(bio_gen_table,"All","Counts")
 
 -year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
@@ -214,7 +218,7 @@ Note that the y-scale of the plot above is set to the percent of the college pop
             %td{:align => "center"}="#{data_two}"
 
 
--furn_gen_table=gen_stats(time_table,"All","Furness")
+-furn_gen_table=gen_stats(time_table,"All","Furness","All")
 -furn_all_counts=time_counts(furn_gen_table,"All","Counts")
 -furn_percent_change=percent_change(furn_all_counts)
 
