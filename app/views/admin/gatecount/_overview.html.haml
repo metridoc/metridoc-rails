@@ -2,6 +2,9 @@
 
 -school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
+-enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
+               'Nursing','SP2']
+
 -school_pop=[9303,4156,68,789,768,1664,5917,993,2122,571,1187,663]
 
 -furn_yearly=gen_stats(time_table,"All","Furness","All")
@@ -95,7 +98,7 @@
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
 
--sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
+-sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences",0)
 -percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency")
 
 -pop_baseline={"1":1,"26":1}

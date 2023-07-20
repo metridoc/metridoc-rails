@@ -111,7 +111,6 @@ module GatecountHelper
         end
         enrollments_array << yearly_enroll
     end
-    puts schools
     return enrollments_array
     
   end  
@@ -177,7 +176,7 @@ module GatecountHelper
     
   end
 
-  def time_counts(input_table,time_frame,count_type)
+  def time_counts(input_table,time_frame,count_type,school_index=0)
     
       copy_table=input_table
 
@@ -326,7 +325,7 @@ module GatecountHelper
             total_pop=9303
             enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
                'Nursing','SP2']
-            total_pop=enrollment_table[-1]["SAS"]
+            total_pop=enrollment_table[-1][enroll_names[school_index]]
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
