@@ -104,9 +104,8 @@ module GatecountHelper
         value_index=(0..value.length-1).to_a
         for i in value_index
             yearly_enroll[schools[i]] = value[i]
-            enrollments_array << yearly_enroll
         end
-
+        enrollments_array << yearly_enroll
     end
     return enrollments_array
     
@@ -320,8 +319,7 @@ module GatecountHelper
 
          #Need to remember to return as a percentage of the college of arts and sciences population
             total_pop=9303
-            enrollments_data=gen_stats(enrollment_table,"All","All","All")
-            total_pop=enrollments_data[-1]["College of Arts & Sciences"]
+            total_pop=enrollment_table[-1]["College of Arts & Sciences"]
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
