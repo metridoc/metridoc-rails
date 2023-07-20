@@ -118,7 +118,7 @@ module GatecountHelper
        #  puts "All Libraries         
     end
 
-    if school != "All"
+    if school_type != "All"
        gen_values=gen_values.delete_if{|h| h["school"] != school_type}
     end
     
