@@ -82,7 +82,7 @@ module GatecountHelper
          school,
          value,
          fiscal_year
-       FROM upenn_enrollments;)
+       FROM upenn_enrollments;")
        #  WHERE user='Enrollment Total';")
        #    AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
        #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
