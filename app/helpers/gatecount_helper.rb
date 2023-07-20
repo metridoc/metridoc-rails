@@ -82,16 +82,15 @@ module GatecountHelper
          school,
          value,
          fiscal_year
-       FROM upenn_enrollments
-         WHERE user='Enrollment Total';")
+       FROM upenn_enrollments;)
+       #  WHERE user='Enrollment Total';")
        #    AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
        #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
     enrollments_array=[]
-
-    puts pop_table.to_a
     
     schools=pop_table.to_a.pluck('school')
+    puts schools
     fiscal_year=pop_table.to_a.pluck('fiscal_year')
     value=pop_table.to_a.pluck('value')
 
