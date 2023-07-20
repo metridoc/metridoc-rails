@@ -174,7 +174,7 @@
         %td Fiscal Year
         -for i in year_index
           -fiscal_year=year_range[i]
-          %td="#{fiscal_year}"
+          %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
     %tbody
       -for m in month_range
         %tr
