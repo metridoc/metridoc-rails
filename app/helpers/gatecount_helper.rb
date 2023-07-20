@@ -79,22 +79,34 @@ module GatecountHelper
   def enrollment_table #(user,fiscal_year)
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
-         user,
          school,
          value,
          fiscal_year
-       FROM upenn_enrollments;")
-       #  WHERE user_group=?
+       FROM upenn_enrollments
+         WHERE user='Enrollment Total';")
        #    AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
        #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
+    enrollments_array=[]
+    
     schools=pop_table.to_a.pluck('school')
+    fiscal_year=pop_table.to_a.pluck('fiscal_year')
     value=pop_table.to_a.pluck('value')
 
-    enrollments_array=Hash.new
-    value_index=(0..value.length-1).to_a
-    value_index.each {|i| enrollments_array[schools[i]] = value[i]}
+    #Do the same thing with the enrollment years where it's the order of the array?
+    year_range=(fiscal_year.min.to_i..fiscal_year.max.to_i).to_a
+    year_index=(0..year_range.length-1).to_a
 
+    for y in year_index
+
+        yearly_enroll=Hash.new
+        
+        value_index=(0..value.length-1).to_a
+        for i in value_index
+            yearly_enroll[schools[i]] = value[i]
+            enrollments_array << yearly_enroll
+        end
+            
     return enrollments_array
     
   end  
@@ -307,6 +319,7 @@ module GatecountHelper
 
          #Need to remember to return as a percentage of the college of arts and sciences population
             total_pop=9303
+            total_pop=enrollment_table[-1]["College of Arts & Sciences"]
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
