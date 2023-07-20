@@ -142,9 +142,9 @@
           -data_one=vp_all_counts[y+1][month_names[m]]
           -data_two=vp_percent_change[y+1][month_names[m]]
           %td{:align => "center"}="#{data_one}"
-          -if data_two.is_a? Integer && data.two > 0
+          -if data_two.is_a? Integer && data_two > 0
             %td{:color => blue, :align => "center"}="#{data_two}"
-          -elsif data_two.is_a? Integer && data.two < 0
+          -elsif data_two.is_a? Integer && data_two < 0
             %td{:color => red, :align => "center"}="#{data_two}"
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
