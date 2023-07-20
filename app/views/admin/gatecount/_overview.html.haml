@@ -184,7 +184,7 @@
           -data_one=bio_all_counts[i][month_names[m]]
           -data_two=bio_percent_change[i][month_names[m]]
           %td="#{data_one}"
-          %td="#{data_two}"
+          %tdd{:align => "center"}="#{data_two}"
 
 
 -furn_gen_table=gen_stats(time_table,"All","Furness")
@@ -215,4 +215,4 @@
           -data_one=furn_all_counts[y+1][month_names[m]]
           -data_two=furn_percent_change[y+1][month_names[m]]
           %td="#{data_one}"
-          %td="#{data_two}"
+          %td{:align => "center"}="#{data_two}"
