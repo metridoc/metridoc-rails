@@ -22,7 +22,19 @@
 
 %hr
 
-=form.select :school, ['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+-schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+
+-# Make a form to select a school for an output plot
+%center
+  = form_tag({:controller => admin_gatecount_path,
+      :action => "frequency"},
+      {:method => :post}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select School
+        %td
+        %td= select_tag "school", options_for_select(schools, schools[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
 
 %h2 Resources
 
