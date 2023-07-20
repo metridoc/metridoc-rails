@@ -88,23 +88,25 @@ module GatecountHelper
        #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
     enrollments_array=[]
-    
-    schools=pop_table.to_a.pluck('school')
-    puts schools
-    fiscal_year=pop_table.to_a.pluck('fiscal_year')
-    value=pop_table.to_a.pluck('value')
 
     #Do the same thing with the enrollment years where it's the order of the array?
     year_range=(fiscal_year.min.to_i..fiscal_year.max.to_i).to_a
     year_index=(0..year_range.length-1).to_a
 
+    #Grab the hash with the greatest value?
     for y in year_index
 
-        yearly_enroll=Hash.new
+        year_values=pop_table.to_a.select{|h| h["fiscal_year"]==fiscal_year}
+        schools=year_values.pluck('school')
         
-        value_index=(0..value.length-1).to_a
+        yearly_enroll=Hash.new
+
+        unique_schools=schools.uniq
+        
+        value_index=(0..unique_schools.length-1).to_a
         for i in value_index
-            yearly_enroll[schools[i]] = value[i]
+            values=year_values.select{|h| h["school"]==unique_schools[i]}.pluck("value")
+            yearly_enroll[unique_schools[i]] = values.max
         end
         enrollments_array << yearly_enroll
     end
