@@ -145,12 +145,24 @@
           %td{:align => "center"}="#{data_two}"
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
+-bio_counts=time_counts(bio_gen_table,"All","Counts")
 
--bio_all_counts=time_counts(bio_gen_table,"All","Counts")
-
--year_range=[2022,2023]
+-year_range=[2017,2018,2019,2020,2021,2022,2023]
 
 -year_index=(0..year_range.length-1).to_a
+
+-bio_all_counts=[{},{},{},{},{},{}]
+
+-for m in month_range
+  -bio_all_counts[0][month_names[m]]=bio_2016[m]
+  -bio_all_counts[1][month_names[m]]=bio_2017[m]
+  -bio_all_counts[2][month_names[m]]=bio_2018[m]
+  -bio_all_counts[3][month_names[m]]=bio_2019[m]
+  -bio_all_counts[4][month_names[m]]=bio_2020[m]
+  -bio_all_counts[5][month_names[m]]=bio_2021[m]
+
+-bio_all_counts.concat(bio_counts)
+-bio_percent_change=percent_change(bio_all_counts)
 
 %section
 
@@ -160,11 +172,6 @@
     %thead
       %tr
         %td Fiscal Year
-        %td=2017 
-        %td=2018
-        %td=2019
-        %td=2020
-        %td=2021
         -for i in year_index
           -fiscal_year=year_range[i]
           %td="#{fiscal_year}"
@@ -173,14 +180,12 @@
         %tr
         -column_title=month_names[m]
         %td="#{column_title}"
-        %td=bio_2017[m]
-        %td=bio_2018[m]
-        %td=bio_2019[m]
-        %td=bio_2020[m]
-        %td=bio_2021[m]
         -for i in year_index
-          -data=bio_all_counts[i][month_names[m]]
-          %td="#{data}"
+          -data_one=bio_all_counts[i][month_names[m]]
+          -data_two=bio_percent_change[i][month_names[m]]
+          %td="#{data_one}"
+          %td="#{data_two}"
+
 
 -furn_gen_table=gen_stats(time_table,"All","Furness")
 -furn_all_counts=time_counts(furn_gen_table,"All","Counts")
