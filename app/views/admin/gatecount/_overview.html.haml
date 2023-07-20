@@ -141,7 +141,7 @@
         -for y in year_index
           -data_one=vp_all_counts[y+1][month_names[m]]
           -data_two=vp_percent_change[y+1][month_names[m]]
-          %td="#{data_one}"
+          %td{:align => "center"}="#{data_one}"
           %td{:align => "center"}="#{data_two}"
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech")
@@ -183,8 +183,8 @@
         -for i in year_index
           -data_one=bio_all_counts[i][month_names[m]]
           -data_two=bio_percent_change[i][month_names[m]]
-          %td="#{data_one}"
-          %tdd{:align => "center"}="#{data_two}"
+          %td{:align => "center"}="#{data_one}"
+          %td{:align => "center"}="#{data_two}"
 
 
 -furn_gen_table=gen_stats(time_table,"All","Furness")
@@ -214,5 +214,5 @@
         -for y in year_index
           -data_one=furn_all_counts[y+1][month_names[m]]
           -data_two=furn_percent_change[y+1][month_names[m]]
-          %td="#{data_one}"
+          %td{:align => "center"}="#{data_one}"
           %td{:align => "center"}="#{data_two}"
