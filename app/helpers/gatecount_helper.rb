@@ -97,7 +97,7 @@ module GatecountHelper
     #Grab the hash with the greatest value?
     for y in year_index
 
-        year_values=pop_table.to_a.select{|h| h["fiscal_year"]==fiscal_year}
+        year_values=pop_table.to_a.select{|h| h["fiscal_year"]==fiscal_year[y]}
         schools=year_values.pluck('school')
         
         yearly_enroll=Hash.new
