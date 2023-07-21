@@ -95,6 +95,7 @@ module GatecountHelper
 
     #Grab the hash with the greatest value?
     #for y in year_index
+    puts pop_table.to_a.pluck("user").uniq
 
     year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023 && h["user"]=="Total Enrollment"}
     schools=year_values.pluck('school')
