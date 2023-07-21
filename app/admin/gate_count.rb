@@ -2,12 +2,12 @@ ActiveAdmin.register_page "GateCount" do
   menu false
 
   #Action needed to define variables for frequency plots
-  page_action :frequency, method: :post do
-    @input_school = params[:school]
-    redirect_url = '/admin/population_penetration'
-    redirect_to redirect_url
+  #page_action :frequency, method: :post do
+  #  @input_school = params[:school]
+  #  redirect_url = '/admin/population_penetration'
+  #  redirect_to redirect_url
 
-  end
+  #end
   
   content title: I18n.t("active_admin.gate_counts") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
