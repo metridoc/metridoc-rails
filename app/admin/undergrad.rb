@@ -1,7 +1,7 @@
 ActiveAdmin.register_page "Undergraduate Statistics" do
 
   breadcrumb do
-    [link_to('Admin',admin_root_path), link_to('Gate Counts',admin_gatecount_path),'Population',admin_population_path]
+    [link_to('Admin',admin_root_path), link_to('Gate Counts',admin_gatecount_path),'Population',admin_population_penetration_path]
   end
 
   #Don't add to the top menu
