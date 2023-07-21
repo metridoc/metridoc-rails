@@ -101,12 +101,12 @@ module GatecountHelper
         
         yearly_enroll=Hash.new
 
-        unique_schools=schools.uniq
+        enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
         
-        value_index=(0..unique_schools.length-1).to_a
+        value_index=(0..enroll_names.length-1).to_a
         for i in value_index
-            values=year_values.select{|h| h["school"]==unique_schools[i]}.pluck("value")
-            yearly_enroll[unique_schools[i]] = values.max
+            values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")
+            yearly_enroll[enroll_names[i]] = values.max
         end
         enrollments_array << yearly_enroll
     end
