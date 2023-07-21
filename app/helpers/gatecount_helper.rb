@@ -293,6 +293,10 @@ module GatecountHelper
 
          puts "Library Users number #{num_users}"
 
+         enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
+               'Nursing','SP2']
+         total_pop=enrollment_table[school_index][enroll_names[school_index]]
+
          week_range=(time.min.to_i..time.max.to_i).to_a
          week_index=(0..week_range.length-1).to_a
          
@@ -321,13 +325,10 @@ module GatecountHelper
                  end
             end  
 
-         #Need to remember to return as a percentage of the college of arts and sciences population
-            total_pop=9303
-            enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
-               'Nursing','SP2']
-            total_pop=enrollment_table[school_index][enroll_names[school_index]]
-
+            #Need to remember to return as a percentage of the college of arts and sciences population
+            
             ymax=(num_users).fdiv(total_pop)
+            ymax=ymax.round(2)
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
