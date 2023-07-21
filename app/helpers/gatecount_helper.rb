@@ -138,7 +138,7 @@ module GatecountHelper
        gen_values=gen_values.select{|h| h["school"] == school_type}
     end
 
-    puts gen_values[1]["school"]
+    puts gen_values.pluck("school")[1]
     return gen_values
     
   end
