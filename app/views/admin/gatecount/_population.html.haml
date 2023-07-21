@@ -56,8 +56,10 @@ Note that the y-scale of the plot above is set to the percent of the college pop
 
 -#Now just need to get the y-axis to be the correct amount!
 
+-input_table=freq_table
+
 -for s in school_index
-  -school_gen_table=gen_stats(freq_table,2023,"Van Pelt",schools[s])
+  -school_gen_table=gen_stats(input_table,2023,"Van Pelt",schools[s])
   -ymax,percents_single,percents_medium,percents_freq=time_counts(school_gen_table,"Weekly","Frequency",s)
 
   #data-viz
