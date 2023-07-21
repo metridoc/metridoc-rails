@@ -326,6 +326,8 @@ module GatecountHelper
             enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
                'Nursing','SP2']
             total_pop=enrollment_table[school_index][enroll_names[school_index]]
+
+            ymax=(num_users).fdiv(total_pop)
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
             percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
@@ -333,7 +335,7 @@ module GatecountHelper
             percents_freq["#{week_range[i]}"]=(freq_user).fdiv(total_pop)
 
          end
-         return percents_zero,percents_single,percents_medium,percents_freq
+         return ymax,percents_single,percents_medium,percents_freq
       end
 
       return count_array
