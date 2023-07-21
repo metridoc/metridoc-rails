@@ -124,11 +124,11 @@ module GatecountHelper
     #This breaks it for some reason...
     #|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
     if library=="Biotech"
-       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Furness"}
+       gen_values=gen_values.select{|h| h["library"] == "Biotech"}
     elsif library=="Furness"
-       gen_values=gen_values.delete_if{|h| h["library"] == "Van Pelt" || h["library"] == "Biotech"}
+       gen_values=gen_values.select{|h| h["library"] == "Furness"}
     elsif library=="Van Pelt"
-       gen_values=gen_values.delete_if{|h| h["library"] == "Furness" || h["library"] == "Biotech"}
+       gen_values=gen_values.select{|h| h["library"] == "Van Pelt"}
    #Need to actually combine the values...but not sure that we want this...
    #else library=="All"
        #  puts "All Libraries         
