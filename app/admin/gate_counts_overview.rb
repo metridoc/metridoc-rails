@@ -7,8 +7,8 @@ ActiveAdmin.register_page "Gate Counts Overview" do
   #Don't add to the top menu
   menu false
 
-   #Action needed to define variables for frequency plots
-  age_action :frequency, method: :get do
+  #Action needed to define variables for frequency plots
+  page_action :frequency, method: :get do
     @input_school = params[:school]
 
   end
