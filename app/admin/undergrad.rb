@@ -9,7 +9,7 @@ ActiveAdmin.register_page "Undergraduate Statistics" do
 
   #Title for the page
   content title: "Undergraduate Statistics" do
-    render partial: 'admin/population_penetration/undergrad'
+    render partial: 'admin/population_penetration/undergraduate_statistics'
   end
 
   #Restrict the page view to the correct users:
