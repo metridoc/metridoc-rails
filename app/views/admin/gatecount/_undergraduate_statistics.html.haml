@@ -1,3 +1,53 @@
 = javascript_include_tag 'application'
 
-%h2 This is for undergrad stats!
+-school_names=["School of Nursing","The Wharton School","School of Engineering and Applied Science","College of Arts & Sciences"]
+
+-school_index=[0,1,2,3]
+
+-school_pop=[580, 1758, 1777, 7135]
+
+-undergrad_people=calc_percents(van_pelt_table,"Individuals","Undergraduate Student")
+
+-undergrad_bar_percents=Hash.new
+
+-school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_people[school_names[i]]).fdiv(school_pop[i])}
+
+%h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
+#data-viz
+#single-col
+  =column_chart undergrad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
+
+-undergrad_vp=calc_percents(van_pelt_table,"Counts","Undergraduate Student")
+
+-undergrad_pie=Hash.new
+
+-school_index.each {|i| undergrad_pie[school_names[i]]=(undergrad_vp[school_names[i]])}
+
+
+%h2{style: "text-align:center;"} Percentage of Gate Counts By Undergraduate School
+#data-viz
+#single-col
+  %h3{style: "text-align:center;"} Undergraduate Students
+  =pie_chart undergrad_pie, round: 2,  download: true
+
+-undergrad_bio=calc_percents(biotech_table,"Raw Counts","Undergraduate Student")
+-undergrad_vp=calc_percents(van_pelt_table,"Raw Counts","Undergraduate Student")
+-undergrad_furn=calc_percents(furness_table,"Raw Counts","Undergraduate Student")
+
+-all_undergrad=[undergrad_vp,undergrad_bio,undergrad_furn]
+
+-school_pop=[0,0,0,0]
+
+-school_index.each {|i| school_pop[i]=all_undergrad.pluck(school_names[i]).sum}
+
+-bio_percents=Hash.new
+-vp_percents=Hash.new
+-furn_percents=Hash.new
+
+-school_index.each {|i| bio_percents[school_names[i]]=(undergrad_bio[school_names[i]]).fdiv(school_pop[i])}
+-school_index.each {|i| vp_percents[school_names[i]]=(undergrad_vp[school_names[i]]).fdiv(school_pop[i])}
+-school_index.each {|i| furn_percents[school_names[i]]=(undergrad_furn[school_names[i]]).fdiv(school_pop[i])}
+
+%h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
+#single-col
+  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, dataset: {borderWidth: 0}, download: true
