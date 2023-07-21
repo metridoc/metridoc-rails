@@ -103,6 +103,20 @@
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
 
+-schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+
+-# Make a form to select a school for an output plot
+%center
+  = form_tag({:controller => admin_gatecount_path,
+      :action => "frequency"},
+      {:method => :get}) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select School
+        %td
+        %td= select_tag "school", options_for_select(schools, schools[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
+
 -sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
 -percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",input_school_index)
 
