@@ -135,7 +135,7 @@ module GatecountHelper
     end
 
     if school_type != "All"
-       gen_values=gen_values.delete_if{|h| h["school"] != school_type}
+       gen_values=gen_values.select{|h| h["school"] == school_type}
     end
     
     return gen_values
