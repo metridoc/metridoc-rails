@@ -25,6 +25,16 @@
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
 
+Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
+
+-sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
+-percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",0)
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: 0.7, stacked: true, download: true   
+
 -# Make a form to select a school for an output plot
 %center
   = form_tag({:controller => admin_gatecount_path,
@@ -39,21 +49,13 @@
         %td Select Library
         %td
         %td= select_tag "library", options_for_select(libraries, libraries[0])
-        %td{rowspan:"3"}= submit_tag "Submit"
+        %td{rowspan:"3"}= submit_tag "Submit"Note that the y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
--percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",0)
-
-#data-viz
-  #single-col
-    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
-    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: 0.7, stacked: true, download: true   
-
-Note that the y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
+This plot may be remade with a given school/library selected. Have fun!
 
 %hr
 
--#Now just need to get the y-axis to be the correct amount!
+-#Think something might be wrong with the y-axis of the plots...
 
 -input_table=freq_table
 
