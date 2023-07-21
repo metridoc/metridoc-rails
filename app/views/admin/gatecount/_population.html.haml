@@ -40,8 +40,8 @@ Note that the y-scale of the plot below is set to the percent of the college pop
       {:method => :get}) do
     %table{:style => "background-color:#DADADA"}
       %tr
+        %td 
         %td Select Library
-        %td
         %td
         %td= select_tag "library", options_for_select(libraries, libraries[0])
       %tr
