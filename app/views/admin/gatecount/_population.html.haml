@@ -16,7 +16,7 @@
   #single-col
     -#column_chart([{"name":"User Baseline", "data":user_baseline},{"name": "Single Visit", "data": percents_single},{"name": "Medium Visits", "data": percents_medium}, {"name":"Freq Visits", "data": percents_freq}],  library: { :series => { 0 => { type: "line_chart"}}})
 
--Libraries=["Van Pelt","Biotech","Furness"]
+-libraries=["Van Pelt","Biotech","Furness"]
 
 -schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
@@ -39,7 +39,7 @@
       %tr
         %td Select Library
         %td
-        %td= select_tag "library", options_for_select(Libraries, Libraries[0])
+        %td= select_tag "library", options_for_select(libraries, libraries[0])
         %td{rowspan:"3"}= submit_tag "Submit"
 
 -sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
