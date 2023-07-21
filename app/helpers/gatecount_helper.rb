@@ -68,7 +68,7 @@ module GatecountHelper
            EXTRACT(week from swipe_date) AS week,
            card_num
          FROM gate_count_card_swipes 
-              AND (EXTRACT(week from swipe_date) >= 1 AND EXTRACT(week from swipe_date) <= 26)
+              WHERE (EXTRACT(week from swipe_date) >= 1 AND EXTRACT(week from swipe_date) <= 26)
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
               AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')")
 
