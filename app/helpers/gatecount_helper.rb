@@ -108,7 +108,7 @@ module GatecountHelper
     for i in value_index
         values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[0]
         puts values
-        puts "#{enroll_names[i]}'s max is #{values.max}"
+        puts "#{enroll_names[i]}'s max is #{values}"
         yearly_enroll[enroll_names[i]] = values
         enrollments_array << yearly_enroll
     end
