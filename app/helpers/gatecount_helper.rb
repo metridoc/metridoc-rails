@@ -94,22 +94,23 @@ module GatecountHelper
     year_index=(0..year_range.length-1).to_a
 
     #Grab the hash with the greatest value?
-    for y in year_index
+    #for y in year_index
 
-        year_values=pop_table.to_a.select{|h| h["fiscal_year"]==fiscal_year[y]}
-        schools=year_values.pluck('school')
+    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023}
+    schools=year_values.pluck('school')
         
-        yearly_enroll=Hash.new
+    yearly_enroll=Hash.new
 
-        enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
+    enrollments_array=[]
+
+    enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
         
-        value_index=(0..enroll_names.length-1).to_a
-        for i in value_index
-            values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")
-            puts values
-            puts "#{enroll_names[i]}'s max is #{values.max}"
-            yearly_enroll[enroll_names[i]] = values.max
-        end
+    value_index=(0..enroll_names.length-1).to_a
+    for i in value_index
+        values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")
+        puts values
+        puts "#{enroll_names[i]}'s max is #{values.max}"
+        yearly_enroll[enroll_names[i]] = values.max
         enrollments_array << yearly_enroll
     end
     return enrollments_array
