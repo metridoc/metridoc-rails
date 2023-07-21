@@ -4,7 +4,7 @@ ActiveAdmin.register_page "GateCount" do
   #Action needed to define variables for frequency plots
   page_action :frequency, method: :post do
     @input_school = params[:school]
-    redirect_url = '/admin/gate_counts_overview'
+    redirect_url = '/admin/population_penetration'
     redirect_to redirect_url
 
   end
