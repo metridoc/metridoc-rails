@@ -80,8 +80,7 @@ module GatecountHelper
       "SELECT
          school,
          value,
-         fiscal_year,
-         user,
+         fiscal_year
        FROM upenn_enrollments;")
        #    AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
        #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
@@ -95,9 +94,8 @@ module GatecountHelper
 
     #Grab the hash with the greatest value?
     #for y in year_index
-    puts pop_table.to_a.pluck("user").uniq
 
-    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023 && h['user']=="Enrollment Total"}
+    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023}
     schools=year_values.pluck('school')
         
     yearly_enroll=Hash.new
