@@ -63,6 +63,8 @@ gem 'net-sftp'
 
 gem 'terser'
 
+gem 'jquery-rails'
+
 group :development, :test do
   gem 'rb-readline'
   gem 'pry'
