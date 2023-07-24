@@ -8,7 +8,7 @@ ActiveAdmin.register_page "Population & Penetration" do
   menu false
 
   #Action needed to define variables for frequency plots
-  page_action method: :post do
+  page_action :post do
     @input_school = params[:school]
     @input_library = params[:libary]
   end
