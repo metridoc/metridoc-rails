@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get 'report_gallery/psc', :to => redirect('pennStateCollaborators.html')
   get 'library_facts/' => "library_facts#index"
   get 'library_facts/factbook', :to => redirect('FACTS2020.epub')
+  get 'population_penetration/' => "population_penetration#index"
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)

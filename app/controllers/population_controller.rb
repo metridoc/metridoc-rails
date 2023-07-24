@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::Base
+class PopulationController < ActionController::Base
 
   def create
     @input_school=params[:school]
