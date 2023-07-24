@@ -35,7 +35,7 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 %center
   = form_tag({:controller => admin_population_penetration_path, :remote => true,
     :action => "frequency"},
-    {:method => :get}) do
+    {:method => :post}) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select Library
