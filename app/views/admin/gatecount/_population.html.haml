@@ -61,19 +61,3 @@ Note that the y-scale of the plot below is set to the percent of the college pop
   #single-col
     %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, Spring Semester 2023"
     = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, refresh: 15, download: true  
-
-%hr
-
--#sigh, not calling from enrollments table in an optimal way but not sure why
--#broken :(
-
--input_table=freq_table
-
--for s in school_index
-  -school_gen_table=gen_stats(input_table,2023,"Van Pelt",schools[s])
-  -ymax,percents_single,percents_medium,percents_freq=time_counts(school_gen_table,"Weekly","Frequency",s)
-
-  #data-viz
-    #single-col
-      %h2{style: "text-align:center;"}="Frequency of #{schools[s]} Visitors to the Van Pelt Library, Spring Semester 2023"
-      = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, download: true   
