@@ -49,7 +49,7 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 -#for the error, want to just plug in a default value...
 
 :javascript
-  $(document).on("ajax:complete",'#random_id', function(event, data, status, xhr) {var input_school=data.school})
+  $(document).on("ajax:complete",'#random_id', function(event, data, status, xhr) {var input_school=data.school, return input_school})
 
 -puts input_school
 -puts input_library
