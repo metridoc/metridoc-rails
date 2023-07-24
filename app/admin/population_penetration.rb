@@ -12,7 +12,12 @@ ActiveAdmin.register_page "Population & Penetration" do
     @input_school = params[:school]
     @input_library = params[:libary]
   end
-  
+
+  def index
+    @input_school = params[:school]
+    @input_library = params[:libary]
+  end
+    
   #Title for the page
   content title: "Populations & Penetration" do
     render partial: 'admin/gatecount/population'
