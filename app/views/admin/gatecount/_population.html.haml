@@ -33,7 +33,7 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 
 -# Make a form to select a school for an output plot
 %center
-  = form_tag({:controller => admin_gatecount_path,
+  = form_tag({:controller => admin_population_penetration_path,
     :action => "frequency", :remote => true},
     {:method => :get}) do
     %table{:style => "background-color:#DADADA"}
