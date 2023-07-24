@@ -52,12 +52,12 @@ Note that the y-scale of the plot below is set to the percent of the college pop
   -input_school="The Wharton School"
   -input_library="Biotech"
 
-  -percents_zero,percents_single,percents_medium,percents_freq=time_counts(gen_stats(freq_table,2023,input_library,input_school),"Weekly","Frequency",0)
+  -ymax,percents_single,percents_medium,percents_freq=time_counts(gen_stats(freq_table,2023,input_library,input_school),"Weekly","Frequency",0)
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
-    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: 0.7, stacked: true, refresh: 15, download: true  
+    %h2{style: "text-align:center;"} "Frequency of #{input_school} Visitors to the #{input_library} Library, Spring Semester 2023"
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, refresh: 15, download: true  
 
 %hr
 
