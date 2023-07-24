@@ -10,4 +10,4 @@ $(document).on("ajax:success",'admin_population_penetration_path', function(even
 
 var chart = Chartkick.charts["2"]
 
-chart.updateData(newData)
+chart.updateData(input_school)
