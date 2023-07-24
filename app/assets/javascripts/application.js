@@ -20,6 +20,9 @@
 //= require rails-ujs
 //= require turbolinks
 
+//=require jquery
+//=require jquery_ujs
+
 //= require vis-network/dist/vis-network
 
 //= require_tree .
