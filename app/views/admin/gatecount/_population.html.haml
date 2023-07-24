@@ -45,8 +45,12 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 
 -#for the error, want to just plug in a default value...
 
--#$().on("ajax:success", (event, data, status, xhr) -> $("#new_article").append xhr.responseText
--#  ).on "ajax:error", (event, xhr, status, error) -> $("#new_article").append "<p>ERROR</p>"
+$(admin_gatecount_path).on("ajax:success", function(event, data, status, xhr) {
+    var input_school=data.school;
+    var input_library=data.library}
+  ).on("ajax:error", function(event, xhr, status, error) {
+    var input_school="College of Arts and Sciences";
+    var input_library="Van Pelt"})
 
 #data-viz
   #single-col
