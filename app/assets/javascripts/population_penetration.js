@@ -6,6 +6,6 @@ $(admin_gatecount_path).on("ajax:success", function(event, data, status, xhr) {
     var input_school="College of Arts and Sciences";
     var input_library="Van Pelt"});
 
-var chart = Chartkick.charts["1"]
+var chart = Chartkick.charts["2"]
 
 chart.updateData(newData)
