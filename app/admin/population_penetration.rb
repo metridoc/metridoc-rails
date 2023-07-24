@@ -12,8 +12,6 @@ ActiveAdmin.register_page "Population & Penetration" do
     @input_school = params[:school]
     @input_library = params[:libary]
   end
-
-  actions :post
   
   #Title for the page
   content title: "Populations & Penetration" do
