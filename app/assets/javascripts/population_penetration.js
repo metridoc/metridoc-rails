@@ -1,4 +1,4 @@
-$(document).on("ajax:success", function(event, data, status, xhr) {
+$(document).on("ajax:success",'admin_population_penetration_path', function(event, data, status, xhr) {
     var input_school=data.school;
     var input_library=data.library;
     alert("Response is => " + input_school + input_library);
