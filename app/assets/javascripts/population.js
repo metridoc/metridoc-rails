@@ -4,9 +4,9 @@ $(document).on("ajax:complete",'admin_population_penetration_path', function(eve
     alert("Response is => " + input_school + input_library);
     return input_school;
     return input_library};
-  ).on("ajax:error", function(event, xhr, status, error) {
-    var input_school="College of Arts and Sciences";
-    var input_library="Van Pelt"});
+\\  ).on("ajax:error", function(event, xhr, status, error) {
+\\    var input_school="College of Arts and Sciences";
+\\    var input_library="Van Pelt"});
 
 var chart = Chartkick.charts["2"]
 
