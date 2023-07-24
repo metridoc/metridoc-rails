@@ -28,15 +28,10 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 -sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
 -percents_zero,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",0)
 
-#data-viz
-  #single-col
-    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
-    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: 0.7, stacked: true, download: true   
-
 -# Make a form to select a school for an output plot
 %center
   = form_tag({:controller => admin_gatecount_path,
-      :action => "frequency"},
+      :action => "frequency"}, remote: true,
       {:method => :get}) do
     %table{:style => "background-color:#DADADA"}
       %tr
@@ -48,9 +43,20 @@ Note that the y-scale of the plot below is set to the percent of the college pop
         %td= select_tag "school", options_for_select(schools, schools[0])
         %td{rowspan:"3"}= submit_tag "Submit"
 
+-#for the error, want to just plug in a default value...
+
+-#$().on("ajax:success", (event, data, status, xhr) -> $("#new_article").append xhr.responseText
+-#  ).on "ajax:error", (event, xhr, status, error) -> $("#new_article").append "<p>ERROR</p>"
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: 0.7, stacked: true, download: true  
+
 %hr
 
--#Think something might be wrong with the y-axis of the plots...definitely still-#not selecting the correct enrollment number...
+-#sigh, not calling from enrollments table in an optimal way but not sure why
+-#broken :(
 
 -input_table=freq_table
 
