@@ -31,9 +31,11 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 -input_school="The Wharton School"
 -input_library="Biotech"
 
+-#url: admin_population_penetration_path
+
 -# Make a form to select a school for an output plot
 %center
-  = form_tag(admin_population_penetration_path, url: admin_population_penetration_path, method: :get,remote: true) do
+  = form_tag(admin_population_penetration_path,html: {id: "random_id"}, method: :get,remote: true) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select Library
@@ -45,6 +47,9 @@ Note that the y-scale of the plot below is set to the percent of the college pop
         %td{rowspan:"3"}= submit_tag "Submit"
 
 -#for the error, want to just plug in a default value...
+
+:javascript
+  $(document).on("ajax:complete",'#random_id', function(event, data, status, xhr) {var input_school=data.school})
 
 -puts input_school
 -puts input_library
