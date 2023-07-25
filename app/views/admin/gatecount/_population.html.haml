@@ -19,7 +19,7 @@
 
 -# Make a form to select a school for an output plot
 %center
-  = form_tag({:contoller => admin_population_penetration_path}, remote: true, method: :get) do
+  = form_tag({:controller => admin_population_penetration_path}, remote: true, method: :get) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select Library
@@ -34,13 +34,14 @@
 -test_library=@input_library.nil? ? 'Failure x 2' : @input_library
 
 -puts test_school
+-puts test_library
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
 
 Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--gen_school_table=gen_stats(freq_table,2023,test_library,test_school)
+-gen_school_table=gen_stats(freq_table,2023,input_library,input_school)
 
 -ymax,percents_single,percents_medium,percents_freq=time_counts(gen_school_table,"Weekly","Frequency",school_index)
 
