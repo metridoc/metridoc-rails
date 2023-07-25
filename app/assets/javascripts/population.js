@@ -14,8 +14,10 @@
 //        success: function(data){}
 //    }); 
 
+alert('Test was successful')
+
 var chart = Chartkick.charts["chart-id"]
 
-\\chart.updateData(input_school)
+chart.updateData(input_school)
 
 chart.redraw()
