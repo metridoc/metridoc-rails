@@ -9,18 +9,6 @@
 
 -schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
-%center
-  = form_tag({:controller => admin_population_penetration_path}, remote: true, method: :get) do
-    %table{:style => "background-color:#DADADA"}
-      %tr
-        %td Select Library
-        %td= select_tag "library", options_for_select(libraries, libraries[0])
-        %td
-      %tr
-        %td Select School
-        %td= select_tag "school", options_for_select(schools, schools[0])
-        %td{rowspan:"3"}= submit_tag "Submit"
-
 -input_school=params[:school].nil? ? 'College of Arts & Sciences' : params[:school]
 
 -input_library=params[:library].nil? ? 'Van Pelt' : params[:library]
