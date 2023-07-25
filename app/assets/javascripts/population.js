@@ -14,8 +14,6 @@ $(admin_population_penetration_path).on("ajax:success",admin_population_penetrat
 //        success: function(data){}
 //    }); 
 
-var chart = Chartkick.charts["chart-id"]
-
-chart.updateData(input_school)
+var chart = Chartkick.charts["0"]
 
 chart.redraw()
