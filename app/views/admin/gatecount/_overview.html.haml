@@ -70,7 +70,7 @@
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
-    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, library: {scales: {y: {ticks:{0, 25000, 50000, 75000, 100000, 125000, 150000}}}}, download: true
+    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, library: {y: {ticks:{0, 25000, 50000, 75000, 100000, 125000, 150000}}}, download: true
 
 #data-viz
   #single-col
