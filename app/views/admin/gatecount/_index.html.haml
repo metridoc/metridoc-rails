@@ -52,11 +52,6 @@ Use this form to generate your own version of the following plot:
 
 -school_index=(0..schools.length-1).to_a
 
-%hr
-%h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
-
-Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week. 
-
 -sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
 -ymax,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",0)
 
@@ -64,6 +59,8 @@ Note that the y-scale of the plot below is set to the percent of the college pop
   #single-col
     %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
     = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, download: true  
+
+Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week. 
 
 
 %h3 Tables
