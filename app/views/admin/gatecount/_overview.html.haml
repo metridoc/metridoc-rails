@@ -56,18 +56,18 @@
 -#Make this less manual later...will affect charts though!
 -for m in month_range
   -if m >= 7
-    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2017[m]
-    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m]
-    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2019[m]
-    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2020[m]
-    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2021[m]
+    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2017[m+1]
+    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
+    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2019[m+1]
+    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2020[m+1]
+    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2021[m+1]
   -else
-    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2016[m]
-    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m]
-    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2018[m]
-    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2019[m]
-    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m]
-    -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m]
+    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2016[m+1]
+    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m+1]
+    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2018[m+1]
+    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2019[m+1]
+    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m+1]
+    -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m+1]
 
 #data-viz
   #single-col
