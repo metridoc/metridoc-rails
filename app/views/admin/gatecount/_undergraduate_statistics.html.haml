@@ -15,7 +15,7 @@
 
 -school_index.each {|i| undergrad_bar_percents[school_names[i]]=(undergrad_people[school_names[i]]).fdiv(school_pop[i])}
 
-%h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Library Per School
+%h2{style: "text-align:center;"} Percentage of Undergraduate Students Using the Van Pelt Library Per School
 #data-viz
 #single-col
   =column_chart undergrad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
@@ -27,7 +27,7 @@
 -school_index.each {|i| undergrad_pie[school_names[i]]=(undergrad_vp[school_names[i]])}
 
 
-%h2{style: "text-align:center;"} Percentage of Gate Counts By Undergraduate School
+%h2{style: "text-align:center;"} Percentage of Van Pelt Gate Counts By Undergraduate School
 #data-viz
 #single-col
   %h3{style: "text-align:center;"} Undergraduate Students
@@ -51,6 +51,6 @@
 -school_index.each {|i| vp_percents[school_names[i]]=(undergrad_vp[school_names[i]]).fdiv(school_pop[i])}
 -school_index.each {|i| furn_percents[school_names[i]]=(undergrad_furn[school_names[i]]).fdiv(school_pop[i])}
 
-%h2{style: "text-align:center;"} Percentage of Gate Counts Per Library (Undergraduate Students)
+%h2{style: "text-align:center;"} Percentage of Gate Counts Per Library For Each Undergraduate School
 #single-col
   =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, dataset: {borderWidth: 0}, download: true
