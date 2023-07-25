@@ -30,11 +30,12 @@
         %td= select_tag "school", options_for_select(schools, schools[0])
         %td{rowspan:"3"}= submit_tag "Submit"
 
--test_school=@input_school.nil? ? 'Failure' : @input_school
--test_library=@input_library.nil? ? 'Failure x 2' : @input_library
+-input_school=params[:school].nil? ? 'Failure' : params[:school]
 
--puts test_school
--puts test_library
+-input_library=params[:library].nil? ? 'Failure x 2' : params[:library]
+
+-puts input_school
+-puts input_library
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
