@@ -11,7 +11,7 @@ ActiveAdmin.register_page "Population & Penetration" do
   page_action :population, method: :post do
     #@input_school = params[:school]
     #@input_library = params[:libary]
-    redirect_url "/admin/population_penetration?library=#{params['library']}&school=#{params['school']}"
+    redirect_url = "/admin/population_penetration?library=#{params['library']}&school=#{params['school']}"
   end
 
   #Title for the page
