@@ -9,7 +9,11 @@
 
 -schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
--school_index=schools.find_index(params[:school])
+-input_school=params[:school].nil? 'College of Arts & Sciences' : params[:school]
+
+-input_library=params[:library].nil? 'Van Pelt' : params[:library]
+
+-school_index=schools.find_index(input_school)
 
 -puts school_index
 
@@ -18,11 +22,11 @@
 
 Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--gen_school_table=gen_stats(freq_table,2023,params[:library],params[:school])
+-gen_school_table=gen_stats(freq_table,2023,input_library,input_school)
 
 -ymax,percents_single,percents_medium,percents_freq=time_counts(gen_school_table,"Weekly","Frequency",school_index)
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"}="Frequency of #{params[:school]} Visitors to the #{params[:library]} Library, Spring Semester 2023"
+    %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, Spring Semester 2023"
     = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, refresh: 15, download: true  
