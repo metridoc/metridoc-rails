@@ -1,0 +1,20 @@
+---
+load_sequence: 6
+target_model: "Alma::Circulation"
+target_adapter: "native_sql"
+truncate_before_load: "no"
+sqls:
+  - |
+      UPDATE alma_circulations
+      SET
+        user_group = upenn_alma_demographics.user_group,
+        school = upenn_alma_demographics.school,
+        statistical_category_1 = upenn_alma_demographics.statistical_category_1,
+        statistical_category_2 = upenn_alma_demographics.statistical_category_2,
+        statistical_category_3 = upenn_alma_demographics.statistical_category_3,
+        statistical_category_4 = upenn_alma_demographics.statistical_category_4,
+        statistical_category_5 = upenn_alma_demographics.statistical_category_5
+      FROM upenn_alma_demographics
+      WHERE alma_circulations.penn_id_number = upenn_alma_demographics.penn_id
+        AND alma_circulations.penn_id_number IS NOT NULL
+        AND alma_circulations.school IS NULL;
