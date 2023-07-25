@@ -14,6 +14,8 @@ $(document).on("ajax:complete",'#random_id', function(event, data, status, xhr) 
 \\        success: function(data){}
 \\    }); 
 
-var chart = Chartkick.charts["1"]
+\\var chart = Chartkick.charts["1"]
 
-chart.updateData(input_school)
+\\chart.updateData(input_school)
+
+chart.redraw()
