@@ -142,6 +142,8 @@
         %td="#{column_title}"
         -for y in year_index
           -data_one=vp_all_counts[y+1][month_names[m]]
+             -if data_one.is_nil?
+              data_one=0
           -data_two=vp_percent_change[y+1][month_names[m]]
           -if data_two.is_a? Numeric
             -if data_two > 0
@@ -199,6 +201,8 @@
         %td="#{column_title}"
         -for i in year_index
           -data_one=bio_all_counts[i][month_names[m]]
+            -if data_one.is_nil?
+              data_one=0
           -data_two=bio_percent_change[i][month_names[m]]
           -if data_two.is_a? Numeric
             -if data_two > 0
