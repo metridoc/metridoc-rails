@@ -22,8 +22,6 @@
 
 %hr
 
--schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
-
 %h2 Resources
 
 %h3 Dashboards
@@ -31,6 +29,40 @@
 
   %li= link_to "Overview", "gate_counts_overview"
   %li= link_to "Populations & Penetration", "population_penetration"
+
+-schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+
+%center
+  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, method: :post) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select Library
+        %td= select_tag "library", options_for_select(libraries, libraries[0])
+        %td
+      %tr
+        %td Select School
+        %td= select_tag "school", options_for_select(schools, schools[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
+
+Use this form to generate your own version of the following plot:
+
+-libraries=["Van Pelt","Biotech","Furness"]
+
+-school_index=(0..schools.length-1).to_a
+
+%hr
+%h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
+
+Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week. 
+
+-sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
+-ymax,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",0)
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, download: true  
+
 
 %h3 Tables
 %ul
