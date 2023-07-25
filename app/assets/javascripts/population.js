@@ -14,6 +14,8 @@ $(admin_population_penetration_path).on("ajax:success",admin_population_penetrat
 //        success: function(data){}
 //    }); 
 
+alert("Order Changed!")
+
 var chart = Chartkick.charts["0"]
 
 chart.redraw()
