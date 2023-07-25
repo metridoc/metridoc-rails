@@ -19,7 +19,7 @@
 
 -# Make a form to select a school for an output plot
 %center
-  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, method: :get) do
+  = form_tag({:contoller => admin_population_penetration_path}, remote: true, method: :get) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select Library
