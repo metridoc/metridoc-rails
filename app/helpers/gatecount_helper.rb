@@ -264,7 +264,14 @@ module GatecountHelper
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
              if time_frame=="Yearly" && count_type=="Counts"
-                fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
+                for i in fiscal_index
+                   if fiscal_year_month[i] >= 7
+                     yearly_data["#{year_range[y]-1}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]
+                   else
+                     yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]
+                   end
+                end
+                #fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
                 fiscal_array["Total"]=fiscal_year_counts.sum
