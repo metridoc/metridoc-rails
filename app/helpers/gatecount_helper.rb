@@ -264,10 +264,7 @@ module GatecountHelper
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
              if time_frame=="Yearly" && count_type=="Counts"
-               if fiscal_year_month[i] >= 7
-                  fiscal_index.each {|i| yearly_data["#{year_range[y]-1}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]} 
-               else
-                  fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
+                fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
                end
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
