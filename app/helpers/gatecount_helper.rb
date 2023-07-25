@@ -362,7 +362,7 @@ module GatecountHelper
          for m in (0..months.length-1).to_a
              old_data=input_data[l][months[m]]
              new_data=input_data[data_length-1][months[m]]
-             if old_data.nil? == true
+             if old_data.nil? == true || l=input_data.length-1
                 percent_change=nil
              else  
                 percent_change=(old_data-new_data).fdiv(new_data)
