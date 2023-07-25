@@ -1,4 +1,4 @@
-$(document).on("ajax:complete",'#random_id', function(e\\vent, data, status, xhr) {
+$(document).on("ajax:complete",'#random_id', function(event, data, status, xhr) {
     var input_school=data.school;
     var input_library=data.library;
     alert("Response is => " + input_school + input_library);
@@ -14,6 +14,6 @@ $(document).on("ajax:complete",'#random_id', function(e\\vent, data, status, xhr
 \\        success: function(data){}
 \\    }); 
 
-var chart = Chartkick.charts["2"]
+var chart = Chartkick.charts["1"]
 
 chart.updateData(input_school)
