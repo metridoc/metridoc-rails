@@ -17,6 +17,19 @@
 
 -puts school_index
 
+-# Make a form to select a school for an output plot
+%center
+  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, method: :post) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select Library
+        %td= select_tag "library", options_for_select(libraries, libraries[0])
+        %td
+      %tr
+        %td Select School
+        %td= select_tag "school", options_for_select(schools, schools[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
+
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
 
