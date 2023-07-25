@@ -369,6 +369,7 @@ module GatecountHelper
                 percent_change=percent_change*100
                 percent_change=percent_change.round(2)
              end
+             month_data[months[m]]=percent_change
          end
          month_data["Statistics"]="% Change"
          all_data << month_data
