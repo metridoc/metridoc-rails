@@ -18,7 +18,9 @@
 
 Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--ymax,percents_single,percents_medium,percents_freq=time_counts(gen_stats(freq_table,2023,params[:library],params[:school]),"Weekly","Frequency",school_index)
+-gen_school_table=gen_stats(freq_table,2023,params[:library],params[:school])
+
+-ymax,percents_single,percents_medium,percents_freq=time_counts(gen_school_table,"Weekly","Frequency",school_index)
 
 #data-viz
   #single-col
