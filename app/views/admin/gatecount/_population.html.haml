@@ -57,6 +57,6 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 -#var chart = Chartkick.charts["0"]
 
 :javascript
-  my_chart.refreshData("/admin/population_penetration?library=#{input_library}&school=#{input_school}", 15)
+  new_chart=my_chart.redraw()
 
-=my_chart
+=new_chart
