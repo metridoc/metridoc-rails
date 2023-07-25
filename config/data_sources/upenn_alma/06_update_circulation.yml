@@ -7,7 +7,6 @@ sqls:
   - |
       UPDATE alma_circulations
       SET
-        user_group = upenn_alma_demographics.user_group,
         school = upenn_alma_demographics.school,
         statistical_category_1 = upenn_alma_demographics.statistical_category_1,
         statistical_category_2 = upenn_alma_demographics.statistical_category_2,
@@ -17,4 +16,5 @@ sqls:
       FROM upenn_alma_demographics
       WHERE alma_circulations.penn_id_number = upenn_alma_demographics.penn_id
         AND alma_circulations.penn_id_number IS NOT NULL
-        AND alma_circulations.school IS NULL;
+        AND alma_circulations.school IS NULL
+        AND upenn_alma_demographics.school IS NOT NULL;
