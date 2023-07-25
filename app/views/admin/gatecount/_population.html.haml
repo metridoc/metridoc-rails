@@ -35,7 +35,7 @@ Note that the y-scale of the plot below is set to the percent of the college pop
 
 -# Make a form to select a school for an output plot
 %center
-  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, {method: :post}) do
+  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, method: :post) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select Library
