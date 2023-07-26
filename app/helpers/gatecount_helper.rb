@@ -103,7 +103,7 @@ module GatecountHelper
         if user=="Total"
            #For some reason it hates when I try to select by user group so for now I'm just indexing the desired group.
            values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[0]
-        elsif user="Undergrad"
+        elsif user=="Undergrad"
            values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[1]
         else
            values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[4]
