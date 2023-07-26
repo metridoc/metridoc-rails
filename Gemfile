@@ -65,6 +65,8 @@ gem 'terser'
 
 gem 'jquery-rails'
 
+gem 'sprocket-rails'
+
 group :development, :test do
   gem 'rb-readline'
   gem 'pry'
