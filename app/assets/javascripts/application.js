@@ -15,7 +15,6 @@
 //= require active_material
 
 //= require chartkick
-//= require Chart.bundle
 
 //= require rails-ujs
 //= require turbolinks
