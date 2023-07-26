@@ -75,25 +75,19 @@ module GatecountHelper
       return output_table.to_a
   end
   
-  def enrollment_table #(user,fiscal_year)
+  def enrollment_table 
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
          school,
          value,
          fiscal_year
        FROM upenn_enrollments;")
-       #    AND ((EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) <=5)\
-       #    OR (EXTRACT(year from swipe_date)=? AND EXTRACT(month from swipe_date) >=6))",user,fiscal_year,fiscal_year-1)
 
     enrollments_array=[]
     fiscal_year=pop_table.to_a.pluck('fiscal_year')
 
-    #Do the same thing with the enrollment years where it's the order of the array?
     year_range=(fiscal_year.min.to_i..fiscal_year.max.to_i).to_a
     year_index=(0..year_range.length-1).to_a
-
-    #Grab the hash with the greatest value?
-    #for y in year_index
 
     year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023}
     schools=year_values.pluck('school')
@@ -106,9 +100,8 @@ module GatecountHelper
         
     value_index=(0..enroll_names.length-1).to_a
     for i in value_index
+        #For some reason it hates when I try to select by user group so for now I'm just grabbing the first value which is the total enrollment.
         values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[0]
-        puts values
-        puts "#{enroll_names[i]}'s max is #{values}"
         yearly_enroll[enroll_names[i]] = values
         enrollments_array << yearly_enroll
     end
@@ -122,29 +115,32 @@ module GatecountHelper
     if fiscal_year.is_a? Integer
        gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
     end
-    #This breaks it for some reason...
+    #This breaks it for some reason...so instead including in the SQL.
     #|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
     if library=="Biotech"
        gen_values=gen_values.select{|h| h["library"] == "Biotech"}
     elsif library=="Furness"
        gen_values=gen_values.select{|h| h["library"] == "Furness"}
     elsif library=="Van Pelt"
-       gen_values=gen_values.select{|h| h["library"] == "Van Pelt"}
-   #Need to actually combine the values...but not sure that we want this...
-   #else library=="All"
-       #  puts "All Libraries         
+       gen_values=gen_values.select{|h| h["library"] == "Van Pelt"}        
     end
 
     if school_type != "All"
        gen_values=gen_values.select{|h| h["school"] == school_type}
     end
-
-    #puts gen_values.pluck("school")[1]
+    
     return gen_values
     
   end
 
   def calc_percents(input_table,type,user_group)
+    
+    #type is one of four options:
+    #1) "Counts" is the percentage of counts relative to the total population.
+    #2) "People" is the percentage of people relative to the total population.
+    #3) "Raw Counts" is just the number of counts, no percentages.
+    #4) "Individuals" is the number of people, no percentages.
+    
     if user_group != "All"
       copy_table=input_table.select{|h| h["user_group"] == user_group}
     elsif
@@ -156,7 +152,7 @@ module GatecountHelper
      all_swipes=num_swipes.sum 
      percents=num_swipes.map {|x| (x).fdiv(all_swipes)}
 
-    #These are not the right numbers...need the enrollments table! 
+    #These are the number of *users*, need enrollments for total school population. 
     elsif type=="People"  
       num_people=copy_table.pluck("num_people")
       all_people=num_people.sum
@@ -264,14 +260,14 @@ module GatecountHelper
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
              if time_frame=="Yearly" && count_type=="Counts"
-                for i in fiscal_index
+               for i in fiscal_index
+                   #Here needs to actually be in the correct time order.
                    if fiscal_year_month[i] >= 7
                      yearly_data["#{year_range[y]-1}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]
                    else
                      yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]
                    end
                 end
-                #fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_counts[i]}
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[fiscal_year_month[i].to_i-1]] = fiscal_year_counts[i]}
                 fiscal_array["Total"]=fiscal_year_counts.sum
@@ -288,7 +284,6 @@ module GatecountHelper
                    yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_people[i]
                  end
                end
-               #fiscal_index.each {|i| yearly_data["#{year_range[y]}-"+month_text[fiscal_year_month[i].to_i-1]+"-01"] = fiscal_year_people[i]}
              end  
              
          end
@@ -308,7 +303,8 @@ module GatecountHelper
          num_users=people.count
 
          enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
-               'Nursing','SP2']
+                       'Nursing','SP2']
+         #For right now this is hardcoded for the most recent year.
          total_pop=enrollment_table[-1][enroll_names[school_index]]
 
          puts "Library Users number #{num_users}"
@@ -342,7 +338,7 @@ module GatecountHelper
                  end
             end  
 
-            #Need to remember to return as a percentage of the college of arts and sciences population
+            #Need to remember to return as a percentage of the college population
             
             ymax=(num_users).fdiv(total_pop)
             ymax=ymax.round(2)
@@ -363,8 +359,6 @@ module GatecountHelper
   def percent_change(input_data)
   #Might be able to add to calc_percents function...
 
-  #Need to read in the array of hashes, compare that month data to the comp_year, then output an array of hashes of the differences
-
      data_length=input_data.length
 
      all_data=[]
@@ -374,6 +368,7 @@ module GatecountHelper
          month_data=Hash.new
          
          for m in (0..months.length-1).to_a
+               #Reading in an array of hashes, comparing each year's month data to the comparison_year (most recent), then output an array of hashes of the differences.
              old_data=input_data[l][months[m]]
              new_data=input_data[data_length-1][months[m]]
              if old_data.nil? == true || l==input_data.length-1
