@@ -74,12 +74,10 @@
     %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_yearly_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
--scale={scales: {yAxes: [{id: 'y-axis', type: 'linear', ticks: {stepSize: 2500, autoSkip: false}}]}}
-
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
-    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, library: scale, download: true
+    = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, library: {scales: {y: {min:0, max:15000, ticks: {stepSize:2500}}}}, download: true
 
 #data-viz
   #single-col
