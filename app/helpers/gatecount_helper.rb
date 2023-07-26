@@ -75,7 +75,7 @@ module GatecountHelper
       return output_table.to_a
   end
   
-  def enrollment_table 
+  def enrollment_table(user) 
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
          school,
@@ -100,8 +100,14 @@ module GatecountHelper
         
     value_index=(0..enroll_names.length-1).to_a
     for i in value_index
-        #For some reason it hates when I try to select by user group so for now I'm just grabbing the first value which is the total enrollment.
-        values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[0]
+        if user=="Total"
+           #For some reason it hates when I try to select by user group so for now I'm just indexing the desired group.
+           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[0]
+        elsif user="Undergrad"
+           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[1]
+        else
+           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[4]
+        end
         yearly_enroll[enroll_names[i]] = values
         enrollments_array << yearly_enroll
     end
@@ -305,7 +311,7 @@ module GatecountHelper
          enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
                        'Nursing','SP2']
          #For right now this is hardcoded for the most recent year.
-         total_pop=enrollment_table[-1][enroll_names[school_index]]
+         total_pop=enrollment_table("Total")[-1][enroll_names[school_index]]
 
          puts "Library Users number #{num_users}"
          puts "Enrollment total is #{total_pop}"
