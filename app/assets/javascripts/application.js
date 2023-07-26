@@ -17,6 +17,8 @@
 //= require Chart.bundle
 //= require chartkick
 
+import "chartkick/chart.js"
+
 //= require rails-ujs
 //= require turbolinks
 
