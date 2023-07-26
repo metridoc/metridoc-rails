@@ -14,13 +14,8 @@
 
 //= require active_material
 
-//= require Chart.bundle
 //= require chartkick
-
-import "chartkick/chart.js"
-
-import "chartkick"
-import "Chart.bundle"
+//= require Chart.bundle
 
 //= require rails-ujs
 //= require turbolinks
