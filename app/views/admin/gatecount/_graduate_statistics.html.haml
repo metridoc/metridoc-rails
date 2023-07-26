@@ -28,7 +28,16 @@
   %h3{style: "text-align:center;"} Van Pelt
   =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
 
--grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
+-grad_enrollment=enrollment_table("Graduate")
+
+-enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
+
+-grad_school_pop=[0,0,0,0,0,0,0,0,0,0,0,0]
+
+-grad_school_index.each {|i| grad_school_pop[i]=grad_enrollment[enroll_names[i]]}
+
+-#grad_school_pop=[2168,2398,68,789,768,1664,4140,993,2122,571,607,663]
+
 -grad_bar_percents=Hash.new
 -grad_people=calc_percents(van_pelt_table,"Individuals","Grad Student")
 
