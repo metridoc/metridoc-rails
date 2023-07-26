@@ -2,8 +2,15 @@
 
 -school_names=["School of Nursing","The Wharton School","School of Engineering and Applied Science","College of Arts & Sciences"]
 
+-enroll_names=["Nursing","Wharton","Engineering","SAS"]
+-undergrad_enroll=enrollment_table("Undergrad")
+
 -school_index=[0,1,2,3]
--school_pop=[580, 1758, 1777, 7135]
+-school_pop=[0,0,0,0]
+
+-school_index.each {|i| school_pop[i]=enrollment[-1][enroll_names[i]]}
+
+-#school_pop=[580, 1758, 1777, 7135]
 
 -furness_table=gen_stats(library_table,2023,"Furness","All")
 -biotech_table=gen_stats(library_table,2023,"Biotech","All")
