@@ -29,18 +29,18 @@
 %h2{style: "text-align:center"} Percentage of Gate Counts By School Per Library
 #left-col
   %h3{style: "text-align:center;"} Furness
-  =pie_chart  furn_pie, round: 2, download: true
+  =pie_chart  furn_pie, round: 2, suffix: "%", download: true
 
 #right-col
   %h3{style: "text-align:center;"} Biotech Commons
-  =pie_chart bio_pie, round: 2, download: true
+  =pie_chart bio_pie, round: 2, suffix: "%", download: true
 
 %h2{style: "text-align:center"} Percentage of Gate Counts By School Per Library
 
 #data-viz
 #single-col
   %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart vp_pie, round: 2, download: true
+  =pie_chart vp_pie, round: 2, suffix: "%", download: true
 
 -#These two plots should be fixed now...
 
@@ -61,4 +61,4 @@
 %h2{style: "text-align:center;"} Percentage of Faculty/Staff Using the Van Pelt Library Per School
 #data-viz
 #single-col
-  =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
+  =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, suffix: "%", download: true
