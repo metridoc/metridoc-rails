@@ -8,30 +8,30 @@
 -biotech_table=gen_stats(library_table,2023,"Biotech","All")
 -van_pelt_table=gen_stats(library_table,2023,"Van Pelt","All")
 
--#furn_counts=calc_percents(furness_table,"Counts","F/S")
+-furn_counts=calc_percents(furness_table,"Counts","F/S")
 -vp_counts=calc_percents(van_pelt_table,"Counts","F/S")
--#bio_counts=calc_percents(biotech_table,"Counts","F/S")
+-bio_counts=calc_percents(biotech_table,"Counts","F/S")
 
--#furn_pie=Hash.new
+-furn_pie=Hash.new
 -vp_pie=Hash.new
--#bio_pie=Hash.new
+-bio_pie=Hash.new
 
--#school_index.each {|i| furn_pie[school_names[i]]=(furn_counts[school_names[i]])}
+-school_index.each {|i| furn_pie[school_names[i]]=(furn_counts[school_names[i]])}
 -school_index.each {|i| vp_pie[school_names[i]]=(vp_counts[school_names[i]])}
--#school_index.each {|i| bio_pie[school_names[i]]=(bio_counts[school_names[i]])}
+-school_index.each {|i| bio_pie[school_names[i]]=(bio_counts[school_names[i]])}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
 %hr
 
--#%h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School P-#er Library
--#left-col
--#%h3{style: "text-align:center;"} Furness
--#=pie_chart  furn_pie, round: 2, download: true
+%h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
+#left-col
+  %h3{style: "text-align:center;"} Furness
+  =pie_chart  furn_pie, round: 2, download: true
 
--#right-col
--#%h3{style: "text-align:center;"} Biotech Commons
--#=pie_chart bio_pie, round: 2, download: true
+#right-col
+  %h3{style: "text-align:center;"} Biotech Commons
+  =pie_chart bio_pie, round: 2, download: true
 
 %h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 
