@@ -350,9 +350,9 @@ module GatecountHelper
             ymax=ymax.round(2)
             
             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-            percents_single["#{week_range[i]}"]=(single_user).fdiv(total_pop)
-            percents_medium["#{week_range[i]}"]=(medium_user).fdiv(total_pop)
-            percents_freq["#{week_range[i]}"]=(freq_user).fdiv(total_pop)
+            percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop)).round(2)*100
+            percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop)).round(2)*100
+            percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop)).round(2)*100
 
          end
          return ymax,percents_single,percents_medium,percents_freq

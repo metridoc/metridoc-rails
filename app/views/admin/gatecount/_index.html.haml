@@ -7,11 +7,17 @@
 
   %ul
 
-    %li The Overview page contains this information for the general UPenn population for all of the fiscal years currently recorded in Metridoc.
+  %li 
+    %strong The Overview page
+    contains this information for the general UPenn population (students, faculty, and staff) for all of the fiscal years currently recorded in Metridoc.
 
-    %li The Populations and Penetration page breaks down the gate counts and number of visitors information by school and undergraduate/graduate population. 
+  %li
+    %strong The Populations and Penetration page
+    breaks down the gate counts and number of visitors information by school and undergraduate/graduate population. 
 
-    %li For any plot with a legend you may click on a label(/s) to eliminate that data from the plot, showing only the data groups that remain. 
+  %li
+    %strong Plot Details:
+    For any plot with a legend you may click on a label(/s) to eliminate that data from the plot, showing only the data groups that remain. If you pan your cursor over a plotting element (such as a point or a bar) the value of that element will be displayed.
 
 %hr
 
@@ -55,7 +61,8 @@
     %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
     = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, download: true  
 
-%p{style: "text-align:center; font-size: 1.25em;"} Note that the y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week. 
+%p{style: "text-align:center; font-size: 1.25em;"} Note that these plots are generated from the combined undergraduate/graduate student population for each school. The y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
+
 
 
 %h3 Tables
