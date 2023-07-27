@@ -107,7 +107,7 @@ module GatecountHelper
         elsif user=="Graduate"
            values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[4]
         elsif user=="F/S"
-           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[12]
+           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[10]
         end
         yearly_enroll[enroll_names[i]] = values
         enrollments_array << yearly_enroll
