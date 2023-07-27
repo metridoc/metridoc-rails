@@ -58,7 +58,7 @@
 
 -school_index.each {|i| staff_bar_percents[school_names[i]]=(staff_people[school_names[i]]).fdiv(school_pop[i])}
 
-%h2{style: "text-align:center;"} Number of Faculty/Staff Using the Van Pelt Library Per School
+%h2{style: "text-align:center;"} Percentage of Faculty/Staff Using the Van Pelt Library Per School
 #data-viz
 #single-col
   =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
