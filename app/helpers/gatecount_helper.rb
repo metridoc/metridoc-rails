@@ -23,7 +23,7 @@ module GatecountHelper
            WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
               AND school IN ('College of Arts & Sciences','The Wharton School','Annenberg School for Communication','School of Dental Medicine','School of Design','Graduate School of Education','School of Engineering and Applied Science','Law School','Perelman School of Medicine','Veterinary Medicine','School of Nursing','Social Policy & Practice','School of Social Policy & Practice')
               GROUP BY 1, 2, 3, 4
-              ORDER BY COUNT(card_num);")
+              ORDER BY COUNT(swipe_date);")
 
       return output_table.to_a
   end
@@ -152,8 +152,7 @@ module GatecountHelper
       copy_table=input_table.select{|h| h["user_group"] == user_group}
       copy_table=copy_table.delete_if{|h| h["school"] == "Social Policy & Practice"}
     elsif user_group == "F/S"
-      copy_table=input_table.select{|h| h["user_group"]=="Staff"}
-        #|| (h["user_group"].include? "Faculty")}
+      copy_table=input_table.select{|h| (h["user_group"].include? "Staff") || (h["user_group"].include? "Faculty")}
     else
       copy_table=input_table
     end
