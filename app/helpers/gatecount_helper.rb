@@ -146,9 +146,11 @@ module GatecountHelper
     #3) "Raw Counts" is just the number of counts, no percentages.
     #4) "Individuals" is the number of people, no percentages.
     
-    if user_group != "All"
+    if user_group == "Grad Student" || user_group == "Undergraduate Student"
       copy_table=input_table.select{|h| h["user_group"] == user_group}
-    elsif
+    elsif user_group == "F/S"
+      copy_table=input_table.select{|h| h["user_group"] == user_group.include? "Staff" || h["user_group"] == user_group.include? "Faculty" }
+    else
       copy_table=input_table
     end
     

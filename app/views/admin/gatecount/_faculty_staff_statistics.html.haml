@@ -15,18 +15,18 @@
 %h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 #left-col
   %h3{style: "text-align:center;"} Furness
-  =pie_chart  calc_percents(furness_table,"Counts","Grad Student"), round: 2, download: true
+  =pie_chart  calc_percents(furness_table,"Counts","F/S"), round: 2, download: true
 
 #right-col
   %h3{style: "text-align:center;"} Biotech Commons
-  =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, download: true
+  =pie_chart calc_percents(biotech_table,"Counts","F/S"), round: 2, download: true
 
 %h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 
 #data-viz
 #single-col
   %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, download: true
+  =pie_chart calc_percents(van_pelt_table,"Counts","F/S"), round: 2, download: true
 
 -grad_enrollment=enrollment_table("Graduate")
 
