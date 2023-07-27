@@ -12,15 +12,13 @@
 -vp_counts=calc_percents(van_pelt_table,"Counts","F/S")
 -bio_counts=calc_percents(biotech_table,"Counts","F/S")
 
--puts vp_counts
-
 -furn_pie=Hash.new
 -vp_pie=Hash.new
 -bio_pie=Hash.new
 
--school_index.each {|i| furn_pie[school_names[i]]=(furn_counts[school_names[i]])}
--school_index.each {|i| vp_pie[school_names[i]]=(vp_counts[school_names[i]])}
--school_index.each {|i| bio_pie[school_names[i]]=(bio_counts[school_names[i]])}
+-school_index.each {|i| furn_pie[school_names[i]]=furn_counts[school_names[i]]}
+-school_index.each {|i| vp_pie[school_names[i]]=vp_counts[school_names[i]]}
+-school_index.each {|i| bio_pie[school_names[i]]=bio_counts[school_names[i]]}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 Faculty & Staff Population Statistics by School
