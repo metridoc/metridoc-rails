@@ -21,13 +21,38 @@ module GatecountHelper
            COUNT(DISTINCT card_num) AS num_people  
          FROM gate_count_card_swipes 
            WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
-              AND school != 'Penn Libraries' AND school != 'Social Policy & Practice'
+              AND school != 'Penn Libraries'
               GROUP BY 1, 2, 3, 4
               ORDER BY COUNT(card_num);")
 
       return output_table.to_a
   end
 
+  def staff_table
+      output_table=GateCount::CardSwipe.connection.select_all(
+        "SELECT
+           school,
+           user_group,
+           CASE
+             WHEN door_name LIKE 'VAN PELT%'
+               THEN 'Van Pelt'
+             WHEN door_name LIKE 'FURNESS%'
+               THEN 'Furness'
+             WHEN door_name LIKE 'BIO%'
+               THEN 'Biotech'
+           END AS library,
+           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+           COUNT(card_num) AS num_swipes, 
+           COUNT(DISTINCT card_num) AS num_people  
+         FROM gate_count_card_swipes 
+           WHERE ((user_group LIKE 'Staff') OR (user_group LIKE 'Faculty') AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
+              AND school != 'Penn Libraries' AND school != 'Social Policy & Practice'
+              GROUP BY 1, 2, 3, 4
+              ORDER BY COUNT(card_num);")
+
+      return output_table.to_a
+  end
+  
   def time_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
