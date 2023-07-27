@@ -62,23 +62,3 @@
 #data-viz
 #single-col
   =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
-
--staff_bar_percents=Hash.new
--staff_people=calc_percents(biotech_table,"Individuals","F/S")
-
--school_index.each {|i| staff_bar_percents[school_names[i]]=(staff_people[school_names[i]]).fdiv(school_pop[i])}
-
-%h2{style: "text-align:center;"} Percentage of Faculty/Staff Using the Biotech Library Per School
-#data-viz
-#single-col
-  =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
-
--staff_bar_percents=Hash.new
--staff_people=calc_percents(furness_table,"Individuals","F/S")
-
--school_index.each {|i| staff_bar_percents[school_names[i]]=(staff_people[school_names[i]]).fdiv(school_pop[i])}
-
-%h2{style: "text-align:center;"} Percentage of Faculty/Staff Using the Furness Library Per School
-#data-viz
-#single-col
-  =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
