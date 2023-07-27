@@ -30,4 +30,4 @@
 #data-viz
   #single-col
     %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, Spring Semester 2023"
-    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, suffix: "%", round: 2, library: {scales: {yAxes: [{id: 'y-axis', type: "linear", ticks: {stepSize: 5}}]}}, download: true  
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, suffix: "%", round: 2, library: {scales: {yAxes: [{id: 'y-axis', ticks: {stepSize: 10}}]}}, download: true  
