@@ -58,5 +58,4 @@
 #data-viz
   #single-col
     %h3{style: "text-align:center;"} Medical Staff/Faculty Usage of the Libraries (Gate Counts)
-    =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, dataset: {borderWidth: 0}, library: {scales: {yAxes: [{id: 'y-axis', type: "logarithmic"}]}}
- download: true
+    =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, dataset: {borderWidth: 0}, library: {scales: {yAxes: [{id: 'y-axis', type: "logarithmic"}]}}, download: true
