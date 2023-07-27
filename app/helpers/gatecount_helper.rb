@@ -152,7 +152,7 @@ module GatecountHelper
       copy_table=input_table.select{|h| h["user_group"] == user_group}
       copy_table=copy_table.delete_if{|h| h["school"] == "Social Policy & Practice"}
     elsif user_group == "F/S"
-      copy_table=input_table.select{|h| (h["user_group"]=="Staff") ||(h["user_group"]=="Faculty") ||(h["user_group"]=="Faculty Express")}
+      copy_table=input_table.select{|h| (h["user_group"].include ? "Staff") ||(h["user_group"].include? "Faculty")}
     else
       copy_table=input_table
     end
