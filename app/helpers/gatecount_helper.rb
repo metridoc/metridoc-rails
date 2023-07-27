@@ -152,13 +152,15 @@ module GatecountHelper
       copy_table=input_table.select{|h| h["user_group"] == user_group}
       copy_table=copy_table.delete_if{|h| h["school"] == "Social Policy & Practice"}
     elsif user_group == "F/S"
-      copy_table=input_table.select{|h| (h["user_group"]=="Staff") ||(h["user_group"]=="Faculty") ||(h["user_group"]=="Faculty Express") }
+      copy_table=input_table.select{|h| (h["user_group"]=="Staff") ||(h["user_group"]=="Faculty") ||(h["user_group"]=="Faculty Express")}
+    else
+      copy_table=input_table
     end
     
     if type=="Counts"
      num_swipes=copy_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
-     percents=num_swipes.map {|x| ((x).fdiv(all_swipes))*100}
+     percents=num_swipes.map {|x| (x).fdiv(all_swipes)}
 
     #These are the number of *users*, need enrollments for total school population. 
     elsif type=="People"  
