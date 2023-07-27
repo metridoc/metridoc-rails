@@ -151,7 +151,7 @@ module GatecountHelper
     if user_group == "Grad Student" || user_group == "Undergraduate Student"
       copy_table=input_table.select{|h| h["user_group"] == user_group}
     elsif user_group == "F/S"
-      copy_table=input_table.select{|h| h["user_group"].include? "Staff"}
+      copy_table=input_table.select{|h| h["user_group"].include? "Staff" || 'Faculty'}
     else
       copy_table=input_table
     end
