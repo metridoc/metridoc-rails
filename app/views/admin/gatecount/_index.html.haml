@@ -59,7 +59,7 @@
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
-    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, round: 2, suffix: "%", library: {scales: {yAxes: [{id: 'y-axis', type: 'linear', ticks: {autoskip: false, steps: 10}}]}}, download: true  
+    = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, round: 2, suffix: "%", library: {scales: {yAxes: [{id: 'y-axis', type: 'linear', ticks: {autoskip: false, stepSize: ((ymax).fdiv(10)).round}}]}}, download: true  
 
 %p{style: "text-align:center; font-size: 1.25em;"} Note that these plots are generated from the combined undergraduate/graduate student population for each school. The y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
