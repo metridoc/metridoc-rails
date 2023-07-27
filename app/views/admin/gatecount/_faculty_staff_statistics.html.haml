@@ -1,12 +1,14 @@
 = javascript_include_tag 'application'
 
--grad_school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+-school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
--grad_school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
+-school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
 
 -furness_table=gen_stats(library_table,2023,"Furness","All")
 -biotech_table=gen_stats(library_table,2023,"Biotech","All")
 -van_pelt_table=gen_stats(library_table,2023,"Van Pelt","All")
+
+-#percent_index.each {|i| percents_array[schools[i]] = percents[i]}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
@@ -28,25 +30,27 @@
   %h3{style: "text-align:center;"} Van Pelt
   =pie_chart calc_percents(van_pelt_table,"Counts","F/S"), round: 2, download: true
 
--grad_enrollment=enrollment_table("Graduate")
+-#These two plots should be fixed now...
+
+-num_staff=enrollment_table("F/S")
 
 -enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
--grad_school_pop=[0,0,0,0,0,0,0,0,0,0,0,0]
--grad_school_index.each {|i| grad_school_pop[i]=grad_enrollment[-1][enroll_names[i]]}
+-school_pop=[0,0,0,0,0,0,0,0,0,0,0,0]
+-school_index.each {|i| school_pop[i]=num_staff[-1][enroll_names[i]]}
 
--grad_bar_percents=Hash.new
--grad_people=calc_percents(van_pelt_table,"Individuals","Grad Student")
+-staff_bar_percents=Hash.new
+-staff_people=calc_percents(van_pelt_table,"Individuals","Grad Student")
 
--grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=(grad_people[grad_school_names[i]]).fdiv(grad_school_pop[i])}
+-school_index.each {|i| staff_bar_percents[school_names[i]]=(staff_people[school_names[i]]).fdiv(school_pop[i])}
 
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
 #single-col
-  =column_chart grad_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
+  =column_chart staff_bar_percents, round: 2, dataset: {borderWidth: 0}, download: true
 
--med_bio=calc_percents(biotech_table,"Raw Counts","Grad Student")
--vp_bio=calc_percents(van_pelt_table,"Raw Counts","Grad Student")
+-med_bio=calc_percents(biotech_table,"Raw Counts","F/S")
+-vp_bio=calc_percents(van_pelt_table,"Raw Counts","F/S")
 
 -med_bio_counts=med_bio.select{|k,v| k == "The Wharton School" || k == "School of Dental Medicine" || k == "Perelman School of Medicine" || k == "Veterinary Medicine" || k == "School of Nursing"}
 -med_vp_counts=vp_bio.select{|k,v| k == "The Wharton School" || k == "School of Dental Medicine" || k == "Perelman School of Medicine" || k == "Veterinary Medicine" || k == "School of Nursing"}
