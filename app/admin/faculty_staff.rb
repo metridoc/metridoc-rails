@@ -9,7 +9,7 @@ ActiveAdmin.register_page "Faculty & Staff Statistics" do
 
   #Title for the page
   content title: "Faculty & Staff Statistics" do
-    render partial: 'admin/gatecount/faculty_staff'
+    render partial: 'admin/gatecount/faculty_staff_statistics'
   end
 
   #Restrict the page view to the correct users:
