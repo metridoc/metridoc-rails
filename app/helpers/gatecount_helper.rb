@@ -160,7 +160,7 @@ module GatecountHelper
     if type=="Counts"
      num_swipes=copy_table.pluck("num_swipes")
      all_swipes=num_swipes.sum 
-     percents=num_swipes.map {|x| (x).fdiv(all_swipes)}
+     percents=num_swipes.map {|x| ((x).fdiv(all_swipes))*100}
 
     #These are the number of *users*, need enrollments for total school population. 
     elsif type=="People"  
