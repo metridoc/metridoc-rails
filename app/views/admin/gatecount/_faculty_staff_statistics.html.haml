@@ -56,7 +56,7 @@
 -staff_bar_percents=Hash.new
 -staff_people=calc_percents(van_pelt_table,"Individuals","F/S")
 
--school_index.each {|i| staff_bar_percents[school_names[i]]=(staff_people[school_names[i]])}
+-school_index.each {|i| staff_bar_percents[school_names[i]]=(staff_people[school_names[i]]).fdiv(school_pop[i])}
 
 %h2{style: "text-align:center;"} Number of Faculty/Staff Using the Van Pelt Library Per School
 #data-viz
