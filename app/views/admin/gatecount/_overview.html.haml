@@ -62,6 +62,10 @@
     -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m+1]
     -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m+1]
 
+%strong
+
+  %p{style: "text-align:center;"} *Note: Biotech library count data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. This additionally means that number of visitors information for this library does not exist prior to 2021.
+
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
@@ -181,10 +185,6 @@
 %section
 
   %h2{style: "text-align:center;"} Biotech Monthly Gate Counts
-  
-  %strong
-
-    %p{style: "text-align:center;"} *Note: Biotech library data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. 
   
   %table{align: "center", border: "1", cellpadding: "5"}
     %thead
