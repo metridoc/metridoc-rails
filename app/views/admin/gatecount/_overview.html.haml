@@ -6,7 +6,7 @@
 -vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
 
 -bio_year=(2016..2021).to_a
--bio_year_index=(0..bio_year.length-2).to_a
+-bio_year_index=(0..bio_year.length-1).to_a
 
 -month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
 -month_range=(0..11).to_a
@@ -30,7 +30,7 @@
 
 -for y in bio_year_index
   -for m in month_range
-    -if m >= 7
+    -if m >= 7 and y < 5
       -bio_yearly_counts["#{bio_year[y]-1}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
       -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
     -else
