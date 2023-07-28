@@ -218,18 +218,18 @@ module GatecountHelper
       if time_frame=="Monthly"
                                                                      
          month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
-          month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
+         month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
       
-          temp_array=Hash.new
-          count_array=Hash.new
+         temp_array=Hash.new
+         count_array=Hash.new
 
-          temp_index=[6,7,8,9,10,11,0,1,2,3,4,5]
-          count_index=(0..count.length-1).to_a
+         temp_index=[6,7,8,9,10,11,0,1,2,3,4,5]
+         count_index=(0..count.length-1).to_a
 
-          count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
-          temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
+         count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
+         temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
 
-          return count_array
+         return count_array
       end
       
       if time_frame=="Fiscal_Year"
