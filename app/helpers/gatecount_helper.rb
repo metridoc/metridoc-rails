@@ -233,31 +233,8 @@ module GatecountHelper
          temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
 
          return count_array
-      end
-      
-      if time_frame=="Fiscal_Year"
-        #For some reason this breaks when I switch it to the same method in "Years/All"
-         years=time
-         year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
-         year_index=[0,1,2,3,4,5,6,7]
-
-         fiscal_data=Hash.new
-
-         for y in year_index
-             fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
-             fiscal_year_counts=fiscal_year_data.pluck('num_swipes').sum
-             fiscal_year_people=fiscal_year_data.pluck('num_people').sum
-             
-             if count_type=="Counts"
-                fiscal_data["#{year_range[y]}"] = fiscal_year_counts
-             elsif count_type=="People"
-                fiscal_data["#{year_range[y]}"] = fiscal_year_people
-             end
-         end
-         return fiscal_data
-      end
-      
-      if time_frame=="All" || time_frame=="Yearly" || time_frame=="Fiscal_Year"
+         
+      else
         
          years=time
          year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
@@ -271,6 +248,12 @@ module GatecountHelper
              fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
              fiscal_year_people=fiscal_year_data.pluck('num_people')
 
+             if count_type=="Counts" && time_frame='Fiscal_Year'
+                yearly_data["#{year_range[y]}"] = fiscal_year_counts
+             elsif count_type=="People" && time_frame='Fiscal_Year'
+                yearly_data["#{year_range[y]}"] = fiscal_year_people
+             end
+             
              fiscal_array=Hash.new
              fiscal_index=(0..fiscal_year_counts.length-1).to_a
              if time_frame=="Yearly" && count_type=="Counts"
@@ -304,7 +287,7 @@ module GatecountHelper
 
          if time_frame=="All"
             return all_data
-         elsif time_frame=="Yearly"  
+         else
             return yearly_data
          end
       end
