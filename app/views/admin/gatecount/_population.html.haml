@@ -12,7 +12,7 @@
 
 -input_school=params[:school].nil? ? 'College of Arts & Sciences' : params[:school]
 -input_library=params[:library].nil? ? 'Van Pelt' : params[:library]
--input_year=params[:year].nil? ? 2023 : params[:year]
+-input_year=params[:year].nil? ? 2023 : params[:year].to_i
 
 -school_index=schools.find_index(input_school)
 
