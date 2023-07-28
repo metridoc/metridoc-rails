@@ -5,6 +5,7 @@ ActiveAdmin.register_page "GateCount" do
   page_action :population, method: :post do
     @input_school = params[:school]
     @input_library = params[:library]
+    @input_year = params[:year]
     redirect_url = "/admin/population_penetration?library=#{params['library']}&school=#{params['school']}"
     redirect_to redirect_url
 
