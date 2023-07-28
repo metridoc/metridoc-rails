@@ -2,7 +2,7 @@
 
 -school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
 
--school_index=[0,1,2,3,4,5,6,7,8,9,10,11]
+-school_index=(0..11).to_a
 
 -furness_table=gen_stats(library_table,2023,"Furness","All")
 -biotech_table=gen_stats(library_table,2023,"Biotech","All")
@@ -46,7 +46,8 @@
 
 -enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
--school_pop=[0,0,0,0,0,0,0,0,0,0,0,0]
+-school_pop=Array.new(12,0)
+
 -school_index.each {|i| school_pop[i]=num_staff[-1][enroll_names[i]]}
 
 -puts school_pop

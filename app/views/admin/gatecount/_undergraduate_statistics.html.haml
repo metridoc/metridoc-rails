@@ -5,8 +5,8 @@
 -enroll_names=["Nursing","Wharton","Engineering","SAS"]
 -undergrad_enroll=enrollment_table("Undergrad")
 
--school_index=[0,1,2,3]
--school_pop=[0,0,0,0]
+-school_index=(0..3).to_a
+-school_pop=Array.new(4,0)
 
 -school_index.each {|i| school_pop[i]=undergrad_enroll[-1][enroll_names[i]]}
 
@@ -42,8 +42,8 @@
 
 -all_undergrad=[undergrad_vp,undergrad_bio,undergrad_furn]
 
--#placeholders for the below
--school_pop=[0,0,0,0]
+-#placeholders for the below, this is a different type of population (users of the library per school rather than the total school population)
+-school_pop=Array.new(4,0)
 
 -school_index.each {|i| school_pop[i]=all_undergrad.pluck(school_names[i]).sum}
 
