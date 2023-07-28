@@ -173,11 +173,14 @@ module GatecountHelper
       percents=copy_table.pluck("num_people")
     end
 
+    all_schools=copy_table.pluck("school")
+    individ_school=all_schools.uniq!
+
     schools=copy_table.pluck("school")
     
     percents_array=Hash.new
     percent_index=(0..percents.length-1).to_a
-    percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+    percent_index.each {|i| percents_array[schools[i]] = percents[]}
     
     return percents_array
     
