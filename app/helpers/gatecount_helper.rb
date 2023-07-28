@@ -321,7 +321,7 @@ module GatecountHelper
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
-      total_pop=enrollment_table("Total")[fiscal_year-(2024)][enroll_names[school_index]]
+      total_pop=enrollment_table("Total")[fiscal_year-2024][enroll_names[school_index]]
 
       people=copy_table.pluck("card_num").uniq
       num_users=people.count
