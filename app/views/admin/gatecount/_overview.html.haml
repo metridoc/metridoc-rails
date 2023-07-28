@@ -32,7 +32,7 @@
 -bio_counts=[106119,102840,97496,107031,85856]
 -bio_index=(0..4).to_a
 
--bio_index.each(|b| bio_fiscal_counts["#{bio_extra_data[b]}"]=bio_counts[b])
+-bio_index.each{|b| bio_fiscal_counts["#{bio_extra_data[b]}"]=bio_counts[b]}
 
 -bio_year=(2016..2021).to_a
 -month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
