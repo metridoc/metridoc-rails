@@ -203,23 +203,14 @@ module GatecountHelper
       copy_table=input_table
     
       if time_frame=="Monthly"
-        time=copy_table.pluck("month")
-      elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
-        time=copy_table.pluck("fiscal_year")
-        all_data=[]
-      elsif time_frame=="All"
-        time=input_table.pluck("fiscal_year")
-        all_data=[]
-      end
-      
-      if count_type=="Counts"
-         count=copy_table.pluck("num_swipes")
-      elsif count_type=="People"
-        count=input_table.pluck("num_people")
-      end
+         time=copy_table.pluck("month")
 
-      if time_frame=="Monthly"
-                                                                     
+         if count_type=="Counts"
+            count=copy_table.pluck("num_swipes")
+         elsif count_type=="People"
+            count=input_table.pluck("num_people")
+         end
+
          month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
          month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
       
@@ -234,7 +225,9 @@ module GatecountHelper
 
          return count_array
          
-      else
+      else 
+         time=copy_table.pluck("fiscal_year")
+         all_data=[]
         
          years=time
          year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
@@ -282,7 +275,8 @@ module GatecountHelper
                  end
                end
              end  
-             
+
+             return_all data
          end
 
          if time_frame=="All"
@@ -304,12 +298,6 @@ module GatecountHelper
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
       
       total_pop=enrollment_table("Total")[fiscal_year-2024][enroll_names[school_index]]
-
-      people=copy_table.pluck("card_num").uniq
-      num_users=people.count
-
-      puts "Library Users number #{num_users}"
-      puts "Enrollment total is #{total_pop}"
 
       week_range=(time.min.to_i..time.max.to_i).to_a
       week_index=(0..week_range.length-1).to_a
@@ -339,8 +327,7 @@ module GatecountHelper
               end
           end  
 
-          #Need to remember to return as a percentage of the college population
-            
+          #Return as a percentage of the college population            
           ymax=(num_users).fdiv(total_pop)
           ymax=(ymax.round(2))*100
             
