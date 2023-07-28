@@ -2,20 +2,16 @@
 
 -school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
--puts "Check if exists"
--puts @input_school
-
 -input_school_index=school_names.index(@input_school)
 
--enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
-               'Nursing','SP2']
-
--school_pop=[9303,4156,68,789,768,1664,5917,993,2122,571,1187,663]
+-#The school names for the enrollment table are different.
+-enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
 -furn_yearly=gen_stats(time_table,"All","Furness","All")
 -bio_yearly=gen_stats(time_table,"All","Biotech","All")
 -vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
 
+-#Define the data for the first four plots.
 -furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
@@ -32,15 +28,13 @@
 -bio_fiscal_people=time_counts(bio_yearly,"Fiscal_Year","People")
 -vp_fiscal_people=time_counts(vp_yearly,"Fiscal_Year","People")
 
--#Make this less manual later...will affect charts though!
+-bio_extra_data=(2016..2020).to_a
+-bio_counts=[106119,102840,97496,107031,85856]
+-bio_index=(0..4).to_a
 
--bio_fiscal_counts["2016"]=106119
--bio_fiscal_counts["2017"]=102840
--bio_fiscal_counts["2018"]=97496
--bio_fiscal_counts["2019"]=107031
--bio_fiscal_counts["2020"]=85856
+-bio_index.each(|b| bio_fiscal_counts["#{bio_extra_data[b]}"]=bio_counts[b])
 
--bio_year=[2016,2017,2018,2019,2020,2021]
+-bio_year=(2016..2021).to_a
 -month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
 
 -bio_2016=["Count",10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
@@ -48,8 +42,7 @@
 -bio_2018=["Count",6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
 -bio_2019=["Count",7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
 -bio_2020=["Count",9271,8631,12122,13036,9764,9624,7683,11430,4295,nil,nil,nil,85856]
--#bio_2021=["Count",0,0,0,0,0,0,0,0,0,0,0,0,0]
--bio_2021=["Count",nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil,nil]
+-bio_2021=["Count"].concat(Array.new(13))
 
 -month_range=(0..11).to_a
 -bio_year_index=(0..bio_year.length-1).to_a
