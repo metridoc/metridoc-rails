@@ -205,10 +205,10 @@ module GatecountHelper
       if time_frame=="Monthly"
         time=copy_table.pluck("month")
       elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
-        time=copy_table.pluck("fiscal_year")
+        years=copy_table.pluck("fiscal_year")
         all_data=[]
       elsif time_frame=="All"
-        time=input_table.pluck("fiscal_year")
+        years=input_table.pluck("fiscal_year")
         all_data=[]
       end
       
