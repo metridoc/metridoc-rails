@@ -179,10 +179,12 @@ module GatecountHelper
         schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
 
         percents_array=Hash.new
+
+        all_counts=copy_table.pluck(num_swipes).sum
         
         for s in schools
             school_table=input_table.select{|h| h["school"] == s}
-            percents=school_table.pluck("num_swipes").sum
+            percents=(school_table.pluck("num_swipes").sum).fdiv(all_counts)
             percents_array[s] = percents
         end
     end
