@@ -208,7 +208,7 @@ module GatecountHelper
         time=copy_table.pluck("fiscal_year")
         all_data=[]
       elsif time_frame=="All"
-        time=input_table.pluck("fiscal_year"
+        time=input_table.pluck("fiscal_year")
         all_data=[]
       end
       
