@@ -1,32 +1,9 @@
 = javascript_include_tag 'application'
 
--school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
-
--input_school_index=school_names.index(@input_school)
-
--#The school names for the enrollment table are different.
--enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
-
+-#Define general tables from which to query for the first four plots.
 -furn_yearly=gen_stats(time_table,"All","Furness","All")
 -bio_yearly=gen_stats(time_table,"All","Biotech","All")
 -vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
-
--#Define the data for the first four plots.
--furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
--bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
--vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
-
--furn_yearly_people=time_counts(furn_yearly,"Yearly","People")
--bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
--vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
-
--furn_fiscal_counts=time_counts(furn_yearly,"Fiscal_Year","Counts")
--bio_fiscal_counts=time_counts(bio_yearly,"Fiscal_Year","Counts")
--vp_fiscal_counts=time_counts(vp_yearly,"Fiscal_Year","Counts")
-
--furn_fiscal_people=time_counts(furn_yearly,"Fiscal_Year","People")
--bio_fiscal_people=time_counts(bio_yearly,"Fiscal_Year","People")
--vp_fiscal_people=time_counts(vp_yearly,"Fiscal_Year","People")
 
 -bio_extra_data=(2016..2020).to_a
 -bio_counts=[106119,102840,97496,107031,85856]
@@ -66,26 +43,43 @@
 
   %p{style: "text-align:center;"} *Note: Biotech library count data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. This additionally means that number of visitors information for this library does not exist prior to 2021.
 
+-furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
+-bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
+-vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
+
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_yearly_counts}, {name: "Furness", data: furn_yearly_counts},{name: "Van Pelt", data: vp_yearly_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
+-furn_yearly_people=time_counts(furn_yearly,"Yearly","People")
+-bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
+-vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
 
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_yearly_people}, {name: "Furness", data: furn_yearly_people},{name: "Van Pelt", data: vp_yearly_people}], xtitle:"Years", ytitle: "Number of Visitors", adapter: "chartjs", legend: true, curve: false, library: {options: {scales: {y: {min:0, max:15000, ticks: {stepSize:2500, autoSkip: false, major: {enabled: true}}}}}}, download: true
 
+-furn_fiscal_counts=time_counts(furn_yearly,"Fiscal_Year","Counts")
+-bio_fiscal_counts=time_counts(bio_yearly,"Fiscal_Year","Counts")
+-vp_fiscal_counts=time_counts(vp_yearly,"Fiscal_Year","Counts")
+
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Card Swipes Per Year Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_fiscal_counts}, {name: "Furness", data: furn_fiscal_counts},{name: "Van Pelt", data: vp_fiscal_counts}], xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
+-furn_fiscal_people=time_counts(furn_yearly,"Fiscal_Year","People")
+-bio_fiscal_people=time_counts(bio_yearly,"Fiscal_Year","People")
+-vp_fiscal_people=time_counts(vp_yearly,"Fiscal_Year","People")
 
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Year Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_fiscal_people}, {name: "Furness", data: furn_fiscal_people},{name: "Van Pelt", data: vp_fiscal_people}], xtitle:"Years", ytitle: "Number of Visitors", legend: true, curve: false, download: true
 
+-#General 2023 tables:
 -furness_2023_table=gen_stats(time_table,2023,"Furness","All")
 -biotech_2023_table=gen_stats(time_table,2023,"Biotech","All")
 -vp_2023_table=gen_stats(time_table,2023,"Van Pelt","All")
@@ -94,21 +88,19 @@
 -vp_2023_counts=time_counts(vp_2023_table,"Monthly","Counts")
 -bio_2023_counts=time_counts(biotech_2023_table,"Monthly","Counts")
 
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library Fiscal Year 2023
+    = line_chart [{name: "BioTech", data: bio_2023_counts}, {name: "Furness", data: furn_2023_counts},{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
+
 -furn_2023_people=time_counts(furness_2023_table,"Monthly","People")
 -vp_2023_people=time_counts(vp_2023_table,"Monthly","People")
 -bio_2023_people=time_counts(biotech_2023_table,"Monthly","People")
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library Fiscal Year 2023
-    = line_chart [{name: "BioTech", data: bio_2023_counts}, {name: "Furness", data: furn_2023_counts},{name: "Van Pelt", data: vp_2023_counts}], xtitle:"Months", ytitle: "Gate Counts", legend: true, curve: false, download: true
-
-#data-viz
-  #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library Fiscal Year 2023
     = line_chart [{name: "BioTech", data: bio_2023_people}, {name: "Furness", data: furn_2023_people},{name: "Van Pelt", data: vp_2023_people}], xtitle:"Months", ytitle: "Number of Visitors", legend: true, curve: false, download: true   
-
--schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
 -vp_gen_table=gen_stats(time_table,"All","Van Pelt","All")
 -vp_all_counts=time_counts(vp_gen_table,"All","Counts")
@@ -118,8 +110,7 @@
 
 -month_range=(0..13).to_a
 
--year_range=[2017,2018,2019,2020,2021,2022,2023]
-
+-year_range=(2017..2023).to_a
 -year_index=(0..year_range.length-1).to_a
 
 %ul
@@ -165,11 +156,10 @@
 -bio_gen_table=gen_stats(time_table,"All","Biotech","All")
 -bio_counts=time_counts(bio_gen_table,"All","Counts")
 
--year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
-
+-year_range=(2016..2023).to_a
 -year_index=(1..year_range.length-1).to_a
 
--bio_all_counts=[{},{},{},{},{},{}]
+-bio_all_counts=Array.new(6) {Hash.new}  
 
 -for m in month_range
   -bio_all_counts[0][month_names[m]]=bio_2016[m]
@@ -215,12 +205,11 @@
             %td{:align => "center"}="#{data_one}"
             %td{:align => "center"}="#{data_two}"
 
-
 -furn_gen_table=gen_stats(time_table,"All","Furness","All")
 -furn_all_counts=time_counts(furn_gen_table,"All","Counts")
 -furn_percent_change=percent_change(furn_all_counts)
 
--year_range=[2020,2021,2022,2023]
+-year_range=(2020..2023).to_a
 
 -year_index=(0..year_range.length-1).to_a
 
