@@ -180,7 +180,7 @@ module GatecountHelper
 
         percents_array=Hash.new
 
-        all_counts=copy_table.pluck(num_swipes).sum
+        all_counts=copy_table.pluck("num_swipes").sum
         
         for s in schools
             school_table=input_table.select{|h| h["school"] == s}
