@@ -196,8 +196,9 @@ module GatecountHelper
             school_table=copy_table.select{|h| h["school"] == s}
             percents=(school_table.pluck("num_people").sum)
             percents_array[s] = percents
+        end
+        
     end
-    
     return percents_array
     
   end
