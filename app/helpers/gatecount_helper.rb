@@ -186,7 +186,7 @@ module GatecountHelper
         for s in schools
             school_table=copy_table.select{|h| h["school"] == s}
             if type=="Counts"
-               percents=(school_table.pluck("num_swipes").sum).fdiv(all_counts)
+               percents=((school_table.pluck("num_swipes").sum).fdiv(all_counts))*100
             else
                percents=(school_table.pluck("num_people").sum)
             end  
