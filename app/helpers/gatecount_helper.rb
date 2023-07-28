@@ -1,7 +1,6 @@
 module GatecountHelper
 
 #Library options are "Van Pelt", "Biotech", "Furness", "All"
-#Student type= "Grad Student" or "Undergraduate Student"
   
   def library_table
       output_table=GateCount::CardSwipe.connection.select_all(
@@ -27,6 +26,8 @@ module GatecountHelper
 
       return output_table.to_a
   end
+
+  #Excluding Penn libraries so that workers who swipe in all the time are not counted.
   
   def time_table
       output_table=GateCount::CardSwipe.connection.select_all(
@@ -122,8 +123,7 @@ module GatecountHelper
     if fiscal_year.is_a? Integer
        gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
     end
-    #This breaks it for some reason...so instead including in the SQL.
-    #|| h["school"]="Penn Libraries" || h["school"]="Social Policy & Practice"}
+    
     if library=="Biotech"
        gen_values=gen_values.select{|h| h["library"] == "Biotech"}
     elsif library=="Furness"
@@ -143,8 +143,8 @@ module GatecountHelper
   def calc_percents(input_table,type,user_group)
     
     #type is one of four options:
-    #1) "Counts" is the percentage of counts relative to the total population.
-    #2) "People" is the percentage of people relative to the total population.
+    #1) "Counts" is the percentage of counts relative to the total (user) population.
+    #2) "People" is the percentage of people relative to the total (user) population.
     #3) "Raw Counts" is just the number of counts, no percentages.
     #4) "Individuals" is the number of people, no percentages.
     
@@ -160,13 +160,9 @@ module GatecountHelper
     if type=="Counts"
      num_swipes=copy_table.pluck("num_swipes")
      percents=num_swipes.map {|x| ((x).fdiv(num_swipes.sum))*100}
-
-    #Note that these are the total number of *users* of the library, need enrollments for the total populations of each school. 
     elsif type=="People"  
       num_people=copy_table.pluck("num_people")
-      all_people=num_people.sum
-      percents=num_people.map {|x| ((x).fdiv(all_people))*100}
-
+      percents=num_people.map {|x| ((x).fdiv(num_people.sum))*100}
     elsif type=="Raw Counts"
       percents=copy_table.pluck("num_swipes")
     elsif type=="Individuals"
