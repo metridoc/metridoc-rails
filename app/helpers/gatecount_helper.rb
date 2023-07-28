@@ -228,6 +228,8 @@ module GatecountHelper
 
           count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
           temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
+
+          return count_array
       end
       
       if time_frame=="Fiscal_Year"
@@ -301,8 +303,6 @@ module GatecountHelper
             return yearly_data
          end
       end
-
-      return count_array
   end
 
   def freq_counts(input_table,fiscal_year,school_index)
