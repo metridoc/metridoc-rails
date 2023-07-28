@@ -161,7 +161,7 @@ module GatecountHelper
      num_swipes=copy_table.pluck("num_swipes")
      percents=num_swipes.map {|x| ((x).fdiv(num_swipes.sum))*100}
 
-    #These are the number of *users*, need enrollments for total school population. 
+    #Note that these are the total number of *users* of the library, need enrollments for the total populations of each school. 
     elsif type=="People"  
       num_people=copy_table.pluck("num_people")
       all_people=num_people.sum
@@ -176,11 +176,20 @@ module GatecountHelper
     all_schools=copy_table.pluck("school")
     individ_school=all_schools.uniq!
 
-    schools=copy_table.pluck("school")
-    
-    percents_array=Hash.new
-    percent_index=(0..percents.length-1).to_a
-    percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+    #schools.each_index{|x| if schools[x]}
+
+    if user_group != "F/S"
+        schools=copy_table.pluck("school")
+        percents_array=Hash.new
+        percent_index=(0..percents.length-1).to_a
+        percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+    #Necessary since Faculty and Staff includes multiple user groups.
+    else
+        schools=copy_table.pluck("school")
+        percents_array=Hash.new
+        percent_index=(0..percents.length-1).to_a
+        percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+    end
     
     return percents_array
     
