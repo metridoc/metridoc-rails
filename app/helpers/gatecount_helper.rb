@@ -257,13 +257,13 @@ module GatecountHelper
                    if month[i] >= 7
                      if count_type=="Counts"
                         yearly_data["#{year_range[y]-1}-"+month_text[month[i]-1]+"-01"] = year_counts[i]
-                     else
+                     elsif count_type=="People"
                         yearly_data["#{year_range[y]-1}-"+month_text[month[i]-1]+"-01"] = year_people[i]
                      end  
                    else
                      if count_type=="Counts"  
                         yearly_data["#{year_range[y]}-"+month_text[month[i]-1]+"-01"] = year_counts[i]
-                     else
+                     elsif count_type=="People"
                         yearly_data["#{year_range[y]}-"+month_text[month[i]-1]+"-01"] = year_people[i]
                      end
                    end  
