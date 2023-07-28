@@ -211,7 +211,7 @@ module GatecountHelper
          if count_type=="Counts"
             count=copy_table.pluck("num_swipes")
          elsif count_type=="People"
-            count=input_table.pluck("num_people")
+            count=copy_table.pluck("num_people")
          end
          
          temp_array=Hash.new
