@@ -257,7 +257,8 @@ module GatecountHelper
          return fiscal_data
       end
       
-      if time_frame=="All" || time_frame=="Yearly"
+      if time_frame=="All" || time_frame=="Yearly" || time_frame=="Fiscal_Year"
+        
          years=time
          year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
          year_index=[0,1,2,3,4,5,6,7]
