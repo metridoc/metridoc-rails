@@ -276,7 +276,7 @@ module GatecountHelper
                end
              end  
 
-             return_all data
+             return all_data
          end
 
          if time_frame=="All"
