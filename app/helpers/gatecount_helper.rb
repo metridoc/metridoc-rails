@@ -201,7 +201,10 @@ module GatecountHelper
   def time_counts(input_table,time_frame,count_type,school_index=0)
     
       copy_table=input_table
-    
+
+      month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
+      month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
+      
       if time_frame=="Monthly"
          time=copy_table.pluck("month")
 
@@ -210,10 +213,7 @@ module GatecountHelper
          elsif count_type=="People"
             count=input_table.pluck("num_people")
          end
-
-         month_names=["January","February","March","April","May","June","July","August","September","October","November","December"]
-         month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
-      
+         
          temp_array=Hash.new
          count_array=Hash.new
 
@@ -241,7 +241,7 @@ module GatecountHelper
              fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
              fiscal_year_people=fiscal_year_data.pluck('num_people')
 
-             if count_type=="Counts"
+             if count_type=="Counts" && time_frame=='Fiscal_Year'
                 yearly_data["#{year_range[y]}"] = fiscal_year_counts
              elsif count_type=="People" && time_frame=='Fiscal_Year'
                 yearly_data["#{year_range[y]}"] = fiscal_year_people
