@@ -315,7 +315,7 @@ module GatecountHelper
       copy_table=input_table
       time=copy_table.pluck("week")
 
-      fiscal_years=copy_table.pluck["fiscal_year"]
+      fiscal_years=copy_table.pluck("fiscal_year")
       fiscal_year_max=max(fiscal_years)
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
