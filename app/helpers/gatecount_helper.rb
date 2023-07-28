@@ -315,14 +315,13 @@ module GatecountHelper
       copy_table=input_table
       time=copy_table.pluck("week")
 
-      fiscal_years=copy_table.pluck("fiscal_year")
-      puts fiscal_years
-      fiscal_year_max=(fiscal_years).max
-      puts fiscal_year_max
+      #Don't know why this is not working...
+      #fiscal_years=copy_table.pluck("fiscal_year")
+      #fiscal_year_max=(fiscal_years).max
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
-      total_pop=enrollment_table("Total")[fiscal_year-(fiscal_year_max+1)][enroll_names[school_index]]
+      total_pop=enrollment_table("Total")[fiscal_year-(2024)][enroll_names[school_index]]
 
       people=copy_table.pluck("card_num").uniq
       num_users=people.count
