@@ -318,6 +318,7 @@ module GatecountHelper
       fiscal_years=copy_table.pluck("fiscal_year")
       puts fiscal_years
       fiscal_year_max=(fiscal_years).max
+      puts fiscal_year_max
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
