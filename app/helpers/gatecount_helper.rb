@@ -312,65 +312,63 @@ module GatecountHelper
          end
       end
 
-      #Need to get each bin for the frequency data:
-      if count_type=="Frequency"
-         freq_info=[]
-
-         people=copy_table.pluck("card_num").uniq
-         num_users=people.count
-
-         enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary',
-                       'Nursing','SP2']
-         #For right now this is hardcoded for the most recent year.
-         total_pop=enrollment_table("Total")[-1][enroll_names[school_index]]
-
-         puts "Library Users number #{num_users}"
-         puts "Enrollment total is #{total_pop}"
-
-         week_range=(time.min.to_i..time.max.to_i).to_a
-         week_index=(0..week_range.length-1).to_a
-         
-         percents_zero=Hash.new
-         percents_single=Hash.new
-         percents_medium=Hash.new
-         percents_freq=Hash.new
-         
-         for i in week_index
-            week_data=copy_table.select{|h| h["week"] == week_range[i]}
-            card_num=week_data.pluck('card_num')
-
-            test_array=card_num.uniq
-            
-            single_user=0
-            medium_user=0
-            freq_user=0
-          
-            for x in test_array
-                 if card_num.count(x)==1
-                    single_user=single_user+1
-                 elsif card_num.count(x) == 2 || card_num.count(x) == 3
-                    medium_user=medium_user+1
-                 elsif card_num.count(x) > 3
-                    freq_user=freq_user+1
-                 end
-            end  
-
-            #Need to remember to return as a percentage of the college population
-            
-            ymax=(num_users).fdiv(total_pop)
-            ymax=(ymax.round(2))*100
-            
-            percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-            percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
-            percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
-            percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
-
-         end
-         return ymax,percents_single,percents_medium,percents_freq
-      end
-
       return count_array
+  end
+
+  def freq_counts(input_table,fiscal_year,school_index)
+      copy_table=input_table
+
+      enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
+      #For right now this is hardcoded for the most recent year.
+      total_pop=enrollment_table("Total")[-1][enroll_names[school_index]]
+
+      people=copy_table.pluck("card_num").uniq
+      num_users=people.count
+
+      puts "Library Users number #{num_users}"
+      puts "Enrollment total is #{total_pop}"
+
+      week_range=(time.min.to_i..time.max.to_i).to_a
+      week_index=(0..week_range.length-1).to_a
+         
+      percents_zero=Hash.new
+      percents_single=Hash.new
+      percents_medium=Hash.new
+      percents_freq=Hash.new
+         
+      for i in week_index
+          week_data=copy_table.select{|h| h["week"] == week_range[i]}
+          card_num=week_data.pluck('card_num')
+
+          test_array=card_num.uniq
             
+          single_user=0
+          medium_user=0
+          freq_user=0
+          
+          for x in test_array
+              if card_num.count(x)==1
+                 single_user=single_user+1
+              elsif card_num.count(x) == 2 || card_num.count(x) == 3
+                 medium_user=medium_user+1
+              elsif card_num.count(x) > 3
+                 freq_user=freq_user+1
+              end
+          end  
+
+          #Need to remember to return as a percentage of the college population
+            
+          ymax=(num_users).fdiv(total_pop)
+          ymax=(ymax.round(2))*100
+            
+          percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
+          percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
+          percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
+          percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
+
+      end
+      
+      return ymax,percents_single,percents_medium,percents_freq
   end
 
   def percent_change(input_data)
