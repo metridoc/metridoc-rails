@@ -315,6 +315,7 @@ module GatecountHelper
       copy_table=input_table
       time=copy_table.pluck("week")
 
+      puts time
       #Don't know why this is not working...
       #fiscal_years=copy_table.pluck("fiscal_year")
       #fiscal_year_max=(fiscal_years).max
