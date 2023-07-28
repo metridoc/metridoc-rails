@@ -194,10 +194,8 @@ module GatecountHelper
   def time_counts(input_table,time_frame,count_type,school_index=0)
     
       copy_table=input_table
-
-      if time_frame=="Weekly"
-        time=copy_table.pluck("week")
-      elsif time_frame=="Monthly"
+    
+      if time_frame=="Monthly"
         time=copy_table.pluck("month")    
       elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
         time=copy_table.pluck("fiscal_year")
@@ -209,8 +207,6 @@ module GatecountHelper
          count=copy_table.pluck("num_swipes")
       elsif count_type=="People"
         count=input_table.pluck("num_people")
-      elsif count_type=="Frequency"
-        count=input_table.pluck("card_num")
       end
 
       if time_frame=="Fiscal_Year"
@@ -318,10 +314,13 @@ module GatecountHelper
   def freq_counts(input_table,fiscal_year,school_index)
       copy_table=input_table
       time=copy_table.pluck("week")
+
+      fiscal_years=copy_table.pluck["fiscal_year"]
+      fiscal_year_max=max(fiscal_years))
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
-      #For right now this is hardcoded for the most recent year.
-      total_pop=enrollment_table("Total")[-1][enroll_names[school_index]]
+
+      total_pop=enrollment_table("Total")[fiscal_year_max-2024][enroll_names[school_index]]
 
       people=copy_table.pluck("card_num").uniq
       num_users=people.count
