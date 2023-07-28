@@ -317,7 +317,8 @@ module GatecountHelper
 
   def freq_counts(input_table,fiscal_year,school_index)
       copy_table=input_table
-
+      time=copy_table.pluck("week")
+      
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
       #For right now this is hardcoded for the most recent year.
       total_pop=enrollment_table("Total")[-1][enroll_names[school_index]]
