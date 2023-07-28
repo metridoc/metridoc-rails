@@ -238,6 +238,8 @@ module GatecountHelper
          for y in year_index
              fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
              month=fiscal_year_data.pluck('month')
+             month.each{|m| m.to_i}
+             
              year_counts=fiscal_year_data.pluck('num_swipes')
              year_people=fiscal_year_data.pluck('num_people')
 
@@ -254,21 +256,21 @@ module GatecountHelper
                for i in fiscal_index
                    if month[i] >= 7
                      if count_type=="Counts"
-                        yearly_data["#{year_range[y]-1}-"+month_text[month[i].to_i-1]+"-01"] = year_counts[i]
+                        yearly_data["#{year_range[y]-1}-"+month_text[month[i]-1]+"-01"] = year_counts[i]
                      else
-                        yearly_data["#{year_range[y]-1}-"+month_text[month[i].to_i-1]+"-01"] = year_people[i]
+                        yearly_data["#{year_range[y]-1}-"+month_text[month[i]-1]+"-01"] = year_people[i]
                      end  
                    else
                      if count_type=="Counts"  
-                        yearly_data["#{year_range[y]}-"+month_text[month[i].to_i-1]+"-01"] = year_counts[i]
+                        yearly_data["#{year_range[y]}-"+month_text[month[i]-1]+"-01"] = year_counts[i]
                      else
-                        yearly_data["#{year_range[y]}-"+month_text[month[i].to_i-1]+"-01"] = year_people[i]
+                        yearly_data["#{year_range[y]}-"+month_text[month[i]-1]+"-01"] = year_people[i]
                      end
                    end  
                end
                
              elsif time_frame=="All"
-                fiscal_index.each {|i| fiscal_array[month_names[month[i].to_i-1]] = year_counts[i]}
+                fiscal_index.each {|i| fiscal_array[month_names[month[i]-1]] = year_counts[i]}
                 fiscal_array["Total"]=year_counts.sum
                 fiscal_array["Statistics"]="Count"
                 all_data << fiscal_array
