@@ -183,7 +183,7 @@ module GatecountHelper
         all_counts=copy_table.pluck("num_swipes").sum
         
         for s in schools
-            school_table=input_table.select{|h| h["school"] == s}
+            school_table=copy_table.select{|h| h["school"] == s}
             percents=(school_table.pluck("num_swipes").sum).fdiv(all_counts)
             percents_array[s] = percents
         end
