@@ -241,7 +241,7 @@ module GatecountHelper
              fiscal_year_counts=fiscal_year_data.pluck('num_swipes')
              fiscal_year_people=fiscal_year_data.pluck('num_people')
 
-             if count_type=="Counts" && time_frame=='Fiscal_Year'
+             if count_type=="Counts"
                 yearly_data["#{year_range[y]}"] = fiscal_year_counts
              elsif count_type=="People" && time_frame=='Fiscal_Year'
                 yearly_data["#{year_range[y]}"] = fiscal_year_people
