@@ -6,7 +6,7 @@
 -vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
 
 -bio_year=(2016..2021).to_a
--bio_year_index=(0..bio_year.length-2).to_a
+-bio_year_index=(0..bio_year.length-1).to_a
 
 -month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
 -month_range=(0..11).to_a
@@ -28,14 +28,30 @@
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
 
--#this introduces a gap in 2018 I don't want...and makes a bigger gap for 2019...
+-for m in month_range
+  -if m >= 7
+    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2017[m+1]
+    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
+    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2019[m+1]
+    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2020[m+1]
+    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2021[m+1]
+  -else
+    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2016[m+1]
+    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m+1]
+    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2018[m+1]
+    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2019[m+1]
+    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m+1]
+    -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m+1]
+
 -for y in bio_year_index
   -for m in month_range
-    -if m >= 7
-      -bio_yearly_counts["#{bio_year[y]-1}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
+    -if m >= 7 && y < 5
+      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
+      -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
     -else
       -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y][m+1]
-		       
+      -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m+1]
+
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
