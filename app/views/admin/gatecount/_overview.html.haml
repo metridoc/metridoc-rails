@@ -15,6 +15,14 @@
 -bio_2020=["Count",9271,8631,12122,13036,9764,9624,7683,11430,4295,nil,nil,nil,85856]
 -bio_2021=["Count"].concat(Array.new(13))
 
+%strong
+
+  %p{style: "text-align:center;"} *Note: Biotech library count data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. This additionally means that number of visitors information for this library does not exist prior to 2021.
+
+-furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
+-bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
+-vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
+
 -month_range=(0..11).to_a
 -bio_year_index=(0..bio_year.length-1).to_a
 
@@ -32,14 +40,6 @@
     -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2019[m+1]
     -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m+1]
     -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m+1]
-
-%strong
-
-  %p{style: "text-align:center;"} *Note: Biotech library count data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. This additionally means that number of visitors information for this library does not exist prior to 2021.
-
--furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
--bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
--vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
 
 #data-viz
   #single-col
