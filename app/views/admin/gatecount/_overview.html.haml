@@ -28,15 +28,13 @@
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
 
--#this introduces a gap in 2018 I don't want...
+-#this introduces a gap in 2018 I don't want...and makes a bigger gap for 2019...
 -for y in bio_year_index
   -for m in month_range
     -if m >= 7 and y < 5
       -bio_yearly_counts["#{bio_year[y]-1}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
-      -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
     -else
       -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y][m+1]
-      -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m+1]
 		       
 #data-viz
   #single-col
