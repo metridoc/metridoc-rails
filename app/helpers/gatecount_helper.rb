@@ -175,7 +175,7 @@ module GatecountHelper
         percent_index=(0..percents.length-1).to_a
         percent_index.each {|i| percents_array[schools[i]] = percents[i]}
     #Necessary since Faculty and Staff includes multiple user groups.
-    else
+    elsif user_group=="F/S" && type=="Counts"
         schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
 
         percents_array=Hash.new
@@ -187,6 +187,15 @@ module GatecountHelper
             percents=(school_table.pluck("num_swipes").sum).fdiv(all_counts)
             percents_array[s] = percents
         end
+    else
+        schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
+
+        percents_array=Hash.new
+        
+        for s in schools
+            school_table=copy_table.select{|h| h["school"] == s}
+            percents=(school_table.pluck("num_people").sum)
+            percents_array[s] = percents
     end
     
     return percents_array
