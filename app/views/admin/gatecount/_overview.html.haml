@@ -28,29 +28,12 @@
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
 
--for m in month_range
-  -if m >= 7
-    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2017[m+1]
-    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
-    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2019[m+1]
-    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2020[m+1]
-    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2021[m+1]
-  -else
-    -bio_yearly_counts["2016-"+month_text[m]+"-01"]=bio_2016[m+1]
-    -bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m+1]
-    -bio_yearly_counts["2018-"+month_text[m]+"-01"]=bio_2018[m+1]
-    -bio_yearly_counts["2019-"+month_text[m]+"-01"]=bio_2019[m+1]
-    -bio_yearly_counts["2020-"+month_text[m]+"-01"]=bio_2020[m+1]
-    -bio_yearly_counts["2021-"+month_text[m]+"-01"]=bio_2021[m+1]
-
 -for y in bio_year_index
   -for m in month_range
     -if m >= 7 && y < 5
       -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
-      -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2018[m+1]
     -else
       -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y][m+1]
-      -#bio_yearly_counts["2017-"+month_text[m]+"-01"]=bio_2017[m+1]
 
 #data-viz
   #single-col
