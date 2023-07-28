@@ -204,10 +204,8 @@ module GatecountHelper
     
       if time_frame=="Monthly"
         time=copy_table.pluck("month")
-      elsif time_frame=="All"
-        time=input_table.pluck("fiscal_year")
-      elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
-        time=copy_table.pluck("fiscal_year")
+      else
+        years=input_table.pluck("fiscal_year")
       end
       
       if count_type=="Counts"
@@ -218,7 +216,6 @@ module GatecountHelper
 
       if time_frame=="Fiscal_Year"
 
-         years=time
          year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
          year_index=[0,1,2,3,4,5,6,7]
 
@@ -260,7 +257,7 @@ module GatecountHelper
       end
       
       if time_frame=="All" || time_frame=="Yearly"
-         years=time
+        
          year_range=(years.min.to_i..years.max.to_i).to_a
          year_index=(0..year_range.length-1).to_a
 
