@@ -6,7 +6,10 @@
 -vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
 
 -bio_year=(2016..2021).to_a
+-bio_year_index=(0..bio_year.length-1).to_a
+
 -month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
+-month_range=(0..11).to_a
 
 -bio_2016=["Count",10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
 -bio_2017=["Count",7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
@@ -14,6 +17,8 @@
 -bio_2019=["Count",7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
 -bio_2020=["Count",9271,8631,12122,13036,9764,9624,7683,11430,4295,nil,nil,nil,85856]
 -bio_2021=["Count"].concat(Array.new(13))
+
+-puts bio_2021
 
 -all_bio=[bio_2016,bio_2017,bio_2018,bio_2019,bio_2020,bio_2021]
 
@@ -24,9 +29,6 @@
 -furn_yearly_counts=time_counts(furn_yearly,"Yearly","Counts")
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
-
--month_range=(0..11).to_a
--bio_year_index=(0..bio_year.length-1).to_a
 
 -for y in bio_year_index
   -for m in month_range
@@ -157,13 +159,9 @@
 
 -bio_all_counts=Array.new(6) {Hash.new}  
 
--for m in month_range
-  -bio_all_counts[0][month_names[m]]=bio_2016[m]
-  -bio_all_counts[1][month_names[m]]=bio_2017[m]
-  -bio_all_counts[2][month_names[m]]=bio_2018[m]
-  -bio_all_counts[3][month_names[m]]=bio_2019[m]
-  -bio_all_counts[4][month_names[m]]=bio_2020[m]
-  -bio_all_counts[5][month_names[m]]=bio_2021[m]
+-for y in bio_year_index
+  -for m in month_range
+    -bio_all_counts[y][month_names[m]]=all_bio[y][m]
 
 -bio_all_counts.concat(bio_counts)
 -bio_percent_change=percent_change(bio_all_counts)
