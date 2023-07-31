@@ -10,15 +10,15 @@
 
 -schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
--puts input_school
--puts input_library
--puts semester
+-puts @input_school
+-puts @input_library
+-puts @semester
 
 -input_school=params[:school].nil? ? 'College of Arts & Sciences' : params[:school]
 -input_library=params[:library].nil? ? 'Van Pelt' : params[:library]
 -semester=params[:semester].nil? ? "Spring" : params[:semester]
 
--school_index=schools.find_index(input_school)
+-school_index=schools.find_index(@input_school)
 
 -puts input_school
 -puts input_library
@@ -29,7 +29,7 @@
 
 %p{style:"font-size: 1.25em;"}  Note that these plots are generated from the combined undergraduate/graduate student population for each school. The y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--gen_school_table=gen_stats(freq_table(semester),2023,input_library,input_school)
+-gen_school_table=gen_stats(freq_table(@semester),2023,@input_library,@input_school)
 
 -ymax,percents_single,percents_medium,percents_freq=freq_counts(gen_school_table,2023,0)
 
