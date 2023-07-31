@@ -307,7 +307,7 @@ module GatecountHelper
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
       
-      total_pop=enrollment_table("Total")[fiscal_year-2024][enroll_names[school_index]]
+      total_pop=enrollment_table("Total")[-1][enroll_names[school_index]]
 
       week_range=(time.min.to_i..time.max.to_i).to_a
       week_index=(0..week_range.length-1).to_a
