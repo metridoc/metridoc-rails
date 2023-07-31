@@ -52,7 +52,16 @@ module GatecountHelper
       return output_table.to_a
   end
 
-   def freq_table
+   def freq_table(semester)
+
+      if semester=="Spring"
+         start_week=1
+         end_week=26
+      elsif semester=="Fall"
+         start_week=27
+         end_week=52
+      end
+      
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            school,
@@ -68,7 +77,7 @@ module GatecountHelper
            EXTRACT(week from swipe_date) AS week,
            card_num
          FROM gate_count_card_swipes 
-              WHERE (EXTRACT(week from swipe_date) >= 1 AND EXTRACT(week from swipe_date) <= 26)
+              WHERE (EXTRACT(week from swipe_date) >= #{start_week} AND EXTRACT(week from swipe_date) <= #{end_week})
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
               AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')")
 
