@@ -242,9 +242,9 @@ module GatecountHelper
              year_people=fiscal_year_data.pluck('num_people')
 
              if count_type=="Counts" && time_frame=='Fiscal_Year'
-                yearly_data["#{year_range[y]}"] = year_counts
+                yearly_data["#{year_range[y]}"] = year_counts.sum
              elsif count_type=="People" && time_frame=='Fiscal_Year'
-                yearly_data["#{year_range[y]}"] = year_people
+                yearly_data["#{year_range[y]}"] = year_people.sum
              end
              
              fiscal_array=Hash.new
