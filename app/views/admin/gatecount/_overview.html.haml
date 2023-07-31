@@ -40,7 +40,7 @@
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
-    = line_chart, name: "Van Pelt", data: vp_yearly_counts}, xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
+    = line_chart, name: "Van Pelt", data: vp_yearly_counts, xtitle:"Years", ytitle: "Gate Counts", legend: true, curve: false, download: true
 
 -furn_yearly_people=time_counts(furn_yearly,"Yearly","People")
 -bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
