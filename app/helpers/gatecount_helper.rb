@@ -290,7 +290,7 @@ module GatecountHelper
       time=copy_table.pluck("week")
 
       card_num=copy_table.pluck('card_num')
-      num_users=card_num.uniq
+      num_users=card_num.uniq.length
       
       #Don't know why this is not working...
       #fiscal_years=copy_table.pluck("fiscal_year")
