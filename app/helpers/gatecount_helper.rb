@@ -222,8 +222,6 @@ module GatecountHelper
 
          count_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
          temp_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
-
-         return count_array
          
       else 
          time=copy_table.pluck("fiscal_year")
@@ -276,12 +274,14 @@ module GatecountHelper
                 all_data << fiscal_array
              end
          end
+      end
 
-         if time_frame=="All"
-            return all_data
-         else
-            return yearly_data
-         end
+      if time_frame=="All"
+         return all_data
+      elsif time_frame=="Yearly"
+         return yearly_data
+      elsif time_frame=="Monthly"
+         return count_array
       end
   end
 
