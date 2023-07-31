@@ -89,7 +89,7 @@ module GatecountHelper
     year_range=(fiscal_year.min.to_i..fiscal_year.max.to_i).to_a
     year_index=(0..year_range.length-1).to_a
 
-    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023}
+    year_values=pop_table.to_a.select{|h| h["fiscal_year"]=="2023"}
     year_values=pop_table.to_a
         
     yearly_enroll=Hash.new
