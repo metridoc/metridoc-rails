@@ -31,8 +31,9 @@
 -schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
 -libraries=["Van Pelt","Biotech","Furness"]
-      
 -years=(2016..2023).to_a
+-semesters=["Spring","Fall"]
+      
 
 %p{style: "font-size: 1.25em;"}
   %strong
@@ -47,8 +48,8 @@
         %td= select_tag "library", options_for_select(libraries, libraries[0])
         %td
       %tr
-        %td Select Year
-        %td= select_tag "year", options_for_select(years, years[-1])
+        %td Select Semester
+        %td= select_tag "semester", options_for_select(semesters, semesters[0])
         %td
       %tr
         %td Select School
@@ -59,7 +60,7 @@
 
 -school_index=(0..schools.length-1).to_a
 
--sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
+-sas_gen_table=gen_stats(freq_table("Spring"),2023,"Van Pelt","College of Arts & Sciences")
 -ymax,percents_single,percents_medium,percents_freq=freq_counts(sas_gen_table,2023,0)
 
 #data-viz
