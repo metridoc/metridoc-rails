@@ -278,7 +278,7 @@ module GatecountHelper
 
       if time_frame=="All"
          return all_data
-      elsif time_frame=="Yearly"
+      elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
          return yearly_data
       elsif time_frame=="Monthly"
          return count_array
