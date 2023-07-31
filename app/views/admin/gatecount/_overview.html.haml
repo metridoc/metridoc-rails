@@ -149,8 +149,6 @@
 
 -bio_gen_table=gen_stats(time_table,"All","Biotech","All")
 -bio_counts=time_counts(bio_gen_table,"All","Counts")
-
--puts bio_counts
     
 -year_range=(2016..2023).to_a
 -year_index=(1..year_range.length-1).to_a
@@ -162,9 +160,7 @@
   -for m in month_range
     -bio_all_counts[y][month_names[m]]=all_bio[y][m]
 
--bio_all_counts.concat(bio_counts)
-
--puts bio_all_counts
+-bio_all_counts.concat(bio_counts[-2,2])
 
 -bio_percent_change=percent_change(bio_all_counts)
 
