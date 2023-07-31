@@ -289,7 +289,7 @@ module GatecountHelper
       copy_table=input_table
       time=copy_table.pluck("week")
 
-      card_num=week_data.pluck('card_num')
+      card_num=copy_table.pluck('card_num')
       num_users=card_num.uniq
       
       #Don't know why this is not working...
