@@ -288,6 +288,9 @@ module GatecountHelper
   def freq_counts(input_table,fiscal_year,school_index)
       copy_table=input_table
       time=copy_table.pluck("week")
+
+      card_num=week_data.pluck('card_num')
+      num_users=card_num.uniq
       
       #Don't know why this is not working...
       #fiscal_years=copy_table.pluck("fiscal_year")
@@ -325,7 +328,7 @@ module GatecountHelper
               end
           end  
 
-          #Return as a percentage of the college population            
+          #Return as a percentage of the college population
           ymax=(num_users).fdiv(total_pop)
           ymax=(ymax.round(2))*100
             
