@@ -249,7 +249,7 @@ module GatecountHelper
              
              fiscal_array=Hash.new
              fiscal_index=(0..year_counts.length-1).to_a
-             if time_frame=="Yearly" && count_type=="Counts"
+             if time_frame=="Yearly"
                #Here needs to actually be in the correct time order.
                for i in fiscal_index
                    if month[i] >= 7
