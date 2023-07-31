@@ -306,6 +306,8 @@ module GatecountHelper
       #fiscal_year_max=(fiscal_years).max
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
+
+      puts enrollment_table("Total")
       
       total_pop=enrollment_table("Total")[enroll_names[school_index]]
 
