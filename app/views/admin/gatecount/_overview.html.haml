@@ -49,7 +49,7 @@
 #data-viz
   #single-col
     %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
-    =line_chart name: "Van Pelt", data: vp_yearly_people, xtitle:"Years", ytitle: "Number of Visitors", adapter: "chartjs", legend: true, curve: false, download: true
+    =line_chart {name: "Van Pelt", data: vp_yearly_people}, xtitle:"Years", ytitle: "Number of Visitors", adapter: "chartjs", legend: true, curve: false, download: true
 -#library: {options: {scales: {y: {min:0, max:15000, ticks: {stepSize:2500, autoSkip: false, major: {enabled: true}}}}}}, download: true
 
 -furn_fiscal_counts=time_counts(furn_yearly,"Fiscal_Year","Counts")
