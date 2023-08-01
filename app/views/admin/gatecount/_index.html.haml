@@ -41,7 +41,7 @@
     The default year is 2023 if no data exists for the library for the year selected.   
 
 %center
-  = form_tag({:controller => admin_population_penetration_path, :action => "population"}, {method: :post}) do
+  = form_tag({:controller => admin_population_penetration_path, :action => "population"}, remote: true, method: :post) do
     %table{:style => "background-color:#DADADA"}
       %tr
         %td Select Library
@@ -57,7 +57,6 @@
         %td{rowspan:"3"}= submit_tag "Submit"
 
 -libraries=["Van Pelt","Biotech","Furness"]
-
 -school_index=(0..schools.length-1).to_a
 
 -sas_gen_table=gen_stats(freq_table("Spring"),2023,"Van Pelt","College of Arts & Sciences")
