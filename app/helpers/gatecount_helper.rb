@@ -306,7 +306,7 @@ module GatecountHelper
       puts enrollment_table("Total",fiscal_year)
       puts num_users
       
-      total_pop=enrollment_table("Total")[enroll_names[school_index]]
+      total_pop=enrollment_table("Total",fiscal_year)[enroll_names[school_index]]
 
       week_range=(time.min.to_i..time.max.to_i).to_a
       week_index=(0..week_range.length-1).to_a
