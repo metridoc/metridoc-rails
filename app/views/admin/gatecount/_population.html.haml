@@ -10,6 +10,36 @@
 
 -schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
+-libraries=["Van Pelt","Biotech","Furness"]
+-years=(2016..2023).to_a
+-semesters=["Spring","Fall"]
+      
+
+%p{style: "font-size: 1.25em;"}
+  %strong
+    Use this form to generate your own version of the following plot!
+    The default year is 2023 if no data exists for the library for the year selected.   
+
+%center
+  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, method: :post) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select Library
+        %td= select_tag "library", options_for_select(libraries, libraries[0])
+        %td
+      %tr
+        %td Select Fiscal Year
+        %td= select_tag "year", options_for_select(years, years[-1])
+        %td 
+      %tr
+        %td Select Semester
+        %td= select_tag "semester", options_for_select(semesters, semesters[0])
+        %td
+      %tr
+        %td Select School
+        %td= select_tag "school", options_for_select(schools, schools[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
+
 -#input_school=@input_school.nil? ? 'College of Arts & Sciences' : @input_school
 -#input_library=@input_library.nil? ? 'Van Pelt' : @input_library
 -#semester=@semester.nil? ? "Spring" : @semester
