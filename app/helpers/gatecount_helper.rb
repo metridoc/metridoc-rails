@@ -84,7 +84,7 @@ module GatecountHelper
       return output_table.to_a
   end
   
-  def enrollment_table(user) 
+  def enrollment_table(user,input_year=2023) 
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
          school,
@@ -98,7 +98,7 @@ module GatecountHelper
     year_range=(fiscal_year.min.to_i..fiscal_year.max.to_i).to_a
     year_index=(0..year_range.length-1).to_a
 
-    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==2023}
+    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==input_year}
     #year_values=pop_table.to_a
         
     yearly_enroll=Hash.new
