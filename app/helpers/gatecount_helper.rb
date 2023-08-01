@@ -304,6 +304,7 @@ module GatecountHelper
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
       puts enrollment_table("Total")
+      puts num_users
       
       total_pop=enrollment_table("Total")[enroll_names[school_index]]
 
