@@ -56,9 +56,9 @@ module GatecountHelper
 
       if semester=="Spring"
          start_week=1
-         end_week=26
+         end_week=20
       elsif semester=="Fall"
-         start_week=27
+         start_week=34
          end_week=52
       end
       
