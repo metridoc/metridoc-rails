@@ -110,6 +110,13 @@ module Import
         @class_name = task_config["target_model"].constantize
       end
 
+      # Connect to the database and get the column information
+      # Any hidden columns will be picked up by this method
+      def columns_hash
+        return @columns_hash if @columns_hash.present?
+        @columns_hash =  ActiveRecord::Base.connection.schema_cache.columns_hash(class_name.table_name)
+      end
+
       def has_institution_id?
         class_name.has_attribute?('institution_id')
       end
@@ -205,7 +212,7 @@ module Import
         csv.close
         headers = columns.map{|c| Util.column_to_attribute(c) }
         headers.each do |column_name|
-          if class_name.columns_hash[column_name].blank?
+          if columns_hash[column_name].blank?
             headers[headers.index(column_name)] = column_name.split(/\_+/).first
           end
         end
@@ -216,13 +223,12 @@ module Import
         # Get the header from the csv file
         headers = get_headers
 
-        # Connect to the database and get the column information
-        # Any hidden columns will be picked up by this method
-        columns_hash = ActiveRecord::Base.connection.schema_cache.columns_hash(class_name.table_name)
-
         # Query the class for any ignored columns
         # If there are ignored columns, the upload must proceed in a different way
         has_ignored_columns = class_name.ignored_columns.any?
+        if has_ignored_columns
+          log "!!CAVEAT!!: These columns will not be visible via the GUI: [#{class_name.ignored_columns.join(", ")}]"
+        end
 
         # Search for unmached columns between the header and the target mapping
         # Provide a warning for columns that will not be loaded
@@ -365,9 +371,7 @@ module Import
         connection = ActiveRecord::Base.connection
 
         # Extract column names from SQL instead of via model
-        column_names = connection.schema_cache.columns_hash(
-          class_name.table_name
-        ).keys
+        column_names = columns_hash.keys
 
         # Get a list of column names quoted
         columns_sql = "(#{column_names.map { |name| connection.quote_column_name(name) }.join(',')})"
@@ -378,9 +382,10 @@ module Import
         options = {}
         if unique_keys.present? and upsert
           # Upsert Option for Duplicates
+          # Allow a list of updateable columns from the config file
           options[:on_duplicate_key_update] = {
             conflict_target: unique_keys,
-            columns: column_names
+            columns: task_config["upsert_columns"] || column_names
           }
         elsif unique_keys.present?
           # Ignore Duplicates
@@ -420,9 +425,7 @@ module Import
         connection = ActiveRecord::Base.connection
 
         # Get the list of column names
-        column_names = connection.schema_cache.columns_hash(
-          class_name.table_name
-        ).keys
+        column_names = columns_hash.keys
 
         # Transform the array of hashes into an array of (val0, val1, ...)
         # for SQL import

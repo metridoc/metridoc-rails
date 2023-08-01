@@ -69,7 +69,7 @@ en:
     marc_data: "MARC data"
     gate_counts: "Gate counts"
     alma:
-      alma_menu: "Alma"
+      alma_menu: "Alma Circulations"
     ares:
       ares_menu: "Ares"
     course_reserves:

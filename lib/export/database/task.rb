@@ -31,11 +31,6 @@ module Export
       klass
     end
 
-    # Returns the target model as an object
-    def target_model
-      @target_model ||= task_config["target_model"].constantize
-    end
-
     # Get string to filter since minimum date
     def export_filter_date_sql
       task_config["export_filter_date_sql"]

@@ -1,0 +1,127 @@
+---
+load_sequence: 6
+
+target_model: "Alma::Circulation"
+target_adapter: "native_sql"
+truncate_before_load: "no"
+sqls:
+  - |
+      UPDATE alma_circulations
+      SET school =
+        CASE
+          WHEN statistical_category_1 IN (SELECT school FROM upenn_alma_departments) THEN statistical_category_1
+          WHEN statistical_category_2 IN (SELECT school FROM upenn_alma_departments) THEN statistical_category_2
+          WHEN statistical_category_3 IN (SELECT school FROM upenn_alma_departments) THEN statistical_category_3
+          WHEN statistical_category_4 IN (SELECT school FROM upenn_alma_departments) THEN statistical_category_4
+          WHEN statistical_category_5 IN (SELECT school FROM upenn_alma_departments) THEN statistical_category_5
+          ELSE NULL
+        END
+      WHERE school IS NULL;
+  - |
+      UPDATE alma_circulations
+      SET school =
+        CASE
+          WHEN alma_circulations.statistical_category_1 ~ '^\d{4}'
+            THEN (
+              SELECT upenn_alma_departments.school
+              FROM upenn_alma_departments
+              WHERE
+                upenn_alma_departments.department_code = LEFT(
+                  alma_circulations.statistical_category_1, 2
+                )
+            )
+          WHEN alma_circulations.statistical_category_2 ~ '^\d{4}'
+            THEN (
+              SELECT upenn_alma_departments.school
+              FROM upenn_alma_departments
+              WHERE
+                upenn_alma_departments.department_code = LEFT(
+                  alma_circulations.statistical_category_2, 2
+                )
+            )
+          WHEN alma_circulations.statistical_category_3 ~ '^\d{4}'
+            THEN (
+              SELECT upenn_alma_departments.school
+              FROM upenn_alma_departments
+              WHERE
+                upenn_alma_departments.department_code = LEFT(
+                  alma_circulations.statistical_category_3, 2
+                )
+            )
+          WHEN alma_circulations.statistical_category_4 ~ '^\d{4}'
+            THEN (
+              SELECT upenn_alma_departments.school
+              FROM upenn_alma_departments
+              WHERE
+                upenn_alma_departments.department_code = LEFT(
+                  alma_circulations.statistical_category_4, 2
+                )
+            )
+          WHEN alma_circulations.statistical_category_5 ~ '^\d{4}'
+            THEN (
+              SELECT upenn_alma_departments.school
+              FROM upenn_alma_departments
+              WHERE
+                upenn_alma_departments.department_code = LEFT(
+                  alma_circulations.statistical_category_5, 2
+                )
+            )
+          ELSE NULL
+        END
+      WHERE school IS NULL;
+  - |
+    UPDATE alma_circulations
+    SET school =
+      CASE
+        WHEN statistical_category_1 IN (SELECT division FROM upenn_alma_divisions)
+          THEN (
+            SELECT upenn_alma_divisions.school
+            FROM upenn_alma_divisions
+            WHERE upenn_alma_divisions.division =
+              alma_circulations.statistical_category_1
+          )
+        WHEN statistical_category_2 IN (SELECT division FROM upenn_alma_divisions)
+          THEN (
+            SELECT upenn_alma_divisions.school
+            FROM upenn_alma_divisions
+            WHERE upenn_alma_divisions.division =
+              alma_circulations.statistical_category_2
+          )
+        WHEN statistical_category_3 IN (SELECT division FROM upenn_alma_divisions)
+          THEN (
+            SELECT upenn_alma_divisions.school
+            FROM upenn_alma_divisions
+            WHERE upenn_alma_divisions.division =
+              alma_circulations.statistical_category_3
+          )
+        WHEN statistical_category_4 IN (SELECT division FROM upenn_alma_divisions)
+          THEN (
+            SELECT upenn_alma_divisions.school
+            FROM upenn_alma_divisions
+            WHERE upenn_alma_divisions.division =
+              alma_circulations.statistical_category_4
+          )
+        WHEN statistical_category_5 IN (SELECT division FROM upenn_alma_divisions)
+          THEN (
+            SELECT upenn_alma_divisions.school
+            FROM upenn_alma_divisions
+            WHERE upenn_alma_divisions.division =
+              alma_circulations.statistical_category_5
+          )
+        ELSE NULL
+      END
+      WHERE school IS NULL;
+  - |
+      UPDATE alma_circulations
+      SET
+        school = upenn_alma_demographics.school,
+        statistical_category_1 = upenn_alma_demographics.statistical_category_1,
+        statistical_category_2 = upenn_alma_demographics.statistical_category_2,
+        statistical_category_3 = upenn_alma_demographics.statistical_category_3,
+        statistical_category_4 = upenn_alma_demographics.statistical_category_4,
+        statistical_category_5 = upenn_alma_demographics.statistical_category_5
+      FROM upenn_alma_demographics
+      WHERE alma_circulations.penn_id_number = upenn_alma_demographics.penn_id
+        AND alma_circulations.penn_id_number IS NOT NULL
+        AND alma_circulations.school IS NULL
+        AND upenn_alma_demographics.school IS NOT NULL;

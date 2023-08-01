@@ -30,6 +30,11 @@ module Export
       @source_adapter ||= task_config["source_adapter"]
     end
 
+    # Returns the target model as an object
+    def target_model
+      @target_model ||= task_config["target_model"].constantize
+    end
+
     # Access any column mappings in the task configuration
     def column_mappings
       @column_mappings ||= task_config["column_mappings"]
