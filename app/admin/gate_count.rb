@@ -2,7 +2,7 @@ ActiveAdmin.register_page "GateCount" do
   menu false
 
   #Action needed to define variables for frequency plots
-  page_action population method: :post do
+  page_action :population method: :post do
     @input_school = params[:school]
     @input_library = params[:library]
     @semester = params[:semester]
