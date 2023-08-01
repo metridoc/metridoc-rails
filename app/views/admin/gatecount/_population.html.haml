@@ -17,19 +17,20 @@
 -input_school=params[:school].nil? ? 'College of Arts & Sciences' : params[:school]
 -input_library=params[:library].nil? ? 'Van Pelt' : params[:library]
 -semester=params[:semester].nil? ? "Spring" : params[:semester]
+-input_year=params[:year].nil? ? "2023" : params[:year]
 
 -school_index=schools.find_index(input_school)
 
 %hr
-%h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
+%h2{style: "text-align:center;"}="Fiscal Year #{input_year} School Population Statistics"
 
 %p{style:"font-size: 1.25em;"} Note that these plots are generated from the combined undergraduate/graduate student population for each school. The y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--gen_school_table=gen_stats(freq_table(semester),2023,input_library,input_school)
+-gen_school_table=gen_stats(freq_table(semester),input_year,input_library,input_school)
 
--ymax,percents_single,percents_medium,percents_freq=freq_counts(gen_school_table,2023,school_index)
+-ymax,percents_single,percents_medium,percents_freq=freq_counts(gen_school_table,input_year,school_index)
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, #{semester} Semester 2023"
+    %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, #{semester} Semester #{input_year}"
     = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, suffix: "%", round: 2, library: {scales: {yAxes: [{id: 'y-axis', type: 'linear', ticks: {autoskip: false, steps: 10}}]}}, download: true  

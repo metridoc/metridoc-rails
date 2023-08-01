@@ -48,6 +48,10 @@
         %td= select_tag "library", options_for_select(libraries, libraries[0])
         %td
       %tr
+        %td Select Year
+        %td= select_tag "year", options_for_select(years, years[-1])
+        %td 
+      %tr
         %td Select Semester
         %td= select_tag "semester", options_for_select(semesters, semesters[0])
         %td
