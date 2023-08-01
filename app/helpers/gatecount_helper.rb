@@ -103,26 +103,22 @@ module GatecountHelper
         
     yearly_enroll=Hash.new
 
-    enrollments_array=[]
-
     enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
         
-    value_index=(0..enroll_names.length-1).to_a
-    for i in value_index
+    for name in enroll_names
         if user=="Total"
            #For some reason it hates when I try to select by user group so for now I'm just indexing the desired group.
-           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[0]
+           values=year_values.select{|h| h["school"]==name}.pluck("value")[0]
         elsif user=="Undergrad"
-           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[1]
+           values=year_values.select{|h| h["school"]==name}.pluck("value")[1]
         elsif user=="Graduate"
-           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[4]
+           values=year_values.select{|h| h["school"]==name}.pluck("value")[4]
         elsif user=="F/S"
-           values=year_values.select{|h| h["school"]==enroll_names[i]}.pluck("value")[10]
+           values=year_values.select{|h| h["school"]==name}.pluck("value")[10]
         end
-        yearly_enroll[enroll_names[i]] = values
-        enrollments_array << yearly_enroll
+        yearly_enroll[name] = values
     end
-    return enrollments_array
+    return yearly_enroll
     
   end  
 
@@ -309,7 +305,7 @@ module GatecountHelper
 
       puts enrollment_table("Total")
       
-      total_pop=enrollment_table("Total")[0][enroll_names[school_index]]
+      total_pop=enrollment_table("Total")[enroll_names[school_index]]
 
       week_range=(time.min.to_i..time.max.to_i).to_a
       week_index=(0..week_range.length-1).to_a
