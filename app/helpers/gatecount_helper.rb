@@ -349,10 +349,10 @@ module GatecountHelper
              percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
              percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
           else
-             percents_zero["#{week_range[i]-34}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-             percents_single["#{week_range[i]-34}"]=((single_user).fdiv(total_pop))*100
-             percents_medium["#{week_range[i]-34}"]=((medium_user).fdiv(total_pop))*100
-             percents_freq["#{week_range[i]-34}"]=((freq_user).fdiv(total_pop))*100
+             percents_zero["#{week_range[i]-33}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
+             percents_single["#{week_range[i]-33}"]=((single_user).fdiv(total_pop))*100
+             percents_medium["#{week_range[i]-33}"]=((medium_user).fdiv(total_pop))*100
+             percents_freq["#{week_range[i]-33}"]=((freq_user).fdiv(total_pop))*100
           end 
       end
       
