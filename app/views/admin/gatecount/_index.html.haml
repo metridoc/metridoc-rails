@@ -62,7 +62,7 @@
 
 -school_index=(0..schools.length-1).to_a
 
--sas_gen_table=gen_stats(freq_table,2023,"Van Pelt","College of Arts & Sciences")
+-sas_gen_table=gen_stats(freq_table("Spring"),2023,"Van Pelt","College of Arts & Sciences")
 -ymax,percents_single,percents_medium,percents_freq=time_counts(sas_gen_table,"Weekly","Frequency",0)
 
 #data-viz
