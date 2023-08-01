@@ -342,12 +342,18 @@ module GatecountHelper
           #Return as a percentage of the college population
           ymax=(num_users).fdiv(total_pop)
           ymax=(ymax.round(2))*100
-            
-          percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-          percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
-          percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
-          percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
 
+          if week_range.min=1
+             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
+             percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
+             percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
+             percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
+          elsif week_range.min=1
+             percents_zero["#{week_range[i]-34}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
+             percents_single["#{week_range[i]-34}"]=((single_user).fdiv(total_pop))*100
+             percents_medium["#{week_range[i]-34}"]=((medium_user).fdiv(total_pop))*100
+             percents_freq["#{week_range[i]-34}"]=((freq_user).fdiv(total_pop))*100
+          end 
       end
       
       return ymax,percents_single,percents_medium,percents_freq
