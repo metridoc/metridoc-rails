@@ -71,7 +71,7 @@ module GatecountHelper
          SELECT
            EXTRACT(week from swipe_date) AS week,
            card_num,
-           COUNT(*) AS frequency
+           COUNT(*) AS frequency,
            CASE
                 WHEN door_name LIKE 'VAN PELT%'
                   THEN 'Van Pelt'
