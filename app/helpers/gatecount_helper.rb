@@ -83,7 +83,7 @@ module GatecountHelper
          FROM gate_count_card_swipes 
               WHERE (EXTRACT(week from swipe_date) >= #{start_week} AND EXTRACT(week from swipe_date) <= #{end_week})
               AND school=#{input_school}
-              AND DATE_PART('year', swipe_date + INTERVAL '6 month')=#{fiscal_year}
+              AND DATE_PART('year', swipe_date + INTERVAL '6 month')=#{input_year}
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
               AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
            GROUP BY 1, 2)
