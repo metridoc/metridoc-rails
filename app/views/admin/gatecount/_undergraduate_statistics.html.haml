@@ -1,6 +1,7 @@
 = javascript_include_tag 'application'
 
--school_names=["School of Nursing","The Wharton School","School of Engineering and Applied Science","College of Arts & Sciences"]
+-school_names=["School of Nursing","The Wharton School","School of Engineering and Applied Science",
+"College of Arts & Sciences"]
 
 -enroll_names=["Nursing","Wharton","Engineering","SAS"]
 -undergrad_enroll=enrollment_table("Undergrad")
@@ -8,11 +9,7 @@
 -school_index=(0..3).to_a
 -school_pop=Array.new(4,0)
 
--puts undergrad_enroll
-
 -school_index.each {|i| school_pop[i]=undergrad_enroll[enroll_names[i]]}
-
--puts school_pop
 
 -furness_table=gen_stats(library_table,2023,"Furness","All")
 -biotech_table=gen_stats(library_table,2023,"Biotech","All")
@@ -46,7 +43,9 @@
 
 -all_undergrad=[undergrad_vp,undergrad_bio,undergrad_furn]
 
--#placeholders for the below, this is a different type of population (users of the library per school rather than the total school population)
+-#placeholders for the below, this is a different type of population
+-#(users of the library per school rather than the total school population)
+
 -school_pop=Array.new(4,0)
 
 -school_index.each {|i| school_pop[i]=all_undergrad.pluck(school_names[i]).sum}
@@ -61,4 +60,9 @@
 
 %h2{style: "text-align:center;"} Percentage of Gate Counts Per Library For Each Undergraduate School
 #single-col
-  =column_chart [{name: "BioTech", data: bio_percents}, {name: "Van Pelt", data: vp_percents}, {name: "Furness", data: furn_percents}], round: 2, dataset: {borderWidth: 0}, download: true
+=column_chart [{name: "BioTech", data: bio_percents},
+               {name: "Van Pelt", data: vp_percents},
+               {name: "Furness", data: furn_percents}],
+               dataset: {borderWidth: 0},
+               round: 2,
+               download: true
