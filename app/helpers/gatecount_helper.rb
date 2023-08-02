@@ -1,7 +1,8 @@
 module GatecountHelper
 
 #Library options are "Van Pelt", "Biotech", "Furness", "All"
-  
+
+  #library_table is used for all "population" plots.
   def library_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
@@ -20,7 +21,8 @@ module GatecountHelper
            COUNT(DISTINCT card_num) AS num_people  
          FROM gate_count_card_swipes 
            WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
-              AND school IN ('College of Arts & Sciences','The Wharton School','Annenberg School for Communication','School of Dental Medicine','School of Design','Graduate School of Education','School of Engineering and Applied Science','Law School','Perelman School of Medicine','Veterinary Medicine','School of Nursing','Social Policy & Practice','School of Social Policy & Practice')
+              AND school IN ('College of Arts & Sciences','The Wharton School','Annenberg School for Communication','School of Dental Medicine','School of Design','Graduate School of Education',
+'School of Engineering and Applied Science','Law School','Perelman School of Medicine','Veterinary Medicine','School of Nursing','Social Policy & Practice','School of Social Policy & Practice')
               GROUP BY 1, 2, 3, 4
               ORDER BY COUNT(swipe_date);")
 
@@ -28,7 +30,8 @@ module GatecountHelper
   end
 
   #Excluding Penn libraries so that workers who swipe in all the time are not counted.
-  
+
+  #The time_table is used for all time plots *except* for the frequency plots by school.
   def time_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
@@ -45,7 +48,8 @@ module GatecountHelper
            COUNT(card_num) AS num_swipes, 
            COUNT(DISTINCT card_num) AS num_people
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
+           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL',
+ 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
            AND school != 'Penn Libraries' 
          GROUP BY 1,2,3;")
 
@@ -83,7 +87,8 @@ module GatecountHelper
 
       return output_table.to_a
   end
-  
+
+  #Get the yearly enrollment of a particular user group for a given year. User groups are "Total" (regarding the total student population), "Undergrad", "Graduate", and "F/S".
   def enrollment_table(user,input_year=2023) 
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
@@ -99,7 +104,6 @@ module GatecountHelper
     year_index=(0..year_range.length-1).to_a
 
     year_values=pop_table.to_a.select{|h| h["fiscal_year"]==input_year}
-    #year_values=pop_table.to_a
         
     yearly_enroll=Hash.new
 
@@ -122,8 +126,8 @@ module GatecountHelper
     
   end  
 
+  #Delete data from the wrong schools/library/year:
   def gen_stats(input_table,fiscal_year,library,school_type)
-    #Delete unnecessary data and data from wrong schools:
     gen_values=input_table
     if fiscal_year.is_a? Integer
        gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
@@ -174,14 +178,15 @@ module GatecountHelper
       percents=copy_table.pluck("num_people")
     end
 
-     schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
+    schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science',
+             'Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
 
     if user_group != "F/S"
         schools=copy_table.pluck("school")
         percents_array=Hash.new
         percent_index=(0..percents.length-1).to_a
         percent_index.each {|i| percents_array[schools[i]] = percents[i]}
-    #Necessary clause since the "Faculty and Staff" category includes multiple user groups.
+    #Needed since the "Faculty and Staff" category includes multiple user groups.
     elsif user_group=="F/S"
 
         percents_array=Hash.new
@@ -203,7 +208,9 @@ module GatecountHelper
     
   end
 
-  def time_counts(input_table,time_frame,count_type,school_index=0)
+  def time_counts(input_table,time_frame,count_type)
+
+      #Current options for time_frame are: "Monthly", "Fiscal_Year", "Yearly" (calendar year), and "All" (all data available in Metridoc).
     
       copy_table=input_table
 
@@ -218,7 +225,8 @@ module GatecountHelper
          elsif count_type=="People"
             count=copy_table.pluck("num_people")
          end
-         
+
+         #
          temp_array=Hash.new
          count_array=Hash.new
 
@@ -255,7 +263,7 @@ module GatecountHelper
              fiscal_array=Hash.new
              fiscal_index=(0..year_counts.length-1).to_a
              if time_frame=="Yearly"
-               #Here needs to actually be in the correct time order.
+               #Here the desired output is in calendar years.
                for i in fiscal_index
                    if month[i] >= 7
                      if count_type=="Counts"
@@ -271,7 +279,8 @@ module GatecountHelper
                      end
                    end  
                end
-               
+
+             #This is intended for table output. 
              elsif time_frame=="All"
                 fiscal_index.each {|i| fiscal_array[month_names[month[i]-1]] = year_counts[i]}
                 fiscal_array["Total"]=year_counts.sum
@@ -281,6 +290,7 @@ module GatecountHelper
          end
       end
 
+      #Make sure the correct output is generated.
       if time_frame=="All"
          return all_data
       elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
@@ -288,6 +298,7 @@ module GatecountHelper
       elsif time_frame=="Monthly"
          return count_array
       end
+      
   end
 
   def freq_counts(input_table,fiscal_year,school_index)
@@ -296,10 +307,6 @@ module GatecountHelper
 
       card_num=copy_table.pluck('card_num')
       num_users=card_num.uniq.length
-      
-      #Don't know why this is not working...
-      #fiscal_years=copy_table.pluck("fiscal_year")
-      #fiscal_year_max=(fiscal_years).max
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
 
@@ -345,6 +352,7 @@ module GatecountHelper
              percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
              percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
              percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
+          #Get the correct labels for the fall semester:
           else
              percents_zero["#{week_range[i]-33}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
              percents_single["#{week_range[i]-33}"]=((single_user).fdiv(total_pop))*100
@@ -357,26 +365,23 @@ module GatecountHelper
   end
 
   def percent_change(input_data)
-  #Might be able to add to calc_percents function...
 
      data_length=input_data.length
 
+     months=["January","February","March","April","May","June","July","August","September","October","November","December","Total"]
      all_data=[]
   
      for l in (0..input_data.length-1).to_a
-         months=["January","February","March","April","May","June","July","August","September","October","November","December","Total"]
-         month_data=Hash.new
-         
+         month_data=Hash.new         
          for m in (0..months.length-1).to_a
-               #Reading in an array of hashes, comparing each year's month data to the comparison_year (most recent), then output an array of hashes of the differences.
+               #Reading in an array of hashes, comparing each year's month data to the comparison_year (by default the most recent), then output an array of hashes of the differences.
              old_data=input_data[l][months[m]]
              new_data=input_data[data_length-1][months[m]]
              if old_data.nil? == true || l==input_data.length-1
                 percent_change=nil
              else  
                 percent_change=(old_data-new_data).fdiv(new_data)
-                percent_change=percent_change*100
-                percent_change=percent_change.round(2)
+                percent_change=(percent_change*100).round(2)
              end
              month_data[months[m]]=percent_change
          end
