@@ -25,9 +25,9 @@
 
 %p{style:"font-size: 1.25em;"} Note that these plots are generated from the combined undergraduate/graduate student population for each school. The y-scale of the plot above is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
 
--gen_school_table=gen_stats(freq_table(semester),input_year,input_library,input_school)
+-gen_school_table=freq_table(semester,input_year,input_school)
 
--ymax,percents_single,percents_medium,percents_freq=freq_counts(gen_school_table,input_year,school_index)
+-ymax,percents_single,percents_medium,percents_freq=freq_counts(gen_school_table,input_year,school_index,input_library)
 
 #data-viz
   #single-col
