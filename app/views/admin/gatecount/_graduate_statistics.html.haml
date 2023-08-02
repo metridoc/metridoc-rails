@@ -1,6 +1,9 @@
 = javascript_include_tag 'application'
 
--grad_school_names=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+-grad_school_names=["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
+"School of Dental Medicine","School of Design","Graduate School of Education",
+"School of Engineering and Applied Science","Law School","Perelman School of Medicine",
+"Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
 
 -grad_school_index=(0..11).to_a
 
@@ -30,7 +33,8 @@
 
 -grad_enrollment=enrollment_table("Graduate")
 
--enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
+-enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
+'Perelman','Veterinary','Nursing','SP2']
 
 -grad_school_pop=Array.new(12,0)
 -grad_school_index.each {|i| grad_school_pop[i]=grad_enrollment[enroll_names[i]]}
@@ -54,4 +58,8 @@
 #data-viz
   #single-col
     %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
-    =column_chart [{name: "BioTech", data: med_bio_counts}, {name: "Van Pelt", data: med_vp_counts}], stacked: true, dataset: {borderWidth: 0}, download: true
+    =column_chart [{name: "BioTech", data: med_bio_counts},
+                   {name: "Van Pelt", data: med_vp_counts}],
+                   dataset: {borderWidth: 0},
+                   stacked: true,
+                   download: true
