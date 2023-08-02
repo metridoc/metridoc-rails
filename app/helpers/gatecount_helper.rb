@@ -56,7 +56,7 @@ module GatecountHelper
       return output_table.to_a
   end
 
-   def freq_table(semester)
+   def freq_table(semester,input_year,input_school)
 
       if semester=="Spring"
          start_week=1
@@ -67,23 +67,35 @@ module GatecountHelper
       end
       
       output_table=GateCount::CardSwipe.connection.select_all(
-        "SELECT
-           school,
-           CASE
-             WHEN door_name LIKE 'VAN PELT%'
-               THEN 'Van Pelt'
-             WHEN door_name LIKE 'FURNESS%'
-               THEN 'Furness'
-             WHEN door_name LIKE 'BIO%'
-               THEN 'Biotech'
-           END AS library,
-           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+        "WITH weekly_data AS (
+         SELECT
            EXTRACT(week from swipe_date) AS week,
-           card_num
+           card_num,
+           COUNT(*) AS frequency
+           CASE
+                WHEN door_name LIKE 'VAN PELT%'
+                  THEN 'Van Pelt'
+                WHEN door_name LIKE 'FURNESS%'
+                  THEN 'Furness'
+                WHEN door_name LIKE 'BIO%'
+                  THEN 'Biotech'
+           END AS library
          FROM gate_count_card_swipes 
               WHERE (EXTRACT(week from swipe_date) >= #{start_week} AND EXTRACT(week from swipe_date) <= #{end_week})
+              AND school=#{input_school}
+              AND DATE_PART('year', swipe_date + INTERVAL '6 month')=#{fiscal_year}
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
-              AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')")
+              AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL', 'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL', 'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
+           GROUP BY 1, 2)
+          SELECT
+              week,
+              card_num,
+              library,
+              CASE WHEN frequency = 1 THEN 1 ELSE 0 END AS single_user,
+              CASE WHEN frequency BETWEEN 2 AND 3 THEN 1 ELSE 0 END AS medium_user,
+              CASE WHEN frequency > 3 THEN 1 ELSE 0 END AS freq_user
+              FROM weekly_data
+              GROUP BY 1;")
 
       return output_table.to_a
   end
@@ -303,11 +315,20 @@ module GatecountHelper
       
   end
 
-  def freq_counts(input_table,fiscal_year,school_index)
+  def freq_counts(input_table,fiscal_year,school_index,library)
       copy_table=input_table
-      time=copy_table.pluck("week")
 
+      if library=="Biotech"
+       copy_table=copy_table.select{|h| h["library"] == "Biotech"}
+      elsif library=="Furness"
+       copy_tablecopy_table.select{|h| h["library"] == "Furness"}
+      elsif library=="Van Pelt"
+       copy_table=copy_table.select{|h| h["library"] == "Van Pelt"}        
+      end
+
+      time=copy_table.pluck("week")
       card_num=copy_table.pluck('card_num')
+      
       num_users=card_num.uniq.length
       
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
@@ -326,24 +347,11 @@ module GatecountHelper
       percents_freq=Hash.new
          
       for i in week_index
-          week_data=copy_table.select{|h| h["week"] == week_range[i]}
-          card_num=week_data.pluck('card_num')
 
-          test_array=card_num.uniq
-            
-          single_user=0
-          medium_user=0
-          freq_user=0
-          
-          for x in test_array
-              if card_num.count(x)==1
-                 single_user=single_user+1
-              elsif card_num.count(x) == 2 || card_num.count(x) == 3
-                 medium_user=medium_user+1
-              elsif card_num.count(x) > 3
-                 freq_user=freq_user+1
-              end
-          end  
+          week_table=week_table.select{|h| h["week"] == week_index}
+          single_user=week_table.pluck('single_user').sum
+          medium_user=week_table.pluck('medium_user').sum
+          freq_user=week_table.pluck('freq_user').sum
 
           #Return as a percentage of the college population
           ymax=(num_users).fdiv(total_pop)
@@ -360,12 +368,11 @@ module GatecountHelper
              percents_single["#{week_range[i]-33}"]=((single_user).fdiv(total_pop))*100
              percents_medium["#{week_range[i]-33}"]=((medium_user).fdiv(total_pop))*100
              percents_freq["#{week_range[i]-33}"]=((freq_user).fdiv(total_pop))*100
-          end 
+          end
       end
-      
-      return ymax,percents_single,percents_medium,percents_freq
   end
-
+      
+  
   def percent_change(input_data)
 
      data_length=input_data.length
