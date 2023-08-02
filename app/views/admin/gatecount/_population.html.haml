@@ -8,18 +8,13 @@
 
 -libraries=["Van Pelt","Biotech","Furness"]
 
--schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science','Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+-schools=["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
+"School of Dental Medicine","School of Design","Graduate School of Education",
+"School of Engineering and Applied Science","Law School","Perelman School of Medicine","Veterinary Medicine",
+"School of Nursing","School of Social Policy & Practice"]
 
-
-
--#input_school=@input_school.nil? ? 'College of Arts & Sciences' : @input_school
--#input_library=@input_library.nil? ? 'Van Pelt' : @input_library
--#semester=@semester.nil? ? "Spring" : @semester
-
-
-
--input_school=params[:school].nil? ? 'College of Arts & Sciences' : params[:school]
--input_library=params[:library].nil? ? 'Van Pelt' : params[:library]
+-input_school=params[:school].nil? ? "College of Arts & Sciences" : params[:school]
+-input_library=params[:library].nil? ? "Van Pelt" : params[:library]
 -semester=params[:semester].nil? ? "Spring" : params[:semester]
 -input_year=params[:year].nil? ? 2023 : params[:year].to_i
 
@@ -36,5 +31,6 @@
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, #{semester} Semester Fiscal Year #{input_year}"
+  %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library,
+  #{semester} Semester Fiscal Year #{input_year}"
     = column_chart [{name: "Single Visit", data: percents_single},{name: "Medium Visits", data: percents_medium}, {name:"Freq Visits", data: percents_freq}], xtitle:"Week of the Semester", ytitle: "Percent of the School Population", legend: true, dataset:{borderWidth:0}, max: ymax, stacked: true, suffix: "%", round: 2, library: {scales: {yAxes: [{id: 'y-axis', type: 'linear', ticks: {autoskip: false, steps: 10}}]}}, download: true  
