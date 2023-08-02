@@ -178,8 +178,10 @@ module GatecountHelper
       percents=copy_table.pluck("num_people")
     end
 
-    schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication","School of Dental Medicine","School of Design",'Graduate School of Education','School of Engineering and Applied Science',
-             'Law School',"Perelman School of Medicine","Veterinary Medicine","School of Nursing",'Social Policy & Practice']
+    schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication",
+             "School of Dental Medicine","School of Design",'Graduate School of Education',
+             'School of Engineering and Applied Science','Law School',"Perelman School of Medicine",
+             "Veterinary Medicine","School of Nursing",'Social Policy & Practice']
 
     if user_group != "F/S"
         schools=copy_table.pluck("school")
