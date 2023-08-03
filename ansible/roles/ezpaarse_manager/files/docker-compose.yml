@@ -25,7 +25,7 @@ services:
       - ezpaarse_middlewares:/opt/ezpaarse/middlewares
       - ezpaarse_resources:/opt/ezpaarse/resources
       - ezpaarse_exclusions:/opt/ezpaarse/exclusions
-      - ezpaarse_input:/tmp/ezpaarse_input
+      - ezpaarse_input_dist:/tmp/ezpaarse_input
       - ezpaarse_output:/tmp/ezpaarse_output
     secrets:
       - source: metridoc_ezpaarse_config
@@ -86,7 +86,7 @@ secrets:
 
 volumes:
   ezpaarse_exclusions:
-  ezpaarse_input:
+  ezpaarse_input_dist:
     external: true
   ezpaarse_middlewares:
   ezpaarse_output:

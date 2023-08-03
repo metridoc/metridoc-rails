@@ -1,7 +1,7 @@
 ---
 - name: create nfs volume for /home/app/webapp/tmp
   docker_volume:
-    name: metridoc_tmp_data
+    name: metridoc_tmp_data_dist
     driver: local
     driver_options:
       type: nfs
