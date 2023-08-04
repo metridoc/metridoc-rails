@@ -351,6 +351,7 @@ module GatecountHelper
 
           week_table=week_table.select{|h| h["week"].to_i == week_range[i]}
 
+          puts "This is a test!"
           puts week_table
           
           single_user=week_table.pluck('single_user').sum
