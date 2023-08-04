@@ -347,7 +347,6 @@ module GatecountHelper
       
       for i in week_index
 
-          #This line is broken...
           week_table=copy_table.select{|h| h["week"] == week_range[i]}
           
           single_user=week_table.pluck('single_user').sum
