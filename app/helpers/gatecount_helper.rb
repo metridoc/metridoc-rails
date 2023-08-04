@@ -94,8 +94,7 @@ module GatecountHelper
               CASE WHEN frequency = 1 THEN 1 ELSE 0 END AS single_user,
               CASE WHEN frequency BETWEEN 2 AND 3 THEN 1 ELSE 0 END AS medium_user,
               CASE WHEN frequency > 3 THEN 1 ELSE 0 END AS freq_user
-              FROM weekly_data
-              GROUP BY 1, 3;")
+              FROM weekly_data;")
 
       return output_table.to_a
   end
