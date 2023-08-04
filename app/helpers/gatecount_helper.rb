@@ -318,11 +318,11 @@ module GatecountHelper
       copy_table=input_table
 
       if library=="Biotech"
-       week_table=copy_table.select{|h| h["library"] == "Biotech"}
+       copy_table=copy_table.select{|h| h["library"] == "Biotech"}
       elsif library=="Furness"
-       week_table=copy_table.select{|h| h["library"] == "Furness"}
+       copy_table=copy_table.select{|h| h["library"] == "Furness"}
       elsif library=="Van Pelt"
-       week_table=copy_table.select{|h| h["library"] == "Van Pelt"}        
+       copy_table=copy_table.select{|h| h["library"] == "Van Pelt"}        
       end
 
       time=copy_table.pluck("week")
@@ -350,7 +350,7 @@ module GatecountHelper
       for i in week_index
 
           #This line is broken...
-          week_table=week_table.select{|h| h["week"].to_i == week_range[i]}
+          week_table=copy_table.select{|h| h["week"] == week_range[i]}
 
           single_user=week_table.pluck('single_user').sum
           medium_user=week_table.pluck('medium_user').sum
