@@ -349,7 +349,7 @@ module GatecountHelper
       
       for i in week_index
 
-          week_table=week_table.select{|h| h["week"] == week_range[i]}
+          week_table=week_table.select{|h| h["week"].to_i == week_range[i]}
           single_user=week_table.pluck('single_user').sum
           medium_user=week_table.pluck('medium_user').sum
           freq_user=week_table.pluck('freq_user').sum
