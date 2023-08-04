@@ -47,6 +47,7 @@ column_mappings:
   "Author": author
   "Physical Item Id": physical_item_id
   "Barcode": barcode
+  "Receiving Date (calendar)": item_creation
   # Item Identification
   "MMS Id": mms_id
   "ISBN": isbn
@@ -97,7 +98,7 @@ upsert_columns:
 - "return_date"
 
 # Filter for request
-#export_filter_start_date: "2019-01-01"
-#export_filter_end_date: "2023-01-01"
+#export_filter_start_date: "2017-07-01"
+#export_filter_end_date: "2018-01-01"
 incremental_filter_sql: 'CASE WHEN "Return Date"."Return Date" IS NOT NULL THEN "Return Date"."Return Date" ELSE "Loan Date"."Loan Date" END'
 incremental_filter_column: "last_status_update"
