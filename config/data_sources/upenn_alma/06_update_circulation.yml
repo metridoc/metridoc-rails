@@ -125,3 +125,8 @@ sqls:
         AND alma_circulations.penn_id_number IS NOT NULL
         AND alma_circulations.school IS NULL
         AND upenn_alma_demographics.school IS NOT NULL;
+  - |
+      UPDATE alma_circulations
+      SET
+        school = 'Unknown'
+      WHERE school IS NULL;
