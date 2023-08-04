@@ -349,12 +349,14 @@ module GatecountHelper
 
           #This line is broken...
           week_table=copy_table.select{|h| h["week"] == week_range[i]}
-
-          puts week_table
           
           single_user=week_table.pluck('single_user').sum
           medium_user=week_table.pluck('medium_user').sum
           freq_user=week_table.pluck('freq_user').sum
+
+          puts single_user
+          puts medium_user
+          puts freq_user
 
           #Return as a percentage of the college population
           ymax=(num_users).fdiv(total_pop)
