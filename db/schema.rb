@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_07_18_182351) do
+ActiveRecord::Schema.define(version: 2023_08_04_140253) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -122,6 +122,7 @@ ActiveRecord::Schema.define(version: 2023_07_18_182351) do
     t.string "statistical_category_3"
     t.string "statistical_category_4"
     t.string "statistical_category_5"
+    t.date "item_creation"
     t.index ["bibliographic_material_type"], name: "alma_circulations_bibliographic_material_type"
     t.index ["bibliographic_resource_type"], name: "alma_circulations_bibliographic_resource_type"
     t.index ["item_loan_id"], name: "alma_circulations_item_loan_id", unique: true
@@ -751,7 +752,7 @@ ActiveRecord::Schema.define(version: 2023_07_18_182351) do
     t.string "method", limit: 8
     t.string "url"
     t.string "status", limit: 3
-    t.integer "size"
+    t.bigint "size"
     t.string "referer"
     t.string "session_id"
     t.string "resource_name"
@@ -763,6 +764,10 @@ ActiveRecord::Schema.define(version: 2023_07_18_182351) do
     t.text "user_group"
     t.string "school"
     t.text "penn_id"
+    t.string "title"
+    t.string "type"
+    t.string "subject"
+    t.string "license"
     t.index ["datetime"], name: "index_ezpaarse_logs_on_datetime"
     t.index ["host"], name: "index_ezpaarse_logs_on_host"
     t.index ["mime"], name: "index_ezpaarse_logs_on_mime"
