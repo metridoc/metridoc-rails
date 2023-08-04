@@ -354,10 +354,6 @@ module GatecountHelper
           medium_user=week_table.pluck('medium_user').sum
           freq_user=week_table.pluck('freq_user').sum
 
-          puts single_user
-          puts medium_user
-          puts freq_user
-
           #Return as a percentage of the college population
           ymax=(num_users).fdiv(total_pop)
           ymax=(ymax.round(2))*100
@@ -375,6 +371,7 @@ module GatecountHelper
              percents_freq["#{week_range[i]-33}"]=((freq_user).fdiv(total_pop))*100
           end
       end
+      return ymax,percents_single,percents_medium,percents_freq
   end
       
   
