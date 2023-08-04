@@ -344,8 +344,6 @@ module GatecountHelper
       percents_single=Hash.new
       percents_medium=Hash.new
       percents_freq=Hash.new
-
-      puts week_table
       
       for i in week_index
 
