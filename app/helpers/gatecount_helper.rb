@@ -344,7 +344,9 @@ module GatecountHelper
       percents_single=Hash.new
       percents_medium=Hash.new
       percents_freq=Hash.new
-         
+
+      puts week_table
+      
       for i in week_index
 
           week_table=week_table.select{|h| h["week"] == week_range[i]}
