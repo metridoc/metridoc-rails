@@ -358,7 +358,7 @@ module GatecountHelper
           ymax=(num_users).fdiv(total_pop)
           ymax=(ymax.round(2))*100
 
-          if week_range.min==1
+          if week_range.min < 34
              percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
              percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
              percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
