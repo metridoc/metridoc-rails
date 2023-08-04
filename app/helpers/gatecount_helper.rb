@@ -318,11 +318,11 @@ module GatecountHelper
       copy_table=input_table
 
       if library=="Biotech"
-       copy_table=copy_table.select{|h| h["library"] == "Biotech"}
+       week_table=copy_table.select{|h| h["library"] == "Biotech"}
       elsif library=="Furness"
-       copy_tablecopy_table.select{|h| h["library"] == "Furness"}
+       week_table=copy_table.select{|h| h["library"] == "Furness"}
       elsif library=="Van Pelt"
-       copy_table=copy_table.select{|h| h["library"] == "Van Pelt"}        
+       week_table=copy_table.select{|h| h["library"] == "Van Pelt"}        
       end
 
       time=copy_table.pluck("week")
