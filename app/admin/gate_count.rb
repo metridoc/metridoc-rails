@@ -8,7 +8,7 @@ ActiveAdmin.register_page "GateCount" do
     @semester = params[:semester]
     @input_year = params[:year]
     #redirect_url = "/admin/population_penetration?library=#{params['library']}&school=#{params['school']}&semester=#{params['semester']}&year=#{params['year']}"
-    redirect_url = "/admin/population_penetration?library=#{params['library']}&semester=#{params['semester']}&year=#{params['year']}"
+    redirect_url = "/admin/population_penetration"
     redirect_to redirect_url
 
   end
