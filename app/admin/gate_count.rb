@@ -7,6 +7,7 @@ ActiveAdmin.register_page "GateCount" do
     @input_library = params[:library]
     @semester = params[:semester]
     @input_year = params[:year]
+    #This currently breaks the graph because some of the schools have an "&" in their name. Also breaks the default setting. Might fix this later.
     #redirect_url = "/admin/population_penetration?library=#{params['library']}&school=#{params['school']}&semester=#{params['semester']}&year=#{params['year']}"
     redirect_url = "/admin/population_penetration"
     redirect_to redirect_url
