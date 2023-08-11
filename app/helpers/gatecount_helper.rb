@@ -317,8 +317,6 @@ module GatecountHelper
   def freq_counts(input_table,fiscal_year,school_index,library)
       copy_table=input_table
 
-      puts copy_table
-
       if library=="Biotech"
        copy_table=copy_table.select{|h| h["library"] == "Biotech"}
       elsif library=="Furness"
