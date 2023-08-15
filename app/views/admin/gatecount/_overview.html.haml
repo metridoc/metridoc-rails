@@ -5,6 +5,7 @@
 -bio_yearly=gen_stats(time_table,"All","Biotech","All")
 -vp_yearly=gen_stats(time_table,"All","Van Pelt","All")
 
+-#Manually inputting in the Biotech data that is not in metridoc (prior to 2022)
 -bio_year=(2016..2021).to_a
 -bio_year_index=(0..bio_year.length-1).to_a
 
@@ -28,8 +29,10 @@
 -bio_yearly_counts=time_counts(bio_yearly,"Yearly","Counts")
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
 
+-#Manually inputting in the Biotech data that is not in metridoc (prior to 2022)
 -for y in bio_year_index
   -for m in month_range
+  -#Need to make sure these are in the correct year (this is not fiscal!)
     -if m >= 7 && y < 5
       -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
     -else
@@ -50,8 +53,6 @@
 -furn_yearly_people=time_counts(furn_yearly,"Yearly","People")
 -bio_yearly_people=time_counts(bio_yearly,"Yearly","People")
 -vp_yearly_people=time_counts(vp_yearly,"Yearly","People")
-
--puts bio_yearly_people
 		      
 #data-viz
   #single-col
@@ -70,6 +71,7 @@
 -bio_fiscal_counts=time_counts(bio_yearly,"Fiscal_Year","Counts")
 -vp_fiscal_counts=time_counts(vp_yearly,"Fiscal_Year","Counts")
 
+-#Again manually adding the biotech library data that is not in metridoc:
 -bio_extra_data=(2016..2020).to_a
 -bio_counts=[106119,102840,97496,107031,85856]
 -bio_index=(0..4).to_a
@@ -78,7 +80,7 @@
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"} Card Swipes Per Year Per Library 2016-2023
+    %h2{style: "text-align:center;"} Card Swipes Per Fiscal Year Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_fiscal_counts},
 		  {name: "Furness", data: furn_fiscal_counts},
 		  {name: "Van Pelt", data: vp_fiscal_counts}],
@@ -94,7 +96,7 @@
 
 #data-viz
   #single-col
-    %h2{style: "text-align:center;"} Number of Visitors Per Year Per Library 2016-2023
+    %h2{style: "text-align:center;"} Number of Visitors Per Fiscal Year Per Library 2016-2023
     = line_chart [{name: "BioTech", data: bio_fiscal_people},
 		  {name: "Furness", data: furn_fiscal_people},
 		  {name: "Van Pelt", data: vp_fiscal_people}],
@@ -146,20 +148,16 @@
 -vp_percent_change=percent_change(vp_all_counts)
 
 -month_names=["Statistics","July","August","September","October","November","December","January","February","March","April","May","June","Total"]
-
 -month_range=(0..13).to_a
 
 -year_range=(2017..2023).to_a
 -year_index=(0..year_range.length-1).to_a
 
 %ul
-
 %hr
-
 %section
-
   %h2{style: "text-align:center;"} Monthly Gate Count Tables By Library
-  %p{style: "text-align:center; font-size: 1.25em;"} The charts that follow have a "% Change" column which are calculated relative to the gate counts from 2023. These cells are highlighted blue if the number of gate counts are higher than those relative to 2023, and red if the number of gate counts are lower relative to 2023.
+  %p{style: "text-align:center; font-size: 1.25em;"} The charts that follow have a "% Change" column which is calculated relative to the gate counts from 2023. These cells are highlighted blue if the number of gate counts are higher than those relative to 2023, and red if the number of gate counts are lower relative to 2023.
 
   %h2{style: "text-align:center;"} Van Pelt Monthly Gate Counts
 
@@ -179,6 +177,7 @@
           -data_one=vp_all_counts[y+1][month_names[m]]
           -data_two=vp_percent_change[y+1][month_names[m]]
           -if data_two.is_a? Numeric
+            -#Add the colors for a positive or negative percent change, leave white otherwise.
             -if data_two > 0
               %td{:align => "center"}="#{data_one}"
               %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
@@ -197,16 +196,16 @@
     
 -year_range=(2016..2023).to_a
 -year_index=(1..year_range.length-1).to_a
--bio_year_index=(0..bio_year.length-1).to_a
-  
--bio_all_counts=Array.new(6) {Hash.new}  
 
+-#Manually add in the biotech data from before 2022.
+-bio_all_counts=Array.new(6) {Hash.new}  
+-bio_year_index=(0..bio_year.length-1).to_a
+    
 -for y in bio_year_index
   -for m in month_range
     -bio_all_counts[y][month_names[m]]=all_bio[y][m]
 
 -bio_all_counts.concat(bio_counts[-2,2])
-
 -bio_percent_change=percent_change(bio_all_counts)
 
 %section
@@ -229,6 +228,7 @@
           -data_one=bio_all_counts[i][month_names[m]]
           -data_two=bio_percent_change[i][month_names[m]]
           -if data_two.is_a? Numeric
+            -#Add colors if the percent change is positive or negative, leave white otherwise.
             -if data_two > 0
               %td{:align => "center"}="#{data_one}"
               %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
@@ -247,7 +247,6 @@
 -furn_percent_change=percent_change(furn_all_counts)
 
 -year_range=(2020..2023).to_a
-
 -year_index=(-4..-1).to_a
 
 %section
@@ -270,6 +269,7 @@
           -data_one=furn_all_counts[y][month_names[m]]
           -data_two=furn_percent_change[y][month_names[m]]
           -if data_two.is_a? Numeric
+            -#Add colors if the percent change is positive or negative, leave white otherwise.
             -if data_two > 0
               %td{:align => "center"}="#{data_one}"
               %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
