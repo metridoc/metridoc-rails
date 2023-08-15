@@ -30,9 +30,10 @@
 -vp_yearly_counts=time_counts(vp_yearly,"Yearly","Counts")
 
 -#Manually inputting in the Biotech data that is not in metridoc (prior to 2022)
+-#Need to make sure these are in the correct year (this is not fiscal!)
+
 -for y in bio_year_index
   -for m in month_range
-  -#Need to make sure these are in the correct year (this is not fiscal!)
     -if m >= 7 && y < 5
       -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
     -else
