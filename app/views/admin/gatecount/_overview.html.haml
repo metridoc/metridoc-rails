@@ -177,7 +177,7 @@
           -data_one=vp_all_counts[y+1][month_names[m]]
           -data_two=vp_percent_change[y+1][month_names[m]]
           -if data_two.is_a? Numeric
-            -#Add the colors for a positive or negative percent change, leave white otherwise.
+          -#Add the colors for a positive or negative percent change, leave white otherwise.
             -if data_two > 0
               %td{:align => "center"}="#{data_one}"
               %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
@@ -228,7 +228,7 @@
           -data_one=bio_all_counts[i][month_names[m]]
           -data_two=bio_percent_change[i][month_names[m]]
           -if data_two.is_a? Numeric
-            -#Add colors if the percent change is positive or negative, leave white otherwise.
+          -#Add colors if the percent change is positive or negative, leave white otherwise.
             -if data_two > 0
               %td{:align => "center"}="#{data_one}"
               %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
@@ -269,7 +269,7 @@
           -data_one=furn_all_counts[y][month_names[m]]
           -data_two=furn_percent_change[y][month_names[m]]
           -if data_two.is_a? Numeric
-            -#Add colors if the percent change is positive or negative, leave white otherwise.
+          -#Add colors if the percent change is positive or negative, leave white otherwise.
             -if data_two > 0
               %td{:align => "center"}="#{data_one}"
               %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
