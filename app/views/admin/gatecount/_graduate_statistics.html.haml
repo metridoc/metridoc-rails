@@ -7,9 +7,9 @@
 
 -grad_school_index=(0..11).to_a
 
--furness_table=gen_stats(library_table,2023,"Furness","All")
--biotech_table=gen_stats(library_table,2023,"Biotech","All")
--van_pelt_table=gen_stats(library_table,2023,"Van Pelt","All")
+-furness_table=gc_gen_stats(library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(library_table,2023,"Van Pelt","All")
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
@@ -18,18 +18,18 @@
 %h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 #left-col
   %h3{style: "text-align:center;"} Furness
-  =pie_chart  calc_percents(furness_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+  =pie_chart  gc_calc_percents(furness_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
 
 #right-col
   %h3{style: "text-align:center;"} Biotech Commons
-  =pie_chart calc_percents(biotech_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+  =pie_chart gc_calc_percents(biotech_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
 
 %h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 
 #data-viz
 #single-col
   %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+  =pie_chart gc_calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
 
 -grad_enrollment=enrollment_table("Graduate")
 
@@ -49,8 +49,8 @@
 #single-col
   =column_chart grad_bar_percents, round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
 
--med_bio=calc_percents(biotech_table,"Raw Counts","Grad Student")
--vp_bio=calc_percents(van_pelt_table,"Raw Counts","Grad Student")
+-med_bio=gc_calc_percents(biotech_table,"Raw Counts","Grad Student")
+-vp_bio=gc_calc_percents(van_pelt_table,"Raw Counts","Grad Student")
 
 -med_bio_counts=med_bio.select{|k,v| k == "The Wharton School" || k == "School of Dental Medicine" || k == "Perelman School of Medicine" || k == "Veterinary Medicine" || k == "School of Nursing"}
 -med_vp_counts=vp_bio.select{|k,v| k == "The Wharton School" || k == "School of Dental Medicine" || k == "Perelman School of Medicine" || k == "Veterinary Medicine" || k == "School of Nursing"}

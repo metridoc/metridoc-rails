@@ -27,9 +27,9 @@
 %strong
   Note that the default plot is for the College of Arts & Sciences, Van Pelt, Spring 2023 if no data exists for the library for the year selected.   
 
--gen_school_table=freq_table(semester,input_year,input_school)
+-gen_school_table=gc_freq_table(semester,input_year,input_school)
 
--ymax,percents_single,percents_medium,percents_freq=freq_counts(gen_school_table,input_year,school_index,input_library)
+-ymax,percents_single,percents_medium,percents_freq=gc_freq_counts(gen_school_table,input_year,school_index,input_library)
 
 #data-viz
   #single-col

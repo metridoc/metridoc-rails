@@ -7,13 +7,13 @@
 
 -school_index=(0..11).to_a
 
--furness_table=gen_stats(library_table,2023,"Furness","All")
--biotech_table=gen_stats(library_table,2023,"Biotech","All")
--van_pelt_table=gen_stats(library_table,2023,"Van Pelt","All")
+-furness_table=gc_gen_stats(library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(library_table,2023,"Van Pelt","All")
 
--furn_counts=calc_percents(furness_table,"Counts","F/S")
--vp_counts=calc_percents(van_pelt_table,"Counts","F/S")
--bio_counts=calc_percents(biotech_table,"Counts","F/S")
+-furn_counts=gc_calc_percents(furness_table,"Counts","F/S")
+-vp_counts=gc_calc_percents(van_pelt_table,"Counts","F/S")
+-bio_counts=gc_calc_percents(biotech_table,"Counts","F/S")
 
 -furn_pie=Hash.new
 -vp_pie=Hash.new
@@ -57,7 +57,7 @@
 -puts school_pop
 
 -staff_bar_percents=Hash.new
--staff_people=calc_percents(van_pelt_table,"Individuals","F/S")
+-staff_people=gc_calc_percents(van_pelt_table,"Individuals","F/S")
 
 -school_index.each {|i| staff_bar_percents[school_names[i]]=((staff_people[school_names[i]]).fdiv(school_pop[i]))*100}
 

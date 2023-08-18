@@ -11,11 +11,11 @@
 
 -school_index.each {|i| school_pop[i]=undergrad_enroll[enroll_names[i]]}
 
--furness_table=gen_stats(library_table,2023,"Furness","All")
--biotech_table=gen_stats(library_table,2023,"Biotech","All")
--van_pelt_table=gen_stats(library_table,2023,"Van Pelt","All")
+-furness_table=gc_gen_stats(library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(library_table,2023,"Van Pelt","All")
 
--undergrad_vp=calc_percents(van_pelt_table,"Counts","Undergraduate Student")
+-undergrad_vp=gc_calc_percents(van_pelt_table,"Counts","Undergraduate Student")
 -undergrad_pie=Hash.new
 
 -school_index.each {|i| undergrad_pie[school_names[i]]=(undergrad_vp[school_names[i]])}
@@ -27,7 +27,7 @@
   %h3{style: "text-align:center;"} Undergraduate Students
   =pie_chart undergrad_pie, round: 2, suffix: "%", download: true
 
--undergrad_people=calc_percents(van_pelt_table,"Individuals","Undergraduate Student")
+-undergrad_people=gc_calc_percents(van_pelt_table,"Individuals","Undergraduate Student")
 -undergrad_bar_percents=Hash.new
 
 -school_index.each {|i| undergrad_bar_percents[school_names[i]]=((undergrad_people[school_names[i]]).fdiv(school_pop[i]))*100}
@@ -37,9 +37,9 @@
 #single-col
   =column_chart undergrad_bar_percents, round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
 
--undergrad_bio=calc_percents(biotech_table,"Raw Counts","Undergraduate Student")
--undergrad_vp=calc_percents(van_pelt_table,"Raw Counts","Undergraduate Student")
--undergrad_furn=calc_percents(furness_table,"Raw Counts","Undergraduate Student")
+-undergrad_bio=gc_calc_percents(biotech_table,"Raw Counts","Undergraduate Student")
+-undergrad_vp=gc_calc_percents(van_pelt_table,"Raw Counts","Undergraduate Student")
+-undergrad_furn=gc_calc_percents(furness_table,"Raw Counts","Undergraduate Student")
 
 -all_undergrad=[undergrad_vp,undergrad_bio,undergrad_furn]
 
