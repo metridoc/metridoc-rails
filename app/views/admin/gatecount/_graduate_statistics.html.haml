@@ -7,9 +7,9 @@
 
 -grad_school_index=(0..11).to_a
 
--furness_table=gc_gen_stats(library_table,2023,"Furness","All")
--biotech_table=gc_gen_stats(library_table,2023,"Biotech","All")
--van_pelt_table=gc_gen_stats(library_table,2023,"Van Pelt","All")
+-furness_table=gc_gen_stats(gc_library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(gc_library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(gc_library_table,2023,"Van Pelt","All")
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
@@ -31,7 +31,7 @@
   %h3{style: "text-align:center;"} Van Pelt
   =pie_chart gc_calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
 
--grad_enrollment=enrollment_table("Graduate")
+-grad_enrollment=gc_enrollment_table("Graduate")
 
 -enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
 'Perelman','Veterinary','Nursing','SP2']
@@ -40,7 +40,7 @@
 -grad_school_index.each {|i| grad_school_pop[i]=grad_enrollment[enroll_names[i]]}
 
 -grad_bar_percents=Hash.new
--grad_people=calc_percents(van_pelt_table,"Individuals","Grad Student")
+-grad_people=gc_calc_percents(van_pelt_table,"Individuals","Grad Student")
 
 -grad_school_index.each {|i| grad_bar_percents[grad_school_names[i]]=((grad_people[grad_school_names[i]]).fdiv(grad_school_pop[i]))*100}
 

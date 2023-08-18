@@ -3,7 +3,7 @@ module GatecountHelper
 #Library options are "Van Pelt", "Biotech", "Furness", "All"
 
   #The library_table is used for all "population" plots (grouped by school).
-  def library_table
+  def gc_library_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            school,
@@ -36,7 +36,7 @@ module GatecountHelper
 
   #The time_table is used for all time plots *except* for the frequency plots by school.
   #Excluding "Penn libraries" here so that workers who swipe in all the time are not counted.
-  def time_table
+  def gc_time_table
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            CASE
@@ -62,7 +62,7 @@ module GatecountHelper
   end
 
   #Used for the plot on the _index page and the _population page
-  def freq_table(semester,input_year,input_school)
+  def gc_freq_table(semester,input_year,input_school)
 
       if semester=="Spring"
          start_week=1
@@ -109,7 +109,7 @@ module GatecountHelper
 
   #Get the yearly enrollment of a particular user group for a given year.
   #User groups are "Total" (the total student population), "Undergrad", "Graduate", and "F/S".
-  def enrollment_table(user,input_year=2023) 
+  def gc_enrollment_table(user,input_year=2023) 
     pop_table=Upenn::Enrollment.connection.select_all(
       "SELECT
          school,
@@ -149,7 +149,7 @@ module GatecountHelper
   end  
 
   #Delete data from the wrong year/library/school:
-  def gen_stats(input_table,fiscal_year,library,school_type)
+  def gc_gen_stats(input_table,fiscal_year,library,school_type)
     gen_values=input_table
     if fiscal_year.is_a? Integer
        gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
@@ -171,7 +171,7 @@ module GatecountHelper
     
   end
 
-  def calc_percents(input_table,type,user_group)
+  def gc_calc_percents(input_table,type,user_group)
     
     #type is one of four options:
     #1) "Counts" is the percentage of counts relative to the total (user) population.
@@ -238,7 +238,7 @@ module GatecountHelper
   #Put the data in the desired time and count bins. Current options for time_frame are:
   #"Monthly", "Fiscal_Year", "Yearly" (calendar year), and "All" (all data available in Metridoc).
   #This function is used for the plots generated in "_overview.html.haml"
-  def time_counts(input_table,time_frame,count_type)
+  def gc_time_counts(input_table,time_frame,count_type)
     
       copy_table=input_table
 
@@ -331,7 +331,7 @@ module GatecountHelper
   end
 
   #Makes the plot shown on the _index page and the _population page.
-  def freq_counts(input_table,fiscal_year,school_index,library)
+  def gc_freq_counts(input_table,fiscal_year,school_index,library)
       copy_table=input_table
 
       #Select the library of interest:
@@ -352,7 +352,7 @@ module GatecountHelper
       enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
                     'Perelman','Veterinary','Nursing','SP2']
       
-      total_pop=enrollment_table("Total",fiscal_year)[enroll_names[school_index.to_i]]
+      total_pop=gc_enrollment_table("Total",fiscal_year)[enroll_names[school_index.to_i]]
 
       week_range=(time.min.to_i..time.max.to_i).to_a
       week_index=(0..week_range.length-1).to_a
@@ -393,7 +393,7 @@ module GatecountHelper
       
   #Reads in an array of hashes, comparing each year's month data to the comparison_year
   #(by default the most recent), then outputs an array of hashes of the differences.
-  def percent_change(input_data)
+  def gc_percent_change(input_data)
 
      data_length=input_data.length
 

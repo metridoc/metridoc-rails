@@ -1,9 +1,9 @@
 = javascript_include_tag 'application'
 
 -#Define general tables from which to query for the first four plots.
--furn_yearly=gc_gen_stats(time_table,"All","Furness","All")
--bio_yearly=gc_gen_stats(time_table,"All","Biotech","All")
--vp_yearly=gc_gen_stats(time_table,"All","Van Pelt","All")
+-furn_yearly=gc_gen_stats(gc_time_table,"All","Furness","All")
+-bio_yearly=gc_gen_stats(gc_time_table,"All","Biotech","All")
+-vp_yearly=gc_gen_stats(gc_time_table,"All","Van Pelt","All")
 
 -#Manually inputting in the Biotech data that is not in metridoc (prior to 2022)
 -bio_year=(2016..2021).to_a
@@ -108,9 +108,9 @@
 		  download: true
 
 -#General 2023 tables:
--furness_2023_table=gc_gen_stats(time_table,2023,"Furness","All")
--biotech_2023_table=gc_gen_stats(time_table,2023,"Biotech","All")
--vp_2023_table=gc_gen_stats(time_table,2023,"Van Pelt","All")
+-furness_2023_table=gc_gen_stats(gc_time_table,2023,"Furness","All")
+-biotech_2023_table=gc_gen_stats(gc_time_table,2023,"Biotech","All")
+-vp_2023_table=gc_gen_stats(gc_time_table,2023,"Van Pelt","All")
 
 -furn_2023_counts=gc_time_counts(furness_2023_table,"Monthly","Counts")
 -vp_2023_counts=gc_time_counts(vp_2023_table,"Monthly","Counts")
@@ -144,7 +144,7 @@
 		  curve: false,
 		  download: true   
 
--vp_gen_table=gc_gen_stats(time_table,"All","Van Pelt","All")
+-vp_gen_table=gc_gen_stats(gc_time_table,"All","Van Pelt","All")
 -vp_all_counts=gc_time_counts(vp_gen_table,"All","Counts")
 -vp_percent_change=gc_percent_change(vp_all_counts)
 
@@ -192,7 +192,7 @@
             %td{:align => "center"}="#{data_one}"
             %td{:align => "center"}="#{data_two}"
 
--bio_gen_table=gc_gen_stats(time_table,"All","Biotech","All")
+-bio_gen_table=gc_gen_stats(gc_time_table,"All","Biotech","All")
 -bio_counts=gc_time_counts(bio_gen_table,"All","Counts")
     
 -year_range=(2016..2023).to_a
@@ -207,7 +207,7 @@
     -bio_all_counts[y][month_names[m]]=all_bio[y][m]
 
 -bio_all_counts.concat(bio_counts[-2,2])
--bio_percent_change=percent_change(bio_all_counts)
+-bio_percent_change=gc_percent_change(bio_all_counts)
 
 %section
 
@@ -243,7 +243,7 @@
             %td{:align => "center"}="#{data_one}"
             %td{:align => "center"}="#{data_two}"
 
--furn_gen_table=gc_gen_stats(time_table,"All","Furness","All")
+-furn_gen_table=gc_gen_stats(gc_time_table,"All","Furness","All")
 -furn_all_counts=gc_time_counts(furn_gen_table,"All","Counts")
 -furn_percent_change=gc_percent_change(furn_all_counts)
 

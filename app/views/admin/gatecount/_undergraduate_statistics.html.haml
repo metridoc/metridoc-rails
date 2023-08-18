@@ -4,16 +4,16 @@
 "College of Arts & Sciences"]
 
 -enroll_names=["Nursing","Wharton","Engineering","SAS"]
--undergrad_enroll=enrollment_table("Undergrad")
+-undergrad_enroll=gc_enrollment_table("Undergrad")
 
 -school_index=(0..3).to_a
 -school_pop=Array.new(4,0)
 
 -school_index.each {|i| school_pop[i]=undergrad_enroll[enroll_names[i]]}
 
--furness_table=gc_gen_stats(library_table,2023,"Furness","All")
--biotech_table=gc_gen_stats(library_table,2023,"Biotech","All")
--van_pelt_table=gc_gen_stats(library_table,2023,"Van Pelt","All")
+-furness_table=gc_gen_stats(gc_library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(gc_library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(gc_library_table,2023,"Van Pelt","All")
 
 -undergrad_vp=gc_calc_percents(van_pelt_table,"Counts","Undergraduate Student")
 -undergrad_pie=Hash.new

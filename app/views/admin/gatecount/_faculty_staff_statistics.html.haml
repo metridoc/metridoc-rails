@@ -7,9 +7,9 @@
 
 -school_index=(0..11).to_a
 
--furness_table=gc_gen_stats(library_table,2023,"Furness","All")
--biotech_table=gc_gen_stats(library_table,2023,"Biotech","All")
--van_pelt_table=gc_gen_stats(library_table,2023,"Van Pelt","All")
+-furness_table=gc_gen_stats(gc_library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(gc_library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(gc_library_table,2023,"Van Pelt","All")
 
 -furn_counts=gc_calc_percents(furness_table,"Counts","F/S")
 -vp_counts=gc_calc_percents(van_pelt_table,"Counts","F/S")
@@ -45,7 +45,7 @@
 
 -#These two plots should be fixed now...
 
--num_staff=enrollment_table("F/S",2023)
+-num_staff=gc_enrollment_table("F/S",2023)
 
 -enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
 'Perelman','Veterinary','Nursing','SP2']
