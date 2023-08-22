@@ -1,30 +1,55 @@
 ---
 load_sequence: 1
+
 target_model: "Alma::Circulation"
 target_adapter: "csv"
+
 file_name: "alma_circulation_daily.csv"
+
+# Flag for the Alma API
+source_adapter: "alma"
+# URL Encoded report path
+report_path: "path=%2Fshared%2FUniversity%20of%20Pennsylvania%2FReports%2Fdaily_circ_report_for_metridoc_012822"
+apikey_string: "&apikey="
+# Limit must be between 25 and 1000 and a multiple of 25
+limit: "&limit=1000"
+
+# API columns to MetriDoc column mapping
+# Alma Uses the original column names, not what is assigned in the GUI
+# As such, the SQL for any calculations need to be used as column names
 column_mappings:
+  "Item Loan Id": item_loan_id
+  # Item Status
+  ' CASE  WHEN  NOT Return Date IS NULL  THEN Return Date ELSE Loan Date END': last_status_update
+  "Process Status": process_status
+  "Loan Status": loan_status
+  # Material type
+  "Physical Item Details.Material Type": physical_item_material_type
+  "Bibliographic Details.Material Type": bibliographic_material_type
+  "Bibliographic Details.Resource Type": bibliographic_resource_type
+  # Loan date
+  ' EXTRACT( YEAR  FROM  TIMESTAMPADD( SQL_TSI_MONTH , 6, Loan Date))': loan_fiscal_year
+  "Loan Year": loan_year
+  "Loan Date": loan_date
+  # Due date and return date
+  "Renewals": renewals
+  "Due Date": due_date
+  "Original Due Date": original_due_date
+  "Return Date": return_date
+  # Type of loan
   "Policy Name": policy_name
-  "Barcode": barcode
-  "Item Id": item_id
-  "Permanent Call Number": permanent_call_number
-  "Classification Code": classification_code
-  "LC Group1": lc_group1
-  "LC Group2": lc_group2
-  "LC Group3": lc_group3
-  "LC Group4": lc_group4
-  "LC Group5": lc_group5
-  "Dewey Number": dewey_number
-  "Dewey Group1": dewey_group1
-  "Dewey Group2": dewey_group2
-  "Dewey Group3": dewey_group3
-  "MMS Id": mms_id
+  # Source of loan
+  "Library Name": library_name
+  "Location Name": location_name
+  # Meta data of object
   "Title": title
   "Title (Normalized)": title_normalized
   "Author": author
-  "Bibliographic Material Type": bibliographic_material_type
-  "Physical Item Material Type": physical_item_material_type
-  "Bibliographic Resource Type": bibliographic_resource_type
+  "Physical Item Id": physical_item_id
+  "Barcode": barcode
+  "Receiving Date (calendar)": item_creation
+  # Item Identification
+  "MMS Id": mms_id
   "ISBN": isbn
   "ISBN (Normalized)": isbn_normalized
   "ISSN": issn
@@ -33,19 +58,47 @@ column_mappings:
   "OCLC Control Number (035a)": oclc_control_number_035a
   "OCLC Control Number (035z)": oclc_control_number_035z
   "OCLC Control Number (035a+z)": oclc_control_number_035az
-  "Library Name": library_name
-  "Location Name": location_name
-  "Resource Sharing Library": resource_sharing_library
+  # LC Classification
+  "Permanent Call Number": permanent_call_number
+  "Classification Code": classification_code
+  "LC Classifications.Group1": lc_group1
+  "LC Classifications.Group2": lc_group2
+  "LC Classifications.Group3": lc_group3
+  "LC Classifications.Group4": lc_group4
+  "LC Classifications.Group5": lc_group5
+  # Dewey classification
+  "Dewey Number": dewey_number
+  "Dewey Classifications.Group1": dewey_group1
+  "Dewey Classifications.Group2": dewey_group2
+  "Dewey Classifications.Group3": dewey_group3
+  # Demographic information
+  "First Name": first_name
+  "Last Name": last_name
+  "Preferred Email": preferred_email
+  "User Primary Identifier": penn_id_number
+  "User Id": user_id
   "User Group": user_group
   "Statistical Category 1": statistical_category_1
   "Statistical Category 2": statistical_category_2
   "Statistical Category 3": statistical_category_3
   "Statistical Category 4": statistical_category_4
   "Statistical Category 5": statistical_category_5
-  "Loan Year": loan_year
-  "Loan Fiscal Year": loan_fiscal_year
-  "Loan Date": loan_date
-  "Due Date": due_date
-  "Original Due Date": original_due_date
 
+# Specify unique keys for the upload
+unique_keys: ["item_loan_id"]
+upsert: true
+# List of specific columns to update on conflict
+upsert_columns:
+- "last_status_update"
+- "process_status"
+- "loan_status"
+- "renewals"
+- "due_date"
+- "original_due_date"
+- "return_date"
 
+# Filter for request
+#export_filter_start_date: "2017-07-01"
+#export_filter_end_date: "2018-01-01"
+incremental_filter_sql: 'CASE WHEN "Return Date"."Return Date" IS NOT NULL THEN "Return Date"."Return Date" ELSE "Loan Date"."Loan Date" END'
+incremental_filter_column: "last_status_update"

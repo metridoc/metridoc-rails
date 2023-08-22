@@ -420,7 +420,7 @@ module GatecountHelper
              if old_data.nil? == true || l==input_data.length-1
                 percent_change=nil
              elsif new_data.nil? == true || l==input_data.length-1
-                percent_change=nil 
+                percent_change=nil
              else  
                 percent_change=(old_data-new_data).fdiv(new_data)
                 percent_change=(percent_change*100).round(2)

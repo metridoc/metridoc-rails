@@ -304,6 +304,12 @@ ActiveAdmin.setup do |config|
       menu.add label: I18n.t("active_admin.resource_sharing"),
         priority: 1
 
+      # Alma Circulation
+      menu.add  label: I18n.t("active_admin.alma.alma_menu"),
+        url: :admin_alma_circulations_path,
+        if: proc{ authorized?(:read, "Alma") },
+        parent: I18n.t("active_admin.resource_sharing")
+
       # Course Reserves
       menu.add  label: I18n.t("active_admin.course_reserves.course_reserves_menu"),
         url: :course_reserves_root_path,
@@ -494,7 +500,8 @@ ActiveAdmin.setup do |config|
   # List of namespaces that need menus
   namespaces = [
     :admin, :ipeds, :ezborrow, :borrowdirect,
-    :illiad, :ezproxy, :upenn, :course_reserves
+    :illiad, :ezproxy, :upenn, :course_reserves,
+    :library_staff
   ]
 
   # Configure the menu for all namespaces
