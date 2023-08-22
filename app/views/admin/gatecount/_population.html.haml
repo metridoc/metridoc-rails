@@ -8,17 +8,16 @@
 
 -libraries=["Van Pelt","Biotech","Furness"]
 
--schools=["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
-"School of Dental Medicine","School of Design","Graduate School of Education",
-"School of Engineering and Applied Science","Law School","Perelman School of Medicine","Veterinary Medicine",
-"School of Nursing","School of Social Policy & Practice"]
-
--input_school=params[:school].nil? ? "College of Arts & Sciences" : params[:school]
+-input_school=input_school.nil? ? "College of Arts & Sciences" : input_school
 -input_library=params[:library].nil? ? "Van Pelt" : params[:library]
--semester=params[:semester].nil? ? "Spring" : params[:semester]
+-input_semester=params[:semester].nil? ? "Spring" : params[:semester]
 -input_year=params[:year].nil? ? 2023 : params[:year].to_i
 
--school_index=schools.find_index(input_school)
+-url_decoding={'%20' => ' ', '%26' => '&'}
+-url_decoding.each do |k,v|
+  -input_school.gsub!(k,v)
+
+-school_index=gc_schools.find_index(input_school)
 
 %hr
 %h2{style: "text-align:center;"}="Fiscal Year #{input_year} School Population Statistics"
@@ -27,13 +26,13 @@
 %strong
   Note that the default plot is for the College of Arts & Sciences, Van Pelt, Spring 2023 if no data exists for the library for the year selected.   
 
--gen_school_table=gc_freq_table(semester,input_year,input_school)
+-gen_school_table=gc_freq_table(input_semester,input_year,input_school)
 
 -ymax,percents_single,percents_medium,percents_freq=gc_freq_counts(gen_school_table,input_year,school_index,input_library)
 
 #data-viz
   #single-col
-  %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, #{semester} Semester Fiscal Year #{input_year}"
+  %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, #{input_semester} Semester Fiscal Year #{input_year}"
   = column_chart [{name: "Single Visit", data: percents_single},
     {name: "Medium Visits", data: percents_medium},
     {name:"Freq Visits", data: percents_freq}],

@@ -7,13 +7,6 @@ ActiveAdmin.register_page "Population & Penetration" do
   #Don't add to the top menu
   menu false
 
-  #Action needed to define variables for frequency plots
-  page_action :population, method: :get do
-    @input_school = params[:school]
-    @input_library = params[:libary]
-    redirect_url="/admin/population_penetration?library=#{params['library']}&school=#{params['school']}"
-  end
-
   #Title for the page
   content title: "Populations & Penetration" do
     render partial: 'admin/gatecount/population'

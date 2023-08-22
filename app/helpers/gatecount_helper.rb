@@ -1,9 +1,51 @@
 module GatecountHelper
 
+  #Define arrays and hashes that are consistently used:
+  #Note: need to add "Social Policy & Practice" for the first SQL query below because for some reason that
+  #is the correct name for the school when querying for Faculty and Staff.
+  def gc_schools
+    ["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
+"School of Dental Medicine","School of Design","Graduate School of Education",
+"School of Engineering and Applied Science","Law School","Perelman School of Medicine",
+"Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+  end
+
+  #The names of the schools are different in the enrollments table.
+  def gc_enroll_names
+      ['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
+  end  
+
+  def gc_door_mapping
+    {'VAN PELT LIBRARY ADA DOOR_ *VPL' => 'Van Pelt', 'VAN PELT LIBRARY TURN1_ *VPL' => 'Van Pelt','VAN PELT LIBRARY TURN2_ *VPL' => 'Van Pelt', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL' => 'Van Pelt','FURNESS TURNSTILE_ *FUR' => 'Furness', 'BIO LIBRARY TURNSTILE GATE_ *JSN' => 'Biotech'}
+  end
+
+  def gc_users
+    {"Total" => "Enrollment Total","Undergrad" => "Undergraduate Total","Graduate" => "Graduate Total","F/S" => "Regular Faculty & Staff Total"}
+  end
+
+  def gc_months
+    Date::MONTHNAMES.compact
+  end
+
+  #Inputting these values manually since they're not in Metridoc.
+  def gc_all_bio
+      bio_2016=["Count",10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
+      bio_2017=["Count",7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
+      bio_2018=["Count",6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
+      bio_2019=["Count",7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
+      bio_2020=["Count",9271,8631,12122,13036,9764,9624,7683,11430,4295,nil,nil,nil,85856]
+      bio_2021=["Count"].concat(Array.new(13))
+      full_bio=[bio_2016,bio_2017,bio_2018,bio_2019,bio_2020,bio_2021]
+      return full_bio
+  end
+  
+#Define tables that are frequently used:
+  
 #Library options are "Van Pelt", "Biotech", "Furness", "All"
 
   #The library_table is used for all "population" plots (grouped by school).
   def gc_library_table
+      doors=gc_door_mapping.keys
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            school,
@@ -20,14 +62,10 @@ module GatecountHelper
            COUNT(card_num) AS num_swipes, 
            COUNT(DISTINCT card_num) AS num_people  
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL',
-           'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL',
-           'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
-              AND school IN ('College of Arts & Sciences','The Wharton School',
-              'Annenberg School for Communication','School of Dental Medicine','School of Design',
-              'Graduate School of Education','School of Engineering and Applied Science','Law School',
-              'Perelman School of Medicine','Veterinary Medicine','School of Nursing',
-              'Social Policy & Practice','School of Social Policy & Practice')
+           WHERE door_name IN ('#{doors[0]}','#{doors[1]}','#{doors[2]}','#{doors[3]}','#{doors[4]}','#{doors[5]}')
+              AND school IN ('#{gc_schools[0]}','#{gc_schools[1]}','#{gc_schools[2]}','#{gc_schools[3]}','#{gc_schools[4]}',
+              '#{gc_schools[5]}','#{gc_schools[6]}','#{gc_schools[7]}','#{gc_schools[8]}','#{gc_schools[9]}',
+              '#{gc_schools[10]}','#{gc_schools[11]}', 'Social Policy & Practice')
               GROUP BY 1, 2, 3, 4
               ORDER BY COUNT(swipe_date);")
 
@@ -37,6 +75,7 @@ module GatecountHelper
   #The time_table is used for all time plots *except* for the frequency plots by school.
   #Excluding "Penn libraries" here so that workers who swipe in all the time are not counted.
   def gc_time_table
+      doors=gc_door_mapping.keys
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            CASE
@@ -52,9 +91,7 @@ module GatecountHelper
            COUNT(card_num) AS num_swipes, 
            COUNT(DISTINCT card_num) AS num_people
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL',
-           'VAN PELT LIBRARY TURN2_ *VPL','VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL',
-           'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
+           WHERE door_name IN ('#{doors[0]}','#{doors[1]}','#{doors[2]}','#{doors[3]}','#{doors[4]}','#{doors[5]}')
            AND school != 'Penn Libraries' 
          GROUP BY 1,2,3;")
 
@@ -64,12 +101,17 @@ module GatecountHelper
   #Used for the plot on the _index page and the _population page
   def gc_freq_table(semester,input_year,input_school)
 
+      doors=gc_door_mapping.keys
+    
       if semester=="Spring"
          start_week=1
          end_week=20
+      elsif semester=="Summer"
+         start_week=22
+         end_week=33
       elsif semester=="Fall"
          start_week=34
-         end_week=52
+         end_week=53
       end
       
       output_table=GateCount::CardSwipe.connection.select_all(
@@ -91,9 +133,7 @@ module GatecountHelper
               AND school='#{input_school}'
               AND DATE_PART('year', swipe_date + INTERVAL '6 month')=#{input_year}
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
-              AND door_name IN ('VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL',
-              'VAN PELT LIBRARY TURN2_ *VPL', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL',
-              'FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN')
+              AND door_name IN ('#{doors[0]}','#{doors[1]}','#{doors[2]}','#{doors[3]}','#{doors[4]}','#{doors[5]}')
            GROUP BY 1, 2, 4)
           SELECT
               week,
@@ -107,47 +147,22 @@ module GatecountHelper
       return output_table.to_a
   end
 
-  #Get the yearly enrollment of a particular user group for a given year.
-  #User groups are "Total" (the total student population), "Undergrad", "Graduate", and "F/S".
-  def gc_enrollment_table(user,input_year=2023) 
-    pop_table=Upenn::Enrollment.connection.select_all(
-      "SELECT
-         school,
-         value,
-         fiscal_year
-       FROM upenn_enrollments;")
+  def gc_enrollment_table(user,input_year=2023)
+    pop_table=Upenn::Enrollment.select(:fiscal_year, :user, :value, :school).where(:user => gc_users[user]).where(:school_parent => "Total").where(:fiscal_year => input_year).where.not(:school => "Non-Academic").all
 
-    enrollments_array=[]
-    fiscal_year=pop_table.to_a.pluck('fiscal_year')
-
-    year_range=(fiscal_year.min.to_i..fiscal_year.max.to_i).to_a
-    year_index=(0..year_range.length-1).to_a
-
-    year_values=pop_table.to_a.select{|h| h["fiscal_year"]==input_year}
-        
     yearly_enroll=Hash.new
-
-    enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
-                  'Perelman','Veterinary','Nursing','SP2']
-        
-    for name in enroll_names
-        if user=="Total"
-          #For some reason it hates when I try to select by user group
-          #so for now I'm just indexing the desired group.
-           values=year_values.select{|h| h["school"]==name}.pluck("value")[0]
-        elsif user=="Undergrad"
-           values=year_values.select{|h| h["school"]==name}.pluck("value")[1]
-        elsif user=="Graduate"
-           values=year_values.select{|h| h["school"]==name}.pluck("value")[4]
-        elsif user=="F/S"
-           values=year_values.select{|h| h["school"]==name}.pluck("value")[10]
-        end
+    
+    for name in gc_enroll_names
+        values=pop_table.to_a.select{|h| h["school"]==name}.pluck("value")[0]
         yearly_enroll[name] = values
     end
+    
     return yearly_enroll
     
-  end  
+  end
 
+#Define helper functions:
+  
   #Delete data from the wrong year/library/school:
   def gc_gen_stats(input_table,fiscal_year,library,school_type)
     gen_values=input_table
@@ -201,17 +216,13 @@ module GatecountHelper
       percents=copy_table.pluck("num_people")
     end
 
-    #Save this information in a hash:
-    schools=['College of Arts & Sciences',"The Wharton School","Annenberg School for Communication",
-             "School of Dental Medicine","School of Design",'Graduate School of Education',
-             'School of Engineering and Applied Science','Law School',"Perelman School of Medicine",
-             "Veterinary Medicine","School of Nursing",'Social Policy & Practice']
+    #"School of Social Policy & Practice" is called something different for F/S:
+    schools=gc_schools[0..10].concat(['Social Policy & Practice'])
 
     if user_group != "F/S"
         schools=copy_table.pluck("school")
         percents_array=Hash.new
-        percent_index=(0..percents.length-1).to_a
-        percent_index.each {|i| percents_array[schools[i]] = percents[i]}
+        percents.each_with_index {|p,i| percents_array[schools[i]] = p}
     #Needed since the "Faculty and Staff" category includes multiple user groups and therefore
     #multiple entries per school.
     elsif user_group=="F/S"
@@ -242,8 +253,6 @@ module GatecountHelper
     
       copy_table=input_table
 
-      month_names=["January","February","March","April","May","June","July","August",
-                   "September","October","November","December"]
       month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
       
       if time_frame=="Monthly"
@@ -262,8 +271,8 @@ module GatecountHelper
          temp_index=(0..count.length-1).to_a
          count_index=[6,7,8,9,10,11,0,1,2,3,4,5]
 
-         temp_index.each {|i| temp_array[month_names[time[i].to_i-1]] = count[i]}
-         count_index.each {|i| count_array[month_names[i]]=temp_array[month_names[i]]}
+         temp_index.each {|i| temp_array[gc_months[time[i].to_i-1]] = count[i]}
+         count_index.each {|i| count_array[gc_months[i]]=temp_array[gc_months[i]]}
          
       else 
          time=copy_table.pluck("fiscal_year")
@@ -311,7 +320,7 @@ module GatecountHelper
 
              #This is intended for table output. 
              elsif time_frame=="All"
-                fiscal_index.each {|i| fiscal_array[month_names[month[i]-1]] = year_counts[i]}
+                fiscal_index.each {|i| fiscal_array[gc_months[month[i]-1]] = year_counts[i]}
                 fiscal_array["Total"]=year_counts.sum
                 fiscal_array["Statistics"]="Count"
                 all_data << fiscal_array
@@ -347,12 +356,8 @@ module GatecountHelper
       card_num=copy_table.pluck('card_num')
       
       num_users=card_num.uniq.length
-
-      #For use with the enrollment table:
-      enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
-                    'Perelman','Veterinary','Nursing','SP2']
       
-      total_pop=gc_enrollment_table("Total",fiscal_year)[enroll_names[school_index.to_i]]
+      total_pop=gc_enrollment_table("Total",fiscal_year)[gc_enroll_names[school_index.to_i]]
 
       week_range=(time.min.to_i..time.max.to_i).to_a
       week_index=(0..week_range.length-1).to_a
@@ -375,13 +380,19 @@ module GatecountHelper
           ymax=(num_users).fdiv(total_pop)
           ymax=(ymax.round(2))*100
 
-          if week_range.min < 34
+          if week_range.min < 21
              percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
              percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
              percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
              percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
+          #Get the correct labels for the summer semester:
+          elsif week_range.min >= 22 and week_range.min <= 33
+             percents_zero["#{week_range[i]-21}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
+             percents_single["#{week_range[i]-21}"]=((single_user).fdiv(total_pop))*100
+             percents_medium["#{week_range[i]-21}"]=((medium_user).fdiv(total_pop))*100
+             percents_freq["#{week_range[i]-21}"]=((freq_user).fdiv(total_pop))*100
           #Get the correct labels for the fall semester:
-          else
+          elsif week_range.min >=34 
              percents_zero["#{week_range[i]-33}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
              percents_single["#{week_range[i]-33}"]=((single_user).fdiv(total_pop))*100
              percents_medium["#{week_range[i]-33}"]=((medium_user).fdiv(total_pop))*100
@@ -397,8 +408,7 @@ module GatecountHelper
 
      data_length=input_data.length
 
-     months=["January","February","March","April","May","June","July","August",
-             "September","October","November","December","Total"]
+     months=gc_months.concat(["Total"])
      all_data=[]
   
      for l in (0..input_data.length-1).to_a

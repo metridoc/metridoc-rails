@@ -1,11 +1,10 @@
 = javascript_include_tag 'application'
 
+-#Necessary: For some reason in staff in the School of Social Policy & Practice are listed as being from "Social Policy & Practice"
 -school_names=["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
 "School of Dental Medicine","School of Design","Graduate School of Education",
 "School of Engineering and Applied Science","Law School","Perelman School of Medicine",
 "Veterinary Medicine","School of Nursing","Social Policy & Practice"]
-
--school_index=(0..11).to_a
 
 -furness_table=gc_gen_stats(gc_library_table,2023,"Furness","All")
 -biotech_table=gc_gen_stats(gc_library_table,2023,"Biotech","All")
@@ -19,9 +18,9 @@
 -vp_pie=Hash.new
 -bio_pie=Hash.new
 
--school_index.each {|i| furn_pie[school_names[i]]=furn_counts[school_names[i]]}
--school_index.each {|i| vp_pie[school_names[i]]=vp_counts[school_names[i]]}
--school_index.each {|i| bio_pie[school_names[i]]=bio_counts[school_names[i]]}
+-school_names.each {|s| furn_pie[s]=furn_counts[s]}
+-school_names.each {|s| vp_pie[s]=vp_counts[s]}
+-school_names.each {|s| bio_pie[s]=bio_counts[s]}
 
 %hr
 %h2{style: "text-align:center;"} Fiscal Year 2023 Faculty & Staff Population Statistics by School
@@ -47,19 +46,17 @@
 
 -num_staff=gc_enrollment_table("F/S",2023)
 
--enroll_names=['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law',
-'Perelman','Veterinary','Nursing','SP2']
-
 -school_pop=Array.new(12,0)
-
--school_index.each {|i| school_pop[i]=num_staff[enroll_names[i]]}
+-gc_enroll_names.each_with_index {|e,i| school_pop[i]=num_staff[e]}
 
 -puts school_pop
 
 -staff_bar_percents=Hash.new
 -staff_people=gc_calc_percents(van_pelt_table,"Individuals","F/S")
 
--school_index.each {|i| staff_bar_percents[school_names[i]]=((staff_people[school_names[i]]).fdiv(school_pop[i]))*100}
+-puts staff_people
+
+-school_names.each_with_index {|s,i| staff_bar_percents[s]=((staff_people[s]).fdiv(school_pop[i]))*100}
 
 %h2{style: "text-align:center;"} Percentage of Faculty/Staff Using the Van Pelt Library Per School
 #data-viz

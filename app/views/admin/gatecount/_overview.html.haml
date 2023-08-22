@@ -12,15 +12,6 @@
 -month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
 -month_range=(0..11).to_a
 
--bio_2016=["Count",10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
--bio_2017=["Count",7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
--bio_2018=["Count",6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
--bio_2019=["Count",7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
--bio_2020=["Count",9271,8631,12122,13036,9764,9624,7683,11430,4295,nil,nil,nil,85856]
--bio_2021=["Count"].concat(Array.new(13))
-
--all_bio=[bio_2016,bio_2017,bio_2018,bio_2019,bio_2020,bio_2021]
-
 %strong
 
   %p{style: "text-align:center;"} *Note: Biotech library count data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. This additionally means that number of visitors information for this library does not exist prior to 2021.
@@ -35,9 +26,9 @@
 -for y in bio_year_index
   -for m in month_range
     -if m >= 7 && y < 5
-      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y+1][m+1]
+      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=gc_all_bio[y+1][m+1]
     -else
-      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=all_bio[y][m+1]
+      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=gc_all_bio[y][m+1]
 
 #data-viz
   #single-col
@@ -75,9 +66,8 @@
 -#Again manually adding the biotech library data that is not in metridoc:
 -bio_extra_data=(2016..2020).to_a
 -bio_counts=[106119,102840,97496,107031,85856]
--bio_index=(0..4).to_a
 
--bio_index.each{|b| bio_fiscal_counts["#{bio_extra_data[b]}"]=bio_counts[b]}
+-bio_counts.each_with_index{|b, i| bio_fiscal_counts["#{bio_extra_data[i]}"]=b}
 
 #data-viz
   #single-col
@@ -148,7 +138,8 @@
 -vp_all_counts=gc_time_counts(vp_gen_table,"All","Counts")
 -vp_percent_change=gc_percent_change(vp_all_counts)
 
--month_names=["Statistics","July","August","September","October","November","December","January","February","March","April","May","June","Total"]
+-month_names=["Statistics"].concat(gc_months.rotate(6),["Total"])
+		      
 -month_range=(0..13).to_a
 
 -year_range=(2017..2023).to_a
@@ -204,7 +195,7 @@
     
 -for y in bio_year_index
   -for m in month_range
-    -bio_all_counts[y][month_names[m]]=all_bio[y][m]
+    -bio_all_counts[y][month_names[m]]=gc_all_bio[y][m]
 
 -bio_all_counts.concat(bio_counts[-2,2])
 -bio_percent_change=gc_percent_change(bio_all_counts)

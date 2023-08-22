@@ -28,14 +28,9 @@
   %li= link_to "Overview", "gate_counts_overview"
   %li= link_to "Populations & Penetration", "population_penetration"
 
--schools=["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
-"School of Dental Medicine","School of Design","Graduate School of Education",
-"School of Engineering and Applied Science","Law School","Perelman School of Medicine",
-"Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
-
 -libraries=["Van Pelt","Biotech","Furness"]
 -years=(2016..2023).to_a
--semesters=["Spring","Fall"]
+-semesters=["Spring","Summer","Fall"]
       
 
 %p{style: "font-size: 1.25em; text-align:center;"}
@@ -60,10 +55,8 @@
         %td
       %tr
         %td Select School
-        %td= select_tag "school", options_for_select(schools, schools[0])
+        %td= select_tag "school", options_for_select(gc_schools, gc_schools[0])
         %td{rowspan:"3"}= submit_tag "Submit"
-
--school_index=(0..schools.length-1).to_a
   
 -sas_gen_table=gc_freq_table("Spring",2023,"College of Arts & Sciences")
   

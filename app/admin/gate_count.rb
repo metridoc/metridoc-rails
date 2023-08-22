@@ -3,13 +3,13 @@ ActiveAdmin.register_page "GateCount" do
 
   #Action needed to define variables for frequency plots
   page_action :population, method: :post do
-    @input_school = params[:school]
-    @input_library = params[:library]
-    @semester = params[:semester]
-    @input_year = params[:year]
-    #This currently breaks the graph because some of the schools have an "&" in their name. Also breaks the default setting. Might fix this later.
-    #redirect_url = "/admin/population_penetration?library=#{params['library']}&school=#{params['school']}&semester=#{params['semester']}&year=#{params['year']}"
-    redirect_url = "/admin/population_penetration"
+    
+    input_school = ERB::Util.url_encode params[:school]
+    input_library = params[:library]
+    input_semester = params[:semester]
+    input_year = params[:year]
+    
+    redirect_url = "/admin/population_penetration?library=#{input_library}&school=#{input_school}&semester=#{input_semester}&year=#{input_year}"
     redirect_to redirect_url
 
   end
