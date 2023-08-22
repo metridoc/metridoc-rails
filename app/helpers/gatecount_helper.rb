@@ -64,7 +64,7 @@ module GatecountHelper
            COUNT(card_num) AS num_swipes, 
            COUNT(DISTINCT card_num) AS num_people  
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('#{doors})
+           WHERE door_name IN (#{doors})
               AND school IN (#{schools}, 'Social Policy & Practice')
               GROUP BY 1, 2, 3, 4
               ORDER BY COUNT(swipe_date);")
