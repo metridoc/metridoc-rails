@@ -44,8 +44,9 @@
 -med_bio=gc_calc_percents(biotech_table,"Raw Counts","Grad Student")
 -vp_bio=gc_calc_percents(van_pelt_table,"Raw Counts","Grad Student")
 
--med_bio_counts=med_bio.select{|k,v| ["The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing"].include? k}
--med_vp_counts=vp_bio.select{|k,v|  ["The Wharton School","School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing"].include? k}
+-med_schools=["School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing"]
+-med_bio_counts=med_bio.select{|k,v| med_schools.include? k}
+-med_vp_counts=vp_bio.select{|k,v| med_schools.include? k}
 
 #data-viz
   #single-col
