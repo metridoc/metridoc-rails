@@ -8,7 +8,7 @@
 
 -libraries=["Van Pelt","Biotech","Furness"]
 
--input_school=input_school.nil? ? "College of Arts & Sciences" : input_school
+-input_school=params[:school].nil? ? "College of Arts & Sciences" : params[:school]
 -input_library=params[:library].nil? ? "Van Pelt" : params[:library]
 -input_semester=params[:semester].nil? ? "Spring" : params[:semester]
 -input_year=params[:year].nil? ? 2023 : params[:year].to_i
