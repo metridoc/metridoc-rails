@@ -1,14 +1,103 @@
 = javascript_include_tag 'application'
 
+%section
+  %h2="Introduction"
+
+  This page is devoted to statistics and plots demonstrating the number of gate counts and the number of people coming into the libraries. 
+
+  %ul
+
+  %li 
+    %strong The Overview page
+    contains this information for the general UPenn population (students, faculty, and staff) for all of the fiscal years currently recorded in Metridoc.
+
+  %li
+    %strong The Populations and Penetration page
+    breaks down the gate counts and number of visitors information by school and the undergraduate, graduate, and faculty/staff populations. 
+
+  %li
+    %strong Plot Details:
+    For any plot with a legend you may click on a label(/s) to eliminate that data from the plot, showing only the data groups that remain. If you pan your cursor over a plotting element (such as a point or a bar) the value of that element will be displayed.
+
+%hr
+
+%h2> Resources
+
+%h3<= "Dashboards"
+%ul
+  %li= link_to "Overview", "gate_counts_overview"
+  %li= link_to "Populations & Penetration", "population_penetration"
+
+-libraries=["Van Pelt","Biotech","Furness"]
+-years=(2016..2023).to_a
+-semesters=["Spring","Summer","Fall"]
+      
+
+%p{style: "font-size: 1.25em; text-align:center;"}
+  %strong
+    Use this form to generate your own version of the following plot!
+    The default year is 2023 if no data exists for the library for the year selected.   
+
+%center
+  = form_tag({:contoller => admin_population_penetration_path, :action => "population"}, remote: true, method: :post) do
+    %table{:style => "background-color:#DADADA"}
+      %tr
+        %td Select Library
+        %td= select_tag "library", options_for_select(libraries, libraries[0])
+        %td
+      %tr
+        %td Select Fiscal Year
+        %td= select_tag "year", options_for_select(years, years[-1])
+        %td 
+      %tr
+        %td Select Semester
+        %td= select_tag "semester", options_for_select(semesters, semesters[0])
+        %td
+      %tr
+        %td Select School
+        %td= select_tag "school", options_for_select(gc_schools, gc_schools[0])
+        %td{rowspan:"3"}= submit_tag "Submit"
+  
+-sas_gen_table=gc_freq_table("Spring",2023,"College of Arts & Sciences")
+  
+-ymax,percents_single,percents_medium,percents_freq=gc_freq_counts(sas_gen_table,2023,0,"Van Pelt")
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Frequency of College of Arts and Sciences Visitors to the Van Pelt Library, Spring Semester 2023
+    = column_chart [{name: "Single Visit", data: percents_single},
+       {name: "Medium Visits", data: percents_medium},
+       {name:"Freq Visits", data: percents_freq}],
+       xtitle:"Week of the Semester",
+       ytitle: "Percent of the School Population",
+       legend: true,
+       dataset:{borderWidth:0},
+       max: ymax,
+       stacked: true,
+       suffix: "%",
+       round: 2,
+       download: true  
+
+Note that the y-scale of the plot below is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week. 
+
+%h3 Tables
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
 
-#data-viz
-  %h2= t 'active_admin.gatecount.columns_heading'
-  #left-col
-    %h3= t 'active_admin.gatecount.left_column_heading'
-    = pie_chart GateCount::CardSwipe.group(:door_name).count.sort_by {|k,v| v}.reverse[0..9], download: true
-  #right-col
-    %h3= t 'active_admin.gatecount.right_column_heading', date_range: "#{10.weeks.ago.midnight.strftime("%m/%d/%Y")} to #{6.weeks.ago.midnight.strftime("%m/%d/%Y")}"
-    = area_chart GateCount::CardSwipe.group_by_day(:swipe_date, range: 10.weeks.ago.midnight..6.weeks.ago.midnight).count, download: true
+%hr
+
+%h2 Additional Details
+%ul
+  %li
+    %strong Covid-19:
+    the data points for April 2020 through July 2022 are extremely low due to closures/restrictions on the libraries due to COVID. 
+  %li
+    %strong Table Construction:
+    The gate_count_card_swipes table has two columns that seem to indicate “user” information (i.e.-staff, student, undergraduate student). These columns are “usc_desc” and “user_group”. The “user_group” column is more accurate in terms of distinguishing between staff that are taking classes (who may be listed as “student” in usc_desc) and full time students. Note that this “user_group” column arises from a match with ALMA data. However, the further back in time you go (i.e.-before COVID) many students are classified as “purge” by ALMA (mostly seniors who graduated that year). Note that the school names contained within the enrollments table are not the same as those in the gate_count_card_swipes table.
+  %li
+    %strong Deduplication:
+    Note that it is possible that there exist multiple swipes for a person’s entry. 
+  %li
+    %strong Demographic Enrichment:
+    Biotech library data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. 
