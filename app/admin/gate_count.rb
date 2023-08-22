@@ -1,6 +1,19 @@
 ActiveAdmin.register_page "GateCount" do
   menu false
 
+  #Action needed to define variables for frequency plots
+  page_action :population, method: :post do
+    
+    input_school = ERB::Util.url_encode params[:school]
+    input_library = params[:library]
+    input_semester = params[:semester]
+    input_year = params[:year]
+    
+    redirect_url = "/admin/population_penetration?library=#{input_library}&school=#{input_school}&semester=#{input_semester}&year=#{input_year}"
+    redirect_to redirect_url
+
+  end
+  
   content title: I18n.t("active_admin.gate_counts") do
     resource_collection = ActiveAdmin.application.namespaces[:admin].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
