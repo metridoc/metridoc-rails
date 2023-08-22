@@ -15,8 +15,8 @@ module GatecountHelper
       ['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
   end  
 
-  def gc_door_mapping
-    {'VAN PELT LIBRARY ADA DOOR_ *VPL' => 'Van Pelt', 'VAN PELT LIBRARY TURN1_ *VPL' => 'Van Pelt','VAN PELT LIBRARY TURN2_ *VPL' => 'Van Pelt', 'VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL' => 'Van Pelt','FURNESS TURNSTILE_ *FUR' => 'Furness', 'BIO LIBRARY TURNSTILE GATE_ *JSN' => 'Biotech'}
+  def gc_doors
+    ['VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL','VAN PELT LIBRARY TURN2_ *VPL','VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL','FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN']
   end
 
   def gc_users
@@ -45,7 +45,9 @@ module GatecountHelper
 
   #The library_table is used for all "population" plots (grouped by school).
   def gc_library_table
-      doors=gc_door_mapping.keys
+      doors=gc_doors.map{|e| "'#{e}'"}.join(",")
+      schools=gc_schools.map{|e| "'#{e}'"}.join(",")
+      
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            school,
@@ -62,10 +64,8 @@ module GatecountHelper
            COUNT(card_num) AS num_swipes, 
            COUNT(DISTINCT card_num) AS num_people  
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('#{doors[0]}','#{doors[1]}','#{doors[2]}','#{doors[3]}','#{doors[4]}','#{doors[5]}')
-              AND school IN ('#{gc_schools[0]}','#{gc_schools[1]}','#{gc_schools[2]}','#{gc_schools[3]}','#{gc_schools[4]}',
-              '#{gc_schools[5]}','#{gc_schools[6]}','#{gc_schools[7]}','#{gc_schools[8]}','#{gc_schools[9]}',
-              '#{gc_schools[10]}','#{gc_schools[11]}', 'Social Policy & Practice')
+           WHERE door_name IN (#{doors})
+              AND school IN (#{schools}, 'Social Policy & Practice')
               GROUP BY 1, 2, 3, 4
               ORDER BY COUNT(swipe_date);")
 
@@ -75,7 +75,8 @@ module GatecountHelper
   #The time_table is used for all time plots *except* for the frequency plots by school.
   #Excluding "Penn libraries" here so that workers who swipe in all the time are not counted.
   def gc_time_table
-      doors=gc_door_mapping.keys
+      doors=gc_doors.map{|e| "'#{e}'"}.join(",")
+      
       output_table=GateCount::CardSwipe.connection.select_all(
         "SELECT
            CASE
@@ -91,7 +92,7 @@ module GatecountHelper
            COUNT(card_num) AS num_swipes, 
            COUNT(DISTINCT card_num) AS num_people
          FROM gate_count_card_swipes 
-           WHERE door_name IN ('#{doors[0]}','#{doors[1]}','#{doors[2]}','#{doors[3]}','#{doors[4]}','#{doors[5]}')
+           WHERE door_name IN (#{doors})
            AND school != 'Penn Libraries' 
          GROUP BY 1,2,3;")
 
@@ -101,7 +102,7 @@ module GatecountHelper
   #Used for the plot on the _index page and the _population page
   def gc_freq_table(semester,input_year,input_school)
 
-      doors=gc_door_mapping.keys
+      doors=gc_doors.map{|e| "'#{e}'"}.join(",")
     
       if semester=="Spring"
          start_week=1
@@ -133,7 +134,7 @@ module GatecountHelper
               AND school='#{input_school}'
               AND DATE_PART('year', swipe_date + INTERVAL '6 month')=#{input_year}
               AND (user_group='Undergraduate Student' OR user_group='Grad Student')
-              AND door_name IN ('#{doors[0]}','#{doors[1]}','#{doors[2]}','#{doors[3]}','#{doors[4]}','#{doors[5]}')
+              AND door_name IN (#{doors})
            GROUP BY 1, 2, 4)
           SELECT
               week,
