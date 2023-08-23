@@ -1,0 +1,276 @@
+= javascript_include_tag 'application'
+
+-#Define general tables from which to query for the first four plots.
+-furn_yearly=gc_gen_stats(gc_time_table,"All","Furness","All")
+-bio_yearly=gc_gen_stats(gc_time_table,"All","Biotech","All")
+-vp_yearly=gc_gen_stats(gc_time_table,"All","Van Pelt","All")
+
+-#Manually inputting in the Biotech data that is not in metridoc (prior to 2022)
+-bio_year=(2016..2021).to_a
+-bio_year_index=(0..bio_year.length-1).to_a
+
+-month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
+-month_range=(0..11).to_a
+
+%strong
+
+  %p{style: "text-align:center;"} *Note: Biotech library count data was manually recorded from 2016-2020, this data is not included in the gate_count_card_swipes table. This additionally means that number of visitors information for this library does not exist prior to 2021.
+
+-furn_yearly_counts=gc_time_counts(furn_yearly,"Yearly","Counts")
+-bio_yearly_counts=gc_time_counts(bio_yearly,"Yearly","Counts")
+-vp_yearly_counts=gc_time_counts(vp_yearly,"Yearly","Counts")
+
+-#Manually inputting in the Biotech data that is not in metridoc (prior to 2022)
+-#Need to make sure these are in the correct year (this is not fiscal!)
+
+-for y in bio_year_index
+  -for m in month_range
+    -if m >= 7 && y < 5
+      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=gc_all_bio[y+1][m+1]
+    -else
+      -bio_yearly_counts["#{bio_year[y]}"+"-"+month_text[m]+"-01"]=gc_all_bio[y][m+1]
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library 2016-2023
+    = line_chart [{name: "BioTech", data: bio_yearly_counts},
+		  {name: "Furness", data: furn_yearly_counts},
+		  {name: "Van Pelt", data: vp_yearly_counts}],
+		  xtitle:"Years",
+		  ytitle: "Gate Counts",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+-furn_yearly_people=gc_time_counts(furn_yearly,"Yearly","People")
+-bio_yearly_people=gc_time_counts(bio_yearly,"Yearly","People")
+-vp_yearly_people=gc_time_counts(vp_yearly,"Yearly","People")
+		      
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library 2016-2023
+    =line_chart [{name: "BioTech", data: bio_yearly_people},
+		 {name: "Furness", data: furn_yearly_people},
+		 {name: "Van Pelt", data: vp_yearly_people}],
+		 xtitle:"Years",
+		 ytitle: "Number of Visitors",
+		 legend: true,
+		 curve: false,
+		 library: {options: {scales: {y: {min:0, max:15000, ticks: {stepSize:2500, autoSkip: false, major: {enabled: true}}}}}},
+		 download: true 
+
+-furn_fiscal_counts=gc_time_counts(furn_yearly,"Fiscal_Year","Counts")
+-bio_fiscal_counts=gc_time_counts(bio_yearly,"Fiscal_Year","Counts")
+-vp_fiscal_counts=gc_time_counts(vp_yearly,"Fiscal_Year","Counts")
+
+-#Again manually adding the biotech library data that is not in metridoc:
+-bio_extra_data=(2016..2020).to_a
+-bio_counts=[106119,102840,97496,107031,85856]
+
+-bio_counts.each_with_index{|b, i| bio_fiscal_counts["#{bio_extra_data[i]}"]=b}
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Fiscal Year Per Library 2016-2023
+    = line_chart [{name: "BioTech", data: bio_fiscal_counts},
+		  {name: "Furness", data: furn_fiscal_counts},
+		  {name: "Van Pelt", data: vp_fiscal_counts}],
+		  xtitle:"Years",
+		  ytitle: "Gate Counts",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+-furn_fiscal_people=gc_time_counts(furn_yearly,"Fiscal_Year","People")
+-bio_fiscal_people=gc_time_counts(bio_yearly,"Fiscal_Year","People")
+-vp_fiscal_people=gc_time_counts(vp_yearly,"Fiscal_Year","People")
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Visitors Per Fiscal Year Per Library 2016-2023
+    = line_chart [{name: "BioTech", data: bio_fiscal_people},
+		  {name: "Furness", data: furn_fiscal_people},
+		  {name: "Van Pelt", data: vp_fiscal_people}],
+		  xtitle:"Years",
+		  ytitle: "Number of Visitors",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+-#General 2023 tables:
+-furness_2023_table=gc_gen_stats(gc_time_table,2023,"Furness","All")
+-biotech_2023_table=gc_gen_stats(gc_time_table,2023,"Biotech","All")
+-vp_2023_table=gc_gen_stats(gc_time_table,2023,"Van Pelt","All")
+
+-furn_2023_counts=gc_time_counts(furness_2023_table,"Monthly","Counts")
+-vp_2023_counts=gc_time_counts(vp_2023_table,"Monthly","Counts")
+-bio_2023_counts=gc_time_counts(biotech_2023_table,"Monthly","Counts")
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Month Per Library Fiscal Year 2023
+    = line_chart [{name: "BioTech", data: bio_2023_counts},
+		  {name: "Furness", data: furn_2023_counts},
+		  {name: "Van Pelt", data: vp_2023_counts}],
+		  xtitle:"Months",
+		  ytitle: "Gate Counts",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+-furn_2023_people=gc_time_counts(furness_2023_table,"Monthly","People")
+-vp_2023_people=gc_time_counts(vp_2023_table,"Monthly","People")
+-bio_2023_people=gc_time_counts(biotech_2023_table,"Monthly","People")
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Visitors Per Month Per Library Fiscal Year 2023
+    = line_chart [{name: "BioTech", data: bio_2023_people},
+		  {name: "Furness", data: furn_2023_people},
+		  {name: "Van Pelt", data: vp_2023_people}],
+		  xtitle:"Months",
+		  ytitle: "Number of Visitors",
+		  legend: true,
+		  curve: false,
+		  download: true   
+
+-vp_gen_table=gc_gen_stats(gc_time_table,"All","Van Pelt","All")
+-vp_all_counts=gc_time_counts(vp_gen_table,"All","Counts")
+-vp_percent_change=gc_percent_change(vp_all_counts)
+
+-month_names=["Statistics"].concat(gc_months.rotate(6),["Total"])
+		      
+-month_range=(0..13).to_a
+
+-year_range=(2017..2023).to_a
+-year_index=(0..year_range.length-1).to_a
+
+%ul
+%hr
+%section
+  %h2{style: "text-align:center;"} Monthly Gate Count Tables By Library
+  %p{style: "text-align:center; font-size: 1.25em;"} The charts that follow have a "% Change" column which is calculated relative to the gate counts from 2023. These cells are highlighted blue if the number of gate counts are higher than those relative to 2023, and red if the number of gate counts are lower relative to 2023.
+
+  %h2{style: "text-align:center;"} Van Pelt Monthly Gate Counts
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Fiscal Year
+        -for i in year_index
+          -fiscal_year=year_range[i]
+          %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
+      %tbody
+      -for m in month_range
+        %tr
+        -column_title=month_names[m]
+        %td="#{column_title}"
+        -for y in year_index
+          -data_one=vp_all_counts[y+1][month_names[m]]
+          -data_two=vp_percent_change[y+1][month_names[m]]
+          -if data_two.is_a? Numeric
+            -#Add color if the percent change is positive or negative, leave white otherwise.
+            -if data_two > 0
+              %td{:align => "center"}="#{data_one}"
+              %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
+            -elsif data_two < 0
+              %td{:align => "center"}="#{data_one}"
+              %td{style: 'background-color: #FFA07A;', :align => "center"}="#{data_two}"
+            -elsif data_two==0
+              %td{:align => "center"}="#{data_one}"
+              %td{:align => "center"}="#{data_two}"
+          -else
+            %td{:align => "center"}="#{data_one}"
+            %td{:align => "center"}="#{data_two}"
+
+-bio_gen_table=gc_gen_stats(gc_time_table,"All","Biotech","All")
+-bio_counts=gc_time_counts(bio_gen_table,"All","Counts")
+    
+-year_range=(2016..2023).to_a
+-year_index=(1..year_range.length-1).to_a
+
+-#Manually add in the biotech data from before 2022.
+-bio_all_counts=Array.new(6) {Hash.new}  
+-bio_year_index=(0..bio_year.length-1).to_a
+    
+-for y in bio_year_index
+  -for m in month_range
+    -bio_all_counts[y][month_names[m]]=gc_all_bio[y][m]
+
+-bio_all_counts.concat(bio_counts[-2,2])
+-bio_percent_change=gc_percent_change(bio_all_counts)
+
+%section
+
+  %h2{style: "text-align:center;"} Biotech Monthly Gate Counts
+  
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Fiscal Year
+        -for i in year_index
+          -fiscal_year=year_range[i]
+          %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
+    %tbody
+      -for m in month_range
+        %tr
+        -column_title=month_names[m]
+        %td="#{column_title}"
+        -for i in year_index
+          -data_one=bio_all_counts[i][month_names[m]]
+          -data_two=bio_percent_change[i][month_names[m]]
+          -if data_two.is_a? Numeric
+            -#Add color if the percent change is positive or negative, leave white otherwise.
+            -if data_two > 0
+              %td{:align => "center"}="#{data_one}"
+              %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
+            -elsif data_two < 0
+              %td{:align => "center"}="#{data_one}"
+              %td{style: 'background-color: #FFA07A;', :align => "center"}="#{data_two}"
+            -elsif data_two==0
+              %td{:align => "center"}="#{data_one}"
+              %td{:align => "center"}="#{data_two}"
+          -else
+            %td{:align => "center"}="#{data_one}"
+            %td{:align => "center"}="#{data_two}"
+
+-furn_gen_table=gc_gen_stats(gc_time_table,"All","Furness","All")
+-furn_all_counts=gc_time_counts(furn_gen_table,"All","Counts")
+-furn_percent_change=gc_percent_change(furn_all_counts)
+
+-year_range=(2020..2023).to_a
+-year_index=(-4..-1).to_a
+      
+%section
+
+  %h2{style: "text-align:center;"} Furness Monthly Gate Counts
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Fiscal Year
+        -for year in year_range
+          -fiscal_year=year
+          %td{:colspan => 2, :align => "center"}="#{fiscal_year}"
+    %tbody
+      -for m in month_range
+        %tr
+        -column_title=month_names[m]
+        %td="#{column_title}"
+        -for y in year_index
+          -data_one=furn_all_counts[y][month_names[m]]
+          -data_two=furn_percent_change[y][month_names[m]]
+          -if data_two.is_a? Numeric
+            -#Add color if the percent change is positive or negative, leave white otherwise.
+            -if data_two > 0
+              %td{:align => "center"}="#{data_one}"
+              %td{style: 'background-color: #ADD8E6;', :align => "center"}="#{data_two}"
+            -elsif data_two < 0
+              %td{:align => "center"}="#{data_one}"
+              %td{style: 'background-color: #FFA07A;', :align => "center"}="#{data_two}"
+            -elsif data_two==0
+              %td{:align => "center"}="#{data_one}"
+              %td{:align => "center"}="#{data_two}"
+          -else
+            %td{:align => "center"}="#{data_one}"
+            %td{:align => "center"}="#{data_two}"

@@ -1,0 +1,48 @@
+= javascript_include_tag 'application'
+
+%ul
+
+  %li= link_to "Undergraduate Statistics", "undergraduate_statistics"
+  %li= link_to "Graduate Statistics", "graduate_statistics"
+  %li= link_to "Faculty & Staff Statistics", "faculty_staff_statistics"
+
+-libraries=["Van Pelt","Biotech","Furness"]
+
+-input_school=params[:school].nil? ? "College of Arts & Sciences" : params[:school]
+-input_library=params[:library].nil? ? "Van Pelt" : params[:library]
+-input_semester=params[:semester].nil? ? "Spring" : params[:semester]
+-input_year=params[:year].nil? ? 2023 : params[:year].to_i
+
+-url_decoding={'%20' => ' ', '%26' => '&'}
+-url_decoding.each do |k,v|
+  -input_school.gsub!(k,v)
+
+-school_index=gc_schools.find_index(input_school)
+
+%hr
+%h2{style: "text-align:center;"}="Fiscal Year #{input_year} School Population Statistics"
+
+%p{style:"font-size: 1.25em;"} Note that these plots are generated from the combined undergraduate/graduate student population for each school. The y-scale of the plot is set to the percent of the college population that used the library over the course of the semester. The bars indicate the percent of library users that went to the library within a given week.
+%strong
+  Note that the default plot is for the College of Arts & Sciences, Van Pelt, Spring 2023 if no data exists for the library for the year selected.   
+
+-gen_school_table=gc_freq_table(input_semester,input_year,input_school)
+
+-ymax,percents_single,percents_medium,percents_freq=gc_freq_counts(gen_school_table,input_year,school_index,input_library)
+
+#data-viz
+  #single-col
+  %h2{style: "text-align:center;"}="Frequency of #{input_school} Visitors to the #{input_library} Library, #{input_semester} Semester Fiscal Year #{input_year}"
+  = column_chart [{name: "Single Visit", data: percents_single},
+    {name: "Medium Visits", data: percents_medium},
+    {name:"Freq Visits", data: percents_freq}],
+    xtitle:"Week of the Semester",
+    ytitle: "Percent of the School Population",
+    legend: true,
+    max: ymax,
+    stacked: true,
+    dataset:{borderWidth:0},
+    suffix: "%",
+    round: 2,
+    library: {scales: {yAxes: [{id: 'y-axis', type: 'linear', ticks: {autoskip: false, steps: 10}}]}},
+    download: true  
