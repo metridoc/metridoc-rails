@@ -2,13 +2,17 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.5'
+gem 'rails', '~> 6.1'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use Puma as the app server
-gem 'puma', '~> 4.3'
+gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
+
+# Rollback mail gem
+# Mail > 2.8.0 requires net-protocol which conflicts with standard library
+gem 'mail', '= 2.7.1'
 
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -85,7 +89,7 @@ group :development do
 
   #tiny_tds and activerecord-sqlserver-adapter gems are needed by only import_helper.rb, which is not really part of the app, it is more for diagnosing/troubleshooting sql server sources
   gem 'tiny_tds', '~> 2.1.0'
-  gem 'activerecord-sqlserver-adapter', '~> 5.2.0'
+  gem 'activerecord-sqlserver-adapter', '~> 6.1'
   gem 'rails_db'
   gem "letter_opener"
 end
