@@ -82,6 +82,7 @@ files = [
   'lib/export/mssql/main.rb',
   'lib/export/database/main.rb',
   'lib/import/task.rb',
+  'config/storage.yml'
 ]
 regexes = [
   # Values set by Ansible variables
