@@ -11,11 +11,16 @@ ActiveAdmin.register Tools::FileUploadImport do
 
   controller do
     def create
-      @file_import = Tools::FileUploadImport.new(permitted_params[:tools_file_upload_import])
+      @file_import = Tools::FileUploadImport.new(
+        permitted_params[:tools_file_upload_import]
+      )
       @file_import.uploaded_by = current_admin_user
 
       if @file_import.save
-        flash[:notice] = t("flash.actions.create.notice", resource_name: @file_import.model_name.human)
+        flash[:notice] = t(
+          "flash.actions.create.notice",
+          resource_name: @file_import.model_name.human
+        )
       end
 
     end

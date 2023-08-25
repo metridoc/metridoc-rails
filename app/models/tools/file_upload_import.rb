@@ -1,35 +1,39 @@
 require 'roo'
 
 class Tools::FileUploadImport < ApplicationRecord
-  has_one_attached :uploaded_file
+
   belongs_to :uploaded_by, class_name: "AdminUser"
   has_many :file_upload_import_logs, -> { order(:sequence) }, class_name: "Tools::FileUploadImportLog"
 
   before_create :set_defaults
-  after_create  :queue_process
+  # Ensure that the active storage blob is saved
+  after_commit :queue_process
+  # attached file must be referenced after commit
+  has_one_attached :uploaded_file
 
-  UPLOADABLE_MODELS = [ Alma::Circulation,
-                        Consultation::Interaction,
-                        GeoData::CountryCode,
-                        Keyserver::StatusTerm,
-                        Keyserver::PlatformTerm,
-                        Keyserver::ReasonTerm,
-                        Keyserver::Program,
-                        Keyserver::EventTerm,
-                        Keyserver::Division,
-                        Keyserver::Computer,
-                        Keyserver::CpuTypeTerm,
-                        Keyserver::Usage,
-                        GateCount::CardSwipe,
-                        Ipeds::Completion,
-                        Ipeds::Directory,
-                        Ipeds::CompletionSchema,
-                        Ipeds::DirectorySchema,
-                        Ipeds::StemCipcode,
-                        Ipeds::Cipcode,
-                        Upenn::Enrollment,
-                        LibraryStaff::Census
-                      ]
+  UPLOADABLE_MODELS = [
+    Alma::Circulation,
+    Consultation::Interaction,
+    GeoData::CountryCode,
+    Keyserver::StatusTerm,
+    Keyserver::PlatformTerm,
+    Keyserver::ReasonTerm,
+    Keyserver::Program,
+    Keyserver::EventTerm,
+    Keyserver::Division,
+    Keyserver::Computer,
+    Keyserver::CpuTypeTerm,
+    Keyserver::Usage,
+    GateCount::CardSwipe,
+    Ipeds::Completion,
+    Ipeds::Directory,
+    Ipeds::CompletionSchema,
+    Ipeds::DirectorySchema,
+    Ipeds::StemCipcode,
+    Ipeds::Cipcode,
+    Upenn::Enrollment,
+    LibraryStaff::Census
+  ]
 
   validates :target_model, presence: true
   validates :uploaded_file, attached: true
