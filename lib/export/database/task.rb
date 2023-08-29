@@ -112,11 +112,9 @@ module Export
       if export_filter_date_sql.present?
         if incremental_filter_column
           # Find the latest date in the specified column for incremental loading
-          latest_date = target_model.pluck(
-            " MAX(#{ActiveRecord::Base.connection.quote_column_name(
+          latest_date = target_model.maximum(
             incremental_filter_column
-            )}) AS latest_date"
-          ).first
+          ).strftime("%Y-%m-%d")
           # Add the filter to the query
           scope = scope.where(export_filter_date_sql, latest_date) if latest_date
         end
