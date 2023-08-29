@@ -52,9 +52,11 @@ module Export
       end
 
       # Find the latest date in the specified column for incremental loading
-      latest_date = target_model.maximum(
+      latest_date = target_model.pluck(
+        " MAX(#{ActiveRecord::Base.connection.quote_column_name(
         task_config["incremental_filter_column"]
-      ).strftime("%Y-%m-%d")
+        )}) AS latest_date"
+      ).first.to_s
 
       @incremental_filter = latest_date || "2017-07-01"
     end
