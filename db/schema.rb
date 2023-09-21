@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_08_23_165449) do
+ActiveRecord::Schema.define(version: 2023_09_12_134256) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -1596,6 +1596,56 @@ ActiveRecord::Schema.define(version: 2023_08_23_165449) do
     t.string "shelving_location"
     t.string "pickup_location"
     t.index ["borrower_id", "lender_id"], name: "transaction_index", unique: true
+  end
+
+  create_table "ss_libcal_answers", force: :cascade do |t|
+    t.integer "staff_id"
+    t.integer "appointment_id"
+    t.text "question_id"
+    t.string "answer"
+    t.index ["appointment_id", "question_id"], name: "ss_libcal_answers_id", unique: true
+  end
+
+  create_table "ss_libcal_appointments", force: :cascade do |t|
+    t.integer "appointment_id"
+    t.date "from_date"
+    t.date "to_date"
+    t.string "patron_first_name"
+    t.string "patron_last_name"
+    t.string "patron_email"
+    t.integer "staff_id"
+    t.string "location"
+    t.integer "location_id"
+    t.string "group"
+    t.integer "group_id"
+    t.integer "category_id"
+    t.string "directions"
+    t.boolean "cancelled"
+    t.json "answers"
+    t.date "downloaded_at"
+    t.index ["appointment_id"], name: "ss_libcal_appointments_id", unique: true
+    t.index ["downloaded_at"], name: "ss_libcal_appointments_downloaded_at"
+    t.index ["from_date"], name: "ss_libcal_appointments_from_date"
+    t.index ["group"], name: "ss_libcal_appointments_group"
+    t.index ["location"], name: "ss_libcal_appointments_location"
+    t.index ["staff_id"], name: "ss_libcal_appointments_staff_id"
+  end
+
+  create_table "ss_libcal_questions", force: :cascade do |t|
+    t.integer "question_id"
+    t.string "label"
+    t.string "answer_type"
+    t.boolean "required"
+    t.json "options"
+    t.index ["question_id"], name: "ss_libcal_questions_id", unique: true
+  end
+
+  create_table "ss_libcal_users", force: :cascade do |t|
+    t.integer "staff_id"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.index ["staff_id"], name: "ss_libcal_users_id", unique: true
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
