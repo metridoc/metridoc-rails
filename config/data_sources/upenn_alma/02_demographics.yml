@@ -5,7 +5,7 @@ target_model: "UpennAlma::Demographic"
 target_adapter: "csv"
 
 truncate_before_load: "yes"
-file_name: "alma_patron_demographics.csv"
+export_file_name: "alma_patron_demographics.csv"
 
 # Flag for the Alma API
 source_adapter: "alma"
