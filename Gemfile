@@ -56,6 +56,9 @@ gem 'd3-rails'
 # Gem for reading xlsx and csv files
 gem 'roo'
 
+# Gem for OAuth2 operations
+gem 'oauth2', '~> 2.0'
+
 gem 'chronic'
 
 gem 'delayed_job_active_record'
