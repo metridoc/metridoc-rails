@@ -1,0 +1,46 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Springshare LibCal data
+    begin with the prefix "ss_libcal_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/springshare/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+%section
+  %h2 Appointment Tables
+  LibCal Appointments are represented in four tables.
+  %ul
+    %li
+      The #{link_to "User", :springshare_libcal_users} table contains
+      identifying information on the library staff with whom appointments
+      can be made.
+    %li
+      The #{link_to "Appointment", :springshare_libcal_appointments} table
+      contains all pertinent information related to the appointment.
+      Note that the patron first name, last name and email are hidden from
+      the website interface.
+    %li
+      The #{link_to "Answer", :springshare_libcal_answers} table
+      expands the answer column of the Appointment Table to provide
+      easier analysis.
+    %li
+      The #{link_to "Question", :springshare_libcal_questions} table
+      contains fetches any customized questions made by library staff for
+      additional information at appointment booking.
+
+  %figure{:style => "text-align: center; max-width: 850px; width: 100%; margin: auto; padding: 0px 0px;"}
+    %figcaption LibCal Appointment Data Table Schema
+    =image_tag asset_path("SpringshareAppointmentBookingsER.png"), :alt => "LibCal Appointments ER Diagram", :width => "100%", :title => "LibCal Appointments ER Diagram"
