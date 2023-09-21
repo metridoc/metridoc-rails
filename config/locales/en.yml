@@ -105,6 +105,8 @@ en:
       ezproxy_menu: "EZProxy"
     upenn:
         upenn_menu: "Institutional Data"
+    springshare:
+        springshare_menu: "LibApps Data"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"
@@ -155,6 +157,7 @@ en:
       alma: "Alma Circulation"
       upennalma: "Alma Demographics"
       ipeds: "IPEDS Data"
+      springshare: "LibApps Data"
       ezproxy: "EZProxy Logs"
       upenn: "University of Pennsylvania Data"
     are_you_sure: "Are you sure?"
@@ -282,6 +285,70 @@ en:
         one: "CIP Code - STEM"
         other: "CIP Codes - STEM"
     attributes:
+      borrowdirect/reshare/borrowing_turnaround:
+        request_id: "Request Id"
+      borrowdirect/reshare/lending_turnaround:
+        request_id: "Request Id"
+      borrowdirect/reshare/directory_entry:
+        de_id: "Directory Entry Id"
+        de_slug: "Short Name"
+        de_name: "Full Name"
+        de_status_fk: "Status Id (Foreign Key)"
+        de_parent: "Parent Id"
+        de_lms_location_code: "LMS Location Code"
+      borrowdirect/reshare/host_lms_location:
+        hll_id: "Host LMS Location Id"
+        hll_date_created: "Date Created"
+        hll_last_updated: "Last Updated"
+        hll_version: "Version"
+        hll_code: "Code"
+        hll_name: "Name"
+        hll_supply_preference: "Supply Preference"
+        hll_corresponding_de: "Corresponding Directy Entry"
+        hll_hidden: "Hidden"
+      borrowdirect/reshare/transaction:
+        request_id: "Request Id"
+        borrower_id: "Borrower Id"
+        lender_id: "Lender Id"
+        oclc_number: "OCLC Number"
+      ezborrow/reshare/borrowing_turnaround:
+        request_id: "Request Id"
+      ezborrow/reshare/lending_turnaround:
+        request_id: "Request Id"
+      ezborrow/reshare/directory_entry:
+        de_id: "Directory Entry Id"
+        de_slug: "Short Name"
+        de_name: "Full Name"
+        de_status_fk: "Status Id (Foreign Key)"
+        de_parent: "Parent Id"
+        de_lms_location_code: "LMS Location Code"
+      ezborrow/reshare/host_lms_location:
+        hll_id: "Host LMS Location Id"
+        hll_date_created: "Date Created"
+        hll_last_updated: "Last Updated"
+        hll_version: "Version"
+        hll_code: "Code"
+        hll_name: "Name"
+        hll_supply_preference: "Supply Preference"
+        hll_corresponding_de: "Corresponding Directy Entry"
+        hll_hidden: "Hidden"
+      ezborrow/reshare/transaction:
+        request_id: "Request Id"
+        borrower_id: "Borrower Id"
+        lender_id: "Lender Id"
+        oclc_number: "OCLC Number"
+      springshare/libcal/answer:
+        appointment_id: "Appointment Id"
+        question_id: "Question Id"
+        staff_id: "Staff Id"
+      springshare/libcal/appointment:
+        staff_id: "Staff Id"
+        location_id: "Location Id"
+        group_id: "Group Id"
+      springshare/libcal/question:
+        question_id: "Question Id"
+      springshare/libcal/user:
+        staff_id: "Staff Id"
       log/job_execution:
         id: "ID"
         source_name: "Source"
