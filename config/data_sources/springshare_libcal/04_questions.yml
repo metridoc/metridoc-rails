@@ -1,0 +1,34 @@
+---
+load_sequence: 4
+
+target_model: "Springshare::Libcal::Question"
+target_adapter: "csv"
+
+export_file_name: "springshare_libcal_questions.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "1.1/appointments/question"
+
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  id: question_id
+  type: answer_type
+
+# Column name for json column
+json_column: "options"
+
+# Unique on the users
+unique_keys: ["question_id"]
+upsert: true
+
+filter_ids: |
+  SELECT
+    DISTINCT A.question_id
+  FROM
+    ss_libcal_answers A
+  LEFT OUTER JOIN
+    ss_libcal_questions B
+  ON
+    CAST(A.question_id AS INTEGER) = B.question_id
