@@ -184,7 +184,7 @@ module Import
 
         sqls.each do |sql|
           begin
-            sql = sql % {institution_id: institution_id}
+            sql = sql % {institution_id: institution_id} if has_institution_id?
             log "Executing Query [#{sql}]"
             ActiveRecord::Base.connection.execute(sql)
           rescue SignalException => e
@@ -305,6 +305,9 @@ module Import
                 # Parse the datetime into the appropriate formats
                 val = Util.parse_datetime(val) if columns_hash[column_name].type == :datetime
                 val = Util.parse_datetime(val) if columns_hash[column_name].type == :date
+
+                # Parse the json object from a string
+                val = JSON.parse(val) if columns_hash[column_name].type == :json
 
                 attributes[column_name] = val
               end

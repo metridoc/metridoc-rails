@@ -40,6 +40,21 @@ module Export
       @column_mappings ||= task_config["column_mappings"]
     end
 
+    def csv_file_path
+      if @csv_file_path
+        return @csv_file_path
+      end
+
+      # Make an export folder if it doesn't already exist
+      FileUtils.mkdir_p task_config["export_folder"]
+
+      # Create a new csv filename for the data
+      @csv_file_path = File.join(
+        task_config["export_folder"],
+        task_config["export_file_name"].downcase
+      )
+    end
+
     # Create a log job execution step entry
     def log_job_execution_step
       return @log_job_execution_step if @log_job_execution_step.present?

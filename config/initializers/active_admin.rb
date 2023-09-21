@@ -322,6 +322,12 @@ ActiveAdmin.setup do |config|
         if: proc { authorized?(:read, 'Consultation') },
         parent: I18n.t('active_admin.resource_sharing')
 
+      # Springshare LibApps
+      menu.add label: I18n.t('active_admin.springshare.springshare_menu'),
+        url: :springshare_root_path,
+        if: proc { authorized?(:read, 'Springshare') },
+        parent: I18n.t('active_admin.resource_sharing')
+
       # EZ Proxy
       menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
         url: :ezproxy_root_path,
@@ -501,7 +507,7 @@ ActiveAdmin.setup do |config|
   namespaces = [
     :admin, :ipeds, :ezborrow, :borrowdirect,
     :illiad, :ezproxy, :upenn, :course_reserves,
-    :library_staff
+    :library_staff, :springshare
   ]
 
   # Configure the menu for all namespaces

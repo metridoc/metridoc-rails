@@ -25,7 +25,8 @@ class Security::UserRole < ApplicationRecord
                         "Ezproxy",
                         "Ipeds",
                         "CourseReserves",
-                        "LibraryStaff"
+                        "LibraryStaff",
+                        "Springshare"
                       ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]

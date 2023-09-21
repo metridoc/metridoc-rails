@@ -4,7 +4,7 @@ load_sequence: 1
 target_model: "Alma::Circulation"
 target_adapter: "csv"
 
-file_name: "alma_circulation_daily.csv"
+export_file_name: "alma_circulation_daily.csv"
 
 # Flag for the Alma API
 source_adapter: "alma"
