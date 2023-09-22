@@ -1,0 +1,22 @@
+---
+load_sequence: 1
+
+target_model: "Springshare::Libcal::User"
+target_adapter: "csv"
+
+export_file_name: "springshare_libcal_users.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "1.1/appointments/users"
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  id: staff_id
+  first_name: first_name
+  last_name: last_name
+  email: email
+
+# Unique on the users
+unique_keys: ["staff_id"]
+upsert: true

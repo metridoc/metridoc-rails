@@ -184,7 +184,7 @@ module Import
 
         sqls.each do |sql|
           begin
-            sql = sql % {institution_id: institution_id}
+            sql = sql % {institution_id: institution_id} if has_institution_id?
             log "Executing Query [#{sql}]"
             ActiveRecord::Base.connection.execute(sql)
           rescue SignalException => e
@@ -306,6 +306,9 @@ module Import
                 val = Util.parse_datetime(val) if columns_hash[column_name].type == :datetime
                 val = Util.parse_datetime(val) if columns_hash[column_name].type == :date
 
+                # Parse the json object from a string
+                val = JSON.parse(val) if columns_hash[column_name].type == :json
+
                 attributes[column_name] = val
               end
 
@@ -423,20 +426,20 @@ module Import
         # Reuse the same one w/in the loop, otherwise it would keep being
         # re-retreived (= lots of time for large imports)
         connection = ActiveRecord::Base.connection
-
-        # Get the list of column names
-        column_names = columns_hash.keys
-
         # Transform the array of hashes into an array of (val0, val1, ...)
         # for SQL import
         records.map do |record|
-          values = column_names.map do |column_name|
+          values = columns_hash.keys.map do |column_name|
             if column_name == class_name.primary_key
               # Fill in the id value from the sequential id table
               connection.next_value_for_sequence(class_name.sequence_name)
             else
               # Get the column value from the record, using NULL as default
-              connection.quote(record.fetch(column_name, nil))
+              value = record.fetch(column_name, nil)
+
+              # Format any yaml or json values for upload into the database
+              value = class_name.type_for_attribute(column_name).serialize(value)
+              connection.quote(value)
             end
           end
           "(#{values.join(',')})"

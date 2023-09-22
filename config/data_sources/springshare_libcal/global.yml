@@ -1,0 +1,9 @@
+---
+target_adapter: 'csv'
+export_folder: '/tmp/springshare/libcal'
+
+auth:
+  domain: 'https://libcal.library.upenn.edu/1.1/oauth/token'
+  client_id: '<%= ENV["SPRINGSHARE_LIBCAL_ID"] %>'
+  client_secret: '<%= ENV["SPRINGSHARE_LIBCAL_SECRET"] %>'
+  grant_type: '<%= ENV["SPRINGSHARE_LIBCAL_GRANTTYPE"] %>'

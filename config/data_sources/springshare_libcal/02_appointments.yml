@@ -1,0 +1,37 @@
+---
+load_sequence: 2
+
+target_model: "Springshare::Libcal::Appointment"
+target_adapter: "csv"
+
+export_file_name: "springshare_libcal_appointments.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "1.1/appointments/bookings"
+
+# Parameters to add to the API call
+parameters:
+  limit: 500
+  include_cancellations: 1
+  date: "2013-10-01" # Appointments start on Oct 3, 2013
+  days: 365
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  id: appointment_id
+  firstName: patron_first_name
+  lastName: patron_last_name
+  email: patron_email
+  userId: staff_id
+
+# Unique on the users
+unique_keys: ["appointment_id"]
+upsert: true
+
+# Incremental filter column name
+incremental_filter_column: "from_date"
+# Timestamp of download for record
+download_timestamp: "downloaded_at"
+# Column name for json column
+json_column: "answers"

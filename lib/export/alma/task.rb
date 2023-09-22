@@ -86,14 +86,6 @@ module Export
       return url
     end
 
-    # Build a CSV file path to store the exported information
-    def csv_file_path
-      @csv_file_path ||= File.join(
-        task_config["export_folder"],
-        task_config["file_name"].downcase
-      )
-    end
-
     # Connect and retrieve the information from the api endpoint
     def connect(report_path = "")
       response = nil
