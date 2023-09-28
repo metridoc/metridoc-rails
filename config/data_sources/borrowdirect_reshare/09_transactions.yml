@@ -1,6 +1,6 @@
 load_sequence:         9
 target_adapter:        'native_sql'
-target_model:          "Borrowdirect::Reshare::Transactions"
+target_model:          "Borrowdirect::Reshare::Transaction"
 truncate_before_load:  "no"
 sqls:
   - |
