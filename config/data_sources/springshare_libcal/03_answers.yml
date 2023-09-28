@@ -27,4 +27,4 @@ sqls:
         appointment_id
       FROM ss_libcal_answers
     ) AND
-    CAST(appointments.answers AS TEXT) <> '[]';
+    json_typeof(appointments.answers) = 'object';
