@@ -269,6 +269,9 @@ en:
       ipeds/completion_schema:
         one: "IPEDS Completion Schema"
         other: "IPEDS Completion Schema"
+      ipeds/program_schema:
+        one: "IPEDS Program Schema"
+        other: "IPEDS Program Schema"
       ipeds/directory_schema:
         one: "IPEDS Directory Schema"
         other: "IPEDS Directory Schema"
@@ -278,6 +281,9 @@ en:
       ipeds/completion:
         one: "IPEDS Completion"
         other: "IPEDS Completions"
+      ipeds/program:
+        one: "IPEDS Program"
+        other: "IPEDS Programs"
       ipeds/cipcode:
         one: "CIP Code"
         other: "CIP Codes"

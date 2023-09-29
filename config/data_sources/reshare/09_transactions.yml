@@ -1,6 +1,6 @@
 load_sequence:         9
 target_adapter:        'native_sql'
-target_model:          "Ezborrow::Reshare::Transactions"
+target_model:          "Ezborrow::Reshare::Transaction"
 truncate_before_load:  "no"
 sqls:
   - |

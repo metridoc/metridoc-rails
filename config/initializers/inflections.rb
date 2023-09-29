@@ -31,6 +31,11 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "completion_schema"
   inflect.uncountable "ipeds_completion_schema"
 
+  # IPEDS::ProgramSchema is uncountable
+  inflect.uncountable "ProgramSchema"
+  inflect.uncountable "program_schema"
+  inflect.uncountable "ipeds_program_schema"
+
   # Status is uncountable
   inflect.uncountable "ReshareStatus"
   inflect.uncountable "Status"
