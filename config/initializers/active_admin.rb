@@ -364,6 +364,12 @@ ActiveAdmin.setup do |config|
         if: proc{ authorized?(:read, "LibraryProfile") },
         parent: I18n.t("active_admin.resource_sharing")
 
+      # Google Analytics
+      menu.add label: I18n.t("active_admin.google_analytics.google_analytics_menu"),
+        url: :google_analytics_root_path,
+        if: proc{ authorized?(:read, "GoogleAnalytics") },
+        parent: I18n.t("active_admin.resource_sharing")
+
       # RSAT Supplemental Data
       menu.add label: I18n.t("active_admin.supplemental_data"),
         url: :admin_supplementaldata_path,
@@ -507,7 +513,7 @@ ActiveAdmin.setup do |config|
   namespaces = [
     :admin, :ipeds, :ezborrow, :borrowdirect,
     :illiad, :ezproxy, :upenn, :course_reserves,
-    :library_staff, :springshare
+    :library_staff, :springshare, :google_analytics
   ]
 
   # Configure the menu for all namespaces

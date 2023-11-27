@@ -94,6 +94,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Card swipe by frequency"
       right_column_heading: "Card swipe transactions, %{date_range}"
+    google_analytics:
+      google_analytics_menu: "Google Analytics"
     keyserver:
       keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"
@@ -159,6 +161,8 @@ en:
       ipeds: "IPEDS Data"
       springshare: "LibApps Data"
       ezproxy: "EZProxy Logs"
+      librarystaff: "Library Staff Census"
+      googleanalytics: "Google Analytics- Universal Analytics"
       upenn: "University of Pennsylvania Data"
     are_you_sure: "Are you sure?"
     file_upload_import:

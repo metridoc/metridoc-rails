@@ -26,7 +26,8 @@ class Security::UserRole < ApplicationRecord
                         "Ipeds",
                         "CourseReserves",
                         "LibraryStaff",
-                        "Springshare"
+                        "Springshare",
+                        "GoogleAnalytics"
                       ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]
