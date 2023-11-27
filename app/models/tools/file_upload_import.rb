@@ -34,7 +34,14 @@ class Tools::FileUploadImport < ApplicationRecord
     Ipeds::StemCipcode,
     Ipeds::Cipcode,
     Upenn::Enrollment,
-    LibraryStaff::Census
+    LibraryStaff::Census,
+    # Only need for upload, after upload, remove
+    GoogleAnalytics::UniversalAnalytics::DailyReport,
+    GoogleAnalytics::UniversalAnalytics::Device,
+    GoogleAnalytics::UniversalAnalytics::Location,
+    GoogleAnalytics::UniversalAnalytics::Pageview,
+    GoogleAnalytics::UniversalAnalytics::Property,
+    GoogleAnalytics::UniversalAnalytics::Source,
   ]
 
   validates :target_model, presence: true
