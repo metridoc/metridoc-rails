@@ -94,6 +94,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Card swipe by frequency"
       right_column_heading: "Card swipe transactions, %{date_range}"
+    google_analytics:
+      google_analytics_menu: "Google Analytics"
     keyserver:
       keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"
