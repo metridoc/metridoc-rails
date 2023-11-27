@@ -161,6 +161,8 @@ en:
       ipeds: "IPEDS Data"
       springshare: "LibApps Data"
       ezproxy: "EZProxy Logs"
+      librarystaff: "Library Staff Census"
+      googleanalytics: "Google Analytics- Universal Analytics"
       upenn: "University of Pennsylvania Data"
     are_you_sure: "Are you sure?"
     file_upload_import:
