@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_24_182924) do
+ActiveRecord::Schema.define(version: 2023_11_30_170258) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
@@ -822,6 +822,132 @@ ActiveRecord::Schema.define(version: 2023_09_24_182924) do
     t.integer "total_rows_to_process"
     t.integer "n_rows_processed"
     t.string "post_sql_to_execute"
+  end
+
+  create_table "ga_ua_daily_reports", force: :cascade do |t|
+    t.integer "property"
+    t.integer "fiscal_year"
+    t.date "date"
+    t.integer "users"
+    t.integer "new_users"
+    t.integer "sessions"
+    t.decimal "sessions_per_user"
+    t.integer "bounces"
+    t.decimal "bounce_rate"
+    t.decimal "session_duration"
+    t.decimal "avg_session_duration"
+    t.integer "pageviews"
+    t.decimal "pageviews_per_session"
+    t.index ["date"], name: "index_ga_ua_daily_reports_on_date"
+    t.index ["fiscal_year"], name: "index_ga_ua_daily_reports_on_fiscal_year"
+    t.index ["property", "fiscal_year", "date"], name: "ga_ua_daily_report_id", unique: true
+    t.index ["property"], name: "index_ga_ua_daily_reports_on_property"
+  end
+
+  create_table "ga_ua_devices", force: :cascade do |t|
+    t.integer "property"
+    t.integer "fiscal_year"
+    t.date "date"
+    t.string "browser"
+    t.string "operating_system"
+    t.integer "users"
+    t.integer "new_users"
+    t.integer "sessions"
+    t.decimal "sessions_per_user"
+    t.integer "bounces"
+    t.decimal "bounce_rate"
+    t.decimal "session_duration"
+    t.decimal "avg_session_duration"
+    t.integer "pageviews"
+    t.decimal "pageviews_per_session"
+    t.index ["browser"], name: "index_ga_ua_devices_on_browser"
+    t.index ["date"], name: "index_ga_ua_devices_on_date"
+    t.index ["fiscal_year"], name: "index_ga_ua_devices_on_fiscal_year"
+    t.index ["operating_system"], name: "index_ga_ua_devices_on_operating_system"
+    t.index ["property", "fiscal_year", "date", "browser", "operating_system"], name: "ga_ua_device_id", unique: true
+    t.index ["property"], name: "index_ga_ua_devices_on_property"
+  end
+
+  create_table "ga_ua_locations", force: :cascade do |t|
+    t.integer "property"
+    t.integer "fiscal_year"
+    t.date "date"
+    t.string "continent"
+    t.string "sub_continent"
+    t.string "country"
+    t.string "region"
+    t.string "metro"
+    t.string "city"
+    t.string "country_iso_code"
+    t.string "region_iso_code"
+    t.integer "users"
+    t.integer "new_users"
+    t.integer "sessions"
+    t.decimal "sessions_per_user"
+    t.integer "bounces"
+    t.decimal "bounce_rate"
+    t.decimal "session_duration"
+    t.decimal "avg_session_duration"
+    t.integer "pageviews"
+    t.decimal "pageviews_per_session"
+    t.index ["country_iso_code"], name: "index_ga_ua_locations_on_country_iso_code"
+    t.index ["date"], name: "index_ga_ua_locations_on_date"
+    t.index ["fiscal_year"], name: "index_ga_ua_locations_on_fiscal_year"
+    t.index ["property", "fiscal_year", "date", "country_iso_code", "region_iso_code", "region", "metro", "city"], name: "ga_ua_location_id", unique: true
+    t.index ["property"], name: "index_ga_ua_locations_on_property"
+    t.index ["region_iso_code"], name: "index_ga_ua_locations_on_region_iso_code"
+  end
+
+  create_table "ga_ua_pageviews", force: :cascade do |t|
+    t.integer "property"
+    t.integer "fiscal_year"
+    t.date "date"
+    t.string "page_path"
+    t.integer "pageviews"
+    t.integer "unique_pageviews"
+    t.integer "entrances"
+    t.decimal "entrance_rate"
+    t.integer "exits"
+    t.decimal "exit_rate"
+    t.integer "bounces"
+    t.decimal "bounce_rate"
+    t.decimal "time_on_page"
+    t.decimal "avg_time_on_page"
+    t.index ["date"], name: "index_ga_ua_pageviews_on_date"
+    t.index ["fiscal_year"], name: "index_ga_ua_pageviews_on_fiscal_year"
+    t.index ["page_path"], name: "index_ga_ua_pageviews_on_page_path"
+    t.index ["property", "fiscal_year", "date", "page_path"], name: "ga_ua_pageview_id", unique: true
+    t.index ["property"], name: "index_ga_ua_pageviews_on_property"
+  end
+
+  create_table "ga_ua_properties", force: :cascade do |t|
+    t.integer "property"
+    t.string "name"
+    t.string "url"
+    t.string "description"
+    t.index ["property"], name: "index_ga_ua_properties_on_property", unique: true
+  end
+
+  create_table "ga_ua_sources", force: :cascade do |t|
+    t.integer "property"
+    t.integer "fiscal_year"
+    t.date "date"
+    t.string "source"
+    t.integer "users"
+    t.integer "new_users"
+    t.integer "sessions"
+    t.decimal "sessions_per_user"
+    t.integer "bounces"
+    t.decimal "bounce_rate"
+    t.decimal "session_duration"
+    t.decimal "avg_session_duration"
+    t.integer "pageviews"
+    t.decimal "pageviews_per_session"
+    t.index ["date"], name: "index_ga_ua_sources_on_date"
+    t.index ["fiscal_year"], name: "index_ga_ua_sources_on_fiscal_year"
+    t.index ["property", "fiscal_year", "date", "source"], name: "ga_ua_source_id", unique: true
+    t.index ["property"], name: "index_ga_ua_sources_on_property"
+    t.index ["source"], name: "index_ga_ua_sources_on_source"
   end
 
   create_table "gate_count_card_swipes", force: :cascade do |t|
