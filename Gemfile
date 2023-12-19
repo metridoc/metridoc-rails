@@ -10,9 +10,8 @@ gem 'puma', '~> 5.6'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 
-# Rollback mail gem
-# Mail > 2.8.0 requires net-protocol which conflicts with standard library
-gem 'mail', '= 2.7.1'
+# No longer part of standard library, ruby 3+
+gem 'mail', '~> 2.8'
 
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
@@ -43,7 +42,6 @@ gem 'devise'
 gem 'activeadmin'
 gem 'haml'
 
-gem 'active_material', github: 'vigetlabs/active_material'
 gem 'active_admin_sidebar'
 
 gem 'chartkick'
@@ -72,7 +70,7 @@ gem 'terser'
 
 group :development, :test do
   gem 'rb-readline'
-  gem 'pry'
+  gem 'pry', '~> 0.14'
   gem 'pry-rails'
   gem 'pry-byebug'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
