@@ -43,7 +43,7 @@ gem 'devise'
 gem 'activeadmin'
 gem 'haml'
 
-gem 'active_material', github: 'vigetlabs/active_material'
+#gem 'active_material', github: 'vigetlabs/active_material'
 gem 'active_admin_sidebar'
 
 gem 'chartkick'
