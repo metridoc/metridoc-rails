@@ -2,13 +2,21 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
+# Ruby on Rails is a full-stack web framework optimized for programmer happiness
+# and sustainable productivity. It encourages beautiful code by favoring
+# convention over configuration.
 gem 'rails', '~> 6.1'
+
 # Use sqlite3 as the database for Active Record
+# Ruby library to interface with the SQLite3 database engine
+# (http://www.sqlite.org). Precompiled binaries are available for common
+# platforms for recent versions of Ruby.
 gem 'sqlite3'
+
 # Use Puma as the app server
+# Puma is a simple, fast, threaded, and highly parallel HTTP 1.1 server
+# for Ruby/Rack applications.
 gem 'puma', '~> 5.6'
-# Use SCSS for stylesheets
-gem 'sass-rails', '~> 5.0'
 
 # Rollback mail gem
 # Mail > 2.8.0 requires net-protocol which conflicts with standard library
@@ -30,6 +38,11 @@ gem 'jbuilder', '~> 2.5'
 
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+
+# This gem combines the speed of libsass, the Sass C implementation,
+# with the ease of use of the original Ruby Sass library.
+# DEPRECATED, BUT DEPENDENCY EXISTS
+gem "sassc"
 
 gem 'pg'
 gem 'mysql2'
@@ -102,3 +115,5 @@ end
 gem 'tzinfo-data'
 
 gem 'todo_runner', :git => 'https://github.com/upenn-libraries/todo_runner.git', :tag => 'v0.4.2'
+
+gem "dartsass-rails", "~> 0.5.0"
