@@ -34,7 +34,6 @@ gem 'mysql2'
 # for Ruby/Rack applications.
 gem 'puma', '~> 5.6'
 
-
 ###########
 # Mail
 ###########

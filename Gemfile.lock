@@ -409,7 +409,7 @@ DEPENDENCIES
   net-sftp
   oauth2 (~> 2.0)
   pg
-  pry
+  pry (~> 0.14)
   pry-byebug
   pry-rails
   puma (~> 5.6)
