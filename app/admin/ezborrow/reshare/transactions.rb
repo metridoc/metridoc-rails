@@ -34,6 +34,6 @@ namespace: :ezborrow do
   :shelving_location,
   :pickup_location
 
-# Set the title on the index page
-index title: "Transaction"
+  # Set the title on the index page
+  index title: "Transaction"
 end

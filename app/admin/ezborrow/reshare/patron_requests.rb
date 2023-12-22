@@ -35,8 +35,6 @@ namespace: :ezborrow do
   :pr_rota_position,
   :pr_is_requester
 
-  preserve_default_filters!
-
   # Set the title on the index page
   index title: "PatronRequest"
 end
