@@ -530,3 +530,10 @@ ActiveAdmin.setup do |config|
   #
   # config.order_clause = MyOrderClause
 end
+
+# Overriding the default Active Admin String Filters
+# Including the "Not Contains" filter
+ActiveAdmin::Inputs::Filters::StringInput.filters.clear
+ActiveAdmin::Inputs::Filters::StringInput.filter(
+  :cont, :not_cont, :eq, :start, :end
+)
