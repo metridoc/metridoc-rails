@@ -6,11 +6,6 @@ namespace: :illiad do
   actions :all, :except => [:new, :edit, :update, :destroy]
 
   preserve_default_filters!
-
-  filter :department, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-  filter :nvtgc, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-  filter :org, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-  filter :rank, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-  filter :status, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
-
+  remove_filter :group_no
+  remove_filter :transaction_number
 end

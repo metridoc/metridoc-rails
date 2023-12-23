@@ -2,6 +2,18 @@
 # yarn lockfile v1
 
 
+"@fontsource/roboto@^4.5.3":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.5.8.tgz#56347764786079838faf43f0eeda22dd7328437f"
+  integrity sha512-CnD7zLItIzt86q4Sj3kZUiLcBk1dSk81qcqgMGaZe7SQ1P8hFNxhMl5AZthK1zrDM5m74VVhaOpuMGIL4gagaA==
+
+active_material@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/active_material/-/active_material-2.0.2.tgz#fa12141586db18e1ae5f0c5807efbdaad3313b38"
+  integrity sha512-HNvBukIPkc8FuPDzB87bubQkoNKLCmkw8P0jctqZ7OvXj2tSg9AcrCSavKtC9PrwYpn739Yq3AJmJ+J0RJ3MGA==
+  dependencies:
+    "@fontsource/roboto" "^4.5.3"
+
 d3-array@^1.2.0:
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.4.tgz#635ce4d5eea759f6f605863dbcfc30edc737f71f"
