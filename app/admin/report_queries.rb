@@ -5,17 +5,17 @@ ActiveAdmin.register Report::Query do
   menu false
 
   permit_params :name,
-  :full_sql,
-  :report_template_id,
-  :owner_id,
-  :comments,
-  :from_section,
-  :where_section,
-  :order_direction_section,
-  :order_section,
-  select_section: [],
-  group_by_section: [],
-  report_query_join_clauses_attributes: [:id, :_destroy, :keyword, :table, :on_keys]
+                :full_sql,
+                :report_template_id,
+                :owner_id,
+                :comments,
+                :from_section,
+                :where_section,
+                :order_direction_section,
+                :order_section,
+                select_section: [],
+                group_by_section: [],
+                report_query_join_clauses_attributes: [:id, :_destroy, :keyword, :table, :on_keys]
 
   preserve_default_filters!
   remove_filter :report_query_join_clauses

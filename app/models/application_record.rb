@@ -1,20 +1,6 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
-  # `ransackable_associations` by default returns the names
-  # of all associations as an array of strings.
-  # For overriding with a whitelist array of strings.
-  def self.ransackable_associations(auth_object = nil)
-    reflect_on_all_associations.map { |a| a.name.to_s }
-  end
-
-  # `ransackable_attributes` by default returns all column names
-  # and any defined ransackers as an array of strings.
-  # For overriding with a whitelist array of strings.
-  def self.ransackable_attributes(auth_object = nil)
-    self.attribute_names
-  end
-
   def to_xml(options = {})
     xml = options[:builder] ||= ::Builder::XmlMarkup.new(indent: options[:indent])
     xml.tag!(options[:root]) do
