@@ -33,7 +33,7 @@ WORKDIR /home/app/webapp
 USER app
 
 # Install gems, add application files, and precompile assets
-RUN gem install bundler -v 2.4.22 && \
+RUN gem install bundler && \
     bundle install && \
     mv /tmp/app/* . && \
     mv config/database.yml.example config/database.yml && \

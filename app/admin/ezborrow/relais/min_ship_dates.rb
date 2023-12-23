@@ -15,7 +15,10 @@ namespace: :ezborrow do
   actions :all, :except => [:new, :edit, :update, :destroy]
 
   preserve_default_filters!
-  remove_filter :library_id
+
+  filter :request_number, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+  filter :min_ship_date, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+
 
   # Set the title on the index page
   index title: "MinShipDate"

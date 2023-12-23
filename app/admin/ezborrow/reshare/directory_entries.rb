@@ -23,6 +23,9 @@ namespace: :ezborrow  do
   :de_lms_location_code,
   :last_updated
 
+  preserve_default_filters!
+  filter :de_slug, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+
   # Set the title on the index page
   index title: "DirectoryEntry"
 end

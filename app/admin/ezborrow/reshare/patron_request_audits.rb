@@ -14,14 +14,14 @@ namespace: :ezborrow do
   actions :all, :except => [:new, :edit, :update, :destroy]
 
   permit_params :last_updated,
-  :origin,
-  :pra_id,
-  :pra_version,
-  :pra_date_created,
-  :pra_patron_request_fk,
-  :pra_from_status_fk,
-  :pra_to_status_fk,
-  :pra_message
+    :origin,
+    :pra_id,
+    :pra_version,
+    :pra_date_created,
+    :pra_patron_request_fk,
+    :pra_from_status_fk,
+    :pra_to_status_fk,
+    :pra_message
 
   # Set the title on the index page
   index title: "PatronRequestAudit"

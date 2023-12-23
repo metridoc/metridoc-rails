@@ -58,6 +58,3 @@
 # Ignore everything in the vagrant dir except the Vagrantfile
 /vagrant/*
 !/vagrant/Vagrantfile
-
-/app/assets/builds/*
-!/app/assets/builds/.keep

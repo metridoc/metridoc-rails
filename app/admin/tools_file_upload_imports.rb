@@ -5,9 +5,9 @@ ActiveAdmin.register Tools::FileUploadImport do
   actions :all, except: [:edit, :destroy]
 
   permit_params :target_model,
-  :uploaded_file,
-  :post_sql_to_execute,
-  :comments
+                :uploaded_file,
+                :post_sql_to_execute,
+                :comments
 
   controller do
     def create

@@ -6,6 +6,8 @@ namespace: :illiad do
   actions :all, :except => [:new, :edit, :update, :destroy]
 
   preserve_default_filters!
-  remove_filter :transaction_number
+
+  filter :group_name, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
+  filter :group_no, filters: [:contains, :not_cont, :starts_with, :ends_with, :equals]
 
 end
