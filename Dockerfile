@@ -34,7 +34,6 @@ USER app
 
 # Install gems, add application files, and precompile assets
 RUN gem install bundler -v 2.4.22 && \
-    yarn install && \
     bundle install && \
     mv /tmp/app/* . && \
     mv config/database.yml.example config/database.yml && \
