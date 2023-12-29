@@ -32,13 +32,17 @@ WORKDIR /home/app/webapp
 
 USER app
 
-# Install gems, add application files, and precompile assets
+# Install gems and node modules
 RUN gem install bundler -v 2.4.22 && \
     yarn install && \
-    bundle install && \
-    mv /tmp/app/* . && \
-    mv config/database.yml.example config/database.yml && \
-    RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
+    bundle install
+
+# Add Application Files
+RUN mv /tmp/app/* . && \
+    mv config/database.yml.example config/database.yml
+
+# Precompile Assets
+RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
 
