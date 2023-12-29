@@ -34,11 +34,11 @@ USER app
 
 # Install gems, add application files, and precompile assets
 RUN gem install bundler -v 2.4.22 && \
+    yarn install && \
     bundle install && \
     mv /tmp/app/* . && \
     mv config/database.yml.example config/database.yml && \
-    RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile && \
-    bundle exec rails dartsass:build
+    RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
 
