@@ -16,9 +16,9 @@ $am-theme-accent: #FFC857;
 $am-theme-backdrop: #FBF9F6;
 $am-theme-divider: #412234;
 
-@use "active_admin/mixins";
-@use "active_material/src/stylesheets/active_material.scss";
-@use "active_admin_sidebar";
+@import "active_admin/mixins";
+@import "active_material/src/stylesheets/active_material.scss";
+@import "active_admin_sidebar";
 
 
-@use "metridoc";
+@import "metridoc";
