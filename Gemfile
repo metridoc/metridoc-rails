@@ -50,11 +50,6 @@ gem 'net-http'
 # Display
 ###########
 
-# Use CoffeeScript for .coffee assets and views
-# CoffeeScript adapter for the Rails asset pipeline.
-# Last updated 2019
-gem 'coffee-rails', '~> 4.2'
-
 # Rails engine for Turbolinks 5 support
 # Last updated 2019
 # Turbolinks makes navigating your web application faster.
