@@ -50,16 +50,9 @@ gem 'net-http'
 # Display
 ###########
 
-# Use CoffeeScript for .coffee assets and views
-# CoffeeScript adapter for the Rails asset pipeline.
-# Last updated 2019
-gem 'coffee-rails', '~> 4.2'
-
-# Rails engine for Turbolinks 5 support
-# Last updated 2019
-# Turbolinks makes navigating your web application faster.
-# Read more: https://github.com/turbolinks/turbolinks
-gem 'turbolinks', '~> 5'
+# Turbo gives you the speed of a single-page web application without having to
+# write any JavaScript.
+gem "turbo-rails"
 
 # Create JSON structures via a Builder-style DSL
 # Last updated 2021
@@ -71,7 +64,7 @@ gem "dartsass-rails", "~> 0.5.0"
 
 # This gem combines the speed of libsass, the Sass C implementation,
 # with the ease of use of the original Ruby Sass library.
-# DEPRECATED, BUT DEPENDENCY EXISTS IN ACTIVE ADMIN
+# DEPRECATED, BUT DEPENDENCY EXISTS IN SPROCKETS
 gem "sassc"
 
 # An elegant, structured (X)HTML/XML templating engine.

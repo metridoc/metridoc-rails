@@ -110,13 +110,6 @@ GEM
     chartkick (5.0.5)
     chronic (0.10.2)
     coderay (1.1.3)
-    coffee-rails (4.2.2)
-      coffee-script (>= 2.2.0)
-      railties (>= 4.0.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     concurrent-ruby (1.2.2)
     crass (1.0.6)
     d3-rails (7.8.5)
@@ -351,9 +344,10 @@ GEM
     tilt (2.3.0)
     timeout (0.4.1)
     tiny_tds (2.1.6)
-    turbolinks (5.2.1)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
+    turbo-rails (1.5.0)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     tzinfo-data (1.2023.3)
@@ -390,7 +384,6 @@ DEPENDENCIES
   capybara (~> 2.13.0)
   chartkick
   chronic
-  coffee-rails (~> 4.2)
   d3-rails
   daemons
   dartsass-rails (~> 0.5.0)
@@ -425,7 +418,7 @@ DEPENDENCIES
   terser
   tiny_tds (~> 2.1.0)
   todo_runner!
-  turbolinks (~> 5)
+  turbo-rails
   tzinfo-data
   web-console (>= 4.2.0)
 

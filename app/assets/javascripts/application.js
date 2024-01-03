@@ -16,7 +16,7 @@
 //= require chartkick
 
 //= require rails-ujs
-//= require turbolinks
+//= require turbo
 
 //= require vis-network/dist/vis-network
 
