@@ -7,6 +7,24 @@
   resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.5.8.tgz#56347764786079838faf43f0eeda22dd7328437f"
   integrity sha512-CnD7zLItIzt86q4Sj3kZUiLcBk1dSk81qcqgMGaZe7SQ1P8hFNxhMl5AZthK1zrDM5m74VVhaOpuMGIL4gagaA==
 
+"@hotwired/turbo-rails@^8.0.0-beta.2":
+  version "8.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-8.0.0-beta.2.tgz#691f8e05ad97f4c192953c4d14d5c288badb3498"
+  integrity sha512-t/e2FvOrhkDOWygsxqJ/drCz74j16hfq3wobzST9qFp7wBZXbGuw0dxB7sPpC+4I9s726KKR5ZaN+D8zaaGfPg==
+  dependencies:
+    "@hotwired/turbo" "^8.0.0-beta.2"
+    "@rails/actioncable" "^7.0"
+
+"@hotwired/turbo@^8.0.0-beta.2":
+  version "8.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo/-/turbo-8.0.0-beta.2.tgz#f9d01a0ca788ed5bf78a1746e06c3244af2b7535"
+  integrity sha512-Ewdz4m+rlBXiqU8hXC9qjrA6/gaYlwUWbab8M/+/PW3KEoZ36pqvLt4l7wEXELPk699bRXVFS08mt3icJ0idfg==
+
+"@rails/actioncable@^7.0":
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.1.2.tgz#d261ff4b72844f5af496671346ec478798f4ac2c"
+  integrity sha512-KGziTZfbmGm8/fHOpj515xupbYU+49hsp4etfdpoDJ/CEY2bRZR0cyFcJkpK6n0t/sxOHNWY6bo9vSgXZvT7Mg==
+
 active_material@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/active_material/-/active_material-2.0.2.tgz#fa12141586db18e1ae5f0c5807efbdaad3313b38"

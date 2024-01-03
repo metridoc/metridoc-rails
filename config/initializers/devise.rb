@@ -9,7 +9,7 @@ Devise.setup do |config|
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
   # config.secret_key = '689e08b9514d5ea9b09ac957d06cbb16d5c3d2369290a62f53d36bbebbc34ce589619c8198f06b8b7622853fc5f51cc4a2be2fe4d482e485d67f95a7a15b59ff'
-  
+
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
   # config.parent_controller = 'DeviseController'
@@ -280,13 +280,6 @@ Devise.setup do |config|
   # When using OmniAuth, Devise cannot automatically set OmniAuth path,
   # so you need to do it manually. For the users scope, it would be:
   # config.omniauth_path_prefix = '/my_engine/users/auth'
-
-  # ==> Turbolinks configuration
-  # If your app is using Turbolinks, Turbolinks::Controller needs to be included to make redirection work correctly:
-  #
-  # ActiveSupport.on_load(:devise_failure_app) do
-  #   include Turbolinks::Controller
-  # end
 
   config.secret_key = '5b3917fabda3722f8876791951fe07b4f670e52856be6fd68b7b01d28fdd081fea391e6c5d4c2eec48c4807eeb6242f465f21ad76bf4c008fd5f8e75f519b98a'
 
