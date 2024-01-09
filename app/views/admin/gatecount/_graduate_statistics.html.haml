@@ -22,9 +22,9 @@
 %h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
 
 #data-viz
-#single-col
-  %h3{style: "text-align:center;"} Van Pelt
-  =pie_chart gc_calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+  #single-col
+    %h3{style: "text-align:center;"} Van Pelt
+    =pie_chart gc_calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
 
 -grad_enrollment=gc_enrollment_table("Graduate")
 
@@ -33,13 +33,12 @@
 
 -grad_bar_percents=Hash.new
 -grad_people=gc_calc_percents(van_pelt_table,"Individuals","Grad Student")
-
--grad_school_names.each_with_index {|g,i| grad_bar_percents[g]=((grad_people[g]).fdiv(grad_school_pop[i]))*100}
+-grad_school_names.each_with_index {|g,i| grad_bar_percents[g]=((grad_people.fetch(g, 0)).fdiv(grad_school_pop[i]))*100}
 
 %h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
 #data-viz
-#single-col
-  =column_chart grad_bar_percents, round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
+  #single-col
+    =column_chart grad_bar_percents, round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
 
 -med_bio=gc_calc_percents(biotech_table,"Raw Counts","Grad Student")
 -vp_bio=gc_calc_percents(van_pelt_table,"Raw Counts","Grad Student")
