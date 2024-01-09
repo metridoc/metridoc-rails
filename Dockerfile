@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby27:2.5.1
+FROM phusion/passenger-ruby32:2.6.2
 
 COPY delayed-job-log-forwarder.sh /etc/service/delayed-job-log-forwarder/run
 COPY webapp.conf /etc/nginx/sites-enabled/webapp
