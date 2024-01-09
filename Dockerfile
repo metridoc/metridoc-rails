@@ -37,7 +37,7 @@ RUN mv /tmp/app/* . && \
     mv config/database.yml.example config/database.yml
 
 # Install gems and node modules
-RUN gem install bundler -v 2.4.22 && \
+RUN gem install bundler && \
     yarn install && \
     bundle install
 
