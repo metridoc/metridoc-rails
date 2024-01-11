@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '~> 6.1'
+gem 'rails', '~> 7.1'
 
 ###########
 # Databases
@@ -62,6 +62,8 @@ gem 'jbuilder', '~> 2.5'
 # Integrate Dart Sass with the asset pipeline in Rails.
 gem "dartsass-rails", "~> 0.5.0"
 
+
+gem "sprockets-rails"
 # This gem combines the speed of libsass, the Sass C implementation,
 # with the ease of use of the original Ruby Sass library.
 # DEPRECATED, BUT DEPENDENCY EXISTS IN SPROCKETS
@@ -225,7 +227,7 @@ group :development do
   gem 'tiny_tds', '~> 2.1.0'
 
   # ActiveRecord SQL Server Adapter. SQL Server 2012 and upward.
-  gem 'activerecord-sqlserver-adapter', '~> 6.1'
+  gem 'activerecord-sqlserver-adapter', '~> 7.1'
 
   # Quick way to inspect your Rails database, see content of tables, filter,
   # export them to CSV, Excel, EXPLAIN SQL and run SQL queries.

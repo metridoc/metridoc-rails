@@ -1,6 +1,6 @@
 class Report::Template < ApplicationRecord
-  serialize :select_section, Array
-  serialize :group_by_section, Array
+  serialize :select_section, type: Array, coder: JSON
+  serialize :group_by_section, type: Array, coder: JSON
   attr_accessor :select_section_with_aggregates
   attr_reader :join_section
   self.table_name = "report_templates"
