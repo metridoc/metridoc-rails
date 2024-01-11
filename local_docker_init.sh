@@ -3,7 +3,7 @@
 set -e
 
 echo "Installing gems"
-gem install bundler -v 2.4.22 && bundle install
+gem install bundler && bundle install
 
 echo "Installing yarn modules"
 yarn install

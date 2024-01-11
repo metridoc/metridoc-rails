@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '~> 6.1'
+gem 'rails', '~> 7.1'
 
 ###########
 # Databases
@@ -32,7 +32,7 @@ gem 'mysql2'
 # Use Puma as the app server
 # Puma is a simple, fast, threaded, and highly parallel HTTP 1.1 server
 # for Ruby/Rack applications.
-gem 'puma', '~> 5.6'
+gem 'puma', '~> 6.4'
 
 
 ###########
@@ -62,6 +62,8 @@ gem 'jbuilder', '~> 2.5'
 # Integrate Dart Sass with the asset pipeline in Rails.
 gem "dartsass-rails", "~> 0.5.0"
 
+
+gem "sprockets-rails"
 # This gem combines the speed of libsass, the Sass C implementation,
 # with the ease of use of the original Ruby Sass library.
 # DEPRECATED, BUT DEPENDENCY EXISTS IN SPROCKETS
@@ -78,7 +80,7 @@ gem 'haml'
 # managing, choosing, blacklisting, and cycling through connections. It comes
 # with an ActiveRecord database adapter implementation.
 # Last updated 2021
-gem 'makara', '~> 0.4.1'
+gem 'makara', '~> 0.5.1'
 
 # A library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import'
@@ -188,7 +190,7 @@ group :development, :test do
   # Adds support for Capybara system testing and selenium driver
   # Capybara is an integration testing tool for rack based web applications.
   # It simulates how a user would interact with a website
-  gem 'capybara', '~> 2.13.0'
+  gem 'capybara', '~> 3.39', '>= 3.39.2'
 
   # Selenium implements the W3C WebDriver protocol to automate popular browsers.
   # It aims to mimic the behaviour of a real user as it interacts with the
@@ -205,7 +207,7 @@ group :development do
 
   # The Listen gem listens to file modifications and notifies you about the
   # changes. Works everywhere!
-  gem 'listen', '>= 3.0.5', '< 3.4'
+  gem 'listen', '>= 3.0.5', '< 4.0'
 
   # Spring speeds up development by keeping your application running in the
   # background. Read more: https://github.com/rails/spring
@@ -214,7 +216,7 @@ group :development do
 
   # Makes spring watch files using the listen gem.
   # Last updated in 2022
-  gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'spring-watcher-listen', '~> 2.1.0'
 
   #tiny_tds and activerecord-sqlserver-adapter gems are needed by only
   # import_helper.rb, which is not really part of the app, it is more for
@@ -225,7 +227,7 @@ group :development do
   gem 'tiny_tds', '~> 2.1.0'
 
   # ActiveRecord SQL Server Adapter. SQL Server 2012 and upward.
-  gem 'activerecord-sqlserver-adapter', '~> 6.1'
+  gem 'activerecord-sqlserver-adapter', '~> 7.1'
 
   # Quick way to inspect your Rails database, see content of tables, filter,
   # export them to CSV, Excel, EXPLAIN SQL and run SQL queries.
