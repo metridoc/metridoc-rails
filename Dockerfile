@@ -1,4 +1,4 @@
-FROM phusion/passenger-ruby27:2.3.0
+FROM phusion/passenger-ruby32:2.6.2
 
 COPY delayed-job-log-forwarder.sh /etc/service/delayed-job-log-forwarder/run
 COPY webapp.conf /etc/nginx/sites-enabled/webapp
@@ -32,12 +32,17 @@ WORKDIR /home/app/webapp
 
 USER app
 
-# Install gems, add application files, and precompile assets
+# Add Application Files
+RUN mv /tmp/app/* . && \
+    mv config/database.yml.example config/database.yml
+
+# Install gems and node modules
 RUN gem install bundler && \
-    bundle install && \
-    mv /tmp/app/* . && \
-    mv config/database.yml.example config/database.yml && \
-    RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
+    yarn install && \
+    bundle install
+
+# Precompile Assets
+RUN RAILS_ENV=production SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
 USER root
 

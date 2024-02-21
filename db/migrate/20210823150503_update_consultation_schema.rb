@@ -26,7 +26,6 @@ class UpdateConsultationSchema < ActiveRecord::Migration[5.2]
       t.integer :number_of_interactions
       t.string :patron_type
       t.string :patron_name
-      t.string :rtg
       t.integer :graduation_year
       t.string :undergraduate_student_type
       t.string :graduate_student_type
