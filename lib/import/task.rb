@@ -60,7 +60,9 @@ module Import
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = global_config.merge(YAML.load_file(@task_file))
+        @task_config = global_config.merge(
+          Psych.load_file(@task_file)
+        )
       end
 
       def target_adapter
@@ -207,7 +209,11 @@ module Import
       end
 
       def get_headers
-        csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        csv = CSV.open(
+          csv_file_path,
+          external_encoding: global_config.fetch("encoding", "UTF-8"),
+          internal_encoding: 'UTF-8'
+        )
         columns = csv.readline
         csv.close
         headers = columns.map{|c| Util.column_to_attribute(c) }
@@ -398,19 +404,24 @@ module Import
         # Pass the primary key flag to track the id sequence
         options[:primary_key] = class_name.primary_key
 
+        # Pass the model name through options
+        options[:model] = class_name
+
         # Create the post sql statements for upsert or ignore duplicates
         post_sql_statements = connection.post_sql_statements(
-          class_name.quoted_table_name, options
+          class_name.quoted_table_name, **options
         )
 
         # Get the prepared set of values for sql insertion
         values_sql = construct_values_sql(class_name, records)
 
         # Insert records
-        result = connection.insert_many( [insert_sql, post_sql_statements].flatten,
+        result = connection.insert_many(
+          [insert_sql, post_sql_statements].flatten,
           values_sql,
           options,
-          "#{class_name} Create Many" )
+          "#{class_name} Create Many"
+        )
 
         log "Imported #{result.ids.size} records."
         log_validation_errors(result.failed_instances)
@@ -483,9 +494,6 @@ module Import
           rescue => ex
             log "Error => #{ex.message} record:[#{record.inspect}]"
             n_errors += 1
-            # record.attribute_names.each do |a|
-            #   log "#{a} --- #{record.send(a).size rescue "n/a"} "
-            # end
           end
         end
 
