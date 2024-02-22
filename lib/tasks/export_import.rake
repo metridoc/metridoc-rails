@@ -43,7 +43,7 @@ namespace "export_import" do
       start :export
 
       task :export, on_fail: :FAIL, next_step: :import do |todo_file|
-        job = YAML.load(todo_file)
+        job = Psych.safe_load(todo_file, aliases: true)
         options = {}
         job.each do |k,v| options[k.to_sym] = v end
         success = Export::Database::Main.new(options).execute()
@@ -57,7 +57,7 @@ namespace "export_import" do
       end
 
       task :import, on_fail: :FAIL, next_step: :bookkeeping do |todo_file|
-        job = YAML.load(todo_file)
+        job = Psych.safe_load(todo_file, aliases: true)
         options = {}
         job.each do |k,v| options[k.to_sym] = v end
         m = Import::Main.new(options)
@@ -65,7 +65,7 @@ namespace "export_import" do
       end
 
       task :bookkeeping, on_fail: :FAIL, next_step: :SUCCESS do |todo_file|
-        job = YAML.load(todo_file)
+        job = Psych.safe_load(todo_file, aliases: true)
         config_folder = job['config_folder']
         from_date = job['from_date']
         to_date = job['to_date']
