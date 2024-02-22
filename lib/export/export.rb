@@ -76,7 +76,7 @@ module Export
         next if File.basename(full_path) == "global.yml"
 
         # Load the yaml file
-        table_params = YAML.load_file(full_path)
+        table_params = Psych.load_file(full_path)
         # Get the sequence of the file
         seq = table_params["load_sequence"] || 0
         # Get the source adapter of the file
@@ -144,7 +144,10 @@ module Export
 
       # If the file exists, load the file into a hash
       if File.exist?(yml_path)
-        global_params = YAML.load(ERB.new(File.read(yml_path)).result)
+        global_params = Psych.safe_load(
+          ERB.new(File.read(yml_path)).result,
+          aliases: true
+        )
       end
 
       # Merge the global configuration with the options
@@ -157,10 +160,11 @@ module Export
 
       # Access the environment configuration
       environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-      dbconfig = YAML.load(
+      dbconfig = Psych.safe_load(
         File.read(
           File.join(root_path, 'config', 'database.yml')
-        )
+        ),
+        aliases: true
       )
 
       # Connect to the database

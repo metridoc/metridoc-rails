@@ -69,7 +69,7 @@ module Import
           next if File.extname(full_path) != '.yml'
           next if File.basename(full_path) == "global.yml"
 
-          table_params = YAML.load_file(full_path)
+          table_params = Psych.load_file(full_path)
           seq = table_params["load_sequence"] || 0
 
           next if sequences_only.present? && !sequences_only.include?(seq)
@@ -88,7 +88,10 @@ module Import
         yml_path = File.join(root_path, "config", "data_sources", config_folder, "global.yml")
 
         if File.exist?(yml_path)
-          global_params = YAML.load(ERB.new(File.read(yml_path)).result)
+          global_params = Psych.safe_load(
+            ERB.new(File.read(yml_path)).result,
+            aliases: true
+          )
         end
 
         @global_params = global_params.merge(@options.stringify_keys)
