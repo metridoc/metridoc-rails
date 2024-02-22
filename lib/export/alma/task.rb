@@ -13,7 +13,7 @@ module Export
 
       # Specify yesterday's date if no end_date is defined
       if end_date.nil?
-        end_date = Date.yesterday.to_s(:db)
+        end_date = Date.yesterday.to_s
       end
 
       date_filter = '&filter='
@@ -74,7 +74,7 @@ module Export
         url += build_date_filter(
           task_config["incremental_filter_sql"],
           task_config.fetch("export_filter_start_date", incremental_filter),
-          task_config.fetch("export_filter_end_date", Date.yesterday.to_s(:db)),
+          task_config.fetch("export_filter_end_date", Date.yesterday.to_s)
         )
       end
 
