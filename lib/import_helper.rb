@@ -211,7 +211,7 @@ module ImportHelper
         z = {}
         z.merge!(is_legacy: true)
         z.merge!(institution_id: institution_id) if has_institution_id
-        headers.each_with_index do |k,i| 
+        headers.each_with_index do |k,i|
           z[k.underscore.to_sym] = row[i] if k != 'id' && class_name.has_attribute?(k.underscore)
         end
         records << class_name.new(z)
@@ -298,7 +298,12 @@ module ImportHelper
 
       connection.close
 
-      app_db = YAML.load_file(File.join(Rails.root, "config", "database.yml"))[Rails.env.to_s] 
+      yml_path = File.join(Rails.root, "config", "database.yml")
+      app_db = Psych.safe_load_file(
+        yml_path,
+        aliases: true
+      )
+
       connection = ActiveRecord::Base.establish_connection(app_db).connection
 
       class_name = "#{namespace.classify}::#{table_name[prefix.length..-1].singularize.classify}".constantize
@@ -316,7 +321,7 @@ module ImportHelper
           break
         end
         z = {}
-        headers.each_with_index do |k,i| 
+        headers.each_with_index do |k,i|
           v = row[i]
           z[k.underscore.to_sym] = v
         end
@@ -535,7 +540,10 @@ module ImportHelper
       global_params = {}
 
       if File.exist?(r.join("global.yml"))
-        global_params = YAML.load_file(r.join("global.yml"))
+        global_params = Psych.safe_load(
+          ERB.new(File.read(r.join("global.yml")).result,
+          aliases: true
+        )
       end
 
       global_params.each do |k, v|
@@ -551,7 +559,10 @@ module ImportHelper
       full_paths.each do |full_path|
         next if File.basename(full_path) == "global.yml"
 
-        table_params = YAML.load_file(full_path)
+        table_params = Psych.safe_load(
+          ERB.new(File.read(full_path)).result,
+          aliases: true
+        )
 
         seq = table_params["load_sequence"] || 0
 
@@ -659,7 +670,7 @@ module ImportHelper
         end
         z = {}
         z.merge!(institution_id: institution_id) if has_institution_id
-        headers.each_with_index do |k,i| 
+        headers.each_with_index do |k,i|
           v = row[i]
           #validations
           unless params["bypass_validations"]
@@ -813,4 +824,3 @@ def valid_datetime?(v)
   end
   return true
 end
-

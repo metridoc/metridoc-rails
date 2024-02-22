@@ -14,7 +14,12 @@ module Export
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = @main_driver.global_config.merge( YAML.load(ERB.new(File.read(@task_file)).result) )
+        @task_config = @main_driver.global_config.merge(
+          Psych.safe_load(
+            ERB.new(File.read(@task_file)).result,
+            aliases: true
+          )
+        )
       end
 
       def import_model_name
@@ -123,7 +128,10 @@ module Export
 
       def validate_range_request(req_type)
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
+        dbconfig = Psych.safe_load_file(
+          File.join(@main_driver.root_path, 'config', 'database.yml'),
+          aliases: true
+        )
         Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
         earliest = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder']).earliest.to_date
         if req_type == 'from'
@@ -139,7 +147,10 @@ module Export
 
       def update_bookkeeping_table
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
+        dbconfig = Psych.safe_load_file(
+          File.join(@main_driver.root_path, 'config', 'database.yml'),
+          aliases: true
+        )
         Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
         table = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder'])
         unless from_date.nil? || from_date > table.earliest.to_date
@@ -186,7 +197,10 @@ module Export
         return @log_job_execution_step if @log_job_execution_step.present?
 
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
+        dbconfig = Psych.safe_load(
+          File.read(File.join(@main_driver.root_path, 'config', 'database.yml')),
+          aliases: true
+        )
         Log::JobExecutionStep.establish_connection dbconfig[environment]
 
         @log_job_execution_step = Log::JobExecutionStep.create!(

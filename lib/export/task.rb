@@ -12,10 +12,11 @@ module Export
     # task file information and save to @task_config
     def task_config
       @task_config ||= @main_driver.global_config.merge(
-        YAML.load(
+        Psych.safe_load(
           ERB.new(
             File.read(@task_file)
-          ).result
+          ).result,
+          aliases: true
         )
       )
     end
@@ -61,12 +62,13 @@ module Export
 
       # Access the environment configuration
       environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-      dbconfig = YAML.load(
+      dbconfig = Psych.safe_load(
         File.read(
           File.join(
             @main_driver.root_path, 'config', 'database.yml'
           )
-        )
+        ),
+        aliases: true
       )
 
       # Connect to the database
