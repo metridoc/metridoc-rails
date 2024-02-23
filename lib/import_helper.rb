@@ -541,7 +541,7 @@ module ImportHelper
 
       if File.exist?(r.join("global.yml"))
         global_params = Psych.safe_load(
-          ERB.new(File.read(r.join("global.yml")).result,
+          ERB.new(File.read(r.join("global.yml"))).result,
           aliases: true
         )
       end
