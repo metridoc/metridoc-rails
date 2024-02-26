@@ -2,7 +2,11 @@ class Log::JobExecution < Log::Base
 
   # Check if the source name is like *name*
   scope :of_source, -> (source_name) {
-    where("source_name ILIKE ? ",  "%#{source_name}%")
+    if source_name == "reshare"
+      return where(source_name: source_name)
+    else
+      return where("source_name ILIKE ? ",  "%#{source_name}%")
+    end
   }
 
   # Find the parent source.
