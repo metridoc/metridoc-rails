@@ -142,6 +142,7 @@ en:
     user_role_sections:
       coursereserves: "Course Reserves"
       borrowdirect: "RSAT: BorrowDirect"
+      reshare: "RSAT: PALCI"
       consultation: "Consultation"
       ezborrow: "RSAT: PALCI"
       gatecount: "Gate Counts"
