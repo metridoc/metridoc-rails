@@ -21,7 +21,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
 WORKDIR /tmp/freetds
 
 # Download and install FreeTDS
-RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.00.27.tar.gz | tar --strip-components=1 -zxf - && \
+RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.4.10.tar.gz | tar --strip-components=1 -zxf - && \
     ./configure --prefix=/usr/local --with-tdsver=7.3 && \
     make && make install
 
