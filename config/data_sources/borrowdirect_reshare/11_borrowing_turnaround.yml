@@ -43,7 +43,8 @@ sqls:
       		AND de.de_status_fk IS NOT NULL
       		AND de.de_parent IS NULL
       		AND de.de_name NOT IN (
-            'Business Library (Manhattanville)'
+            'Business Library (Manhattanville)',
+            'Library Collections and Services Facility'
           )
         GROUP BY de.de_name, pra.pra_patron_request_fk
       )
