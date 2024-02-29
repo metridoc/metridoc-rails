@@ -24,6 +24,7 @@ This table is designed to incrementally update.  It creates two subtables, borro
 When extracting the "nice" name for each lender and borrower, a join between the Patron Request and the Directory Entry table is made.  In order to correctly find the institution, the directory parent must be NULL.  This indicates we are at the top level of the institution.  However, when new entries are added, entries may temporarily be incomplete.  As such, multiple entries can be flagged as the same institution.  This is a rare occurrence so a restriction on the de_name is added for the following:
 
 * Business Library (Manhattanville)
+* Library Collections and Services Facility
 
 # Lending Turnarounds
 For each lender, there is a row of the status, and pertinent times in the lending lifecycle.  After an item has shipped, the turnaround times are calculated in days.
