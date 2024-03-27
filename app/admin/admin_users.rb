@@ -25,7 +25,7 @@ ActiveAdmin.register AdminUser do
       admin_user.user_role ? admin_user.user_role.name : ""
     end
     column :super_admin
-    column :current_sign_in_at
+    column :last_sign_in_at
     column :sign_in_count
     column :created_at
     actions
