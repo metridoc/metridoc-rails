@@ -6,10 +6,10 @@ class Tools::FileUploadImport < ApplicationRecord
   has_many :file_upload_import_logs, -> { order(:sequence) }, class_name: "Tools::FileUploadImportLog"
 
   before_create :set_defaults
-  # Ensure that the active storage blob is saved
-  after_commit :queue_process
-  # attached file must be referenced after commit
+  # Post Rails 7.1, must appear BEFORE after_commit
   has_one_attached :uploaded_file
+  # Save the active storage blob
+  after_commit :queue_process
 
   UPLOADABLE_MODELS = [
     Alma::Circulation,
