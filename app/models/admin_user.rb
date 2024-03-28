@@ -2,7 +2,7 @@ class AdminUser < ApplicationRecord
   belongs_to :user_role, class_name: "Security::UserRole", optional: true
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, 
+  devise :database_authenticatable, :trackable,
          :recoverable, :rememberable, :validatable
 
   def to_xml(options = {})
@@ -34,9 +34,14 @@ class AdminUser < ApplicationRecord
     return system_admin? && admin_user != self
   end
 
-  protected 
-  def password_required? 
+  # Don't keep the IP addresses of logins
+  def current_sign_in_ip; end
+  def last_sign_in_ip=(_ip); end
+  def current_sign_in_ip=(_ip); end
+
+  protected
+  def password_required?
     self.encrypted_password.blank?
-  end 
+  end
 
 end
