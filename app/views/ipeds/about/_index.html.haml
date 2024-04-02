@@ -112,10 +112,12 @@
       For each year of data download the data file for completions dataset
       that includes "Awards/degrees conferred by program (6-digit CIP code),
       award level, race/ethnicity, and gender"
+    %li Do NOT open the file with Microsoft Excel, it will reformat the CIP codes from strings to numbers.
     %li
-      In each file, add the column YEAR and fill it with the year the data
-      are from
-    %li Save each file as a csv
+      The files need to be
+      #{link_to "preprocessed (instructions below)", ipeds_about_url(anchor: "preprocessing")}
+      before uploading with the
+      #{link_to "Upload Tool", :admin_tools_file_upload_imports}.
 
   %h3 Programs Table
   %p
@@ -150,7 +152,7 @@
       For each year of data download the data file for completions dataset
       that includes "Number of programs offered and number of programs offered
       via distance education, by award level"
-    %li NB: Do not open the file with Microsoft Excel, it will reformat the CIP codes incorrectly.
+    %li Do NOT open the file with Microsoft Excel, it will reformat the CIP codes from strings to numbers.
     %li
       The download will be a zip file with a name like C2013DEP.zip.
       %ul
@@ -158,19 +160,11 @@
         %ul
           %li c2013dep.csv - The first release of the data.
           %li c2013dep_rv.csv - The revised release of the data.
-
     %li
-      Preprocess the file for upload
-      %ul
-        %li Convert from Windows format
-        %li Add the year as a column
-        %li Remove any quotes or spaces
-      Linux commands to run preprocessing on data from 2013:
-      %pre
-        $ dos2unix c2013dep_rv.csv
-        $ awk -F',' '$(NF+1) = NR>1 ? "2013" : "YEAR"' OFS=',' c2013dep_rv.csv > c2013dep_rv_temp.csv
-        $ sed 's/[[:space:]\"]*//g' c2013dep_rv_temp.csv > c2013dep_rv_final.csv
-    %li Upload the file with the #{link_to "Upload Tool", :admin_tools_file_upload_imports}.
+      The files need to be
+      #{link_to "preprocessed (instructions below)", ipeds_about_url(anchor: "preprocessing")}
+      before uploading with the
+      #{link_to "Upload Tool", :admin_tools_file_upload_imports}.
 
   %h3 Directory Tables
   %p
@@ -239,3 +233,62 @@
     %li Copy the NAFSA table and paste into an Excel file
     %li Rename the 2020 CIP Code column to CIP Code 2020
     %li Save as csv
+
+%hr
+%section
+  %h2{id: "preprocessing"} Preprocessing Files for Upload
+  %p
+    Both the yearly completions data and the yearly programs data need to be
+    preprocessed.  There are multiple ways to clean the data file, but here are
+    two, one linux centered and one using python. The steps necessary to clean
+    the data are:
+
+  %ul
+    %li Convert from Windows format to normalized csv
+    %li Add the year as a column
+    %li Remove any quotes, spaces or blank rows
+
+
+  %h3 Linux Method
+  %ul
+    %li
+      Linux commands to run preprocessing on data from 2013:
+      %pre
+        $ dos2unix c2013dep_rv.csv
+        $ awk -F',' '$(NF+1) = NR>1 ? "2013" : "YEAR"' OFS=',' c2013dep_rv.csv > c2013dep_rv_temp.csv
+        $ sed 's/[[:space:]\"]*//g' c2013dep_rv_temp.csv > c2013dep_rv_final.csv
+
+
+  %h3 Python Method
+  %ul
+    %li
+      Copy the following python script into a file called process_IPEDs_files.py:
+      %pre
+        %code
+          :preserve
+            import pandas as pd
+            import re
+            import sys
+
+            input_file = sys.argv[1]
+
+            # Define output file name
+            output_file = input_file.replace(".csv", "_processed.csv")
+
+            # Read in the csv ensuring the CIPCODE is kept as a string
+            df = pd.read_csv(input_file, dtype={"CIPCODE": str})
+
+            # Add a column for the year
+            # The year is extracted from the last 4 digit number of the input file name
+            df["year"] = re.findall(r'\d{4}', input_file)[-1]
+            # Remove any spaces in the CIPCODE
+            df["CIPCODE"] = df.CIPCODE.apply(str.strip)
+
+            # Print the file to an output
+            df.to_csv(output_file, index = False)
+    %li
+      Example of running file on data from 2013:
+      %pre
+        $ python process_IPEDs_files.py path/to/c2013dep_rv.csv
+    %li
+      Output file available at: path/to/c2013dep_rv_processed.csv
