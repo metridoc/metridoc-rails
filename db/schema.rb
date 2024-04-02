@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_01_143213) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1210,6 +1210,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
     t.string "text_change"
     t.string "cip_code2020"
     t.text "cip_title2020"
+    t.index ["cip_code2010", "cip_code2020"], name: "ipeds_cipcodes_unique_id", unique: true
   end
 
   create_table "ipeds_completion_schema", force: :cascade do |t|
@@ -1219,6 +1220,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
     t.string "format"
     t.string "imputationvar"
     t.text "var_title"
+    t.index ["varname"], name: "ipeds_completion_schema_unique_id", unique: true
   end
 
   create_table "ipeds_completions", force: :cascade do |t|
@@ -1257,6 +1259,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
     t.integer "cnralt"
     t.integer "cnralm"
     t.integer "cnralw"
+    t.index ["year", "unitid", "cipcode", "majornum", "awlevel"], name: "ipeds_completions_unique_id", unique: true
   end
 
   create_table "ipeds_directories", force: :cascade do |t|
@@ -1333,6 +1336,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
     t.float "latitude"
     t.integer "dfrcgid"
     t.integer "dfrcuscg"
+    t.index ["unitid"], name: "ipeds_directories_unique_id", unique: true
   end
 
   create_table "ipeds_directory_schema", force: :cascade do |t|
@@ -1342,6 +1346,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
     t.string "format"
     t.string "imputationvar"
     t.text "var_title"
+    t.index ["varname"], name: "ipeds_directory_schema_unique_id", unique: true
   end
 
   create_table "ipeds_program_schema", force: :cascade do |t|
@@ -1406,6 +1411,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_27_150119) do
     t.string "cip_code_two_digit_series"
     t.string "cip_code_2020"
     t.text "cip_code_title"
+    t.index ["cip_code_2020"], name: "iped_stem_cipcodes_unique_id", unique: true
   end
 
   create_table "keyserver_computers", force: :cascade do |t|
