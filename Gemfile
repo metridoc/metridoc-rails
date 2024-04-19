@@ -5,7 +5,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '~> 7.1'
+gem 'rails', '>= 7.1.3.1'
+
+# RDoc produces HTML and command-line documentation for Ruby projects. RDoc
+# includes the +rdoc+ and +ri+ tools for generating and displaying documentation
+# from the command-line.
+# Required by IRB
+gem 'rdoc', '>= 6.6.3.1'
 
 ###########
 # Databases
@@ -34,6 +40,11 @@ gem 'mysql2'
 # for Ruby/Rack applications.
 gem 'puma', '~> 6.4'
 
+# Rack provides a minimal, modular and adaptable interface for developing web
+# applications in Ruby. By wrapping HTTP requests and responses in the simplest
+# way possible, it unifies and distills the API for web servers, web frameworks,
+# and software in between (the so-called middleware) into a single method call.
+gem 'rack', '>=3.0.9.1'
 
 ###########
 # Mail
@@ -71,6 +82,12 @@ gem "sassc"
 
 # An elegant, structured (X)HTML/XML templating engine.
 gem 'haml'
+
+# Nokogiri makes it easy and painless to work with XML and HTML from Ruby.
+# It provides a sensible, easy-to-understand API for reading, writing,
+# modifying, and querying documents. It is fast and standards-compliant by
+# relying on native parsers like libxml2, libgumbo, or xerces.
+gem 'nokogiri', '>= 1.16.4'
 
 ##############
 # ActiveRecord
