@@ -9,7 +9,6 @@ default-slack-config: &default-slack-config
 
 orbs:
   slack: circleci/slack@3.4.2
-  docker: circleci/docker@0.5.13
 
 commands:
   molecule_test:
@@ -113,7 +112,8 @@ jobs:
       - slack/status: *default-slack-config
   publish_container:
     description: Builds and Tags a Docker Image.
-    executor: docker/docker
+    docker:
+      - image: circleci/python:3.6
     parameters:
       image:
         description: Name of image to publish.
@@ -129,8 +129,21 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - docker/check:
-          registry: quay.io
+      - run:
+          name: Check Environment Variables
+          command: |
+            if [[ -z "${DOCKER_LOGIN}" ]]; then
+              echo "DOCKER_LOGIN is not set, will not be able to push image."
+              exit 1
+            fi
+
+            if [[ -z "${DOCKER_PASSWORD}" ]]; then
+              echo "DOCKER_PASSWORD is not set, will not be able to push image."
+              exit 1
+            fi
+      - run:
+          name: Docker Login
+          command: docker login -u "${DOCKER_LOGIN}" -p "${DOCKER_PASSWORD}" quay.io
       - run:
           name: Build Docker Image
           command: |
@@ -147,9 +160,12 @@ jobs:
               --label "edu.upenn.library.circleci.workflow-id=${CIRCLE_WORKFLOW_ID}" \
               -f << parameters.dockerfile >> \
               << parameters.path >>
-      - docker/push:
-          registry: quay.io
-          image: << parameters.image >>
+      - run:
+          name: Push Docker Image
+          command: |
+            if [[ $CIRCLE_NODE_INDEX == 0 ]]; then
+              docker push quay.io/<< parameters.image >>
+            fi
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
