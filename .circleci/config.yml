@@ -29,6 +29,7 @@ jobs:
   check-for-secrets:
     docker:
       - image: quay.io/upennlibraries/gitleaks:v2.0.0
+    working_directory: /root/project
     steps:
         - checkout
         - run:
