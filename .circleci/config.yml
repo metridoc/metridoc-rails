@@ -113,6 +113,8 @@ jobs:
   publish_container:
     description: Builds and Tags a Docker Image.
     context: quay.io
+    executor:
+      docker/docker
     parameters:
       image:
         description: Name of image to publish.
@@ -131,7 +133,7 @@ jobs:
         - docker/check:
           registry: quay.io
         - run:
-          - name: Build Docker Image
+          name: Build Docker Image
           command: |
             docker build \
               -t quay.io/<< parameters.image >>:${CIRCLE_SHA1} \
