@@ -34,7 +34,7 @@ jobs:
         - run:
             name: Check repository for secrets
             command: |
-              gitleaks --path=${CIRCLE_WORKING_DIRECTORY} --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
+              gitleaks --repo-path=${CIRCLE_WORKING_DIRECTORY} --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.9
