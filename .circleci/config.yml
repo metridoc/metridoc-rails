@@ -112,9 +112,7 @@ jobs:
       - slack/status: *default-slack-config
   publish_container:
     description: Builds and Tags a Docker Image.
-    context: quay.io
-    executor:
-      docker/docker
+    executor: docker/docker
     parameters:
       image:
         description: Name of image to publish.
@@ -127,30 +125,30 @@ jobs:
         description: Name of the dockerfile to use to build container. Defaults to Dockerfile.
         type: string
         default: Dockerfile
-      steps:
-        - checkout
-        - setup_remote_docker
-        - docker/check:
-          registry: quay.io
-        - run:
-          name: Build Docker Image
-          command: |
-            docker build \
-              -t quay.io/<< parameters.image >>:${CIRCLE_SHA1} \
-              -t quay.io/<< parameters.image >>:${CIRCLE_SHA1:0:7} \
-              --label "edu.upenn.library.build-system=circleci" \
-              --label "edu.upenn.library.circleci.build-number=${CIRCLE_BUILD_NUM}" \
-              --label "edu.upenn.library.circleci.build-timestamp=$(date -uIs)" \
-              --label "edu.upenn.library.circleci.build-url=${CIRCLE_BUILD_URL}" \
-              --label "edu.upenn.library.circleci.git-branch=${CIRCLE_BRANCH}" \
-              --label "edu.upenn.library.circleci.git-commit=${CIRCLE_SHA1}" \
-              --label "edu.upenn.library.circleci.git-repo-url=${CIRCLE_REPOSITORY_URL}" \
-              --label "edu.upenn.library.circleci.workflow-id=${CIRCLE_WORKFLOW_ID}" \
-              -f << parameters.dockerfile >> \
-              << parameters.path >>
-        - docker/push:
-          registry: quay.io
-          image: << parameters.image >>
+    steps:
+      - checkout
+      - setup_remote_docker
+      - docker/check:
+        registry: quay.io
+      - run:
+        name: Build Docker Image
+        command: |
+          docker build \
+            -t quay.io/<< parameters.image >>:${CIRCLE_SHA1} \
+            -t quay.io/<< parameters.image >>:${CIRCLE_SHA1:0:7} \
+            --label "edu.upenn.library.build-system=circleci" \
+            --label "edu.upenn.library.circleci.build-number=${CIRCLE_BUILD_NUM}" \
+            --label "edu.upenn.library.circleci.build-timestamp=$(date -uIs)" \
+            --label "edu.upenn.library.circleci.build-url=${CIRCLE_BUILD_URL}" \
+            --label "edu.upenn.library.circleci.git-branch=${CIRCLE_BRANCH}" \
+            --label "edu.upenn.library.circleci.git-commit=${CIRCLE_SHA1}" \
+            --label "edu.upenn.library.circleci.git-repo-url=${CIRCLE_REPOSITORY_URL}" \
+            --label "edu.upenn.library.circleci.workflow-id=${CIRCLE_WORKFLOW_ID}" \
+            -f << parameters.dockerfile >> \
+            << parameters.path >>
+      - docker/push:
+        registry: quay.io
+        image: << parameters.image >>
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
