@@ -172,11 +172,13 @@ workflows:
       - check-for-secrets
       - publish_container:
           name: publish_metridoc
+          context: quay.io
           image: upennlibraries/metridoc
           requires:
             - check-for-secrets
       - publish_container:
           name: publish_metridoc_python_jobs
+          context: quay.io
           image: upennlibraries/metridoc-python-jobs
           dockerfile: ./ansible/roles/python_jobs_manager/files/src/Dockerfile
           path: ./ansible/roles/python_jobs_manager/files/src
@@ -184,6 +186,7 @@ workflows:
             - check-for-secrets
       - publish_container:
           name: publish_metridoc_ezpaarse
+          context: quay.io
           image: upennlibraries/metridoc-ezpaarse
           dockerfile: ./ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile
           path: ./ansible/roles/ezpaarse_manager/files/ezpaarse
@@ -191,6 +194,7 @@ workflows:
             - check-for-secrets
       - publish_container:
           name: publish_metridoc_ezpaarse_mongodb
+          context: quay.io
           image: upennlibraries/metridoc-ezpaarse-mongodb
           dockerfile: ./ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile
           path: ./ansible/roles/ezpaarse_manager/files/mongodb
