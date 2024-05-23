@@ -48,3 +48,30 @@
   %figure{:style => "text-align: center; max-width: 850px; width: 100%; margin: auto; padding: 0px 0px;"}
     %figcaption LibCal Appointment Data Table Schema
     =image_tag asset_path("SpringshareAppointmentBookingsER.png"), :alt => "LibCal Appointments ER Diagram", :width => "100%", :title => "LibCal Appointments ER Diagram"
+
+
+%hr
+%section
+  %h2 Space Booking Tables 
+  LibCal Space Bookings are represented in five tables.
+  %ul
+    %li 
+      The #{link_to "Space Location", :springshare_libcal_space_locations} table 
+      contains information on the bookable locations in the Libraries.
+    %li
+      The #{link_to "Space Forms", :springshare_libcal_space_forms} table 
+      contains the form data associated with the bookable locations.
+    %li
+      The #{link_to "Space Questions", :springshare_libcal_space_questions} table
+      contains the individual questions asked in each form.
+    %li
+      The #{link_to "Space Bookings", :springshare_libcal_space_bookings} table
+      contains information on reserved bookings of spaces.
+    %li
+      The #{link_to "Space Answers", :springshare_libcal_space_answers} table
+      contains answers to questions in a booking form in order to book a room.
+
+  %figure{:style => "text-align: center; max-width: 1000px; width: 100%; margin: auto; padding: 0px 0px;"}
+    %figcaption LibCal Room Booking Data Table Schema
+    =image_tag asset_path("SpringshareSpaceBookingsER.png"), :alt => "LibCal Space Bookings ER Diagram", :width => "100%", :title => "LibCal Bookings ER Diagram"
+
