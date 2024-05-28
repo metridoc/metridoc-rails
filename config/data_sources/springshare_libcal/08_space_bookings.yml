@@ -12,7 +12,7 @@ report_path: "1.1/space/bookings"
 
 # Parameters to add to the API call
 parameters:
-  limit: 100
+  limit: 500
   include_cancel: 1
   formAnswers: 1
   date: "2017-01-01" # Bookings start on Mar 20, 2017
