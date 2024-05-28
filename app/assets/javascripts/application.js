@@ -18,8 +18,6 @@
 //= require rails-ujs
 //= require turbo
 
-//= require vis-network/dist/vis-network
-
 //= require_tree .
 
 //= require d3

@@ -1,16 +1,25 @@
 ActiveAdmin.register Log::JobExecutionStep do
   menu false
   actions :index, :show
-  
+
+  # Define a way to sort json column explicitly
+  order_by(:step_yml) do |order_clause|
+    [
+      Arel.sql("step_yml->> 'config_folder', step_yml ->> 'single_step'"),
+      order_clause.order
+    ].join(' ')
+  end
+
   index do
     column :job_execution_id
     column :step_name
+    column :step_yml
     column :started_at
     column :status
     column :status_set_at
     actions
   end
-  
+
   show title: :title do |job_execution_step|
     attributes_table do
       row :job_execution_id do
