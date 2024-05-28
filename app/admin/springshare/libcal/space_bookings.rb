@@ -1,5 +1,5 @@
-ActiveAdmin.register Springshare::Libcal::Appointment,
-as: "Libcal::Appointment",
+ActiveAdmin.register Springshare::Libcal::SpaceBooking,
+as: "Libcal::SpaceBooking",
 namespace: :springshare do
   menu false
 
@@ -13,6 +13,14 @@ namespace: :springshare do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
+  # Explicitly define how to order the event column
+  order_by(:event) do |order_clause|
+    [
+      Arel.sql("event ->> 'id'"),
+      order_clause.order
+    ].join(' ')
+  end
+
   # Explicitly define how to order the answer column
   order_by(:answers) do |order_clause|
     [
@@ -21,6 +29,6 @@ namespace: :springshare do
     ].join(' ')
   end
 
-  # Set the title on the index page
-  index title: "Appointment"
+  # Set the title the index page
+  index title: "Space Bookings"
 end

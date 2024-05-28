@@ -1,0 +1,56 @@
+---
+load_sequence: 8
+
+target_model: "Springshare::Libcal::SpaceBooking"
+target_adapter: "csv"
+
+export_file_name: "springshare_libcal_space_bookings.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "1.1/space/bookings"
+
+# Parameters to add to the API call
+parameters:
+  limit: 100
+  include_cancel: 1
+  formAnswers: 1
+  date: "2017-01-01" # Bookings start on Mar 20, 2017
+  days: 365
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  bookId: booking_key
+  id: booking_id
+  lid: location_id
+  location_name: location_name
+  cid: category_id
+  category_name: category_name
+  eid: item_id
+  item_name: item_name
+  fromDate: from_date
+  toDate: to_date
+  created: created
+  status: status
+  cancelled: cancelled
+  event: event
+  nickname: nickname
+  firstName: first_name
+  lastName: last_name
+  email: email
+  account: account
+
+# Unique on the users
+unique_keys: ["booking_id"]
+upsert: true
+
+# Incremental filter column name
+incremental_filter_column: "from_date"
+# Timestamp of download for record
+download_timestamp: "downloaded_at"
+# Column name for json column
+json_column: "event"
+
+# Things to merge into a single json object
+merge_columns: "answers"
+merge_columns_regex: /^q\d+$/

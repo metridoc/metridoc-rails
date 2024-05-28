@@ -1,0 +1,39 @@
+---
+load_sequence: 9
+target_model: "Springshare::Libcal::SpaceBooking"
+target_adapter: "native_sql"
+
+truncate_before_load: "no"
+
+sqls:
+  - |
+
+      UPDATE ss_libcal_space_bookings
+      SET pennkey = SPLIT_PART(email, '@', 1)
+      WHERE pennkey IS NULL;
+
+      UPDATE ss_libcal_space_bookings
+      SET (
+        statistical_category_1,
+        statistical_category_2,
+        statistical_category_3,
+        statistical_category_4,
+        statistical_category_5,
+        user_group,
+        school,
+        penn_id
+      ) = (
+        upenn_alma_demographics.statistical_category_1,
+        upenn_alma_demographics.statistical_category_2,
+        upenn_alma_demographics.statistical_category_3,
+        upenn_alma_demographics.statistical_category_4,
+        upenn_alma_demographics.statistical_category_5,
+        upenn_alma_demographics.user_group,
+        upenn_alma_demographics.school,
+        upenn_alma_demographics.penn_id
+      )
+      FROM upenn_alma_demographics
+      WHERE
+        ss_libcal_space_bookings.penn_id IS NULL
+        AND ss_libcal_space_bookings.pennkey IS NOT NULL
+        AND upenn_alma_demographics.pennkey = ss_libcal_space_bookings.pennkey;

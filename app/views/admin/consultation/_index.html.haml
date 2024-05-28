@@ -1,4 +1,5 @@
 %h2= "Links to Consultation & Instruction Forms"
+
 %ul
   %li
     %a(title="General Libraries Form" href="https://upenn.libwizard.com/f/Penn_Libraries_Consultation-Instruction_Form" target="_default" rel="noreferrer noopener")General Libraries Form
@@ -11,6 +12,10 @@
     %em{:style =>"color:gray"} (opens a new window)
 
 %h2= "Link to Downloadable Raw Data Table"
+%p(style="margin: auto; width: 50%; border:3px;border-style:solid;border-color:#990000;padding: 1em;background-color:#C35A00;color:#f7f7f7;text-align:center;")
+  Data is fetched from Springshare every Sunday.
+
+
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human, "/admin/#{resource.resource_name.param_key.pluralize}"
