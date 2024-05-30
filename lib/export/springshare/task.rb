@@ -77,6 +77,16 @@ module Export
       @expiry_time = Time.at(@token.expires_at)
     end # End of authorization
 
+    def fetch_response
+      response = @token.get(
+        @report_url,
+        params: parameters || nil
+      )
+
+      # Extract the JSON document returned
+      JSON.parse(response.body)
+    end
+
     # Connect to the API and get documents
     def connect
       # Refresh the token if needed
@@ -92,24 +102,33 @@ module Export
       parameters.merge!("date": start_date) if start_date.present?
 
       # Specify the report url
-      report_url = task_config["report_path"]
+      @report_url = task_config["report_path"]
 
-      # Some instances require identifires appended to query
+      # Some instances require identifiers appended to query
       if task_config["filter_ids"].present?
         ids_list = ActiveRecord::Base.connection.execute(
           task_config["filter_ids"]
         )
-        report_url += "/" + ids_list.values.join(",")
+        @report_url += "/" + ids_list.values.join(",")
       end
 
-      # Make the request for the page
-      response = @token.get(
-        report_url,
-        params: parameters || nil
-      )
+      # If pagination isn't needed
+      unless parameters["page"] && parameters["limit"]
+          @document = fetch_response
+          return
+      end
 
-      # Extract the JSON document returned
-      @document = JSON.parse(response.body)
+      # To retrieve multiple pages
+      @document = []
+      # Keep the individual page separate
+      page_response = []
+      while parameters["page"] == 1 || page_response.length == parameters["limit"]
+        page_response = fetch_response
+        @document += page_response
+
+        # Increment the page number passed to parameters
+        parameters["page"] += 1
+      end
     end
 
     # Write the header of the CSV file

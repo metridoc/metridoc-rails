@@ -17,6 +17,7 @@ parameters:
   formAnswers: 1
   date: "2017-01-01" # Bookings start on Mar 20, 2017
   days: 365
+  page: 1
 
 # API columns to MetriDoc column mapping
 column_mappings:
