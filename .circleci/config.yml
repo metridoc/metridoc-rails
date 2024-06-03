@@ -9,7 +9,6 @@ default-slack-config: &default-slack-config
 
 orbs:
   docker-publish: upenn-libraries/docker-publish@0.1.0
-  gitleaks: upenn-libraries/gitleaks@0.1.1
   slack: circleci/slack@3.4.2
 
 commands:
@@ -27,6 +26,17 @@ commands:
           working_directory: ansible/roles/<< parameters.role >>
 
 jobs:
+  gitleaks-check:
+    docker:
+      -image: gitleaks:v8.18.2
+    shell: /bin/sh -leo pipefail
+    environment:
+      HOME: /root
+    steps:
+      - checkout
+      - run:
+        command: |
+          gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --verbose --log-level debug --log-opts "--full-history"
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.9
@@ -121,9 +131,8 @@ jobs:
 workflows:
   build_test_and_deploy:
     jobs:
-      - gitleaks/check_local:
-          image: quay.io/upennlibraries/gitleaks:v2.0.0
-          options: --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
+      - gitleaks-check:
+          name: gitleaks
       - docker-publish/publish:
           name: publish_metridoc
           context: quay.io
@@ -131,7 +140,7 @@ workflows:
           image: upennlibraries/metridoc
           label_prefix: edu.upenn.library
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - docker-publish/publish:
           name: publish_metridoc_python_jobs
           context: quay.io
@@ -141,7 +150,7 @@ workflows:
           path: ./ansible/roles/python_jobs_manager/files/src
           label_prefix: edu.upenn.library
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - docker-publish/publish:
           name: publish_metridoc_ezpaarse
           context: quay.io
@@ -151,7 +160,7 @@ workflows:
           path: ./ansible/roles/ezpaarse_manager/files/ezpaarse
           label_prefix: edu.upenn.library
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - docker-publish/publish:
           name: publish_metridoc_ezpaarse_mongodb
           context: quay.io
@@ -161,27 +170,27 @@ workflows:
           path: ./ansible/roles/ezpaarse_manager/files/mongodb
           label_prefix: edu.upenn.library
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - test_role:
           name: test_jenkins_manager_role
           role: jenkins_manager
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - test_role:
           name: test_metridoc_manager_role
           role: metridoc_manager
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - test_role:
           name: test_postgres_primary_manager_role
           role: postgres_primary_manager
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - test_role:
           name: test_postgres_replica_manager_role
           role: postgres_replica_manager
           requires:
-            - gitleaks/check_local
+            - gitleaks-check
       - deploy-production:
           filters:
             branches:
