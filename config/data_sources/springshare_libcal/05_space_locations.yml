@@ -1,0 +1,22 @@
+---
+load_sequence: 5
+
+target_model: "Springshare::Libcal::SpaceLocation"
+target_adapter: "csv"
+
+export_file_name: "springshare_libcal_space_locations.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "1.1/space/locations"
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  lid: location_id
+  name: location_name
+  public: public
+  formid: form_id
+
+# Unique on the location
+unique_keys: ["location_id"]
+upsert: true

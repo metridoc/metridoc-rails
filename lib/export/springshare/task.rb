@@ -36,6 +36,17 @@ module Export
       @json_column ||= task_config["json_column"]
     end
 
+    # Get any merged column definitions
+    def merge_columns
+      @merge_columns ||= task_config["merge_columns"]
+    end
+
+    # Get any merged column definitions
+    # The yaml string needs to be "eval"ed in order to create the regex string
+    def merge_columns_regex
+      @merge_columns_regex ||= eval task_config["merge_columns_regex"]
+    end
+
     # Function to fetch an authorization token from Springshare
     def fetch_token
       # Authorization URL
@@ -66,6 +77,16 @@ module Export
       @expiry_time = Time.at(@token.expires_at)
     end # End of authorization
 
+    def fetch_response
+      response = @token.get(
+        @report_url,
+        params: parameters || nil
+      )
+
+      # Extract the JSON document returned
+      JSON.parse(response.body)
+    end
+
     # Connect to the API and get documents
     def connect
       # Refresh the token if needed
@@ -81,24 +102,33 @@ module Export
       parameters.merge!("date": start_date) if start_date.present?
 
       # Specify the report url
-      report_url = task_config["report_path"]
+      @report_url = task_config["report_path"]
 
-      # Some instances require identifires appended to query
+      # Some instances require identifiers appended to query
       if task_config["filter_ids"].present?
         ids_list = ActiveRecord::Base.connection.execute(
           task_config["filter_ids"]
         )
-        report_url += "/" + ids_list.values.join(",")
+        @report_url += "/" + ids_list.values.join(",")
       end
 
-      # Make the request for the page
-      response = @token.get(
-        report_url,
-        params: parameters || nil
-      )
+      # If pagination isn't needed
+      unless parameters["page"] && parameters["limit"]
+          @document = fetch_response
+          return
+      end
 
-      # Extract the JSON document returned
-      @document = JSON.parse(response.body)
+      # To retrieve multiple pages
+      @document = []
+      # Keep the individual page separate
+      page_response = []
+      while parameters["page"] == 1 || page_response.length == parameters["limit"]
+        page_response = fetch_response
+        @document += page_response
+
+        # Increment the page number passed to parameters
+        parameters["page"] += 1
+      end
     end
 
     # Write the header of the CSV file
@@ -107,8 +137,18 @@ module Export
       # This gets all the keys of each record and then builds a unique list
       @headers = @document.map(&:keys).inject(&:|)
 
+      # Add a column for any merged columns and remove the columns that are
+      # going to be merged
+      if merge_columns.present? and merge_columns_regex.present?
+        @headers << merge_columns if merge_columns.present?
+        @headers.delete_if{
+          |value| value.to_s.match?(merge_columns_regex)
+        }
+      end
+
       # Add a column to record the downloaded timestamp
       @headers << download_timestamp if download_timestamp.present?
+
       # Create a new CSV file and write the headers
       CSV.open(csv_file_path, 'w') do |csv|
         csv << @headers.map{|v| column_mappings[v] || v}
@@ -129,6 +169,19 @@ module Export
           # Add any missing elements to h as a nil value
           missing_keys.each{|k| h[k] = nil}
 
+          # Merge multiple columns into a single JSON object by the regex rule
+          if merge_columns.present? and merge_columns_regex.present?
+            # Select the parts of the hash that match a particular regex string
+            # and save the value as a json string
+
+            merged = h.select {
+              |key, value| key.to_s.match?(merge_columns_regex)
+            }
+
+            # Return a nil value for empty merged columns
+            h[merge_columns] = merged.empty? ? nil.to_json : merged.to_json
+          end
+
           # Convert json column to a json string if present
           if json_column.present?
             #h[json_column] = h[json_column].nil? ? '[]' : h[json_column].to_json
@@ -141,8 +194,8 @@ module Export
             h[download_timestamp] = current_time
           end
 
-          # Add to the csv
-          csv << h.to_h.values
+          # Add to the csv, maintaining the same order as the header
+          csv << @headers.map{|header| h.fetch(header, nil)}
         end
       end
     end
