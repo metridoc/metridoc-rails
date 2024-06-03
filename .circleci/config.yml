@@ -8,7 +8,6 @@ default-slack-config: &default-slack-config
   webhook: ${SLACK_WEBHOOK}
 
 orbs:
-  docker-publish: upenn-libraries/docker-publish@0.1.0
   slack: circleci/slack@3.4.2
 
 commands:
@@ -26,17 +25,18 @@ commands:
           working_directory: ansible/roles/<< parameters.role >>
 
 jobs:
-  gitleaks-check:
+  check-for-secrets:
     docker:
-      -image: gitleaks:v8.18.2
+      - image: zricethezav/gitleaks:v8.18.2
     shell: /bin/sh -leo pipefail
     environment:
       HOME: /root
     steps:
       - checkout
       - run:
-        command: |
-          gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --verbose --log-level debug --log-opts "--full-history"
+          name: Check repository for secrets
+          command: |
+            gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --verbose --log-level debug --log-opts "--full-history"
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.9
@@ -112,6 +112,63 @@ jobs:
             echo "export GIT_COMMIT_DESC='$(git --git-dir /root/project/.git log --oneline -n 1 $CIRCLE_SHA1)'" | tr '\n' ' ' >> $BASH_ENV
             source $BASH_ENV
       - slack/status: *default-slack-config
+  publish_container:
+    description: Builds and Tags a Docker Image.
+    docker:
+      - image: cimg/python:3.12
+    parameters:
+      image:
+        description: Name of image to publish.
+        type: string
+      path:
+        description: Path to the directory containing your Dockerfile and build context. Defaults to . (working directory).
+        type: string
+        default: .
+      dockerfile:
+        description: Name of the dockerfile to use to build container. Defaults to Dockerfile.
+        type: string
+        default: Dockerfile
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Check Environment Variables
+          command: |
+            if [[ -z "${DOCKER_LOGIN}" ]]; then
+              echo "DOCKER_LOGIN is not set, will not be able to push image."
+              exit 1
+            fi
+
+            if [[ -z "${DOCKER_PASSWORD}" ]]; then
+              echo "DOCKER_PASSWORD is not set, will not be able to push image."
+              exit 1
+            fi
+      - run:
+          name: Docker Login
+          command: docker login -u "${DOCKER_LOGIN}" -p "${DOCKER_PASSWORD}" quay.io
+      - run:
+          name: Build Docker Image
+          command: |
+            docker build \
+              -t quay.io/<< parameters.image >>:${CIRCLE_SHA1} \
+              -t quay.io/<< parameters.image >>:${CIRCLE_SHA1:0:7} \
+              --label "edu.upenn.library.build-system=circleci" \
+              --label "edu.upenn.library.circleci.build-number=${CIRCLE_BUILD_NUM}" \
+              --label "edu.upenn.library.circleci.build-timestamp=$(date -uIs)" \
+              --label "edu.upenn.library.circleci.build-url=${CIRCLE_BUILD_URL}" \
+              --label "edu.upenn.library.circleci.git-branch=${CIRCLE_BRANCH}" \
+              --label "edu.upenn.library.circleci.git-commit=${CIRCLE_SHA1}" \
+              --label "edu.upenn.library.circleci.git-repo-url=${CIRCLE_REPOSITORY_URL}" \
+              --label "edu.upenn.library.circleci.workflow-id=${CIRCLE_WORKFLOW_ID}" \
+              -f << parameters.dockerfile >> \
+              << parameters.path >>
+      - run:
+          name: Push Docker Image
+          command: |
+            if [[ $CIRCLE_NODE_INDEX == 0 ]]; then
+              docker push quay.io/<< parameters.image >>
+            fi     
+
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
@@ -131,66 +188,57 @@ jobs:
 workflows:
   build_test_and_deploy:
     jobs:
-      - gitleaks-check:
-          name: gitleaks
-      - docker-publish/publish:
+      - check-for-secrets
+      - publish_container:
           name: publish_metridoc
           context: quay.io
-          registry: quay.io
           image: upennlibraries/metridoc
-          label_prefix: edu.upenn.library
           requires:
-            - gitleaks-check
-      - docker-publish/publish:
+            - check-for-secrets
+      - publish_container:
           name: publish_metridoc_python_jobs
           context: quay.io
-          registry: quay.io
           image: upennlibraries/metridoc-python-jobs
           dockerfile: ./ansible/roles/python_jobs_manager/files/src/Dockerfile
           path: ./ansible/roles/python_jobs_manager/files/src
-          label_prefix: edu.upenn.library
           requires:
-            - gitleaks-check
-      - docker-publish/publish:
+            - check-for-secrets
+      - publish_container:
           name: publish_metridoc_ezpaarse
           context: quay.io
-          registry: quay.io
           image: upennlibraries/metridoc-ezpaarse
           dockerfile: ./ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile
           path: ./ansible/roles/ezpaarse_manager/files/ezpaarse
-          label_prefix: edu.upenn.library
           requires:
-            - gitleaks-check
-      - docker-publish/publish:
+            - check-for-secrets
+      - publish_container:
           name: publish_metridoc_ezpaarse_mongodb
           context: quay.io
-          registry: quay.io
           image: upennlibraries/metridoc-ezpaarse-mongodb
           dockerfile: ./ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile
           path: ./ansible/roles/ezpaarse_manager/files/mongodb
-          label_prefix: edu.upenn.library
           requires:
-            - gitleaks-check
+            - check-for-secrets
       - test_role:
           name: test_jenkins_manager_role
           role: jenkins_manager
           requires:
-            - gitleaks-check
+            - check-for-secrets
       - test_role:
           name: test_metridoc_manager_role
           role: metridoc_manager
           requires:
-            - gitleaks-check
+            - check-for-secrets
       - test_role:
           name: test_postgres_primary_manager_role
           role: postgres_primary_manager
           requires:
-            - gitleaks-check
+            - check-for-secrets
       - test_role:
           name: test_postgres_replica_manager_role
           role: postgres_replica_manager
           requires:
-            - gitleaks-check
+            - check-for-secrets
       - deploy-production:
           filters:
             branches:
