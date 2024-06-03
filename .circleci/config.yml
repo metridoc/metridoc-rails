@@ -27,14 +27,16 @@ commands:
 jobs:
   check-for-secrets:
     docker:
-      - image: quay.io/upennlibraries/gitleaks:v2.0.0
-    working_directory: /root/project
+      - image: gitleaks:v8.18.2
+    shell: /bin/sh -leo pipefail
+    environment:
+      HOME: /root
     steps:
-        - checkout
-        - run:
-            name: Check repository for secrets
-            command: |
-              gitleaks --repo-path=${CIRCLE_WORKING_DIRECTORY} --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
+      - checkout
+      - run:
+        name: Check repository for secrets
+        command: |
+          gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --verbose --log-level debug --log-opts "--full-history"
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.9
@@ -220,6 +222,7 @@ workflows:
           name: test_jenkins_manager_role
           role: jenkins_manager
           requires:
+
             - check-for-secrets
       - test_role:
           name: test_metridoc_manager_role
