@@ -1,6 +1,6 @@
 class Security::UserRole < ApplicationRecord
-  has_many :admin_users
-  has_many :user_role_sections, class_name: "Security::UserRoleSection"
+  has_many :admin_users, dependent: :nullify
+  has_many :user_role_sections, dependent: :destroy, class_name: "Security::UserRoleSection"
 
   accepts_nested_attributes_for :user_role_sections, allow_destroy: true, reject_if: proc {|attributes| attributes['section'].blank? }
 
