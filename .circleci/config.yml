@@ -35,7 +35,7 @@ jobs:
       - run:
           name: Check repository for secrets
           command: |
-            gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --verbose --log-level debug --log-opts "--full-history"
+            gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --redact --log-opts "--full-history"
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.9
@@ -165,7 +165,7 @@ jobs:
           name: Push Docker Image
           command: |
             if [[ $CIRCLE_NODE_INDEX == 0 ]]; then
-              docker push quay.io/<< parameters.image >>
+              docker push --all-tags quay.io/<< parameters.image >>
             fi     
 
   test_role:
