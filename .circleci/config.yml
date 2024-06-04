@@ -27,14 +27,15 @@ commands:
 jobs:
   check-for-secrets:
     docker:
-      - image: quay.io/upennlibraries/gitleaks:v2.0.0
+      - image: zricethezav/gitleaks:v8.18.2
+    shell: /bin/sh -leo pipefail
     working_directory: /root/project
     steps:
-        - checkout
-        - run:
-            name: Check repository for secrets
-            command: |
-              gitleaks --repo-path=${CIRCLE_WORKING_DIRECTORY} --redact --config=${CIRCLE_WORKING_DIRECTORY}/.gitleaks.toml --branch=${CIRCLE_BRANCH}
+      - checkout
+      - run:
+          name: Check repository for secrets
+          command: |
+            gitleaks detect --source ${CIRCLE_WORKING_DIRECTORY}  --redact --log-opts "--full-history"
   deploy-production:
     docker:
       - image: quay.io/upennlibraries/ansible:2.9
@@ -113,7 +114,7 @@ jobs:
   publish_container:
     description: Builds and Tags a Docker Image.
     docker:
-      - image: circleci/python:3.6
+      - image: cimg/python:3.12
     parameters:
       image:
         description: Name of image to publish.
@@ -164,8 +165,9 @@ jobs:
           name: Push Docker Image
           command: |
             if [[ $CIRCLE_NODE_INDEX == 0 ]]; then
-              docker push quay.io/<< parameters.image >>
-            fi
+              docker push --all-tags quay.io/<< parameters.image >>
+            fi     
+
   test_role:
     description: Test an Ansible role using Molecule
     parameters:
