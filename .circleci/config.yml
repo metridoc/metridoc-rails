@@ -29,8 +29,7 @@ jobs:
     docker:
       - image: zricethezav/gitleaks:v8.18.2
     shell: /bin/sh -leo pipefail
-    environment:
-      HOME: /root
+    working_directory: /root/project
     steps:
       - checkout
       - run:
