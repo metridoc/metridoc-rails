@@ -1,80 +1,28 @@
 title = "gitleaks config"
 
+[extend]
+# Use default list of secrets from gitleaks
+useDefault = true
+
+# Add special rules for bespoke secrets
 [[rules]]
-description = "Password in string"
-regex = '''(?i)[\w]*(password|secret)[\w]* *[:=>,]+ *['"][\S]{2,}['"]'''
-[[rules]]
-description = "Password in YAML config"
-regex = '''(?i)[\w]*(password|secret)[\w]* *: *[\S]{2,}'''
-[[rules]]
-description = "AWS"
-regex = '''AKIA[0-9A-Z]{16}'''
-[[rules]]
-description = "RKCS8"
-regex = '''-----BEGIN PRIVATE KEY-----'''
-[[rules]]
-description = "RSA"
-regex = '''-----BEGIN RSA PRIVATE KEY-----'''
-[[rules]]
-description = "Github"
-regex = '''(?i)github.*['\"][0-9a-zA-Z]{35,40}['\"]'''
-[[rules]]
-description = "SSH"
-regex = '''-----BEGIN OPENSSH PRIVATE KEY-----'''
-[[rules]]
-description = "Facebook"
-regex = '''(?i)facebook.*['\"][0-9a-f]{32}['\"]'''
-[[rules]]
-description = "Twitter"
-regex = '''(?i)twitter.*['\"][0-9a-zA-Z]{35,44}['\"]'''
-[[rules]]
-description = "PGP"
-regex = '''-----BEGIN PGP PRIVATE KEY BLOCK-----'''
-[[rules]]
-description = "Slack token"
-regex = '''xox[baprs]-.*'''
-[[rules]]
+id = "mdoc-api-key"
 description = "Strip API Key"
 regex = '''(?i)(sk|pk)_(test|live)_[0-9a-zA-Z]{10,32}'''
 
-[whitelist]
+[allowlist]
+description = "Global Allow List"
+
+# Commits with secrets that have been revoked that should be ignored
 commits = [
   # Keys revoked
-  'a3c3d0692d2b4d6ce86a74d322971ed73a4fc352',
-  '70ff9de851f73d360d5f1f396699e6b1091f2f0f',
   '2221cea6f8ee4069a33b2cf67009fab5cc6afc96',
-  '9da6f4a797a8481f1e3263565954cb1e676bf2d1',
-  'd39d44de7781a39b8e327cd4e70dd88e61471952',
   'aea2727af142db5aa9a25be2023396d292b36583',
-  'd19006fa9c5fd209bbfa133ec9741f33586520c0',
-  '15676f4bfb9fad46a9cbf45a300cc547db657a86',
-  'a2dbe4f289478abaeb79c31e03755838bcf9d5fb',
-  '8be935c79c187f2ba94e1b365d641824e3eb56ea',
   '32379d9f96087bf9fed48d4d3c16df7f7da94c1c',
-  'e1d2c80260906963ac78c171ad5daa10eef6e21a',
-  'a936e957937ae371476420e560e277352539bb84',
-  'beee224a961676c1e0108dcba6b92e63f8e3bb87',
-  '4d35ceeb0fb02357ca7d6a177c4c69593cbd7afb',
-  '04ebddcf47e51f5525bdbaf5abb5c04621477b4f',
-  'c08ac80efdf37e22de80e51ca53d28881efe14e5',
-  '6747e3369523915133303e1a9130debc8db44549',
-  '9baaf1bfa3f8bf916bb2b8f50bab91141538cb03',
-  'b69436a701db97e7d0b278450264b6b069980f6e',
-  'd1a3eb4defffd356f1e6d766f99476cbec483459',
-  '96ae4b911b0e7e5974a5e5fcce6d5a49db3f98ea',
-  '144d82c0674591c2eaa35a9b876fdf2296956434',
-  'e21eddcbaa8094bebe00ef0baf89c3a9b0a5716f',
-  '257e9dcb8b700880795208f165f2f16b39183537',
-  '4c452113850265c906165ffb1551fa527a23ad92',
-  'f0bde8e3c32aacc248e05f523de9fb65a587bccd',
-  '30061e8aa4986b6855db37ad238587a0b0ed6867',
-  'b5a3ee7339a73835c7d997310bd3259b75cb6ad5',
-  'fe813205caf59db03c7ef07436c8fd10e1662362',
-  '8c3caad5948e39e7b0f68946d87f243820b0bc09',
-  'ff10d01b41c6a0908ed89088be5c41a3a6eccd82',
-  '0f87c748b8ee396ba541fa9cd0eec0cc5f49a30d',
 ]
-files = [
+
+# Files to ignore when looking for secrets
+paths = [
   '\.gitleaks\.toml',
   '(.*?)(jpg|gif|doc|pdf|bin|md)$',
   '(.*?)examples?\.yml$',
@@ -84,6 +32,10 @@ files = [
   'lib/import/task.rb',
   'config/storage.yml'
 ]
+
+# Test the entire line for the following regex strings
+regexTarget = "line"
+
 regexes = [
   # Values set by Ansible variables
   '''{{ *[\S]+ *}}''',

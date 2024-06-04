@@ -1,6 +1,13 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'rbconfig'
+
+# Determine if arch is ARM
+def arm_architecture?
+  RbConfig::CONFIG['host_cpu'].downcase.start_with?('arm')
+end
+
 # Arrange nodes in reverse order so the manager is the last vm to be provisioned
 cluster = {
   "metridoc-manager" => { :ip => "10.10.3.201", :cpus => 1, :mem => 4096, :port => 2020 }
@@ -9,22 +16,45 @@ cluster = {
 Vagrant.configure("2") do |config|
   config.vagrant.plugins = ["vagrant-env", "vagrant-vbguest", "vagrant-hostsupdater"]
 
+  # Select correct box for arch
+  if arm_architecture?
+    config.vm.box = "bento/ubuntu-22.04-arm64"
+  else
+    config.vm.box = "ubuntu/focal64"
+  end
+
+  # Install parallels plugin if user is on mac
+  if Vagrant::Util::Platform::darwin?
+    config.vagrant.plugins << "vagrant-parallels"
+  end
+
   cluster.each_with_index do |(hostname, info), index|
-    config.vm.box = "ubuntu/bionic64"
 
     # Use the default insecure key as this is only used for development
     config.ssh.insert_key = false
 
     config.vm.define hostname do |cfg|
+      cfg.vm.network :private_network, ip: "#{info[:ip]}"
+      cfg.vm.network :forwarded_port, id: "ssh", host: info[:port], guest: 22
+      cfg.vm.hostname = hostname
+
+      # Virtual Box Settings
       cfg.vm.provider :virtualbox do |vb, override|
-        override.vm.network :private_network, ip: "#{info[:ip]}"
-        override.vm.network :forwarded_port, id: "ssh", host: info[:port], guest: 22
-        override.vm.hostname = hostname
         vb.name = hostname
         vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on"]
         # push the first interface far out enough to minimize potential conflict with docker swarm
         # which defaults to 10.0.0.0/8 for networks/containers
         vb.customize ["modifyvm", :id, "--natnet1", "10.252/16"]
+      end
+
+      # Parallels Settings for Mac Environment
+      # https://github.com/sprotheroe/vagrant-disksize/issues/45
+      # To get parallels working you may need to run:
+      #   vagrant plugin uninstall vagrant-disksize
+      cfg.vm.provider :parallels do |prl, override|
+        prl.name = hostname
+        prl.memory = info[:mem]
+        prl.cpus = info[:cpus]
       end
 
       # Update and install packages
