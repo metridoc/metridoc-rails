@@ -28,7 +28,7 @@ module Export
 
     # Fetch any parameters for the API call
     def parameters
-      @parameters ||= task_config["parameters"]
+      @parameters ||= task_config["parameters"] || {}
     end
 
     # Get any json column definitions
@@ -113,7 +113,7 @@ module Export
       end
 
       # If pagination isn't needed
-      unless parameters["page"] && parameters["limit"]
+      unless parameters.has_key?("page") && parameters.has_key?("limit")
           @document = fetch_response
           return
       end
