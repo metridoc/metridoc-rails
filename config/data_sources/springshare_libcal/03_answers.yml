@@ -22,9 +22,9 @@ sqls:
     FROM
       ss_libcal_appointments appointments,
       json_each_text(appointments.answers) answer
-    WHERE appointments.appointment_id NOT IN (
+    WHERE appointments.appointment_id > (
       SELECT
-        appointment_id
+        MAX(appointment_id)
       FROM ss_libcal_answers
     ) AND
     json_typeof(appointments.answers) = 'object';
