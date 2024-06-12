@@ -20,9 +20,9 @@ sqls:
     FROM
       ss_libcal_space_bookings bookings,
       json_each_text(bookings.answers) answer
-    WHERE bookings.booking_id NOT IN (
+    WHERE bookings.booking_id > (
       SELECT
-        booking_id
+        MAX(booking_id)
       FROM ss_libcal_space_answers
     ) AND
     json_typeof(bookings.answers) = 'object';
