@@ -125,4 +125,46 @@ module EzproxyHelper
     [request_data, session_data]
   end
 
+  # Function will group model by the top ten requested of a 
+  # specified key and the fiscal year.
+  def ezproxy_group_requests_by_fiscal_year(model, group)
+
+    # Grab the top ten most frequent groups
+    top_ten_by_requests = model.order("sum_requests desc")
+      .group(group)
+      .sum(:requests)
+      .first(10)
+      .to_h
+      .keys
+
+    # Do a double group by count
+    # Output: [group, fiscal_year, requests]
+    requests = model.group(group, "fiscal_year")
+      .where(group.to_sym => top_ten_by_requests)
+      .sum(:requests)
+      .map{|k,v| k.map!{|x| x.nil? ? "Unknown" : x} + [v]}
+
+    # Make a sorted array of the fiscal years
+    fiscal_years = requests.map{|v| v[1]}.to_set.to_a.sort
+
+    # Intialize empty hash, replace nil key with "Unknown"
+    # Output {group_name: {fy1: 0, fy2: 0}}
+    request_data = top_ten_by_requests.map{ 
+      |v| [
+        v ? v : "Unknown", 
+        fiscal_years.map{
+          |fy| [fy, 0]
+        }.to_h
+      ]
+    }.to_h
+
+    # Fill in the hash
+    requests.each do |v|
+      request_data[v[0]][v[1]] = v[2]
+    end
+
+    # Create the object to plot
+    request_data.map{|k, v| {name: k, data: v}}
+  end
+
 end
