@@ -1,0 +1,109 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  Springshare's #{link_to "LibAnswers", "https://www.springshare.com/libanswers/"}
+  application is a ticketing and helpdesk system and can also act as a means of 
+  consultation.  All times will show up in the interface in coordinated universal 
+  time (UTC).  There is no API for the ticketing database. The expected refresh 
+  of the data is monthly manual uploads.
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Springshare LibAnswers data
+    begin with the prefix "ss_libanswers_".
+
+  %h3 Data Tables
+
+  %ul{:style => "padding-left: 20px;"}
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/springshare/#{resource.resource_name.param_key.pluralize}"
+
+  %h3 Statistics
+
+  %ul 
+    %li 
+      General 
+      #{link_to "statistics dashboard", springshare_libanswers_statistics_path} 
+      with filtering capabilities.
+
+%hr
+%section
+  %h2 Data Upload Process
+  Impact Assessment & Organizational Analysis expect to refresh data monthly.  
+  If users want more recent data, please navigate to Springshare.
+  %ul
+    %li 
+      Navigate to the 
+      #{link_to "SpringShare LibAnswers Ticket Database", "https://faq.library.upenn.edu/admin/ticketbrowse?m=list"}.
+    %li Select the "Export" tab.
+    %li Increase filter on "Asked from" to the past year.
+    %li Filter on "Updated between" to the last month.
+    %li Check the box that says strip HTML from export data.
+    %li Click on the "Export Tickets" button.
+    %li 
+      Update the resulting csv file via the 
+      #{link_to "File Upload Tool", admin_tools_file_upload_imports_path}
+      %ul
+        %li 
+          Note that the database will update records with the new information 
+          whilst maintaining the unique index. (It handles duplicates on the backend).
+
+
+%hr
+%section
+  %h2 Table Information 
+
+  %h3 Queues 
+  Multiple Queues can be created for departments or different ticket types.  
+  The Queue list is only available through Springshare's LibAnswers Interface.
+
+  %ul
+    %li
+      Queue Identifier - Springshare's Unique Identifier for each queue.  
+      This is a foreign key in the Ticket Table.
+    %li Name - The human readable name created when the queue was constructed.
+    %li Email Address - The email address associated with the queue.
+    %li Number of Tickets - The number of tickets in the queue in the MetriDoc interface.
+    %li Last Modified - The most recent date the record was modified.
+
+  %h3 Tickets
+  This table contains a summary of the tickets
+
+  %ul
+    %li Ticket Identifier - Springshare's Unique Identifier for the ticket.
+    %li Queue Identifier - The code for the queue the ticket belongs to.
+    %li Asked On - The datetime of the ticket.
+    %li Question - A subject heading for the question.
+    %li 
+      Details - More information on what is needed.  This field is hidden due 
+      to potentital personal identifying information.
+    %li Owner - The librarian assigned to the ticket.
+    %li Source - The source of the ticket.
+    %li Status - The status of the ticket.
+    %li Name - Patron Name, hidden from the website interface.
+    %li Email - Patron email, hidden from the website interface.
+    %li Last Updated - The datetime of the most recent update of the ticket.
+    %li Tags - Tags associated with the ticket.
+    %li Interactions - The number of interactions on the ticket.
+    %li Time to first reply - The time in seconds to the first reply to the ticket.
+    %li Time to close - The time in seconds to the close of the ticket.
+    %li 
+      Demographics - Data is enriched with Demographic information if a 
+      Penn Email address is used.
+      %ul 
+        %li Statistical Category 1
+        %li Statistical Category 2
+        %li Statistical Category 3
+        %li Statistical Category 4
+        %li Statistical Category 5
+        %li User Group
+        %li School
+        %li Penn Id - Patron Penn Card Number, hidden from the website interface.
+        %li Pennkey - Patron Pennkey, hidden from the website interface.
+
