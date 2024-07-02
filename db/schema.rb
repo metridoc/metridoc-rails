@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_07_171529) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_13_141745) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1788,6 +1788,43 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_171529) do
     t.string "shelving_location"
     t.string "pickup_location"
     t.index ["borrower_id", "lender_id"], name: "transaction_index", unique: true
+  end
+
+  create_table "ss_libanswers_queues", force: :cascade do |t|
+    t.integer "queue_id"
+    t.string "name"
+    t.string "email_address"
+    t.integer "number_of_tickets", default: 0
+    t.datetime "last_modified"
+    t.index ["queue_id"], name: "ss_libanswers_queue_id", unique: true
+  end
+
+  create_table "ss_libanswers_tickets", force: :cascade do |t|
+    t.integer "ticket_id"
+    t.integer "queue_id"
+    t.datetime "asked_on"
+    t.text "question"
+    t.text "details"
+    t.string "owner"
+    t.string "source"
+    t.string "status"
+    t.string "name"
+    t.string "email"
+    t.datetime "last_updated"
+    t.string "tags"
+    t.integer "interactions"
+    t.interval "time_to_first_reply"
+    t.interval "time_to_close"
+    t.string "statistical_category_1"
+    t.string "statistical_category_2"
+    t.string "statistical_category_3"
+    t.string "statistical_category_4"
+    t.string "statistical_category_5"
+    t.string "user_group", default: "Unknown"
+    t.string "school", default: "Unknown"
+    t.string "penn_id"
+    t.string "pennkey"
+    t.index ["ticket_id"], name: "ss_libanswers_ticket_id", unique: true
   end
 
   create_table "ss_libcal_answers", force: :cascade do |t|

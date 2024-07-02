@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '>= 7.1.3.1'
+gem 'rails', '>= 7.1.3.4'
 
 # RDoc produces HTML and command-line documentation for Ruby projects. RDoc
 # includes the +rdoc+ and +ri+ tools for generating and displaying documentation
@@ -87,7 +87,7 @@ gem 'haml'
 # It provides a sensible, easy-to-understand API for reading, writing,
 # modifying, and querying documents. It is fast and standards-compliant by
 # relying on native parsers like libxml2, libgumbo, or xerces.
-gem 'nokogiri', '>= 1.16.4'
+gem 'nokogiri', '>= 1.16.5'
 
 ##############
 # ActiveRecord
@@ -208,6 +208,9 @@ group :development, :test do
   # Capybara is an integration testing tool for rack based web applications.
   # It simulates how a user would interact with a website
   gem 'capybara', '~> 3.39', '>= 3.39.2'
+
+  # Dependancy of Selenium webdriver
+  gem 'rexml', ">= 3.2.7"
 
   # Selenium implements the W3C WebDriver protocol to automate popular browsers.
   # It aims to mimic the behaviour of a real user as it interacts with the

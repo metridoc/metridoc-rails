@@ -295,6 +295,18 @@ en:
       ipeds/stem_cipcode:
         one: "CIP Code - STEM"
         other: "CIP Codes - STEM"
+      springshare:
+        one: "Springshare Data"
+        other: "Springshare Data"
+      springshare/libanswers:
+        one: "LibAnswers"
+        other: "LibAnswers"
+      springshare/libanswers/queue:
+        one: "LibAnswers Queue"
+        other: "LibAnswers Queues"
+      springshare/libanswers/ticket:
+        one: "LibAnswers Ticket"
+        other: "LibAnswers Tickets"
     attributes:
       borrowdirect/reshare/borrowing_turnaround:
         request_id: "Request Id"
