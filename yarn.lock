@@ -25,10 +25,10 @@
   resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.1.3.tgz#4db480347775aeecd4dde2405659eef74a458881"
   integrity sha512-ojNvnoZtPN0pYvVFtlO7dyEN9Oml1B6IDM+whGKVak69MMYW99lC2NOWXWeE3bmwEydbP/nn6ERcpfjHVjYQjA==
 
-active_material@^2.0.2:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/active_material/-/active_material-2.0.3.tgz#e5225b5c8502f4cc5a37c5d74a563232dd9704a2"
-  integrity sha512-d5SlctmobSatxwAG+GTg4R+lwIgMZZ17QIorrFLlAmzShGwu4sMsDRDlBGkOJ/zrJRQ4Tx8a/d9I5kSAPIW1lA==
+active_material@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/active_material/-/active_material-2.0.2.tgz#fa12141586db18e1ae5f0c5807efbdaad3313b38"
+  integrity sha512-HNvBukIPkc8FuPDzB87bubQkoNKLCmkw8P0jctqZ7OvXj2tSg9AcrCSavKtC9PrwYpn739Yq3AJmJ+J0RJ3MGA==
   dependencies:
     "@fontsource/roboto" "^4.5.3"
 
