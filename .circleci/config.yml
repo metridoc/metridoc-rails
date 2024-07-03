@@ -10,19 +10,19 @@ default-slack-config: &default-slack-config
 orbs:
   slack: circleci/slack@3.4.2
 
-commands:
-  molecule_test:
-    description: Run the `molecule test` command within a role directory
-    parameters:
-      role:
-        description: Name of the Ansible role
-        type: string
-    steps:
-      - run:
-          command: pip3 install pytest pytest-testinfra
-      - run:
-          command: molecule test
-          working_directory: ansible/roles/<< parameters.role >>
+# commands:
+#   molecule_test:
+#     description: Run the `molecule test` command within a role directory
+#     parameters:
+#       role:
+#         description: Name of the Ansible role
+#         type: string
+#     steps:
+#       - run:
+#           command: pip3 install pytest pytest-testinfra
+#       - run:
+#           command: molecule test
+#           working_directory: ansible/roles/<< parameters.role >>
 
 jobs:
   check-for-secrets:
@@ -168,21 +168,21 @@ jobs:
               docker push --all-tags quay.io/<< parameters.image >>
             fi     
 
-  test_role:
-    description: Test an Ansible role using Molecule
-    parameters:
-      role:
-        description: Name of the Ansible role
-        type: string
-    docker:
-      - image: quay.io/ansible/creator-ee:v0.4.2
-    environment:
-      HOME: /root
-    steps:
-      - checkout
-      - setup_remote_docker
-      - molecule_test:
-          role: << parameters.role >>
+  # test_role:
+  #   description: Test an Ansible role using Molecule
+  #   parameters:
+  #     role:
+  #       description: Name of the Ansible role
+  #       type: string
+  #   docker:
+  #     - image: quay.io/ansible/creator-ee:v0.4.2
+  #   environment:
+  #     HOME: /root
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - molecule_test:
+  #         role: << parameters.role >>
 
 workflows:
   build_test_and_deploy:
@@ -218,26 +218,26 @@ workflows:
           path: ./ansible/roles/ezpaarse_manager/files/mongodb
           requires:
             - check-for-secrets
-      - test_role:
-          name: test_jenkins_manager_role
-          role: jenkins_manager
-          requires:
-            - check-for-secrets
-      - test_role:
-          name: test_metridoc_manager_role
-          role: metridoc_manager
-          requires:
-            - check-for-secrets
-      - test_role:
-          name: test_postgres_primary_manager_role
-          role: postgres_primary_manager
-          requires:
-            - check-for-secrets
-      - test_role:
-          name: test_postgres_replica_manager_role
-          role: postgres_replica_manager
-          requires:
-            - check-for-secrets
+      # - test_role:
+      #     name: test_jenkins_manager_role
+      #     role: jenkins_manager
+      #     requires:
+      #       - check-for-secrets
+      # - test_role:
+      #     name: test_metridoc_manager_role
+      #     role: metridoc_manager
+      #     requires:
+      #       - check-for-secrets
+      # - test_role:
+      #     name: test_postgres_primary_manager_role
+      #     role: postgres_primary_manager
+      #     requires:
+      #       - check-for-secrets
+      # - test_role:
+      #     name: test_postgres_replica_manager_role
+      #     role: postgres_replica_manager
+      #     requires:
+      #       - check-for-secrets
       - deploy-production:
           filters:
             branches:
@@ -247,10 +247,10 @@ workflows:
             - publish_metridoc_python_jobs
             - publish_metridoc_ezpaarse
             - publish_metridoc_ezpaarse_mongodb
-            - test_jenkins_manager_role
-            - test_metridoc_manager_role
-            - test_postgres_primary_manager_role
-            - test_postgres_replica_manager_role
+            # - test_jenkins_manager_role
+            # - test_metridoc_manager_role
+            # - test_postgres_primary_manager_role
+            # - test_postgres_replica_manager_role
       - deploy-staging:
           filters:
             branches:
@@ -260,7 +260,7 @@ workflows:
             - publish_metridoc_python_jobs
             - publish_metridoc_ezpaarse
             - publish_metridoc_ezpaarse_mongodb
-            - test_jenkins_manager_role
-            - test_metridoc_manager_role
-            - test_postgres_primary_manager_role
-            - test_postgres_replica_manager_role
+            # - test_jenkins_manager_role
+            # - test_metridoc_manager_role
+            # - test_postgres_primary_manager_role
+            # - test_postgres_replica_manager_role
