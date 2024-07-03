@@ -4,10 +4,6 @@ class Springshare::Libanswers::Ticket < Springshare::Libanswers::Base
     :details, :name, :email, :pennkey, :penn_id
   ]
 
-  # Specify how time intervals should show up
-  attribute :time_to_first_reply, :interval
-  attribute :time_to_close, :interval
-
   # Define an alternate name for an id
   # To correct the id named on upload
   def self.alternate_id
