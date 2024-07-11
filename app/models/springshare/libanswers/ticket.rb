@@ -1,8 +1,11 @@
 class Springshare::Libanswers::Ticket < Springshare::Libanswers::Base
 
-  self.ignored_columns = [
-    :details, :name, :email, :pennkey, :penn_id
-  ]
+  # Define the columns
+  def self.superadmin_columns
+    [
+      "details", "name", "email", "pennkey", "penn_id"
+    ]
+  end
 
   # Define an alternate name for an id
   # To correct the id named on upload
