@@ -1,0 +1,160 @@
+= javascript_include_tag 'application'
+
+-# Establish the model
+- tickets = Springshare::Libanswers::Ticket
+- queues = Springshare::Libanswers::Queue
+
+-# Form to update filters on page
+%center
+  All Filters are Optional
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Queue:
+        %td
+        %td
+          = select_tag :queue_id, 
+            options_from_collection_for_select(queues.all, 
+              "queue_id", 
+              "name", 
+              params[:queue_id]),
+            include_blank: "All Queues"
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Ticket Owner:
+        %td
+        %td
+          = select_tag :owner, 
+            options_for_select(tickets.distinct.pluck(:owner),
+              params[:owner]),
+            include_blank: "All Owners"
+      %tr
+        %td Filter on Patron User Group:
+        %td
+        %td
+          = select_tag :user_group, 
+            options_for_select(tickets.distinct.pluck(:user_group),
+              params[:user_group]),
+            include_blank: "All User Groups"
+      %tr
+        %td Filter on Patron Affiliation:
+        %td
+        %td
+          = select_tag :school, 
+            options_for_select(tickets.distinct.pluck(:school),
+              params[:school]),
+            include_blank: "All Affiliations"
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(springshare_libanswers_fiscal_years,
+              params[:fiscal_year]),
+            include_blank: "All Years"
+
+-# Filter tickets given input parameters
+- tickets  = springshare_libanswers_filter_tickets(params)
+
+%hr
+%h2 Time Series
+
+= line_chart tickets.group_by_day(:asked_on).count,
+  title: "Tickets by Date",
+  download: true,
+  xtitle: "Date",
+  ytitle: "Number of Tickets"
+
+%div{style: "width: 100%; display: flex; align-items: stretch;"}
+  %div{style: "width: 47%;"}
+    = line_chart tickets.group_by_hour_of_day(:asked_on).count,
+      title: "Tickets by Hour of Day (*UTC)",
+      download: true,
+      xtitle: "Hour of Day",
+      ytitle: "Number of Tickets",
+      xmin: -0.5,
+      xmax: 23.5
+    %p
+      * UTC: Universal Coordinated Time is a standard time shifted by 
+      4 to 5 hours from Philadelphia time depending on Daylight Savings.
+
+  %div{style: "margin-left: 6%; width: 47%;"}
+    = column_chart tickets.group_by_day_of_week(:asked_on, format: "%a").count,
+      title: "Tickets by Day of Week",
+      download: true,
+      xtitle: "Day of Week",
+      ytitle: "Number of Tickets"
+
+
+
+%div{style: "width: 100%;"}
+  %div{style: "width: 47%; float: left"}
+    = line_chart tickets.group_by_month(:asked_on).count,
+      title: "Tickets by Month",
+      download: true,
+      xtitle: "Month",
+      ytitle: "Number of Tickets"
+
+  %div{style: "margin-left: 53%; width: 47%;"}
+    = column_chart tickets.select(:asked_on).map{|u| (u.asked_on + 6.months).year}.tally,
+      title: "Tickets by Fiscal Year",
+      download: true,
+      xtitle: "Fiscal Year",
+      ytitle: "Number of Tickets"
+
+%hr
+%h2 Queue Statistics
+
+- queue_name_lookup = queues.pluck(:queue_id, :name).to_h
+= bar_chart tickets.group(:queue_id).count.sort_by { |_k, v| -v }.map {|k,v| [queue_name_lookup[k], v]},
+  title: "Tickets by Queue",
+  download: true,
+  xtitle: "Number of Tickets",
+  ytitle: "Queue Title",
+  height: "500px"
+
+%hr
+%h2 Response Time
+%p 
+  How to read time difference categories: "30 minutes" refers to times shorter than 30 
+  minutes but longer than 10 minutes
+
+%div{style: "width: 100%; display: flex; align-items: stretch;"}
+  %div{style: "width: 47%;"}
+    = bar_chart springshare_libanswers_group_duration(tickets, :time_to_first_reply),
+      title: "Time to First Reply",
+      download: true,
+      xtitle: "Frequency",
+      ytitle: "Maximum Time Delay"
+
+    * Possible reasons for zero seconds
+    %ul
+      %li New Question
+      %li Automated Reply
+      %li Spam that did not justify a reply, but has been closed
+
+  %div{style: "margin-left: 6%; width: 47%;"}
+    = bar_chart springshare_libanswers_group_duration(tickets, :time_to_close),
+      title: "Time to Close",
+      download: true,
+      xtitle: "Frequency",
+      ytitle: "Maximum Time Delay"
+
+    * Possible reasons for zero seconds
+    %ul
+      %li Ticket is not closed
+
+%hr
+%h2 Patron Information
+
+%div{style: "width: 100%;"}
+  %div{style: "width: 65%; float: left;"}
+    = pie_chart tickets.group(:school).count.sort_by { |_k, v| -v },
+      title: "Patron School",
+      download: true,
+      legend: "left"
+  %div{style: "margin-left: 65%; width: 35%;"}
+    = pie_chart tickets.group(:user_group).count.sort_by { |_k, v| -v },
+      title: "Patron User Group", 
+      download: true,
+      legend: "right"

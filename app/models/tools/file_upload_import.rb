@@ -12,7 +12,6 @@ class Tools::FileUploadImport < ApplicationRecord
   after_commit :queue_process
 
   UPLOADABLE_MODELS = [
-    Alma::Circulation,
     Consultation::Interaction,
     GeoData::CountryCode,
     Keyserver::StatusTerm,
@@ -24,17 +23,18 @@ class Tools::FileUploadImport < ApplicationRecord
     Keyserver::Computer,
     Keyserver::CpuTypeTerm,
     Keyserver::Usage,
-    GateCount::CardSwipe,
     Ipeds::Completion,
     Ipeds::Directory,
     Ipeds::Program,
     Ipeds::CompletionSchema,
     Ipeds::DirectorySchema,
-    Ipeds:: ProgramSchema,
+    Ipeds::ProgramSchema,
     Ipeds::StemCipcode,
     Ipeds::Cipcode,
     Upenn::Enrollment,
     LibraryStaff::Census,
+    Springshare::Libanswers::Queue,
+    Springshare::Libanswers::Ticket
   ]
 
   validates :target_model, presence: true
@@ -51,7 +51,7 @@ class Tools::FileUploadImport < ApplicationRecord
     FileUploadImportMailer.with(file_upload_import: self).started_notice.deliver_now
 
     import
-    log "Finished processing."
+
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
   end
 
@@ -70,7 +70,13 @@ class Tools::FileUploadImport < ApplicationRecord
   # Open the Spreadsheet
   # This can be a csv, xls, xlsx and the Roo gem will handle all of them
   def spreadsheet
-    Roo::Spreadsheet.open(file_path, extension: extension.to_sym())
+    Roo::Spreadsheet.open(
+      file_path, 
+      {
+        extension: extension.to_sym(), 
+        csv_options: { encoding: 'bom|utf-8' } 
+      }
+    )
   rescue => ex
     log "Error =>  [#{ex.message}]"
     raise ex
@@ -93,7 +99,15 @@ class Tools::FileUploadImport < ApplicationRecord
       if target_class.columns_hash[column_name].blank?
         headers[headers.index(column_name)] = column_name.split(/\_+/).first
       end
+
+      # Some uploadable files will have an id column.
+      # Rename the id column as defined in the model.
+      if (column_name == "id") && (target_class.respond_to? :alternate_id)
+        headers[headers.index(column_name)] = target_class.alternate_id
+      end
     end
+
+    # Return the headers
     headers
   end
 
@@ -146,7 +160,7 @@ class Tools::FileUploadImport < ApplicationRecord
             row_error = true
             next
           end
-          # Check for valid dates for date columns, requires a sting input
+          # Check for valid dates for date columns, requires a string input
           if target_class.columns_hash[column_name].type == :date && !Util.valid_datetime?(val)
             log "Invalid date [#{val}] in column: #{column_name} row: #{row.join(",")}"
             n_errors = n_errors + 1
@@ -156,6 +170,14 @@ class Tools::FileUploadImport < ApplicationRecord
 
           # If the target column is a datetime type, then turn the value into a datetime
           val = Util.parse_datetime(val) if target_class.columns_hash[column_name].type == :datetime
+
+          # If the target column is an interval type, then turn the value into an interval
+          # Takes strings like 01:02:30 and makes them like PT01H02M30S for parsing
+          if target_class.columns_hash[column_name].type == :interval
+            val = ActiveSupport::Duration.parse(
+              "PT" + val.split(":").zip(["H", "M", "S"]).flatten.join()
+              )
+          end
 
           attributes[column_name] = val
         end
@@ -210,6 +232,14 @@ class Tools::FileUploadImport < ApplicationRecord
 
     self.update_columns(status: success ? "success" : "failed") unless cancelled?
 
+    # Automatically update tables after the import is complete if 
+    # defined in the model
+    if target_class.respond_to?(:update_after_import) && success
+      log "Updating tables after import."
+      target_class.update_after_import
+      log "Finished updating tables after import."
+    end
+
     save!
   end
 
@@ -235,7 +265,11 @@ class Tools::FileUploadImport < ApplicationRecord
 
   def import_records(target_class, records)
     begin
-      target_class.import records
+      if target_class.respond_to?(:on_conflict_update)
+        target_class.import records, on_duplicate_key_update: target_class.on_conflict_update
+      else
+        target_class.import records
+      end
       return {status: 'success', n_inserted: records.size}
     rescue => ex
       log "Error while importing records => #{ex.message}"
