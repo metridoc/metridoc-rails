@@ -5,10 +5,10 @@ module SpringshareHelper
 
     # Get the max and min fiscal year
     min_fiscal_year = (
-      tickets.select(:asked_on).min.asked_on + 6.months
+      tickets.minimum(:asked_on) + 6.months
     ).year
     max_fiscal_year = (
-      tickets.select(:asked_on).max.asked_on + 6.months
+      tickets.maximum(:asked_on) + 6.months
     ).year
 
     # Return the range of fiscal years
@@ -34,10 +34,10 @@ module SpringshareHelper
       ) unless params[:school].blank?
     
     unless params[:fiscal_year].blank?
-      this_year, last_year = fiscal_year_ranges(
+      this_year, _ = fiscal_year_ranges(
         params[:fiscal_year].to_i
       )
-      tickets.where(asked_on: this_year)
+      tickets = tickets.where(asked_on: this_year)
     end
 
     # Return the filtered tickets
