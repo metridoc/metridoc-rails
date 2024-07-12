@@ -1,8 +1,5 @@
 = javascript_include_tag 'application'
 
--# range = 2.weeks.ago .. 1.week.ago
--# Item.where(:updated_at => range)
-
 -# Establish the model
 - tickets = Springshare::Libanswers::Ticket
 - queues = Springshare::Libanswers::Queue
@@ -52,15 +49,11 @@
         %td
         %td
           = select_tag :fiscal_year, 
-            options_for_select(springshare_libanswers_fiscal_years),
+            options_for_select(springshare_libanswers_fiscal_years,
+              params[:fiscal_year]),
             include_blank: "All Years"
 
--# Filter model by queue_id if selected
--# tickets = tickets.where(queue_id: params[:queue_id]) unless params[:queue_id].blank?
--# tickets = tickets.where(owner: params[:owner]) unless params[:owner].blank?
--# tickets = tickets.where(user_group: params[:user_group]) unless params[:user_group].blank?
--# tickets = tickets.where(school: params[:school]) unless params[:school].blank?
--# Filter model by fiscal year if selected
+-# Filter tickets given input parameters
 - tickets  = springshare_libanswers_filter_tickets(params)
 
 %hr
