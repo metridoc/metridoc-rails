@@ -1,4 +1,4 @@
-FROM python:3.9
+FROM python:3.12
 
 # create user
 RUN groupadd -g 1000 app && useradd -g app -u 1000 -m -d /home/app app
