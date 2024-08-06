@@ -43,7 +43,7 @@ build_and_push_metridoc_image:
   after_script:
     - docker logout ${CI_REGISTRY}
   environment:
-    name: ${ENVIRONMENT_NAME}
+    name: testing # UPDATE THIS BACK TO ${ENVIRONMENT NAME}
   parallel:
     matrix:
       - RUNNER: build-arm
