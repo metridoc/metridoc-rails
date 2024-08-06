@@ -51,8 +51,8 @@ build_and_push_metridoc_image:
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: linux/amd64
   variables:
-    DOCKER_BUILD_CONTEXT: .
-    DOCKERFILE_PATH: .
+    DOCKER_BUILD_CONTEXT: ./
+    DOCKERFILE_PATH: ./
     REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
     USE_CACHE: "false"
   tags:
