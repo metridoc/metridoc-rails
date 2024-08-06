@@ -26,10 +26,10 @@ main:
       - artifact: .pipeline.yml
         job: secret_detection
     strategy: depend
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      variables:
-        ENVIRONMENT_NAME: production
-    - if: $CI_COMMIT_BRANCH == "staging"
-      variables:
-        ENVIRONMENT_NAME: staging
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#      variables:
+#        ENVIRONMENT_NAME: production
+#    - if: $CI_COMMIT_BRANCH == "staging"
+#      variables:
+#        ENVIRONMENT_NAME: staging
