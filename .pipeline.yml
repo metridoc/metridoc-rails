@@ -21,7 +21,9 @@ include:
 
 stages:
   - build_and_push:metridoc_image
-#  - build_and_push:ui_image
+  - build_and_push:metridoc_python_jobs_image
+  - build_and_push:metridoc_ezpaarse_image
+  - build_and_push_metridoc_ezpaarse_mongodb_image
 #  - amend_tmp_api_images
 #  - amend_tmp_ui_images
 #  - sast
@@ -37,9 +39,6 @@ build_and_push_metridoc_image:
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
     - !reference [.install_hashicorp_vault, before_script]
     - !reference [.vault_jwt_auth, before_script]
-    # - export TNSNAMES_ORA="$(vault kv get -field=data_warehouse_tnsnames_ora kv-applications/course-request-form/staging)"
-    # - echo $DOCKER_BUILD_ARGS
-    - set -xv
   after_script:
     - docker logout ${CI_REGISTRY}
   environment:
@@ -53,11 +52,89 @@ build_and_push_metridoc_image:
   variables:
     DOCKER_BUILD_CONTEXT: ./
     DOCKERFILE_PATH: ./
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc/python_jobs
+    USE_CACHE: "false"
+  tags:
+    - ${RUNNER}
+
+build_and_push_metridoc_python_jobs_image:
+  stage: build_and_push:metridoc_python_jobs_image
+  extends:
+    - .build_and_push_docker_images
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  environment:
+    name: ${ENVIRONMENT_NAME}
+  parallel:
+    matrix:
+      - RUNNER: build-arm
+        DOCKER_BUILD_PLATFORM: linux/arm64
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: linux/amd64
+  variables:
+    DOCKER_BUILD_CONTEXT: ./ansible/roles/python_jobs_manager/files/src/
+    DOCKERFILE_PATH: ./ansible/roles/python_jobs_manager/files/src/
     REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
     USE_CACHE: "false"
   tags:
     - ${RUNNER}
-# -- End - build and push base image
+
+build_and_push_metridoc_ezpaarse_image:
+  stage: build_and_push:metridoc_ezpaarse_image
+  extends:
+    - .build_and_push_docker_images
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  environment:
+    name: ${ENVIRONMENT_NAME}
+  parallel:
+    matrix:
+      - RUNNER: build-arm
+        DOCKER_BUILD_PLATFORM: linux/arm64
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: linux/amd64
+  variables:
+    DOCKER_BUILD_CONTEXT: ./ansible/roles/ezpaarse_manager/files/ezpaarse/
+    DOCKERFILE_PATH: ./ansible/roles/ezpaarse_manager/files/ezpaarse/
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc/ezpaarse
+    USE_CACHE: "false"
+  tags:
+    - ${RUNNER}
+
+build_and_push_metridoc_ezpaarse_mongodb_image:
+  stage: build_and_push:metridoc_ezpaarse_mongodb_image
+  extends:
+    - .build_and_push_docker_images
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  environment:
+    name: ${ENVIRONMENT_NAME}
+  parallel:
+    matrix:
+      - RUNNER: build-arm
+        DOCKER_BUILD_PLATFORM: linux/arm64
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: linux/amd64
+  variables:
+    DOCKER_BUILD_CONTEXT: ./ansible/roles/ezpaarse_manager/files/mongodb/
+    DOCKERFILE_PATH: ./ansible/roles/ezpaarse_manager/files/mongodb/
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc/ezpaarse_mongodb
+    USE_CACHE: "false"
+  tags:
+    - ${RUNNER}
+
 
 ## -- Start - build and push base image
 #build_and_push_ui_base_image:
