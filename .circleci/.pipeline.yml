@@ -1,0 +1,274 @@
+---
+include:
+  - project: devops/gitlab/ci-templates/deploy
+    file: .hashicorp_vault.yml
+  - project: devops/gitlab/ci-templates/docker
+    ref: 1.0.0
+    file:
+      - .amend_manifests.yml
+      - .build_and_push_docker_images.yml
+      - .copy_docker_images.yml
+      - .remove_tmp_registry.yml
+  - project: devops/gitlab/ci-templates/sast
+    ref: master
+    file:
+      - .trivy_container_scanning.yml
+  - project: devops/gitlab/ci-templates/general
+    file:
+      - .install_hashicorp_vault.yml
+      - .vault_jwt_auth.yml
+        #- template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+
+stages:
+  - build_and_push:metridoc_image
+#  - build_and_push:ui_image
+#  - amend_tmp_api_images
+#  - amend_tmp_ui_images
+#  - sast
+#  - copy_docker_images
+#  - remove_tmp_registry
+#  - deploy
+
+build_and_push_metridoc_image:
+  stage: build_and_push:metridoc_image
+  extends:
+    - .build_and_push_docker_images
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
+    # - export TNSNAMES_ORA="$(vault kv get -field=data_warehouse_tnsnames_ora kv-applications/course-request-form/staging)"
+    # - echo $DOCKER_BUILD_ARGS
+    - set -xv
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  environment:
+    name: ${ENVIRONMENT_NAME}
+  parallel:
+    matrix:
+      - RUNNER: build-arm
+        DOCKER_BUILD_PLATFORM: linux/arm64
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: linux/amd64
+  variables:
+    DOCKER_BUILD_CONTEXT: .
+    DOCKERFILE_PATH: .
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+    USE_CACHE: "false"
+  tags:
+    - ${RUNNER}
+# -- End - build and push base image
+
+## -- Start - build and push base image
+#build_and_push_ui_base_image:
+#  stage: build_and_push:ui_image
+#  extends:
+#    - .build_and_push_docker_images
+#  parallel:
+#    matrix:
+#      - RUNNER: build-arm
+#        DOCKER_BUILD_PLATFORM: linux/arm64
+#      - RUNNER: build
+#        DOCKER_BUILD_PLATFORM: linux/amd64
+#  variables:
+#    DOCKER_BUILD_CONTEXT: app/ui/
+#    DOCKERFILE_PATH: app/ui/
+#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
+#    DOCKER_TARGET: base
+#  tags:
+#    - ${RUNNER}
+## -- End - build and push base image
+#
+#build_and_push_ui_dev_image:
+#  stage: build_and_push:ui_image
+#  extends:
+#    - .build_and_push_docker_images
+#  parallel:
+#    matrix:
+#      - RUNNER: build-arm
+#        DOCKER_BUILD_PLATFORM: linux/arm64
+#      - RUNNER: build
+#        DOCKER_BUILD_PLATFORM: linux/amd64
+#  needs:
+#    - build_and_push_ui_base_image
+#  variables:
+#    DOCKER_BUILD_CONTEXT: app/ui/
+#    DOCKERFILE_PATH: app/ui/
+#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
+#    DOCKER_TARGET: dev
+#  tags:
+#    - ${RUNNER}
+## -- End - build and push base image
+#
+#build_and_push_ui_prod_image:
+#  stage: build_and_push:ui_image
+#  extends:
+#    - .build_and_push_docker_images
+#  parallel:
+#    matrix:
+#      - RUNNER: build-arm
+#        DOCKER_BUILD_PLATFORM: linux/arm64
+#      - RUNNER: build
+#        DOCKER_BUILD_PLATFORM: linux/amd64
+#  needs:
+#    - build_and_push_ui_base_image
+#  variables:
+#    DOCKER_BUILD_CONTEXT: app/ui/
+#    DOCKERFILE_PATH: app/ui/
+#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
+#    DOCKER_TARGET: prod
+#  tags:
+#    - ${RUNNER}
+## -- End - build and push base image
+#
+#amend_tmp_api_images:
+#  stage: amend_tmp_api_images
+#  extends:
+#    - .amend_manifests
+#  needs:
+#    - build_and_push_api_image
+#  variables:
+#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/api
+#  tags:
+#    - build
+## -- End - build, push temp dev image
+#
+#amend_tmp_ui_images:
+#  stage: amend_tmp_ui_images
+#  extends:
+#    - .amend_manifests
+#  needs:
+#    - build_and_push_ui_base_image
+#    - build_and_push_ui_dev_image
+#    - build_and_push_ui_prod_image
+#  variables:
+#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
+#  tags:
+#    - build
+## -- End - build, push temp dev image
+#
+## -- Start - SAST images
+#trivy_container_api_scanning:
+#  stage: sast
+#  extends:
+#    - .trivy_container_scanning
+#  before_script:
+#    - apk add --no-cache docker
+#    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+#  after_script:
+#    - docker logout ${CI_REGISTRY}
+#  needs:
+#    - amend_tmp_api_images
+#  variables:
+#    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/api:${CI_COMMIT_SHORT_SHA}
+#  allow_failure: true
+#  tags:
+#    - build
+## -- End - SAST images
+#
+#trivy_container_ui_scanning:
+#  stage: sast
+#  extends:
+#    - .trivy_container_scanning
+#  before_script:
+#    - apk add --no-cache docker
+#    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+#  script:
+#    # Ensure a reports dir exists
+#    - mkdir -p ${CI_OUTPUT_DIR} ${TRIVY_CACHE_DIR}
+#      # Build report
+#    - trivy --cache-dir ${TRIVY_CACHE_DIR} --timeout 10m image --exit-code 0 --no-progress -o ${CI_OUTPUT_DIR}/${TRIVY_OUTPUT_FILENAME} ${CI_IMAGE_NAME}
+#      # Print high vulnerabilities
+#    - trivy --cache-dir ${TRIVY_CACHE_DIR} --timeout 10m image --exit-code 0 --no-progress --severity HIGH ${CI_IMAGE_NAME}
+#      # Throw error on critical vulnerabilities
+#    - trivy --cache-dir ${TRIVY_CACHE_DIR} --skip-dirs /root/.local/share/pnpm --timeout 10m image --exit-code 1 --severity CRITICAL --ignore-unfixed --no-progress
+#      ${CI_IMAGE_NAME}
+#  after_script:
+#    - docker logout ${CI_REGISTRY}
+#  needs:
+#    - amend_tmp_ui_images
+#  variables:
+#    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/ui:${CI_COMMIT_SHORT_SHA}-prod
+#  allow_failure: true
+#  tags:
+#    - build
+## -- End - SAST images
+#
+## -- Start - Copy app docker images
+#copy_docker_api_images:
+#  stage: copy_docker_images
+#  variables:
+#    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/api
+#    FINAL_REGISTRY_REPOSITORY: api
+#  needs:
+#    - trivy_container_api_scanning
+#  extends:
+#    - .copy_docker_images
+#  tags:
+#    - build
+## -- End - Copy app docker images
+#
+#copy_docker_ui_images:
+#  stage: copy_docker_images
+#  variables:
+#    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
+#    FINAL_REGISTRY_REPOSITORY: ui
+#  needs:
+#    - trivy_container_ui_scanning
+#  extends:
+#    - .copy_docker_images
+#  tags:
+#    - build
+## -- End - Copy app docker images
+#
+## -- Start - remove tmp registry repository
+#remove_tmp_registry:
+#  stage: remove_tmp_registry
+#  extends:
+#    - .remove_tmp_registry
+#  rules:
+#    - when: always
+#  needs:
+#    - copy_docker_api_images
+#    - copy_docker_ui_images
+#  allow_failure: true
+#  tags:
+#    - build
+## -- End - remove tmp registry repository
+#
+## Deploy staging
+#deploy_staging:
+#  stage: deploy
+#  extends:
+#    - .deploy
+#  variables:
+#    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-prod
+#  environment:
+#    name: ${ENVIRONMENT_NAME}
+#    url: metridoc-staging.library.upenn.int
+#  needs:
+#    - copy_docker_ui_images
+#    - copy_docker_api_images
+#  rules:
+#    - if: $CI_COMMIT_REF_NAME == "staging"
+#  tags:
+#    - deploy
+#
+## Deploy production
+#deploy_production:
+#  stage: deploy
+#  extends:
+#    - .deploy
+#  variables:
+#    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-prod
+#  environment:
+#    name: ${ENVIRONMENT_NAME}
+#    url: metridoc.library.upenn.edu
+#  needs:
+#    - copy_docker_ui_images
+#    - copy_docker_api_images
+#  rules:
+#    - if: $CI_COMMIT_REF_NAME == "master"
+#  tags:
+#    - deploy
+#

@@ -168,22 +168,6 @@ jobs:
               docker push --all-tags quay.io/<< parameters.image >>
             fi     
 
-  # test_role:
-  #   description: Test an Ansible role using Molecule
-  #   parameters:
-  #     role:
-  #       description: Name of the Ansible role
-  #       type: string
-  #   docker:
-  #     - image: quay.io/ansible/creator-ee:v0.4.2
-  #   environment:
-  #     HOME: /root
-  #   steps:
-  #     - checkout
-  #     - setup_remote_docker
-  #     - molecule_test:
-  #         role: << parameters.role >>
-
 workflows:
   build_test_and_deploy:
     jobs:
@@ -218,26 +202,6 @@ workflows:
           path: ./ansible/roles/ezpaarse_manager/files/mongodb
           requires:
             - check-for-secrets
-      # - test_role:
-      #     name: test_jenkins_manager_role
-      #     role: jenkins_manager
-      #     requires:
-      #       - check-for-secrets
-      # - test_role:
-      #     name: test_metridoc_manager_role
-      #     role: metridoc_manager
-      #     requires:
-      #       - check-for-secrets
-      # - test_role:
-      #     name: test_postgres_primary_manager_role
-      #     role: postgres_primary_manager
-      #     requires:
-      #       - check-for-secrets
-      # - test_role:
-      #     name: test_postgres_replica_manager_role
-      #     role: postgres_replica_manager
-      #     requires:
-      #       - check-for-secrets
       - deploy-production:
           filters:
             branches:
