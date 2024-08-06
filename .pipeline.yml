@@ -23,7 +23,7 @@ stages:
   - build_and_push:metridoc_image
   - build_and_push:metridoc_python_jobs_image
   - build_and_push:metridoc_ezpaarse_image
-  - build_and_push_metridoc_ezpaarse_mongodb_image
+  - build_and_push:metridoc_ezpaarse_mongodb_image
 #  - amend_tmp_api_images
 #  - amend_tmp_ui_images
 #  - sast
