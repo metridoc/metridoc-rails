@@ -52,7 +52,7 @@ build_and_push_metridoc_image:
   variables:
     DOCKER_BUILD_CONTEXT: ./
     DOCKERFILE_PATH: ./
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc/python_jobs
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/app
     USE_CACHE: "false"
   tags:
     - ${RUNNER}
@@ -78,7 +78,7 @@ build_and_push_metridoc_python_jobs_image:
   variables:
     DOCKER_BUILD_CONTEXT: ./ansible/roles/python_jobs_manager/files/src/
     DOCKERFILE_PATH: ./ansible/roles/python_jobs_manager/files/src/
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/python_jobs
     USE_CACHE: "false"
   tags:
     - ${RUNNER}
@@ -104,7 +104,7 @@ build_and_push_metridoc_ezpaarse_image:
   variables:
     DOCKER_BUILD_CONTEXT: ./ansible/roles/ezpaarse_manager/files/ezpaarse/
     DOCKERFILE_PATH: ./ansible/roles/ezpaarse_manager/files/ezpaarse/
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc/ezpaarse
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ezpaarse
     USE_CACHE: "false"
   tags:
     - ${RUNNER}
@@ -130,7 +130,7 @@ build_and_push_metridoc_ezpaarse_mongodb_image:
   variables:
     DOCKER_BUILD_CONTEXT: ./ansible/roles/ezpaarse_manager/files/mongodb/
     DOCKERFILE_PATH: ./ansible/roles/ezpaarse_manager/files/mongodb/
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc/ezpaarse_mongodb
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ezpaarse_mongodb
     USE_CACHE: "false"
   tags:
     - ${RUNNER}
