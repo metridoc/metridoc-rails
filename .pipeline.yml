@@ -53,7 +53,7 @@ build_and_push_metridoc_image:
   tags:
     - ${RUNNER}
 
-amend_tmp_images:
+amend_tmp_metridoc_images:
   stage: amend_tmp_images
   extends:
     - .amend_manifests
