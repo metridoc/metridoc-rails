@@ -10,7 +10,7 @@ include:
       - .copy_docker_images.yml
       - .remove_tmp_registry.yml
   - project: devops/gitlab/ci-templates/sast
-    ref: main
+    ref: master
     file:
       - .trivy_container_scanning.yml
   - project: devops/gitlab/ci-templates/general
