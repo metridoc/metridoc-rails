@@ -4,31 +4,31 @@ class Security::UserRole < ApplicationRecord
 
   accepts_nested_attributes_for :user_role_sections, allow_destroy: true, reject_if: proc {|attributes| attributes['section'].blank? }
 
-  MANAGED_SECTIONS = [  "Security",
-                        "Alma",
-                        "Borrowdirect",
-                        "Consultation",
-                        "EzBorrow",
-                        "GateCount",
-                        "Illiad",
-                        "Keyserver",
-                        "Marc",
-                        "LibraryProfile",
-                        "SupplementalData",
-                        "Log",
-                        "Bookkeeping",
-                        "Tools",
-                        "Misc",
-                        "Report",
-                        "UpennAlma",
-                        "Upenn",
-                        "Ezproxy",
-                        "Ipeds",
-                        "CourseReserves",
-                        "LibraryStaff",
-                        "Springshare",
-                        "GoogleAnalytics"
-                      ]
+  MANAGED_SECTIONS = [  
+    "Security",
+    "Alma",
+    "Borrowdirect",
+    "Consultation",
+    "EzBorrow",
+    "GateCount",
+    "Illiad",
+    "Keyserver",
+    "Marc",
+    "LibraryProfile",
+    "SupplementalData",
+    "Log",
+    "Tools",
+    "Misc",
+    "Report",
+    "UpennAlma",
+    "Upenn",
+    "Ezproxy",
+    "Ipeds",
+    "CourseReserves",
+    "LibraryStaff",
+    "Springshare",
+    "GoogleAnalytics"
+  ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]
 
@@ -37,7 +37,7 @@ class Security::UserRole < ApplicationRecord
     return true unless Security::UserRole.subject_secured?(subject)
 
     s = Security::UserRole.translate_subject_to_section(subject)
-    access_level = action == :read || :statistics ? ['read-only', 'read-write'] : 'read-write'
+    access_level = [:read, :statistics].include?(action) ? ['read-only', 'read-write'] : 'read-write'
 
     puts "checking: #{s} - #{access_level} - #{action.to_s}"
 
