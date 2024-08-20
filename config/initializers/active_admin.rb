@@ -436,17 +436,6 @@ ActiveAdmin.setup do |config|
 
   end
 
-  # Helper method to build the bookkeeping menu
-  # This class may be deprecated?
-  def build_bookkeeping_menu(namespace)
-    namespace.build_menu do |menu|
-      menu.add label: "Bookkeeping",
-        url: :admin_bookkeeping_path,
-        if: proc{ authorized?(:read, "Bookkeeping::DataLoad") },
-        parent: I18n.t("active_admin.bookkeeping")
-    end
-  end
-
   # Helper method to build the report query menu
   def build_report_query_menu(namespace)
     namespace.build_menu do |menu|
@@ -488,7 +477,6 @@ ActiveAdmin.setup do |config|
     build_utility_navigation(namespace)
     build_data_menu(namespace)
     build_admin_menu(namespace)
-    build_bookkeeping_menu(namespace)
     build_report_query_menu(namespace)
     build_tools_menu(namespace)
     build_documentation_menu(namespace)

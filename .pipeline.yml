@@ -21,14 +21,10 @@ include:
 
 stages:
   - build_and_push:metridoc_image
-  - build_and_push:metridoc_python_jobs_image
-  - build_and_push:metridoc_ezpaarse_image
-  - build_and_push:metridoc_ezpaarse_mongodb_image
-#  - amend_tmp_api_images
-#  - amend_tmp_ui_images
-#  - sast
-#  - copy_docker_images
-#  - remove_tmp_registry
+  - amend_tmp_images
+  - sast
+  - copy_docker_images
+  - remove_tmp_registry
 #  - deploy
 
 build_and_push_metridoc_image:
@@ -52,267 +48,71 @@ build_and_push_metridoc_image:
   variables:
     DOCKER_BUILD_CONTEXT: ./
     DOCKERFILE_PATH: ./
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/app
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
     USE_CACHE: "false"
   tags:
     - ${RUNNER}
 
-build_and_push_metridoc_python_jobs_image:
-  stage: build_and_push:metridoc_python_jobs_image
+amend_tmp_metridoc_images:
+  stage: amend_tmp_images
   extends:
-    - .build_and_push_docker_images
+    - .amend_manifests
+  needs:
+    - build_and_push_metridoc_image
+  variables:
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+  tags:
+    - build
+# -- End - build, push temp dev image
+
+# -- Start - SAST images
+trivy_container_metridoc_scanning:
+  stage: sast
+  extends:
+    - .trivy_container_scanning
   before_script:
+    - apk add --no-cache docker
     - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-    - !reference [.install_hashicorp_vault, before_script]
-    - !reference [.vault_jwt_auth, before_script]
   after_script:
     - docker logout ${CI_REGISTRY}
-  environment:
-    name: ${ENVIRONMENT_NAME}
-  parallel:
-    matrix:
-      - RUNNER: build-arm
-        DOCKER_BUILD_PLATFORM: linux/arm64
-      - RUNNER: build
-        DOCKER_BUILD_PLATFORM: linux/amd64
+  needs:
+    - amend_tmp_metridoc_images
   variables:
-    DOCKER_BUILD_CONTEXT: ./ansible/roles/python_jobs_manager/files/src/
-    DOCKERFILE_PATH: ./ansible/roles/python_jobs_manager/files/src/
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/python_jobs
-    USE_CACHE: "false"
+    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/metridoc:${CI_COMMIT_SHORT_SHA}
+  allow_failure: true
   tags:
-    - ${RUNNER}
+    - build
+# -- End - SAST images
 
-build_and_push_metridoc_ezpaarse_image:
-  stage: build_and_push:metridoc_ezpaarse_image
+# -- Start - Copy app docker images
+copy_docker_metridoc_images:
+  stage: copy_docker_images
+  variables:
+    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+    FINAL_REGISTRY_REPOSITORY: metridoc
+  needs:
+    - trivy_container_metridoc_scanning
   extends:
-    - .build_and_push_docker_images
-  before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-    - !reference [.install_hashicorp_vault, before_script]
-    - !reference [.vault_jwt_auth, before_script]
-  after_script:
-    - docker logout ${CI_REGISTRY}
-  environment:
-    name: ${ENVIRONMENT_NAME}
-  parallel:
-    matrix:
-      - RUNNER: build-arm
-        DOCKER_BUILD_PLATFORM: linux/arm64
-      - RUNNER: build
-        DOCKER_BUILD_PLATFORM: linux/amd64
-  variables:
-    DOCKER_BUILD_CONTEXT: ./ansible/roles/ezpaarse_manager/files/ezpaarse/
-    DOCKERFILE_PATH: ./ansible/roles/ezpaarse_manager/files/ezpaarse/
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ezpaarse
-    USE_CACHE: "false"
+    - .copy_docker_images
   tags:
-    - ${RUNNER}
+    - build
+# -- End - Copy app docker images
 
-build_and_push_metridoc_ezpaarse_mongodb_image:
-  stage: build_and_push:metridoc_ezpaarse_mongodb_image
+# -- Start - remove tmp registry repository
+remove_tmp_registry:
+  stage: remove_tmp_registry
   extends:
-    - .build_and_push_docker_images
-  before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-    - !reference [.install_hashicorp_vault, before_script]
-    - !reference [.vault_jwt_auth, before_script]
-  after_script:
-    - docker logout ${CI_REGISTRY}
-  environment:
-    name: ${ENVIRONMENT_NAME}
-  parallel:
-    matrix:
-      - RUNNER: build-arm
-        DOCKER_BUILD_PLATFORM: linux/arm64
-      - RUNNER: build
-        DOCKER_BUILD_PLATFORM: linux/amd64
-  variables:
-    DOCKER_BUILD_CONTEXT: ./ansible/roles/ezpaarse_manager/files/mongodb/
-    DOCKERFILE_PATH: ./ansible/roles/ezpaarse_manager/files/mongodb/
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ezpaarse_mongodb
-    USE_CACHE: "false"
+    - .remove_tmp_registry
+  rules:
+    - when: always
+  needs:
+    - copy_docker_metridoc_images
+  allow_failure: true
   tags:
-    - ${RUNNER}
+    - build
+# -- End - remove tmp registry repository
 
 
-## -- Start - build and push base image
-#build_and_push_ui_base_image:
-#  stage: build_and_push:ui_image
-#  extends:
-#    - .build_and_push_docker_images
-#  parallel:
-#    matrix:
-#      - RUNNER: build-arm
-#        DOCKER_BUILD_PLATFORM: linux/arm64
-#      - RUNNER: build
-#        DOCKER_BUILD_PLATFORM: linux/amd64
-#  variables:
-#    DOCKER_BUILD_CONTEXT: app/ui/
-#    DOCKERFILE_PATH: app/ui/
-#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
-#    DOCKER_TARGET: base
-#  tags:
-#    - ${RUNNER}
-## -- End - build and push base image
-#
-#build_and_push_ui_dev_image:
-#  stage: build_and_push:ui_image
-#  extends:
-#    - .build_and_push_docker_images
-#  parallel:
-#    matrix:
-#      - RUNNER: build-arm
-#        DOCKER_BUILD_PLATFORM: linux/arm64
-#      - RUNNER: build
-#        DOCKER_BUILD_PLATFORM: linux/amd64
-#  needs:
-#    - build_and_push_ui_base_image
-#  variables:
-#    DOCKER_BUILD_CONTEXT: app/ui/
-#    DOCKERFILE_PATH: app/ui/
-#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
-#    DOCKER_TARGET: dev
-#  tags:
-#    - ${RUNNER}
-## -- End - build and push base image
-#
-#build_and_push_ui_prod_image:
-#  stage: build_and_push:ui_image
-#  extends:
-#    - .build_and_push_docker_images
-#  parallel:
-#    matrix:
-#      - RUNNER: build-arm
-#        DOCKER_BUILD_PLATFORM: linux/arm64
-#      - RUNNER: build
-#        DOCKER_BUILD_PLATFORM: linux/amd64
-#  needs:
-#    - build_and_push_ui_base_image
-#  variables:
-#    DOCKER_BUILD_CONTEXT: app/ui/
-#    DOCKERFILE_PATH: app/ui/
-#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
-#    DOCKER_TARGET: prod
-#  tags:
-#    - ${RUNNER}
-## -- End - build and push base image
-#
-#amend_tmp_api_images:
-#  stage: amend_tmp_api_images
-#  extends:
-#    - .amend_manifests
-#  needs:
-#    - build_and_push_api_image
-#  variables:
-#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/api
-#  tags:
-#    - build
-## -- End - build, push temp dev image
-#
-#amend_tmp_ui_images:
-#  stage: amend_tmp_ui_images
-#  extends:
-#    - .amend_manifests
-#  needs:
-#    - build_and_push_ui_base_image
-#    - build_and_push_ui_dev_image
-#    - build_and_push_ui_prod_image
-#  variables:
-#    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
-#  tags:
-#    - build
-## -- End - build, push temp dev image
-#
-## -- Start - SAST images
-#trivy_container_api_scanning:
-#  stage: sast
-#  extends:
-#    - .trivy_container_scanning
-#  before_script:
-#    - apk add --no-cache docker
-#    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-#  after_script:
-#    - docker logout ${CI_REGISTRY}
-#  needs:
-#    - amend_tmp_api_images
-#  variables:
-#    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/api:${CI_COMMIT_SHORT_SHA}
-#  allow_failure: true
-#  tags:
-#    - build
-## -- End - SAST images
-#
-#trivy_container_ui_scanning:
-#  stage: sast
-#  extends:
-#    - .trivy_container_scanning
-#  before_script:
-#    - apk add --no-cache docker
-#    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-#  script:
-#    # Ensure a reports dir exists
-#    - mkdir -p ${CI_OUTPUT_DIR} ${TRIVY_CACHE_DIR}
-#      # Build report
-#    - trivy --cache-dir ${TRIVY_CACHE_DIR} --timeout 10m image --exit-code 0 --no-progress -o ${CI_OUTPUT_DIR}/${TRIVY_OUTPUT_FILENAME} ${CI_IMAGE_NAME}
-#      # Print high vulnerabilities
-#    - trivy --cache-dir ${TRIVY_CACHE_DIR} --timeout 10m image --exit-code 0 --no-progress --severity HIGH ${CI_IMAGE_NAME}
-#      # Throw error on critical vulnerabilities
-#    - trivy --cache-dir ${TRIVY_CACHE_DIR} --skip-dirs /root/.local/share/pnpm --timeout 10m image --exit-code 1 --severity CRITICAL --ignore-unfixed --no-progress
-#      ${CI_IMAGE_NAME}
-#  after_script:
-#    - docker logout ${CI_REGISTRY}
-#  needs:
-#    - amend_tmp_ui_images
-#  variables:
-#    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/ui:${CI_COMMIT_SHORT_SHA}-prod
-#  allow_failure: true
-#  tags:
-#    - build
-## -- End - SAST images
-#
-## -- Start - Copy app docker images
-#copy_docker_api_images:
-#  stage: copy_docker_images
-#  variables:
-#    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/api
-#    FINAL_REGISTRY_REPOSITORY: api
-#  needs:
-#    - trivy_container_api_scanning
-#  extends:
-#    - .copy_docker_images
-#  tags:
-#    - build
-## -- End - Copy app docker images
-#
-#copy_docker_ui_images:
-#  stage: copy_docker_images
-#  variables:
-#    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/ui
-#    FINAL_REGISTRY_REPOSITORY: ui
-#  needs:
-#    - trivy_container_ui_scanning
-#  extends:
-#    - .copy_docker_images
-#  tags:
-#    - build
-## -- End - Copy app docker images
-#
-## -- Start - remove tmp registry repository
-#remove_tmp_registry:
-#  stage: remove_tmp_registry
-#  extends:
-#    - .remove_tmp_registry
-#  rules:
-#    - when: always
-#  needs:
-#    - copy_docker_api_images
-#    - copy_docker_ui_images
-#  allow_failure: true
-#  tags:
-#    - build
-## -- End - remove tmp registry repository
-#
 ## Deploy staging
 #deploy_staging:
 #  stage: deploy

@@ -262,5 +262,3 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 # Some versions of Ubuntu also requires this gem
 gem 'tzinfo-data'
-
-gem 'todo_runner', :git => 'https://github.com/upenn-libraries/todo_runner.git', :tag => 'v0.4.2'
