@@ -145,7 +145,7 @@ remove_tmp_registry:
 #    - copy_docker_ui_images
 #    - copy_docker_api_images
 #  rules:
-#    - if: $CI_COMMIT_REF_NAME == "main"
+#    - if: $CI_COMMIT_REF_NAME == "master"
 #  tags:
 #    - deploy
 #
