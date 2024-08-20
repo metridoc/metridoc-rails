@@ -10,7 +10,7 @@ include:
       - .copy_docker_images.yml
       - .remove_tmp_registry.yml
   - project: devops/gitlab/ci-templates/sast
-    ref: master
+    ref: main
     file:
       - .trivy_container_scanning.yml
   - project: devops/gitlab/ci-templates/general
@@ -145,7 +145,7 @@ remove_tmp_registry:
 #    - copy_docker_ui_images
 #    - copy_docker_api_images
 #  rules:
-#    - if: $CI_COMMIT_REF_NAME == "master"
+#    - if: $CI_COMMIT_REF_NAME == "main"
 #  tags:
 #    - deploy
 #
