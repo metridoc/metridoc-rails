@@ -1,0 +1,39 @@
+= javascript_include_tag 'application'
+
+%h2{style: "text-align:center;"} 
+#data-viz
+#single-col
+  %h3{style: "text-align:center;"} User Sentiment
+  =pie_chart libchats.group(:sentiment), round: 2, suffix: "%", download: true
+
+%h2{style: "text-align:center;"} Sentiment by Affiliation
+#single-col
+=scatter  lc_q_cats.group(user_type).pluck(sentiment_score)
+               dataset: {borderWidth: 0},
+               round: 2,
+               legend: true,
+               download: true
+
+%h2{style: "text-align:center;"} Sentiment vs. Length of Chat
+#single-col
+=scatter_chart libchats.pluck(:message_count, :sentiment_score),
+               xtitle: "Message Count"
+               ytitle "Sentiment Score"
+               download: true
+
+%h2{style: "text-align:center;"} Sentiment when the Chat Resulted in a Ticket
+#single-col
+=Column_chart libchats.where("ticket_id > ?", "0").pluck(:sentiment_score),
+               xtitle: "Message Count",
+               ytitle "Number of Chats",
+               download: true
+
+-#Scatter plot or column chart?
+-#Length of chats when resulting in a ticket are a much smaller number than those that don't...plot both on one plot?
+
+%h2{style: "text-align:center;"} Length of Chat When Chat Resulted in a Ticket
+#single-col
+=scatter_chart libchats.pluck(:duration, :ticket_id),
+               xtitle: "Message Count",
+               ytitle "Ticket_ID",
+               download: true

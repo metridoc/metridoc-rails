@@ -1,0 +1,129 @@
+= javascript_include_tag 'application'
+
+#First do the demographics pie chart:
+
+%h2{style: "text-align:center;"} 
+#data-viz
+#single-col
+  %h3{style: "text-align:center;"} Affiliation of Libchat Users
+  =pie_chart lc_q_cats.group(:user_type), round: 2, suffix: "%", download: true
+
+%h2{style: "text-align:center;"} Types of Users by School
+=Column_chart lc_q_cats.pluck(:school),
+               xtitle: "School",
+               ytitle "Number of Users",
+               legend: true
+               download: true
+
+%h2{style: "text-align:center;"} 
+#data-viz
+#single-col
+  %h3{style: "text-align:center;"} Main Category of Questions:
+  =pie_chart lc_q_cats, round: 2, suffix: "%", download: true
+
+%h2{style: "text-align:center;"} Length of Chat by Category
+#single-col
+=scatter_chart libchats.pluck(:message_count, :qtype),
+               xtitle: "Message Count"
+               ytitle "Category Type"
+               download: true
+
+-num_cat=(0..category_names.length-1).to_a
+-num_dem=(0..demographics_names.length-1).to_a
+
+-visitor_cats,alumni_cats,faculty_cats,student_cats=lc_counts(lc_q_cats,"categories")
+
+%ul
+%hr
+%section
+  %h2{style: "text-align:center;"} Types of Chats by Affiliation
+  %p{style: "text-align:center; font-size: 1.25em;"} 
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Affiliation
+        -for d in num_dem
+          -demographic=demographics_names[d]
+          %td{:colspan => 2, :align => "center"}="#{demographic}"
+      %tbody
+      -for c in num_cat
+        %tr
+        -column_title=category_names[n]
+        %td="#{column_title}"
+        -for y in year_index
+          -data_one=visitor_cats["{year_range[y]}"]
+          -data_two=alumni_cats["{year_range[y]}"]
+          -data_three=faculty_cats["{year_range[y]}"]
+          -data_four=student_cats["{year_range[y]}"]
+          %td{:align => "center"}="#{data_one}"
+          %td{:align => "center"}="#{data_two}"
+          %td{:align => "center"}="#{data_three}"
+          %td{:align => "center"}="#{data_four}"
+
+
+-# Form to update filters on page
+%center
+  All Filters are Optional
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Category of Question:
+        %td
+        %td
+          = select_tag :q_type, 
+            options_for_select(lc_q_cats.distinct.pluck(:q_type),
+              params[:q_type]),
+            include_blank: "All User Groups"
+
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(lc_q_cats.distinct.pluck[:fiscal_year],
+              params[:fiscal_year]),
+            include_blank: "All Years"
+
+-chats_by_q=filter_chats_dem(params)
+
+%h2{style: "text-align:center;"} Number of Users in Each Groups for a Given Category
+#single-col
+=pie_chart chats_by_q.group(:user_group).count, title: Affiliation breakdown in  params[:q_type] category, round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
+
+-# Form to update filters on page
+%center
+  All Filters are Optional
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Category of Question:
+        %td
+        %td
+          = select_tag :q_type, 
+            options_for_select(lc_q_cats.distinct.pluck(:q_type),
+              params[:q_type]),
+            include_blank: "All User Groups"
+      %tr
+        %td Filter on User Affiliation:
+        %td
+        %td
+          = select_tag :user_group, 
+            options_for_select(lc_q_cats.distinct.pluck(:user_group),
+              params[:user_group]),
+            include_blank: "All Affiliations"
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(springshare_libanswers_fiscal_years,
+              params[:fiscal_year]),
+            include_blank: "All Years"
+
+-chats_by_q=filter_chats_q(params)
+
+%h2{style: "text-align:center;"} Breakdown of Categories into Subcategories
+#single-col
+=pie_chart libchats.group(params[:q_type]).count, title: params[:q_type], round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
+
