@@ -10,6 +10,10 @@ The following tables are pulled directly from the ReShare implementation:
 * Symbols
 * Status
 * Patron Request Audit
+* Host LMS Location
+* Host LMS Pick Locations
+
+The patron requests table is further enriched by mapping the pick location foreign key to a human readable name.
 
 The remaining tables are constructed locally to form simple summary tables to build reports from:
 
@@ -35,3 +39,4 @@ It is possible that a lender will cancel or otherwise leave an item unfulfilled.
 For each requested item, there is a row of the status, and pertinent times in the borrowing lifecycle.  After an item has checked as arriving at the borrowing institution, the turnaround times are calculated in days.
 
 [^date]: February 2023
+[^date]: August 2024
