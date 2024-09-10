@@ -9,6 +9,9 @@
 -borrowing_monthly = reshare_monthly_fulfillment(Borrowdirect, institution, fiscal_year, true)
 -lending_monthly = reshare_monthly_fulfillment(Borrowdirect, institution, fiscal_year, false)
 
+-# Get the locally fulfilled items
+- local_fulfillment = reshare_monthly_local_fulfillment(Borrowdirect, institution, fiscal_year)
+
 %section
   %h2= "#{institution} Monthly Lending Statistics FY#{fiscal_year}"
 
@@ -31,6 +34,10 @@
       %tr
         -borrowing_monthly.first.each do |cell|
           %th= cell
+      %tr{style: "font-style: italic; background-color: #ffddc0;"}
+        %td Locally Filled
+        - local_fulfillment.last.each do |cell|
+          %td= cell
     %tbody
       - borrowing_monthly.drop(1).each do |row|
         %tr

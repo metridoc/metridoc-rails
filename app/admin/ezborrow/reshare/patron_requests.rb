@@ -35,6 +35,23 @@ namespace: :ezborrow do
   :pr_rota_position,
   :pr_is_requester
 
-  # Set the title on the index page
-  index title: "PatronRequest"
+  index title: "Patron Requests" do
+
+    id_column
+    # Loop through the columns and truncate the bib record for the index only
+    self.resource_class.column_names.each do |c|
+      next if c == "id"
+
+      if c == "pr_bib_record"
+        column c.to_sym do |pr|
+          pr.pr_bib_record.truncate 50 unless pr.pr_bib_record.nil?
+        end
+      else 
+        column c.to_sym
+      end
+
+    end
+    actions
+  end
+
 end

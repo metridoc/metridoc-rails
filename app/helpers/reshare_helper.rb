@@ -13,10 +13,8 @@ module ReshareHelper
     end
 
     # Find the starting and ending fiscal years
-    maximum_fiscal_year = maximum_date.mon > 6 ?
-      maximum_date.year + 1 : maximum_date.year
-    minimum_fiscal_year = minimum_date.mon > 6 ?
-      minimum_date.year + 1 : minimum_date.year
+    maximum_fiscal_year = (maximum_date + 6.months).year
+    minimum_fiscal_year = (minimum_date + 6.months).year
 
     # Make an array of possible years
     years = maximum_fiscal_year.downto(minimum_fiscal_year).to_a.map{
@@ -97,11 +95,68 @@ module ReshareHelper
        LEFT JOIN #{prefix}lending_turnarounds
        ON #{prefix}lending_turnarounds.request_id = #{prefix}transactions.lender_id
        WHERE #{prefix}transactions.lender = '#{institution}'
-       AND #{prefix}transactions.date_created
-         BETWEEN '#{fiscal_year-1}-07-01' AND '#{fiscal_year}-06-30'
+       AND #{prefix}transactions.fiscal_year = '#{fiscal_year}'
        GROUP BY ROLLUP (borrower)
        ORDER BY borrower NULLS FIRST;"
     ).rows
+  end
+
+  def reshare_borrowing_no_rota(model, institution, fiscal_year)
+    # Get the prefix of the table for the reshare model
+    prefix = table_name_prefix(model::Reshare)
+
+    model::Reshare::Transaction.connection.select_all(
+      "SELECT
+        COUNT(
+          DISTINCT #{prefix}transactions.request_id
+        ) FILTER (
+          WHERE #{prefix}transactions.borrower_status = 'REQ_END_OF_ROTA'
+        ) AS unfilled,
+        COUNT(
+          DISTINCT #{prefix}transactions.request_id
+        ) FILTER (
+          WHERE #{prefix}transactions.borrower_status IN (
+            'REQ_CANCELLED', 
+            'REQ_CANCEL_PENDING'
+          )
+        ) AS cancelled
+      FROM #{prefix}transactions
+      WHERE #{prefix}transactions.borrower = '#{institution}'
+      AND #{prefix}transactions.lender = 'Unassigned'
+      AND #{prefix}transactions.fiscal_year = '#{fiscal_year}';"
+    ).first
+  end
+
+  def reshare_borrowing_locally(model, institution, fiscal_year)
+    # Get the prefix of the table for the reshare model
+    prefix = table_name_prefix(model::Reshare)
+
+    model::Reshare::Transaction.connection.select_all(
+      "SELECT
+        COUNT(
+          DISTINCT #{prefix}transactions.request_id
+        ) FILTER (
+          WHERE #{prefix}transactions.lender = 'Unassigned' 
+          AND #{prefix}transactions.borrower_status = 'REQ_FILLED_LOCALLY'
+        ) AS locally,
+        COUNT(
+          DISTINCT #{prefix}transactions.request_id
+        ) FILTER (
+          WHERE #{prefix}transactions.lender != 'Unassigned' 
+          AND #{prefix}transactions.borrower_status = 'REQ_REQUEST_COMPLETE'
+        ) AS ill, 
+        COUNT(
+          DISTINCT #{prefix}transactions.request_id
+        ) FILTER (
+          WHERE #{prefix}transactions.borrower_status IN (
+            'REQ_FILLED_LOCALLY', 
+            'REQ_REQUEST_COMPLETE'
+          ) 
+        ) AS total
+      FROM #{prefix}transactions
+      WHERE #{prefix}transactions.borrower = '#{institution}'
+      AND #{prefix}transactions.fiscal_year = '#{fiscal_year}';"
+    ).first
   end
 
   # Build the summary table for the selected institution
@@ -122,7 +177,10 @@ module ReshareHelper
         COUNT(
           DISTINCT #{prefix}transactions.request_id
         ) FILTER (
-          WHERE #{prefix}transactions.borrower_status = 'REQ_REQUEST_COMPLETE'
+          WHERE #{prefix}transactions.borrower_status IN (
+            'REQ_REQUEST_COMPLETE',
+            'REQ_FILLED_LOCALLY'
+          )
         ) AS complete,
         COUNT(
           DISTINCT #{prefix}transactions.request_id
@@ -140,7 +198,11 @@ module ReshareHelper
           DISTINCT #{prefix}transactions.request_id
         ) FILTER (
           WHERE #{prefix}transactions.borrower_status NOT IN (
-            'REQ_REQUEST_COMPLETE', 'REQ_END_OF_ROTA', 'REQ_CANCELLED', 'REQ_CANCEL_PENDING'
+            'REQ_REQUEST_COMPLETE', 
+            'REQ_END_OF_ROTA', 
+            'REQ_CANCELLED', 
+            'REQ_CANCEL_PENDING',
+            'REQ_FILLED_LOCALLY'
           )
         ) AS pending,
         ROUND(
@@ -172,8 +234,7 @@ module ReshareHelper
       LEFT JOIN #{prefix}borrowing_turnarounds
       ON #{prefix}borrowing_turnarounds.request_id = #{prefix}transactions.borrower_id
       WHERE #{prefix}transactions.borrower = '#{institution}'
-      AND #{prefix}transactions.date_created
-        BETWEEN '#{fiscal_year-1}-07-01' AND '#{fiscal_year}-06-30';"
+      AND #{prefix}transactions.fiscal_year = '#{fiscal_year}';"
     ).rows
 
     # Fetch the summary rows by institution.
@@ -227,8 +288,7 @@ module ReshareHelper
       LEFT JOIN #{prefix}borrowing_turnarounds
       ON #{prefix}borrowing_turnarounds.request_id = #{prefix}transactions.borrower_id
       WHERE #{prefix}transactions.borrower = '#{institution}'
-      AND #{prefix}transactions.date_created
-        BETWEEN '#{fiscal_year - 1}-07-01' AND '#{fiscal_year}-06-30'
+      AND #{prefix}transactions.fiscal_year = '#{fiscal_year}'
       GROUP BY 1
       ORDER BY 1;"
     ).rows
@@ -237,18 +297,36 @@ module ReshareHelper
     summary_row + institution_rows
   end
 
+  def reshare_monthly_local_fulfillment(model, institution, fiscal_year)
+
+    # Build the query to calculate monthly local fulfillment
+    query = model::Reshare::Transaction.select(:request_id).distinct
+    .where(borrower_status: 'REQ_FILLED_LOCALLY')
+    .where(borrower: institution)
+    .where(fiscal_year: fiscal_year)
+    .group("CAST(EXTRACT (MONTH FROM date_created) AS int)")
+    .count
+
+    # Get a list of display months for the column headings
+    months = display_months(fiscal_year).reverse()
+
+    output_table = []
+    # Add in the column headings
+    output_table << months.map{|m| Date::MONTHNAMES[m]}
+    output_table << months.map{|m| query.fetch(m, 0)}
+
+    return output_table
+  end
+
   # This function counts the number of fulfillments completed for
   # each month in a fiscal year
   def reshare_monthly_fulfillment(model, institution, fiscal_year, get_borrowing)
-
-    # Get the fiscal year ranges
-    this_year, last_year = fiscal_year_ranges(fiscal_year)
 
     # Build the query to calculate monthly fulfillment
     output_query = model::Reshare::Transaction.select(:request_id).distinct
     .where(lender_status: 'RES_COMPLETE')
     .where(borrower_status: 'REQ_REQUEST_COMPLETE')
-    .where(date_created: this_year)
+    .where(fiscal_year: fiscal_year)
 
     if get_borrowing
       output_query = output_query.where(borrower: institution)
@@ -262,7 +340,7 @@ module ReshareHelper
     .count
 
     # Get a list of display months for the column headings
-    months = display_months(this_year).reverse()
+    months = display_months(fiscal_year).reverse()
 
     # Get a list of the institution names (row headings)
     institutions = reshare_institution_names(model)

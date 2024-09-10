@@ -114,9 +114,9 @@ module Export
           # Find the latest date in the specified column for incremental loading
           latest_date = target_model.maximum(
             incremental_filter_column
-          ).strftime("%Y-%m-%d")
+          )
           # Add the filter to the query
-          scope = scope.where(export_filter_date_sql, latest_date) if latest_date
+          scope = scope.where(export_filter_date_sql, latest_date.strftime("%Y-%m-%d")) if latest_date
         end
       end
 

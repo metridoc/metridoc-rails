@@ -1,0 +1,241 @@
+load_sequence:         10
+target_adapter:        'native_sql'
+target_model:          "Borrowdirect::Reshare::Transaction"
+truncate_before_load:  "no"
+sqls:
+  - |
+    WITH max_date AS (
+      SELECT
+        COALESCE (
+          MAX(borrower_last_updated),
+          '1970-01-01'
+        ) AS max_date
+      FROM bd_reshare_transactions
+      WHERE lender != 'Unassigned'
+    ),
+    directory_map AS (
+      SELECT
+        origin,
+        de_name
+      FROM bd_reshare_directory_entries de
+      WHERE 
+        de_parent IS NULL
+        AND de_status_fk IS NOT NULL
+        AND de_name NOT IN (
+          'Business Library (Manhattanville)',
+          'Library Collections and Services Facility'
+        )
+    ),
+    borrower AS (
+    	SELECT
+    		dm.de_name AS borrower,
+        pr.pr_id,
+        pr.pr_date_created,
+    		pr.pr_title,
+    		pr.pr_pickup_location_slug,
+    		pr.pr_selected_item_barcode,
+    		pr.pr_hrid,
+        s.st_code,
+        pr.pr_pub_date,
+        pr.pr_publisher,
+        pr.pr_place_of_pub,
+        pr.pr_oclc_number,
+        pr.last_updated
+    	FROM bd_reshare_patron_requests pr
+    	JOIN directory_map dm
+    		ON pr.origin = dm.origin
+    	JOIN bd_reshare_status s
+    		ON s.st_id = pr.pr_state_fk
+    	WHERE pr.pr_is_requester IS TRUE
+        AND pr.last_updated > (SELECT max_date FROM max_date)
+    ),
+    lender AS (
+    	SELECT
+    		dm.de_name AS lender,
+    		pr.pr_local_call_number,
+        pr.pr_id,
+    		hll.hll_name AS pick_location,
+    		pr.pr_pick_shelving_location,
+    		pr.pr_hrid,
+    		s.st_code,
+        pr.last_updated
+    	FROM bd_reshare_patron_requests pr
+    	JOIN directory_map dm
+    		ON pr.origin = dm.origin
+    	JOIN bd_reshare_status s
+    		ON s.st_id = pr.pr_state_fk
+      LEFT JOIN bd_reshare_host_lms_locations hll
+        ON hll.hll_id = pr.pr_pick_location_fk
+    	WHERE pr.pr_is_requester IS FALSE
+        AND pr.last_updated > (SELECT max_date FROM max_date)
+    )
+    INSERT INTO bd_reshare_transactions (
+      borrower,
+      lender,
+      request_id,
+      borrower_id,
+      lender_id,
+      date_created,
+      fiscal_year,
+      borrower_last_updated,
+      lender_last_updated,
+      borrower_status,
+      lender_status,
+      title,
+      publication_date,
+      place_of_publication,
+      publisher,
+      call_number,
+      oclc_number,
+      barcode,
+      pick_location,
+      shelving_location,
+      pickup_location
+    )
+    SELECT
+    	borrower.borrower,
+      lender.lender,
+    	borrower.pr_hrid,
+      borrower.pr_id,
+      lender.pr_id,
+      borrower.pr_date_created,
+      EXTRACT(
+        year FROM (
+          borrower.pr_date_created + INTERVAL '6 months'
+        )
+      ), 
+      borrower.last_updated,
+      lender.last_updated,
+      borrower.st_code,
+      lender.st_code,
+    	borrower.pr_title,
+      borrower.pr_pub_date,
+      borrower.pr_place_of_pub,
+      borrower.pr_publisher,
+      lender.pr_local_call_number,
+      borrower.pr_oclc_number,
+      borrower.pr_selected_item_barcode,
+    	lender.pick_location,
+    	lender.pr_pick_shelving_location,
+    	borrower.pr_pickup_location_slug
+    FROM borrower
+    JOIN lender
+      ON borrower.pr_hrid = lender.pr_hrid
+    ON CONFLICT (borrower_id, lender_id)
+    DO UPDATE
+    SET
+      (
+        borrower_last_updated,
+        borrower_status,
+        lender_last_updated,
+        lender_status
+      ) = (
+        EXCLUDED.borrower_last_updated,
+        EXCLUDED.borrower_status,
+        EXCLUDED.lender_last_updated,
+        EXCLUDED.lender_status
+      );
+
+
+  - |
+    WITH max_date AS (
+      SELECT
+        COALESCE (
+          MAX(borrower_last_updated),
+          '1970-01-01'
+        ) AS max_date
+      FROM bd_reshare_transactions
+      WHERE lender = 'Unassigned'
+    ),
+    directory_map AS (
+      SELECT
+        origin,
+        de_name
+      FROM bd_reshare_directory_entries de
+      WHERE 
+        de_parent IS NULL
+        AND de_status_fk IS NOT NULL
+        AND de_name NOT IN (
+          'Business Library (Manhattanville)',
+          'Library Collections and Services Facility'
+        )
+    ),
+        borrower AS (
+    	SELECT
+    		dm.de_name AS borrower,
+        pr.pr_id,
+        pr.pr_date_created,
+    		pr.pr_title,
+    		pr.pr_pickup_location_slug,
+    		pr.pr_selected_item_barcode,
+    		pr.pr_hrid,
+        s.st_code,
+        pr.pr_pub_date,
+        pr.pr_publisher,
+        pr.pr_place_of_pub,
+        pr.pr_oclc_number,
+        pr.last_updated
+    	FROM bd_reshare_patron_requests pr
+    	JOIN directory_map dm
+    		ON pr.origin = dm.origin
+    	JOIN bd_reshare_status s
+    		ON s.st_id = pr.pr_state_fk
+    	WHERE pr.pr_is_requester IS TRUE
+        AND pr.pr_resolved_sup_inst_symbol_fk IS NULL
+        AND pr.last_updated > (SELECT max_date FROM max_date)
+        AND st_code IN (
+          'REQ_FILLED_LOCALLY', 
+          'REQ_END_OF_ROTA', 
+          'REQ_CANCELLED'
+        )
+    )
+    INSERT INTO bd_reshare_transactions (
+      borrower,
+      lender,
+      request_id,
+      borrower_id,
+      lender_id,
+      date_created,
+      fiscal_year,
+      borrower_last_updated,
+      borrower_status,
+      title,
+      publication_date,
+      place_of_publication,
+      publisher,
+      oclc_number,
+      barcode,
+      pickup_location
+    )
+    SELECT
+    	borrower.borrower,
+      'Unassigned',
+    	borrower.pr_hrid,
+      borrower.pr_id,
+      '-',
+      borrower.pr_date_created,
+      EXTRACT(
+        year FROM (
+          borrower.pr_date_created + INTERVAL '6 months'
+        )
+      ),
+      borrower.last_updated,
+      borrower.st_code,
+    	borrower.pr_title,
+      borrower.pr_pub_date,
+      borrower.pr_place_of_pub,
+      borrower.pr_publisher,
+      borrower.pr_oclc_number,
+      borrower.pr_selected_item_barcode,
+    	borrower.pr_pickup_location_slug
+    FROM borrower
+    ON CONFLICT (borrower_id, lender_id)
+    DO UPDATE
+    SET
+      (
+        borrower_last_updated,
+        borrower_status
+      ) = (
+        EXCLUDED.borrower_last_updated,
+        EXCLUDED.borrower_status
+      );
