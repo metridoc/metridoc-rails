@@ -6,7 +6,7 @@
 - library_id = params[:library_id].nil? ? nil : params[:library_id]
 - library_id = library_id.to_i < 0 ? nil : library_id
 
-- table = build_summary_table(fiscal_year, library_id)
+- table = illiad_build_summary_table(fiscal_year, library_id)
 
 -# Monthly statistics path
 - monthly_path = "/illiad/monthly_statistics?"
@@ -27,10 +27,10 @@
     html_options = {:style => "color: blue;text-decoration: underline;"})
 
 <!-- Build the table -->
-- process_types.each do |p_k, p_v|
+- illiad_process_types.each do |p_k, p_v|
   %hr
   %h2{:style => "font-weight:bold;color:#011F5B"}= p_v
-  - request_types.each do |r_k, r_v|
+  - illiad_request_types.each do |r_k, r_v|
     %h3{:style => "color:#990000;text-align:center;font-weight:bold"}= r_v
     %table.statistics_summary
       %thead

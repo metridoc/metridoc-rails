@@ -11,21 +11,21 @@ module IlliadHelper
   end
 
   # Locations of the start date of the request
-  TRACKING_TABLE_NAMES = {
+  ILLIAD_TRACKING_TABLE_NAMES = {
     "Borrowing" => "illiad_trackings",
     "Lending" => "illiad_lending_trackings",
     "Doc Del" => "illiad_doc_del_trackings"
   }
 
   # Locations of the start date of the request
-  TURNAROUND_START_DATE = {
+  ILLIAD_TURNAROUND_START_DATE = {
     "Borrowing" => "request_date",
     "Lending" => "arrival_date",
     "Doc Del" => "arrival_date"
   }
 
   # Locations of completion date
-  TURNAROUND_COMPLETION_DATE =
+  ILLIAD_TURNAROUND_COMPLETION_DATE =
   {
     "Borrowing" => "receive_date",
     "Lending" => "completion_date",
@@ -33,35 +33,24 @@ module IlliadHelper
   }
 
   # Locations of calculated turnaround times
-  TURNAROUND_TIMES =
+  ILLIAD_TURNAROUND_TIMES =
   {
     "Borrowing" => "turnaround_req_rec",
     "Lending" => "turnaround",
     "Doc Del" => "turnaround"
   }
 
-  # A FILLED status is not in UNFILLED_STATUS or PENDING_STATUS
+  # A FILLED status is not in ILLIAD_UNFILLED_STATUS or ILLIAD_PENDING_STATUS
   # Define what a unfilled status is for all types
-  UNFILLED_STATUS = "Cancelled by ILL Staff"
+  ILLIAD_UNFILLED_STATUS = "Cancelled by ILL Staff"
 
   # Define what a pending status is for all types
-  PENDING_STATUS = "NULL"
+  ILLIAD_PENDING_STATUS = "NULL"
 
   # Function uses a process type to determine which Tracking
   # table to access then collects all the statistics information
   # in a nested SQL statement
-  def count_requests(process_type, year, options={})
-    # Select the table
-    case process_type
-    when "Borrowing"
-      table = Illiad::Tracking
-    when "Lending"
-      table = Illiad::LendingTracking
-    when "Doc Del"
-      table = Illiad::DocDelTracking
-    else
-      table = nil
-    end
+  def illiad_count_requests(process_type, year, options={})
 
     # Group by month
     get_monthly = options.fetch(:get_monthly, false)
@@ -73,7 +62,7 @@ module IlliadHelper
     library_id = options.fetch(:library_id, 2)
 
     # Get the name of the table
-    table_name = TRACKING_TABLE_NAMES[process_type]
+    table_name = ILLIAD_TRACKING_TABLE_NAMES[process_type]
 
     # Start the base query selecting the billing information and
     # process and request types from the Transaction Table
@@ -102,25 +91,25 @@ module IlliadHelper
     # and process
     from_sql = from_sql.select("COUNT(
         CASE WHEN
-          NOT #{table_name}.completion_status = '#{UNFILLED_STATUS}'
-          AND #{table_name}.completion_status IS NOT #{PENDING_STATUS}
+          NOT #{table_name}.completion_status = '#{ILLIAD_UNFILLED_STATUS}'
+          AND #{table_name}.completion_status IS NOT #{ILLIAD_PENDING_STATUS}
         THEN 1
         END) AS filled_requests")
       .select("COUNT(
         CASE WHEN
-          #{table_name}.completion_status = '#{UNFILLED_STATUS}'
+          #{table_name}.completion_status = '#{ILLIAD_UNFILLED_STATUS}'
         THEN 1
         END) AS unfilled_requests")
       .select("COUNT(
         CASE WHEN
-          #{table_name}.completion_status IS #{PENDING_STATUS}
+          #{table_name}.completion_status IS #{ILLIAD_PENDING_STATUS}
         THEN 1
         END) AS pending_requests")
       .select("AVG(
         CASE WHEN
-          NOT #{table_name}.completion_status = '#{UNFILLED_STATUS}'
-          AND #{table_name}.completion_status IS NOT #{PENDING_STATUS}
-        THEN #{table_name}.#{TURNAROUND_TIMES[process_type]}
+          NOT #{table_name}.completion_status = '#{ILLIAD_UNFILLED_STATUS}'
+          AND #{table_name}.completion_status IS NOT #{ILLIAD_PENDING_STATUS}
+        THEN #{table_name}.#{ILLIAD_TURNAROUND_TIMES[process_type]}
         END) AS turnaround")
       .joins("INNER JOIN #{table_name} " +
         "ON illiad_transactions.transaction_number = #{table_name}.transaction_number " +
@@ -179,7 +168,7 @@ module IlliadHelper
   end
 
   # Calculate the completion rate
-  def query_statistics(year, options = {})
+  def illiad_query_statistics(year, options = {})
 
     # Set up the default conditions
     library_id = options.fetch(:library_id, 2)
@@ -192,30 +181,31 @@ module IlliadHelper
 
     # For each process type load the results into an array
     results = []
-    process_types.keys.each do |process_type|
-      results = results + count_requests(process_type.to_s, year, options)
+    illiad_process_types.keys.each do |process_type|
+      results = results + illiad_count_requests(process_type.to_s, year, options)
     end
 
     # Product will combine lists
     # Get a list of all keys needed for tables
-    output_keys = process_types.keys.map{ |k| k.to_s }.product(
-      request_types.keys.map{ |k| k.to_s }
+    output_keys = illiad_process_types.keys.map{ |k| k.to_s }.product(
+      illiad_request_types.keys.map{ |k| k.to_s }
     )
 
     # Build keys for the monthly tables
     if get_monthly
-      months = display_months(year)
-      output_keys = process_types.keys.map{ |k| k.to_s }.product(
-        request_types.keys.map{ |k| k.to_s },
+      fiscal_year = (year.first + 6.months).year
+      months = display_months(fiscal_year)
+      output_keys = illiad_process_types.keys.map{ |k| k.to_s }.product(
+        illiad_request_types.keys.map{ |k| k.to_s },
         months
       )
     end
 
     # Build keys for grouping by user tables
     if group_by_user
-      groups = lender_groups(library_id)
-      output_keys = process_types.keys.map{ |k| k.to_s }.product(
-        request_types.keys.map{ |k| k.to_s },
+      groups = illiad_lender_groups(library_id)
+      output_keys = illiad_process_types.keys.map{ |k| k.to_s }.product(
+        illiad_request_types.keys.map{ |k| k.to_s },
         groups
       )
     end
@@ -274,7 +264,7 @@ module IlliadHelper
   end
 
   # Returns an array of possible groups
-  def lender_groups(library_id)
+  def illiad_lender_groups(library_id)
     # Find distinct transactions
     all_groups = Illiad::Group.select(
       :group_name
@@ -289,39 +279,8 @@ module IlliadHelper
     return groups.sort.append(nil)
   end
 
-  # Format the number of days to 2 decimal places
-  def format_into_days(input)
-    output = "---"
-    if input and input != 0 and not input.to_f.nan?
-      output = sprintf('%.2f', input)
-    end
-    return output
-  end
-
-  # Method to format the number appropriately
-  # This will be used for big integers (> 1000)
-  def format_big_number(input)
-    output = "---"
-    if input and input != 0
-      output = ActiveSupport::NumberHelper.number_to_delimited(input)
-    end
-    return output
-  end
-
-  # Method to format the number appropriately
-  # This will be used for percentages
-  def format_percent(input)
-    output = "---"
-    if input and input != 0 and not input.to_f.nan?
-      output = ActiveSupport::NumberHelper.number_to_percentage(
-        input * 100, precision: 1
-      )
-    end
-    return output
-  end
-
   # Mapping of process types to proper titles
-  def process_types
+  def illiad_process_types
     {
       "Borrowing": "Borrowing",
       "Lending": "Lending",
@@ -330,25 +289,15 @@ module IlliadHelper
   end
 
   # Mapping of request types to proper titles
-  def request_types
+  def illiad_request_types
     {
       "Article": "Articles",
       "Loan": "Books"
     }
   end
 
-  # Method to check for a key and format the number appropriately
-  # This will be used for currencies
-  def format_currency(input)
-    output = "---"
-    if input and input != 0
-      output = ActiveSupport::NumberHelper.number_to_currency(input)
-    end
-    return output
-  end
-
   # Method to build the overall statistical summary table
-  def build_summary_table(fiscal_year, library_id)
+  def illiad_build_summary_table(fiscal_year, library_id)
     years = fiscal_year_ranges(fiscal_year)
 
     options = {
@@ -359,7 +308,7 @@ module IlliadHelper
 
     # Construct the output hash for the table
     years.each do |year|
-      year_table = query_statistics(year, **options)
+      year_table = illiad_query_statistics(year, **options)
       year_table.each do |k, v|
         # If the key exists, append to the end
         if output_table.key?(k)
@@ -375,8 +324,8 @@ module IlliadHelper
   end
 
   # Method to build the monthly breakdown table
-  def build_monthly_table(fiscal_year, library_id)
-    this_year, last_year = fiscal_year_ranges(fiscal_year)
+  def illiad_build_monthly_table(fiscal_year, library_id)
+    this_year, _ = fiscal_year_ranges(fiscal_year)
 
     options = {
       :library_id => library_id,
@@ -384,14 +333,14 @@ module IlliadHelper
     }
 
     # Construct an output hash for the table
-    output_table = query_statistics(this_year, **options)
+    output_table = illiad_query_statistics(this_year, **options)
 
-    return output_table, display_months(this_year)
+    return output_table, display_months(fiscal_year)
   end
 
   # Method to access user groups
-  def build_user_table(fiscal_year, library_id)
-    this_year, last_year = fiscal_year_ranges(fiscal_year)
+  def illiad_build_user_table(fiscal_year, library_id)
+    this_year, _ = fiscal_year_ranges(fiscal_year)
 
     options = {
       :library_id => library_id,
@@ -399,9 +348,9 @@ module IlliadHelper
     }
 
     # Construct an output hash for the table
-    output_table = query_statistics(this_year, **options)
+    output_table = illiad_query_statistics(this_year, **options)
 
-    return output_table, lender_groups(library_id)
+    return output_table, illiad_lender_groups(library_id)
   end
 
 end
