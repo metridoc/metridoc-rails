@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -154,6 +154,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.decimal "time_to_ship"
     t.decimal "time_to_receipt"
     t.decimal "total_time"
+    t.integer "fiscal_year"
     t.index ["borrower", "request_id"], name: "bd_borrowing_turnaround_index", unique: true
   end
 
@@ -208,6 +209,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.decimal "time_to_ship"
     t.decimal "time_to_receipt"
     t.decimal "total_time"
+    t.integer "fiscal_year"
     t.index ["lender", "request_id"], name: "bd_lending_turnaround_index", unique: true
   end
 
@@ -271,6 +273,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.datetime "pr_due_date_rs", precision: nil
     t.datetime "pr_parsed_due_date_rs", precision: nil
     t.boolean "pr_overdue"
+    t.string "pr_pick_shelving_location_fk"
+    t.string "pr_patron_identifier"
     t.index ["pr_id"], name: "bd_patron_requests_index", unique: true
   end
 
@@ -314,6 +318,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.string "pick_location"
     t.string "shelving_location"
     t.string "pickup_location"
+    t.integer "fiscal_year"
     t.index ["borrower_id", "lender_id"], name: "bd_transaction_index", unique: true
   end
 
@@ -1621,6 +1626,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.decimal "time_to_ship"
     t.decimal "time_to_receipt"
     t.decimal "total_time"
+    t.integer "fiscal_year"
     t.index ["borrower", "request_id"], name: "borrowing_turnaround_index", unique: true
   end
 
@@ -1675,6 +1681,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.decimal "time_to_ship"
     t.decimal "time_to_receipt"
     t.decimal "total_time"
+    t.integer "fiscal_year"
     t.index ["lender", "request_id"], name: "lending_turnaround_index", unique: true
   end
 
@@ -1738,6 +1745,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.datetime "pr_due_date_rs", precision: nil
     t.datetime "pr_parsed_due_date_rs", precision: nil
     t.boolean "pr_overdue"
+    t.string "pr_pick_shelving_location_fk"
+    t.string "pr_patron_identifier"
     t.index ["pr_id"], name: "index_reshare_patron_requests_on_pr_id", unique: true
   end
 
@@ -1781,6 +1790,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_20_144755) do
     t.string "pick_location"
     t.string "shelving_location"
     t.string "pickup_location"
+    t.integer "fiscal_year"
     t.index ["borrower_id", "lender_id"], name: "transaction_index", unique: true
   end
 
