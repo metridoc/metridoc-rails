@@ -10,6 +10,10 @@
 -# Get the borrowing summary table
 - borrowing_table = reshare_borrowing_summary(Borrowdirect, institution, fiscal_year)
 
+-# Get special cases for borrowing
+- no_rota = reshare_borrowing_no_rota(Borrowdirect, institution, fiscal_year)
+- filled_locally = reshare_borrowing_locally(Borrowdirect, institution, fiscal_year)
+
 %section
   %h2 General Information
   %p
@@ -24,6 +28,13 @@
     that if an institution passed on an item that another institution fulfilled,
     it is counted as unfilled for that institution but filled in the All Institution
     summary row.
+    %br
+    Some requests go through the Reshare system but are filled locally.
+    These requests are included in the count of successful requests, but a separate table
+    is provided separating local and Reshare requests.  Additionally, some requests are 
+    made but no rota is created either because the request was immediately cancelled or 
+    because the item requested was not available in the consortium. A separate table is 
+    provided listing those requests.
   %p
     For lending statistics, all rows are the selected institution's
     interactions with a request.  If the request was completed by another institution,
@@ -100,7 +111,41 @@
 
 %section
   %h2= "#{institution} Borrowing Statistics"
+  %center
+    %table.statistics_summary{style: "max-width: 350px;"}
+      %caption Successful Locally Filled vs ILL Filled Requests, included in Filled All Institution counts.
+      %thead
+        %tr
+          %th Fill Source
+          %th Number of Requests
+      %tbody
+        %tr
+          %td Locally
+          %td= filled_locally["locally"]
+        %tr
+          %td ILL
+          %td= filled_locally["ill"]
+        %tr{style: "font-weight: bold; background-color: #011F5B25;"}
+          %td Total 
+          %td= filled_locally["total"]
 
+  %br
+  %center
+    %table.statistics_summary{style: "max-width: 350px;"}
+      %caption Requests where no Lender was identified, included in Unfilled and Cancelled All Institution counts.
+      %thead
+        %tr
+          %th No Lenders Identified
+          %th Number of Requests
+      %tbody
+        %tr
+          %td Unfilled
+          %td= no_rota["unfilled"]
+        %tr
+          %td Cancelled
+          %td= no_rota["cancelled"]
+
+  %br
   %table.statistics_summary
     %thead
       %tr
@@ -115,7 +160,7 @@
         %th
           %div.tooltip
             Filled
-            %span.tooltiptext Filled Loans
+            %span.tooltiptext Filled Loans, including Locally Filled Items
         %th
           %div.tooltip
             Unfilled
@@ -131,7 +176,7 @@
         %th
           %div.tooltip
             Fill Rate
-            %span.tooltiptext Ratio of Filled Loans to the sum of Filled, Unfilled and Cancelled Loans
+            %span.tooltiptext Ratio of Filled Loans to the sum of Filled, Unfilled and Cancelled Loans, Excludes Locally Filled Items
         %th
           %div.tooltip
             Fill Time
@@ -146,6 +191,7 @@
             %span.tooltiptext Average Time from Request to Receipt in Days
     %tbody
       - borrowing_table.each do |row|
+        - next if row.first == 'Unassigned'
         %tr
           - row.each do |cell|
             %td= cell
