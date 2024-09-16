@@ -60,7 +60,9 @@ module Import
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = global_config.merge(YAML.load_file(@task_file))
+        @task_config = global_config.merge(
+          Psych.load_file(@task_file)
+        )
       end
 
       def target_adapter
@@ -108,6 +110,13 @@ module Import
       def class_name
         return @class_name if @class_name.present?
         @class_name = task_config["target_model"].constantize
+      end
+
+      # Connect to the database and get the column information
+      # Any hidden columns will be picked up by this method
+      def columns_hash
+        return @columns_hash if @columns_hash.present?
+        @columns_hash =  ActiveRecord::Base.connection.schema_cache.columns_hash(class_name.table_name)
       end
 
       def has_institution_id?
@@ -177,7 +186,7 @@ module Import
 
         sqls.each do |sql|
           begin
-            sql = sql % {institution_id: institution_id}
+            sql = sql % {institution_id: institution_id} if has_institution_id?
             log "Executing Query [#{sql}]"
             ActiveRecord::Base.connection.execute(sql)
           rescue SignalException => e
@@ -200,12 +209,16 @@ module Import
       end
 
       def get_headers
-        csv = CSV.open(csv_file_path, {external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8'})
+        csv = CSV.open(
+          csv_file_path,
+          external_encoding: global_config.fetch("encoding", "UTF-8"),
+          internal_encoding: 'UTF-8'
+        )
         columns = csv.readline
         csv.close
         headers = columns.map{|c| Util.column_to_attribute(c) }
         headers.each do |column_name|
-          if class_name.columns_hash[column_name].blank?
+          if columns_hash[column_name].blank?
             headers[headers.index(column_name)] = column_name.split(/\_+/).first
           end
         end
@@ -216,13 +229,12 @@ module Import
         # Get the header from the csv file
         headers = get_headers
 
-        # Connect to the database and get the column information
-        # Any hidden columns will be picked up by this method
-        columns_hash = ActiveRecord::Base.connection.schema_cache.columns_hash(class_name.table_name)
-
         # Query the class for any ignored columns
         # If there are ignored columns, the upload must proceed in a different way
         has_ignored_columns = class_name.ignored_columns.any?
+        if has_ignored_columns
+          log "!!CAVEAT!!: These columns will not be visible via the GUI: [#{class_name.ignored_columns.join(", ")}]"
+        end
 
         # Search for unmached columns between the header and the target mapping
         # Provide a warning for columns that will not be loaded
@@ -300,6 +312,9 @@ module Import
                 val = Util.parse_datetime(val) if columns_hash[column_name].type == :datetime
                 val = Util.parse_datetime(val) if columns_hash[column_name].type == :date
 
+                # Parse the json object from a string
+                val = JSON.parse(val) if columns_hash[column_name].type == :json
+
                 attributes[column_name] = val
               end
 
@@ -365,9 +380,7 @@ module Import
         connection = ActiveRecord::Base.connection
 
         # Extract column names from SQL instead of via model
-        column_names = connection.schema_cache.columns_hash(
-          class_name.table_name
-        ).keys
+        column_names = columns_hash.keys
 
         # Get a list of column names quoted
         columns_sql = "(#{column_names.map { |name| connection.quote_column_name(name) }.join(',')})"
@@ -378,9 +391,10 @@ module Import
         options = {}
         if unique_keys.present? and upsert
           # Upsert Option for Duplicates
+          # Allow a list of updateable columns from the config file
           options[:on_duplicate_key_update] = {
             conflict_target: unique_keys,
-            columns: column_names
+            columns: task_config["upsert_columns"] || column_names
           }
         elsif unique_keys.present?
           # Ignore Duplicates
@@ -390,19 +404,24 @@ module Import
         # Pass the primary key flag to track the id sequence
         options[:primary_key] = class_name.primary_key
 
+        # Pass the model name through options
+        options[:model] = class_name
+
         # Create the post sql statements for upsert or ignore duplicates
         post_sql_statements = connection.post_sql_statements(
-          class_name.quoted_table_name, options
+          class_name.quoted_table_name, **options
         )
 
         # Get the prepared set of values for sql insertion
         values_sql = construct_values_sql(class_name, records)
 
         # Insert records
-        result = connection.insert_many( [insert_sql, post_sql_statements].flatten,
+        result = connection.insert_many(
+          [insert_sql, post_sql_statements].flatten,
           values_sql,
           options,
-          "#{class_name} Create Many" )
+          "#{class_name} Create Many"
+        )
 
         log "Imported #{result.ids.size} records."
         log_validation_errors(result.failed_instances)
@@ -418,22 +437,20 @@ module Import
         # Reuse the same one w/in the loop, otherwise it would keep being
         # re-retreived (= lots of time for large imports)
         connection = ActiveRecord::Base.connection
-
-        # Get the list of column names
-        column_names = connection.schema_cache.columns_hash(
-          class_name.table_name
-        ).keys
-
         # Transform the array of hashes into an array of (val0, val1, ...)
         # for SQL import
         records.map do |record|
-          values = column_names.map do |column_name|
+          values = columns_hash.keys.map do |column_name|
             if column_name == class_name.primary_key
               # Fill in the id value from the sequential id table
               connection.next_value_for_sequence(class_name.sequence_name)
             else
               # Get the column value from the record, using NULL as default
-              connection.quote(record.fetch(column_name, nil))
+              value = record.fetch(column_name, nil)
+
+              # Format any yaml or json values for upload into the database
+              value = class_name.type_for_attribute(column_name).serialize(value)
+              connection.quote(value)
             end
           end
           "(#{values.join(',')})"
@@ -477,9 +494,6 @@ module Import
           rescue => ex
             log "Error => #{ex.message} record:[#{record.inspect}]"
             n_errors += 1
-            # record.attribute_names.each do |a|
-            #   log "#{a} --- #{record.send(a).size rescue "n/a"} "
-            # end
           end
         end
 

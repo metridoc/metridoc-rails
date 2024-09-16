@@ -1,0 +1,151 @@
+---
+include:
+  - project: devops/gitlab/ci-templates/deploy
+    file: .hashicorp_vault.yml
+  - project: devops/gitlab/ci-templates/docker
+    ref: 1.0.0
+    file:
+      - .amend_manifests.yml
+      - .build_and_push_docker_images.yml
+      - .copy_docker_images.yml
+      - .remove_tmp_registry.yml
+  - project: devops/gitlab/ci-templates/sast
+    ref: master
+    file:
+      - .trivy_container_scanning.yml
+  - project: devops/gitlab/ci-templates/general
+    file:
+      - .install_hashicorp_vault.yml
+      - .vault_jwt_auth.yml
+        #- template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
+
+stages:
+  - build_and_push:metridoc_image
+  - amend_tmp_images
+  - sast
+  - copy_docker_images
+  - remove_tmp_registry
+#  - deploy
+
+build_and_push_metridoc_image:
+  stage: build_and_push:metridoc_image
+  extends:
+    - .build_and_push_docker_images
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+    - !reference [.install_hashicorp_vault, before_script]
+    - !reference [.vault_jwt_auth, before_script]
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  environment:
+    name: ${ENVIRONMENT_NAME}
+  parallel:
+    matrix:
+      - RUNNER: build-arm
+        DOCKER_BUILD_PLATFORM: linux/arm64
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: linux/amd64
+  variables:
+    DOCKER_BUILD_CONTEXT: ./
+    DOCKERFILE_PATH: ./
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+    USE_CACHE: "false"
+  tags:
+    - ${RUNNER}
+
+amend_tmp_metridoc_images:
+  stage: amend_tmp_images
+  extends:
+    - .amend_manifests
+  needs:
+    - build_and_push_metridoc_image
+  variables:
+    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+  tags:
+    - build
+# -- End - build, push temp dev image
+
+# -- Start - SAST images
+trivy_container_metridoc_scanning:
+  stage: sast
+  extends:
+    - .trivy_container_scanning
+  before_script:
+    - apk add --no-cache docker
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  after_script:
+    - docker logout ${CI_REGISTRY}
+  needs:
+    - amend_tmp_metridoc_images
+  variables:
+    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/metridoc:${CI_COMMIT_SHORT_SHA}
+  allow_failure: true
+  tags:
+    - build
+# -- End - SAST images
+
+# -- Start - Copy app docker images
+copy_docker_metridoc_images:
+  stage: copy_docker_images
+  variables:
+    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+    FINAL_REGISTRY_REPOSITORY: metridoc
+  needs:
+    - trivy_container_metridoc_scanning
+  extends:
+    - .copy_docker_images
+  tags:
+    - build
+# -- End - Copy app docker images
+
+# -- Start - remove tmp registry repository
+remove_tmp_registry:
+  stage: remove_tmp_registry
+  extends:
+    - .remove_tmp_registry
+  rules:
+    - when: always
+  needs:
+    - copy_docker_metridoc_images
+  allow_failure: true
+  tags:
+    - build
+# -- End - remove tmp registry repository
+
+
+## Deploy staging
+#deploy_staging:
+#  stage: deploy
+#  extends:
+#    - .deploy
+#  variables:
+#    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-prod
+#  environment:
+#    name: ${ENVIRONMENT_NAME}
+#    url: metridoc-staging.library.upenn.int
+#  needs:
+#    - copy_docker_ui_images
+#    - copy_docker_api_images
+#  rules:
+#    - if: $CI_COMMIT_REF_NAME == "staging"
+#  tags:
+#    - deploy
+#
+## Deploy production
+#deploy_production:
+#  stage: deploy
+#  extends:
+#    - .deploy
+#  variables:
+#    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-prod
+#  environment:
+#    name: ${ENVIRONMENT_NAME}
+#    url: metridoc.library.upenn.edu
+#  needs:
+#    - copy_docker_ui_images
+#    - copy_docker_api_images
+#  rules:
+#    - if: $CI_COMMIT_REF_NAME == "master"
+#  tags:
+#    - deploy
+#

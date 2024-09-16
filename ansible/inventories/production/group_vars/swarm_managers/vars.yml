@@ -122,6 +122,10 @@ docker_stack_env:
 
   ALMA_API_KEY: "{{ vault_alma_api_key }}"
 
+  SPRINGSHARE_LIBCAL_ID: "{{ vault_springshare_libcal_id }}"
+  SPRINGSHARE_LIBCAL_SECRET: "{{ vault_springshare_libcal_secret }}"
+  SPRINGSHARE_LIBCAL_GRANTTYPE: "{{ vault_springshare_libcal_granttype }}"
+
   BORROWDIRECT_RESHARE_DB: "{{ vault_borrowdirect_reshare_db }}"
   BORROWDIRECT_RESHARE_HOST: "{{ vault_borrowdirect_reshare_host }}"
   BORROWDIRECT_RESHARE_PORT: "{{ vault_borrowdirect_reshare_port }}"

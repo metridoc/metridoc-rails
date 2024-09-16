@@ -54,7 +54,7 @@ module Export
         full_paths.each do |full_path|
           next if File.basename(full_path) == "global.yml"
 
-          table_params = YAML.load_file(full_path)
+          table_params = Psych.safe_load_file(full_path)
           seq = table_params["load_sequence"] || 0
 
           next if sequences_only.present? && !sequences_only.include?(seq)
@@ -73,7 +73,10 @@ module Export
         yml_path = File.join(root_path, "config", "data_sources", config_folder, "global.yml")
 
         if File.exist?(yml_path)
-          global_params = YAML.load(ERB.new(File.read(yml_path)).result)
+          global_params = Psych.safe_load(
+            ERB.new(File.read(yml_path)).result,
+            aliases: true
+          )
         end
 
         @global_params = global_params.merge(@options.stringify_keys)
@@ -94,7 +97,10 @@ module Export
         return @log_job_execution if @log_job_execution.present?
 
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(root_path, 'config', 'database.yml')))
+        dbconfig = Psych.safe_load_file(
+          File.join(root_path, 'config', 'database.yml'),
+          aliases: true
+        )
 
         Log::JobExecution.establish_connection dbconfig[environment]
 
@@ -118,5 +124,3 @@ module Export
 
   end
 end
-
-

@@ -3,6 +3,14 @@ ActiveAdmin.register Log::JobExecution do
 
   actions :index, :show
 
+  # Define a way to sort json column explicitly
+  order_by(:global_yml) do |order_clause|
+    [
+      Arel.sql("global_yml->> 'config_folder'"),
+      order_clause.order
+    ].join(' ')
+  end
+
   index do
     column :id
     column :source_name

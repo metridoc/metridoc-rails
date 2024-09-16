@@ -1,0 +1,30 @@
+---
+load_sequence: 3
+
+target_model: "Springshare::Libcal::Answer"
+target_adapter: "native_sql"
+
+truncate_before_load: "no"
+
+sqls:
+  - |
+    INSERT INTO ss_libcal_answers (
+      staff_id,
+      appointment_id,
+      question_id,
+      answer
+    )
+    SELECT
+      appointments.staff_id,
+      appointments.appointment_id,
+      REPLACE (answer.key, 'q', ''),
+      answer.value
+    FROM
+      ss_libcal_appointments appointments,
+      json_each_text(appointments.answers) answer
+    WHERE appointments.appointment_id > (
+      SELECT
+        MAX(appointment_id)
+      FROM ss_libcal_answers
+    ) AND
+    json_typeof(appointments.answers) = 'object';

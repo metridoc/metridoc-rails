@@ -1,0 +1,51 @@
+---
+load_sequence: 7
+
+target_model: "Springshare::Libcal::SpaceForm"
+target_adapter: "native_sql"
+
+truncate_before_load: "no"
+
+sqls:
+  - |
+    INSERT INTO ss_libcal_space_questions (
+      form_id,
+      question_id,
+      question_key,
+      question_type,
+      required,
+      label,
+      options
+    )
+    SELECT
+      form_id,
+      cols.id,
+      fields.key,
+      cols.type,
+      cols.required,
+      cols.label,
+      cols.options
+    FROM
+      ss_libcal_space_forms forms,
+      json_each(forms.fields) fields,
+      json_to_record(fields.value) AS cols(
+        id NUMERIC,
+        label TEXT,
+        type TEXT,
+        required BOOLEAN,
+        options json
+      )
+    ON CONFLICT (form_id, question_key)
+    DO UPDATE
+    SET
+      (
+        question_type,
+        required,
+        label,
+        options
+      ) = (
+        EXCLUDED.question_type,
+        EXCLUDED.required,
+        EXCLUDED.label,
+        EXCLUDED.options
+      );

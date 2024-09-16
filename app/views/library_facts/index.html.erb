@@ -2,8 +2,8 @@
 <html>
 <head>
   <title>MetriDoc</title>
-  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbo-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbo-track': 'reload' %>
   <%= favicon_link_tag(asset_path('favicon.ico')) %>
 </head>
 
@@ -21,9 +21,10 @@
   <div id="main_content_wrapper">
     <div id="main_content">
       <div id="dashboard_default_message">
-        <h1>Library Fact Book</h1>
+        <h1>Library Fact Books</h1>
         <ul>
-          <li><a href="library_facts/factbook">Download Library Fact Book (Epub format)</a></li>
+          <li><a href="library_facts/factbook_2020">Download 2020 Library Fact Book (Epub format)</a></li>
+          <li><a href="library_facts/factbook_2023">Download 2023 Library Fact Book (PDF format)</a></li>
         </ul>
       </div>
     </div>

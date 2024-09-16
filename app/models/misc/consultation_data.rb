@@ -1,8 +1,3 @@
-module Misc
-
-  class ConsultationData < ActiveRecord::Base
-    self.table_name_prefix = 'misc_'
-
-  end
-
+class Misc::ConsultationData < ApplicationRecord
+  self.table_name_prefix = 'misc_'
 end

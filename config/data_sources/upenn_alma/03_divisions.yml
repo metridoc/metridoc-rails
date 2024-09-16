@@ -3,4 +3,4 @@ load_sequence: 3
 target_model: "UpennAlma::Division"
 target_adapter: "csv"
 truncate_before_load: "yes"
-file_name: "alma_divisions.csv"
+export_file_name: "alma_divisions.csv"

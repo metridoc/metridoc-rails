@@ -52,7 +52,9 @@ module Preprocess
 
     def task_config
       return @task_config unless @task_config.blank?
-      @task_config = global_config.merge(YAML.load_file(@task_file))
+      @task_config = global_config.merge(
+        Psych.safe_load_file(@task_file)
+      )
     end
 
     def target_adapter
@@ -166,7 +168,11 @@ module Preprocess
     end
 
     def get_headers
-      csv = CSV.open(csv_file_path, { external_encoding: global_config['encoding'] || 'UTF-8', internal_encoding: 'UTF-8' })
+      csv = CSV.open(
+        csv_file_path,
+        external_encoding: global_config.fetch('encoding', 'UTF-8'),
+        internal_encoding: 'UTF-8'
+      )
       columns = csv.readline
       csv.close
       headers = columns.map { |c| Util.column_to_attribute(c) }

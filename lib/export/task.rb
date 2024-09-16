@@ -12,10 +12,11 @@ module Export
     # task file information and save to @task_config
     def task_config
       @task_config ||= @main_driver.global_config.merge(
-        YAML.load(
+        Psych.safe_load(
           ERB.new(
             File.read(@task_file)
-          ).result
+          ).result,
+          aliases: true
         )
       )
     end
@@ -30,9 +31,29 @@ module Export
       @source_adapter ||= task_config["source_adapter"]
     end
 
+    # Returns the target model as an object
+    def target_model
+      @target_model ||= task_config["target_model"].constantize
+    end
+
     # Access any column mappings in the task configuration
     def column_mappings
       @column_mappings ||= task_config["column_mappings"]
+    end
+
+    def csv_file_path
+      if @csv_file_path
+        return @csv_file_path
+      end
+
+      # Make an export folder if it doesn't already exist
+      FileUtils.mkdir_p task_config["export_folder"]
+
+      # Create a new csv filename for the data
+      @csv_file_path = File.join(
+        task_config["export_folder"],
+        task_config["export_file_name"].downcase
+      )
     end
 
     # Create a log job execution step entry
@@ -41,12 +62,13 @@ module Export
 
       # Access the environment configuration
       environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-      dbconfig = YAML.load(
+      dbconfig = Psych.safe_load(
         File.read(
           File.join(
             @main_driver.root_path, 'config', 'database.yml'
           )
-        )
+        ),
+        aliases: true
       )
 
       # Connect to the database

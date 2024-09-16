@@ -1,0 +1,35 @@
+---
+include:
+  - template: Jobs/Secret-Detection.gitlab-ci.yml
+
+stages:
+  - secret_check
+  - main_pipeline
+
+secret_detection:
+  stage: secret_check
+  allow_failure: false
+  artifacts:
+    paths:
+      - .pipeline.yml
+    expire_in: 1 day
+  tags:
+    - ${RUNNER}
+
+main:
+  stage: main_pipeline
+  needs:
+    - secret_detection
+  allow_failure: false
+  trigger:
+    include:
+      - artifact: .pipeline.yml
+        job: secret_detection
+    strategy: depend
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      variables:
+        ENVIRONMENT_NAME: production
+    - if: $CI_COMMIT_BRANCH == "staging"
+      variables:
+        ENVIRONMENT_NAME: staging

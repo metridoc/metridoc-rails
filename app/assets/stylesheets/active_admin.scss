@@ -17,7 +17,7 @@ $am-theme-backdrop: #FBF9F6;
 $am-theme-divider: #412234;
 
 @import "active_admin/mixins";
-@import "active_material";
+@import "active_material/src/stylesheets/active_material";
 @import "active_admin_sidebar";
 
 
