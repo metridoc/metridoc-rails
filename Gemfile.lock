@@ -346,6 +346,7 @@ DEPENDENCIES
   groupdate
   haml
   jbuilder (~> 2.5)
+  jquery-rails
   letter_opener
   listen (>= 3.0.5, < 3.4)
   makara (~> 0.4.1)
@@ -364,6 +365,7 @@ DEPENDENCIES
   selenium-webdriver
   spring
   spring-watcher-listen (~> 2.0.0)
+  sprockets
   sqlite3
   terser
   tiny_tds (~> 2.1.0)
