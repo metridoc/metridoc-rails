@@ -13,6 +13,7 @@ column_mappings:
   # Record Information
   "pr_hrid": pr_hrid
   "pr_patron_type": pr_patron_type
+  "pr_patron_identifier": pr_patron_identifier
 
   # Requesting Pick up information
   "pr_resolved_req_inst_symbol_fk": pr_resolved_req_inst_symbol_fk
@@ -23,6 +24,7 @@ column_mappings:
   "pr_resolved_sup_inst_symbol_fk": pr_resolved_sup_inst_symbol_fk
   "pr_pick_location_fk": pr_pick_location_fk
   "pr_pick_shelving_location": pr_pick_shelving_location
+  "pr_pick_shelving_location_fk": pr_pick_shelving_location_fk
 
   # Bibliographic details
   "pr_title": pr_title

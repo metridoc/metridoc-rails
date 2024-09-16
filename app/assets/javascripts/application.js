@@ -12,15 +12,11 @@
 //
 //= require active_admin/base
 
-//= require active_material
-
 //= require Chart.bundle
 //= require chartkick
 
 //= require rails-ujs
-//= require turbolinks
-
-//= require vis-network/dist/vis-network
+//= require turbo
 
 //= require_tree .
 

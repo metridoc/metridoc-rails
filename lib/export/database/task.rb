@@ -31,11 +31,6 @@ module Export
       klass
     end
 
-    # Returns the target model as an object
-    def target_model
-      @target_model ||= task_config["target_model"].constantize
-    end
-
     # Get string to filter since minimum date
     def export_filter_date_sql
       task_config["export_filter_date_sql"]
@@ -117,13 +112,11 @@ module Export
       if export_filter_date_sql.present?
         if incremental_filter_column
           # Find the latest date in the specified column for incremental loading
-          latest_date = target_model.pluck(
-            " MAX(#{ActiveRecord::Base.connection.quote_column_name(
+          latest_date = target_model.maximum(
             incremental_filter_column
-            )}) AS latest_date"
-          ).first
+          )
           # Add the filter to the query
-          scope = scope.where(export_filter_date_sql, latest_date) if latest_date
+          scope = scope.where(export_filter_date_sql, latest_date.strftime("%Y-%m-%d")) if latest_date
         end
       end
 

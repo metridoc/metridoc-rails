@@ -5,6 +5,9 @@ set -e
 echo "Installing gems"
 gem install bundler && bundle install
 
+echo "Installing yarn modules"
+yarn install
+
 echo "Migrating db"
 bundle exec rake db:migrate db:seed
 

@@ -343,7 +343,7 @@ module RelaisHelper
     current_monthly_items, previous_monthly_items = relais_count_items(model, **options)
 
     # Get the list of months to dynamically display
-    months = display_months(this_year)
+    months = display_months(fiscal_year)
 
     # The the list of libraries
     library_map = [["All Libraries", -1]] + relais_library_map(model)

@@ -38,7 +38,6 @@ en:
     edit_resource: "Edit %{resource}"
     delete_resource: "Delete %{resource}"
     supplemental_data: "RSAT Supplemental Data"
-    bookkeeping: "Bookkeeping"
     has_many_delete: "Remove"
     new_link: "New %{model}"
     dashboard_heading: "Welcome to MetriDoc"
@@ -69,7 +68,7 @@ en:
     marc_data: "MARC data"
     gate_counts: "Gate counts"
     alma:
-      alma_menu: "Alma"
+      alma_menu: "Alma Circulations"
     ares:
       ares_menu: "Ares"
     course_reserves:
@@ -94,6 +93,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Card swipe by frequency"
       right_column_heading: "Card swipe transactions, %{date_range}"
+    google_analytics:
+      google_analytics_menu: "Google Analytics"
     keyserver:
       keyserver_menu: "Keyserver"
       columns_heading: "Example data visualizations"
@@ -105,6 +106,8 @@ en:
       ezproxy_menu: "EZProxy"
     upenn:
         upenn_menu: "Institutional Data"
+    springshare:
+        springshare_menu: "LibApps Data"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"
@@ -138,6 +141,7 @@ en:
     user_role_sections:
       coursereserves: "Course Reserves"
       borrowdirect: "RSAT: BorrowDirect"
+      reshare: "RSAT: PALCI"
       consultation: "Consultation"
       ezborrow: "RSAT: PALCI"
       gatecount: "Gate Counts"
@@ -148,14 +152,16 @@ en:
       libraryprofile: "Participating Libraries"
       supplementaldata: "RSAT: Supplemental Data"
       log: "Log"
-      bookkeeping: "Bookkeeping"
       security: "Security"
       misc: "Miscellaneous"
       report: "Reports"
       alma: "Alma Circulation"
       upennalma: "Alma Demographics"
       ipeds: "IPEDS Data"
+      springshare: "LibApps Data"
       ezproxy: "EZProxy Logs"
+      librarystaff: "Library Staff Census"
+      googleanalytics: "Google Analytics- Universal Analytics"
       upenn: "University of Pennsylvania Data"
     are_you_sure: "Are you sure?"
     file_upload_import:
@@ -266,6 +272,9 @@ en:
       ipeds/completion_schema:
         one: "IPEDS Completion Schema"
         other: "IPEDS Completion Schema"
+      ipeds/program_schema:
+        one: "IPEDS Program Schema"
+        other: "IPEDS Program Schema"
       ipeds/directory_schema:
         one: "IPEDS Directory Schema"
         other: "IPEDS Directory Schema"
@@ -275,13 +284,92 @@ en:
       ipeds/completion:
         one: "IPEDS Completion"
         other: "IPEDS Completions"
+      ipeds/program:
+        one: "IPEDS Program"
+        other: "IPEDS Programs"
       ipeds/cipcode:
         one: "CIP Code"
         other: "CIP Codes"
       ipeds/stem_cipcode:
         one: "CIP Code - STEM"
         other: "CIP Codes - STEM"
+      springshare:
+        one: "Springshare Data"
+        other: "Springshare Data"
+      springshare/libanswers:
+        one: "LibAnswers"
+        other: "LibAnswers"
+      springshare/libanswers/queue:
+        one: "LibAnswers Queue"
+        other: "LibAnswers Queues"
+      springshare/libanswers/ticket:
+        one: "LibAnswers Ticket"
+        other: "LibAnswers Tickets"
     attributes:
+      borrowdirect/reshare/borrowing_turnaround:
+        request_id: "Request Id"
+      borrowdirect/reshare/lending_turnaround:
+        request_id: "Request Id"
+      borrowdirect/reshare/directory_entry:
+        de_id: "Directory Entry Id"
+        de_slug: "Short Name"
+        de_name: "Full Name"
+        de_status_fk: "Status Id (Foreign Key)"
+        de_parent: "Parent Id"
+        de_lms_location_code: "LMS Location Code"
+      borrowdirect/reshare/host_lms_location:
+        hll_id: "Host LMS Location Id"
+        hll_date_created: "Date Created"
+        hll_last_updated: "Last Updated"
+        hll_version: "Version"
+        hll_code: "Code"
+        hll_name: "Name"
+        hll_supply_preference: "Supply Preference"
+        hll_corresponding_de: "Corresponding Directy Entry"
+        hll_hidden: "Hidden"
+      borrowdirect/reshare/transaction:
+        request_id: "Request Id"
+        borrower_id: "Borrower Id"
+        lender_id: "Lender Id"
+        oclc_number: "OCLC Number"
+      ezborrow/reshare/borrowing_turnaround:
+        request_id: "Request Id"
+      ezborrow/reshare/lending_turnaround:
+        request_id: "Request Id"
+      ezborrow/reshare/directory_entry:
+        de_id: "Directory Entry Id"
+        de_slug: "Short Name"
+        de_name: "Full Name"
+        de_status_fk: "Status Id (Foreign Key)"
+        de_parent: "Parent Id"
+        de_lms_location_code: "LMS Location Code"
+      ezborrow/reshare/host_lms_location:
+        hll_id: "Host LMS Location Id"
+        hll_date_created: "Date Created"
+        hll_last_updated: "Last Updated"
+        hll_version: "Version"
+        hll_code: "Code"
+        hll_name: "Name"
+        hll_supply_preference: "Supply Preference"
+        hll_corresponding_de: "Corresponding Directy Entry"
+        hll_hidden: "Hidden"
+      ezborrow/reshare/transaction:
+        request_id: "Request Id"
+        borrower_id: "Borrower Id"
+        lender_id: "Lender Id"
+        oclc_number: "OCLC Number"
+      springshare/libcal/answer:
+        appointment_id: "Appointment Id"
+        question_id: "Question Id"
+        staff_id: "Staff Id"
+      springshare/libcal/appointment:
+        staff_id: "Staff Id"
+        location_id: "Location Id"
+        group_id: "Group Id"
+      springshare/libcal/question:
+        question_id: "Question Id"
+      springshare/libcal/user:
+        staff_id: "Staff Id"
       log/job_execution:
         id: "ID"
         source_name: "Source"

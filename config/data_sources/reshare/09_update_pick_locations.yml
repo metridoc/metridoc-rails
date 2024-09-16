@@ -1,0 +1,26 @@
+load_sequence:         9
+target_adapter:        'native_sql'
+target_model:          "Ezborrow::Reshare::PatronRequest"
+truncate_before_load:  "no"
+sqls:
+  - |
+    UPDATE reshare_patron_requests
+    SET
+      pr_pick_shelving_location_fk = hlsl.hlsl_id
+    FROM reshare_host_lms_shelving_locations hlsl
+    WHERE
+      pr_pick_shelving_location_fk IS NULL
+      AND pr_pick_shelving_location IS NOT NULL
+      AND pr_pick_shelving_location = hlsl.hlsl_code
+    AND reshare_patron_requests.origin = hlsl.origin
+
+  - |
+    UPDATE reshare_patron_requests
+    SET
+      pr_pick_shelving_location = hlsl.hlsl_code
+    FROM reshare_host_lms_shelving_locations hlsl
+    WHERE
+      pr_pick_shelving_location_fk IS NOT NULL
+      AND pr_pick_shelving_location IS NULL
+      AND pr_pick_shelving_location_fk = hlsl.hlsl_id
+    AND reshare_patron_requests.origin = hlsl.origin

@@ -3,9 +3,9 @@
 %ul
   - resources.each do |resource|
     %li= link_to resource.resource_name.human(count: 2), "/admin/#{resource.resource_name.param_key.pluralize}"
-- sources = ["reshare", "illiad", "borrowdirect", "other"]
+- sources = ["borrowdirect", "reshare", "illiad", "other"]
 - sources.each do |source|
-  %h3= t("active_admin.log.jobs_heading", source: t("phrases.user_role_sections.#{source}", {default: "Other Sources"}))
+  %h3= t("active_admin.log.jobs_heading", source: t("phrases.user_role_sections.#{source}", default: "Other Sources"))
   %table.data_summary
     %tr
       %th= Log::JobExecution.human_attribute_name(:id)

@@ -1,0 +1,30 @@
+---
+load_sequence: 6
+
+target_model: "Springshare::Libcal::SpaceForm"
+target_adapter: "csv"
+
+export_file_name: "springshare_libcal_space_forms.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "1.1/space/form"
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  id: form_id
+  name: name
+
+# Column name for json column
+json_column: "fields"
+
+# Unique on the location
+unique_keys: ["form_id"]
+upsert: true
+
+filter_ids: |
+  SELECT
+    DISTINCT form_id
+  FROM
+    ss_libcal_space_locations
+  WHERE form_id IS NOT NULL

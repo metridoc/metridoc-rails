@@ -2,9 +2,8 @@
   "name": "metridoc-rails",
   "private": true,
   "dependencies": {
-    "chart.js": "^4.3.2",
-    "chartkick": "^5.0.1",
-    "d3-loom": "^1.0.2",
-    "vis-network": "^9.0.5"
+    "@hotwired/turbo-rails": "^8.0.0-beta.2",
+    "active_material": "2.0.2",
+    "d3-loom": "^1.0.2"
   }
 }

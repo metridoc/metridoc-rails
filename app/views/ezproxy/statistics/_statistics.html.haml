@@ -16,9 +16,8 @@
     title: "EZProxy Yearly Trends"
 
   - model = Ezproxy::EzpaarsePlatform
-  - top_10_data = ezproxy_top_x_data(model, 10, "platform_name")
-  - data = ezproxy_double_group(model.where(platform_name: top_10_data[0][:data].keys), "platform_name", "fiscal_year")
-  = line_chart data[0],
+  - data = ezproxy_group_requests_by_fiscal_year(model, "platform_name")
+  = line_chart data,
     download: true,
     thousands: ",",
     height: "400px",
@@ -27,9 +26,8 @@
     title: "Top 10 Platforms"
 
 %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
-  - top_10_data = ezproxy_top_x_data(model, 10, "mime")
-  - data = ezproxy_double_group(model.where(mime: top_10_data[0][:data].keys), "mime", "fiscal_year")
-  = line_chart data[0],
+  - data = ezproxy_group_requests_by_fiscal_year(model, "mime")
+  = line_chart data,
     download: true,
     thousands: ",",
     height: "400px",
@@ -37,9 +35,8 @@
     xtitle: "Fiscal Year (YTD)", ytitle: "Number of Requests",
     title: "Top 10 Resource Formats"
 
-  - top_10_data = ezproxy_top_x_data(model, 10, "rtype")
-  - data = ezproxy_double_group(model.where(rtype: top_10_data[0][:data].keys), "rtype", "fiscal_year")
-  = line_chart data[0],
+  - data = ezproxy_group_requests_by_fiscal_year(model, "rtype")
+  = line_chart data,
     download: true,
     thousands: ",",
     height: "400px",
@@ -49,9 +46,8 @@
 
 %div{style: "display: grid; width: 100%; grid-template-columns: 1fr 1fr; grid-gap: 20px;"}
   - model = Ezproxy::EzpaarseUserProfile
-  - top_10_data = ezproxy_top_x_data(model, 10, "user_group")
-  - data = ezproxy_double_group(model.where(user_group: top_10_data[0][:data].keys), "user_group", "fiscal_year")
-  = line_chart data[0],
+  - data = ezproxy_group_requests_by_fiscal_year(model, "user_group")
+  = line_chart data,
     download: true,
     thousands: ",",
     height: "400px",
@@ -59,9 +55,8 @@
     xtitle: "Fiscal Year (YTD)", ytitle: "Number of Requests",
     title: "Top 10 User Groups"
 
-  - top_10_data = ezproxy_top_x_data(model, 10, "school")
-  - data = ezproxy_double_group(model.where(school: top_10_data[0][:data].keys), "school", "fiscal_year")
-  = line_chart data[0],
+  - data = ezproxy_group_requests_by_fiscal_year(model, "school")
+  = line_chart data,
     download: true,
     thousands: ",",
     height: "400px",

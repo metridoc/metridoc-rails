@@ -2,45 +2,35 @@
 # yarn lockfile v1
 
 
-"@babel/runtime@^7.21.0":
-  version "7.22.6"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.22.6.tgz#57d64b9ae3cff1d67eb067ae117dac087f5bd438"
-  integrity sha512-wDb5pWm4WDdF6LFUde3Jl8WzPA+3ZbxYqkC6xAXuD3irdEHN1k0NfTRrJD8ZD378SJ61miMLCqIOXYhd8x+AJQ==
+"@fontsource/roboto@^4.5.3":
+  version "4.5.8"
+  resolved "https://registry.yarnpkg.com/@fontsource/roboto/-/roboto-4.5.8.tgz#56347764786079838faf43f0eeda22dd7328437f"
+  integrity sha512-CnD7zLItIzt86q4Sj3kZUiLcBk1dSk81qcqgMGaZe7SQ1P8hFNxhMl5AZthK1zrDM5m74VVhaOpuMGIL4gagaA==
+
+"@hotwired/turbo-rails@^8.0.0-beta.2":
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo-rails/-/turbo-rails-8.0.4.tgz#d224f524a9e33fe687cec5d706054eb6fe13fa5b"
+  integrity sha512-GHCv5+B2VzYZZvMFpg/g9JLx/8pl/8chcubSB7T+Xn1zYOMqAKB6cT80vvWUzxdwfm/2KfaRysfDz+BmvtjFaw==
   dependencies:
-    regenerator-runtime "^0.13.11"
+    "@hotwired/turbo" "^8.0.4"
+    "@rails/actioncable" "^7.0"
 
-"@kurkle/color@^0.3.0":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.2.tgz#5acd38242e8bde4f9986e7913c8fdf49d3aa199f"
-  integrity sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==
+"@hotwired/turbo@^8.0.4":
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/@hotwired/turbo/-/turbo-8.0.4.tgz#5c5361c06a37cdf10dcba4223f1afd0ca1c75091"
+  integrity sha512-mlZEFUZrJnpfj+g/XeCWWuokvQyN68WvM78JM+0jfSFc98wegm259vCbC1zSllcspRwbgXK31ibehCy5PA78/Q==
 
-chart.js@4:
-  version "4.3.1"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.3.1.tgz#b83ea014ff9f45e43bfd98ef2bdaba2a9aed8a16"
-  integrity sha512-QHuISG3hTJ0ftq0I0f5jqH9mNVO9bqG8P+zvMOVslgKajQVvFEX7QAhYNJ+QEmw+uYTwo8XpTimaB82oeTWjxw==
+"@rails/actioncable@^7.0":
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/@rails/actioncable/-/actioncable-7.1.3.tgz#4db480347775aeecd4dde2405659eef74a458881"
+  integrity sha512-ojNvnoZtPN0pYvVFtlO7dyEN9Oml1B6IDM+whGKVak69MMYW99lC2NOWXWeE3bmwEydbP/nn6ERcpfjHVjYQjA==
+
+active_material@2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/active_material/-/active_material-2.0.2.tgz#fa12141586db18e1ae5f0c5807efbdaad3313b38"
+  integrity sha512-HNvBukIPkc8FuPDzB87bubQkoNKLCmkw8P0jctqZ7OvXj2tSg9AcrCSavKtC9PrwYpn739Yq3AJmJ+J0RJ3MGA==
   dependencies:
-    "@kurkle/color" "^0.3.0"
-
-chart.js@^4.3.2:
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/chart.js/-/chart.js-4.3.2.tgz#904ebe0376eb368a659a92d2050df47336847e4c"
-  integrity sha512-pvQNyFOY1QmbmIr8oDORL16/FFivfxj8V26VFpFilMo4cNvkV5WXLJetDio365pd9gKUHGdirUTbqJfw8tr+Dg==
-  dependencies:
-    "@kurkle/color" "^0.3.0"
-
-chartjs-adapter-date-fns@>=3:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/chartjs-adapter-date-fns/-/chartjs-adapter-date-fns-3.0.0.tgz#c25f63c7f317c1f96f9a7c44bd45eeedb8a478e5"
-  integrity sha512-Rs3iEB3Q5pJ973J93OBTpnP7qoGwvq3nUnoMdtxO+9aoJof7UFcRbWcIDteXuYd1fgAvct/32T9qaLyLuZVwCg==
-
-chartkick@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/chartkick/-/chartkick-5.0.1.tgz#f557ff8560f974343dc65c7fc34ce1e8326d8ee7"
-  integrity sha512-4F3tWI3eBQgnjCYZIZ+fHOaJuNyxeyhDE2Tm+voOWB19hDjSJceys/spzN52DOn8bWepNESGXvPVTGU1jeFsbA==
-  optionalDependencies:
-    chart.js "4"
-    chartjs-adapter-date-fns ">=3"
-    date-fns ">=2"
+    "@fontsource/roboto" "^4.5.3"
 
 d3-array@^1.2.0:
   version "1.2.4"
@@ -67,7 +57,7 @@ d3-interpolate@^1.1.5:
 d3-loom@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/d3-loom/-/d3-loom-1.0.2.tgz#c369f22520525687b5170395917f6ededd68864b"
-  integrity sha1-w2nyJSBSVoe1FwOVkX9u3t1ohks=
+  integrity sha512-wp7s6jixNKeKtkj7rq3Bc7k+398i1nueQRb0Gh56NruNTURZY4mKsyeQeI0dupyAOS4hC/0SoORsVNAbETazWA==
   dependencies:
     d3-array "^1.2.0"
     d3-collection "^1.0.4"
@@ -78,20 +68,3 @@ d3-path@^1.0.5:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/d3-path/-/d3-path-1.0.9.tgz#48c050bb1fe8c262493a8caf5524e3e9591701cf"
   integrity sha512-VLaYcn81dtHVTjEHd8B+pbe9yHWpXKZUC87PzoFmsFrJqgFwDe/qxfp5MlfsfM1V5E/iVt0MmEbWQ7FVIXh/bg==
-
-date-fns@>=2:
-  version "2.30.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.30.0.tgz#f367e644839ff57894ec6ac480de40cae4b0f4d0"
-  integrity sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==
-  dependencies:
-    "@babel/runtime" "^7.21.0"
-
-regenerator-runtime@^0.13.11:
-  version "0.13.11"
-  resolved "https://registry.yarnpkg.com/regenerator-runtime/-/regenerator-runtime-0.13.11.tgz#f6dca3e7ceec20590d07ada785636a90cdca17f9"
-  integrity sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==
-
-vis-network@^9.0.5:
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/vis-network/-/vis-network-9.1.0.tgz#511db833b68060f279bedc4a852671261d40204e"
-  integrity sha512-rx96L144RJWcqOa6afjiFyxZKUerRRbT/YaNMpsusHdwzxrVTO2LlduR45PeJDEztrAf3AU5l2zmiG+1ydUZCw==

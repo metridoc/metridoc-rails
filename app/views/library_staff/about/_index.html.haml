@@ -1,0 +1,82 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    The data is extracted from the University of Pennsylvania's
+    #{link_to "Data Warehouse", "https://www.isc.upenn.edu/enterprise-information-analytics"},
+    primarily the #{link_to "Human Capital Management", "https://www.isc.upenn.edu/human-capital-management-data-collection"}
+    (HCM) tables. The HCM tables are imported from the University of Pennsylvania's
+    instance of Workday.  The data below is extracted from the Penn Libraries' employee records.
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards
+  %ul
+    %li Place Holder
+
+  %h3 Data
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/library_staff/#{resource.resource_name.param_key.pluralize}"
+
+
+%hr
+%section
+  %h2 Data Structure
+
+  %h3 Census Table
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    The census table is extracted from the HCM_POSITION_GENERAL_V, HCM_JOB_FAMILY, and
+    HCM_PERSON_V from the #{link_to "HCM", "https://www.isc.upenn.edu/human-capital-management-data-collection"} database tables (DWHCM).
+    The data is further supplemented by the ORG_CODES table from the Data Warehouse
+    #{link_to "General Ledger", "https://www.isc.upenn.edu/general-ledger-data-collection"} database (DWADMIN).
+    This table is a snapshot of the current employees of the Penn Libraries.
+
+  %h4 Census Table Columns
+  %ul
+    %li
+      Employment status - A one-character code identifying the employee's current employment relationship with the University of Pennsylvania.
+      %ul
+        %li A - Active
+        %li L - Leave
+        %li T - Terminated
+        %li P - Paid Leave (Deprecated)
+    %li Employment status date - The date the employee's employment status went into effect.
+    %li Position ID - The unique system identifier for the person.
+    %li Penn ID - The 8-digit identification number assigned to the worker by the Penn Community system.
+    %li Workday ID - The unique ID for the worker in Workday, distinct from the Penn ID.
+    %li Hire date - The employee's most recent date of hire.
+    %li Occupant from date - The date from which the worker occupied the position.
+    %li Legal last name - Last name of the worker.
+    %li Legal first name - First name of the worker.
+    %li Calculated total fte - The total full time equivalent of all the current positions for the worker.
+    %li Primary percent effort - The full time equivalent value of the worker's primary position.
+    %li Position employee type - The employee type assigned to the position (academic, staff, student, temporary etc.)
+    %li
+      Full part time - A one-character code indicating the time status of the worker.
+      %ul
+        %li R - Retired
+        %li L - Long Term Disability Leave
+        %li W - Worker's Compensation Leave
+        %li S - Postdocs
+        %li T - Temporary
+        %li F - Full Time (> 0.875 FTE)
+        %li P - Part Time (< 0.875 FTE)
+    %li Position school ctr - The two-digit number used to identify the school or center for the Penn Cost Center associated with the position.
+    %li Job profile id - The system identifier of the job profile for the position.
+    %li Job profile name - The name of the job profile for the position.
+    %li Primary business title - The business title entered in Workday for the worker's primary position.
+    %li Exempt job flag - Whether the job profile is considered exempt (Y) or non-exempt (N) under the Fair Labor Standards Act (FLSA).
+    %li Job family id - The system identifier for the grouping of similar job profiles that includes the job profile.
+    %li Worker location - The descriptive name of the location on campus linked to the person's work address.
+    %li Manager Penn ID - The Penn ID of the manager for the position.
+    %li Job family group name - The system identifier for the grouping of similar job families that includes the job profile.
+    %li Job family name - the name of the grouping of similar job profiles that includes the job profile.
+    %li Primary email address work - The individual's primary work email address.  Typically related to the worker's Pennkey.
+    %li Supervisory org name - The descriptive name representing the Supervisory Organization for the position.
+    %li Position Penn Cost Center - The 4-digit number for the Penn Cost Center associated with the position.
+    %li Position cost center desc - The description that corresponds to the organization code.
+    %li Org short name - The abbreviated name that corresponds to the organization code.

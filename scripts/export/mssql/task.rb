@@ -1,5 +1,4 @@
 require '../../../app/models/log/job_execution_step.rb'
-require '../../../app/models/bookkeeping/data_load.rb'
 
 require 'csv'
 
@@ -14,7 +13,12 @@ module Export
 
       def task_config
         return @task_config unless @task_config.blank?
-        @task_config = @main_driver.global_config.merge( YAML.load(ERB.new(File.read(@task_file)).result) )
+        @task_config = @main_driver.global_config.merge(
+          Psych.safe_load(
+            ERB.new(File.read(@task_file)).result,
+            aliases: true
+          )
+        )
       end
 
       def import_model_name
@@ -68,18 +72,12 @@ module Export
           scope = scope.where(filter)
         end
 
-        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
-          raise "Ranged queries not supported in production mode.  Specify a from OR a to date."
-        end
-
         if export_filter_date_sql.present? && from_date.present?
-          validate_range_request('from')
           scope = scope.where(export_filter_date_sql, from_date)
         end
 
-        if export_filter_date_range_sql.present? && to_date.present?
-          validate_range_request('to')
-          scope = scope.where(export_filter_date_range_sql, Date.today - 1.years, to_date)
+        if export_filter_date_range_sql.present? && from_date.present? && to_date.present?
+          scope = scope.where(export_filter_date_range_sql, from_date, to_date)
         end
 
         if group_by_columns.present?
@@ -121,36 +119,6 @@ module Export
         column_mappings.each.map{ |k, v| "#{k} AS #{v}" }.join(", ")
       end
 
-      def validate_range_request(req_type)
-        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
-        Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
-        earliest = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder']).earliest.to_date
-        if req_type == 'from'
-          raise "From date cannot be greater than #{earliest}" unless from_date < earliest
-        elsif req_type == 'to'
-          raise "To date cannot be earlier than #{earliest}" if to_date < earliest
-          raise "To date must be after #{Date.today - 1.years}" if to_date < Date.today - 1.years
-        else
-          raise 'Invalid range request type.  Please specify "from" or "to."'
-        end
-
-      end
-
-      def update_bookkeeping_table
-        environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
-        Bookkeeping::DataLoad.establish_connection(dbconfig[environment])
-        table = Bookkeeping::DataLoad.find_by(:table_name => task_config['config_folder'])
-        unless from_date.nil? || from_date > table.earliest.to_date
-          table.earliest = from_date.to_s
-        end
-        unless to_date.nil? || to_date < table.latest.to_date
-          table.latest = to_date.to_s
-        end
-        table.save!
-      end
-
       def execute
         log_job_execution_step
 
@@ -186,16 +154,19 @@ module Export
         return @log_job_execution_step if @log_job_execution_step.present?
 
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-        dbconfig = YAML.load(File.read(File.join(@main_driver.root_path, 'config', 'database.yml')))
+        dbconfig = Psych.safe_load(
+          File.read(File.join(@main_driver.root_path, 'config', 'database.yml')),
+          aliases: true
+        )
         Log::JobExecutionStep.establish_connection dbconfig[environment]
 
         @log_job_execution_step = Log::JobExecutionStep.create!(
-                                                          job_execution_id: @main_driver.log_job_execution.id,
-                                                          step_name: task_config["load_sequence"],
-                                                          step_yml: task_config,
-                                                          started_at: Time.now,
-                                                          status: 'running'
-                                                    )
+          job_execution_id: @main_driver.log_job_execution.id,
+          step_name: task_config["load_sequence"],
+          step_yml: task_config,
+          started_at: Time.now,
+          status: 'running'
+        )
       end
 
       def log(m)

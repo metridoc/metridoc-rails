@@ -304,6 +304,12 @@ ActiveAdmin.setup do |config|
       menu.add label: I18n.t("active_admin.resource_sharing"),
         priority: 1
 
+      # Alma Circulation
+      menu.add  label: I18n.t("active_admin.alma.alma_menu"),
+        url: :admin_alma_circulations_path,
+        if: proc{ authorized?(:read, "Alma") },
+        parent: I18n.t("active_admin.resource_sharing")
+
       # Course Reserves
       menu.add  label: I18n.t("active_admin.course_reserves.course_reserves_menu"),
         url: :course_reserves_root_path,
@@ -314,6 +320,12 @@ ActiveAdmin.setup do |config|
       menu.add label: I18n.t('active_admin.consultation.consultation_menu'),
         url: :admin_consultation_path,
         if: proc { authorized?(:read, 'Consultation') },
+        parent: I18n.t('active_admin.resource_sharing')
+
+      # Springshare LibApps
+      menu.add label: I18n.t('active_admin.springshare.springshare_menu'),
+        url: :springshare_root_path,
+        if: proc { authorized?(:read, 'Springshare') },
         parent: I18n.t('active_admin.resource_sharing')
 
       # EZ Proxy
@@ -350,6 +362,12 @@ ActiveAdmin.setup do |config|
       menu.add label: I18n.t("active_admin.library_profiles_heading"),
         url: :admin_libraryprofile_path,
         if: proc{ authorized?(:read, "LibraryProfile") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Google Analytics
+      menu.add label: I18n.t("active_admin.google_analytics.google_analytics_menu"),
+        url: :google_analytics_root_path,
+        if: proc{ authorized?(:read, "GoogleAnalytics") },
         parent: I18n.t("active_admin.resource_sharing")
 
       # RSAT Supplemental Data
@@ -418,17 +436,6 @@ ActiveAdmin.setup do |config|
 
   end
 
-  # Helper method to build the bookkeeping menu
-  # This class may be deprecated?
-  def build_bookkeeping_menu(namespace)
-    namespace.build_menu do |menu|
-      menu.add label: "Bookkeeping",
-        url: :admin_bookkeeping_path,
-        if: proc{ authorized?(:read, "Bookkeeping::DataLoad") },
-        parent: I18n.t("active_admin.bookkeeping")
-    end
-  end
-
   # Helper method to build the report query menu
   def build_report_query_menu(namespace)
     namespace.build_menu do |menu|
@@ -470,7 +477,6 @@ ActiveAdmin.setup do |config|
     build_utility_navigation(namespace)
     build_data_menu(namespace)
     build_admin_menu(namespace)
-    build_bookkeeping_menu(namespace)
     build_report_query_menu(namespace)
     build_tools_menu(namespace)
     build_documentation_menu(namespace)
@@ -494,7 +500,8 @@ ActiveAdmin.setup do |config|
   # List of namespaces that need menus
   namespaces = [
     :admin, :ipeds, :ezborrow, :borrowdirect,
-    :illiad, :ezproxy, :upenn, :course_reserves
+    :illiad, :ezproxy, :upenn, :course_reserves,
+    :library_staff, :springshare, :google_analytics
   ]
 
   # Configure the menu for all namespaces
@@ -511,3 +518,10 @@ ActiveAdmin.setup do |config|
   #
   # config.order_clause = MyOrderClause
 end
+
+# Overriding the default Active Admin String Filters
+# Including the "Not Contains" filter
+ActiveAdmin::Inputs::Filters::StringInput.filters.clear
+ActiveAdmin::Inputs::Filters::StringInput.filter(
+  :cont, :not_cont, :eq, :start, :end
+)

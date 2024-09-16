@@ -8,13 +8,13 @@
 
 %h2= "Displaying ILLiad User Group Summary for the #{fiscal_year} fiscal year at the University of Pennsylvania"
 
-- table, groups = build_user_table(fiscal_year, library_id)
+- table, groups = illiad_build_user_table(fiscal_year, library_id)
 
 <!-- Build the table -->
-- process_types.each do |p_k, p_v|
+- illiad_process_types.each do |p_k, p_v|
   %hr
   %h2{:style => "font-weight:bold;color:#011F5B"}= p_v
-  - request_types.each do |r_k, r_v|
+  - illiad_request_types.each do |r_k, r_v|
     %h3{:style => "color:#990000;text-align:center;font-weight:bold"}= r_v
     %table.statistics_summary
       %thead

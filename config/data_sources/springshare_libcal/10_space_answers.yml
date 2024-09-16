@@ -1,0 +1,28 @@
+---
+load_sequence: 10
+
+target_model: "Springshare::Libcal::SpaceAnswer"
+target_adapter: "native_sql"
+
+truncate_before_load: "no"
+
+sqls:
+  - |
+    INSERT INTO ss_libcal_space_answers (
+      booking_id,
+      question_key,
+      answer
+    )
+    SELECT
+      bookings.booking_id,
+      answer.key,
+      answer.value
+    FROM
+      ss_libcal_space_bookings bookings,
+      json_each_text(bookings.answers) answer
+    WHERE bookings.booking_id > (
+      SELECT
+        MAX(booking_id)
+      FROM ss_libcal_space_answers
+    ) AND
+    json_typeof(bookings.answers) = 'object';

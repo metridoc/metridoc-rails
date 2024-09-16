@@ -1,0 +1,139 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 About the Data
+  Universal Analytics, or Google Analytics 3, was used to monitor the usage of
+  webpages hosted by the Penn Libraries.  Universal Analytics was deprecated by
+  Google in favor of Google Analytics 4 in July 1, 2023.  The data from
+  Universal Analytics was only guaranteed through December 31, 2023.  In order
+  to preserve the data, specific reports of interest were downloaded for the
+  properties managed by the Penn Libraries.  This data was downloaded via API
+  directly from Google and uploaded to MetriDoc via csv files.
+  %br
+  %br
+  The data consists of five available reports from FY2018 through FY2023.  The only
+  exception are individual Canvas pageviews.  Canvas receives an enormous amount
+  of traffic and more detailed information is available through Canvas Data
+  directly.
+  %br
+  %br
+  More detailed information on the reports preserved is found below.
+
+%hr
+%section
+  %h2 Resources
+  %h3 Dashboards
+  %ul
+    %li Placeholder
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Google Analytics Universal
+    Analytics data begin with the prefix "ga_ua_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/google_analytics/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+%section
+  %h2 Data Structure
+  Properties are represented by a Google Analytics identifier.  The
+  #{link_to "Property", "/google_analytics/universal_analytics_properties"}
+  table provides a mapping from the identifier to the url and description of
+  the property.
+  %br
+  Google Analytics separates data types into metrics and dimensions.  The
+  common metrics used in all reports other than the Pageview reports are:
+  %ul
+    %li Users - The total number of users for the requested time period.
+    %li New Users - The number of sessions marked as a user's first session.
+    %li
+      Sessions - The total number of sessions.
+      %ul
+        %li A session is a group of user interactions with a property that take place within a given time frame.
+        %li Sessions end after 30 minutes of inactivity or at midnight.
+    %li
+      Sessions Per User - The number of sessions per unique user.
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total number of sessions divided by the total number of users.
+    %li Bounces - The total number of single page sessions for the property.
+    %li
+      Bounce Rate - The percentage of single-page sessions.
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total number of bounces divided by the total number of sessions.
+    %li Session Duration - The total duration (in seconds) of users' sessions.
+    %li
+      Avg Session Duration - The average duration of users sessions.
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total duration of sessions divided by the number of sessions.
+    %li Pageviews - The total number of pageviews for the property.
+    %li
+      Pageviews Per Session - The average number of pages viewed during a session, including repeated views of a single page.
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total number of pageviews divided by the total number of sessions.
+
+  The metrics used in the Pageview report are:
+  %ul
+    %li Pageviews - The total number of pageviews for the property.
+    %li Unique Pageviews - The number of sessions during which the specified page was viewed at least once.
+    %li Entrances - The number of entrances to the property measured as the first pageview in a session.
+    %li
+      Entrance Rate - The percentage of pageviews in which this page was the entrance.
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total number of entrances divided by the total number of pageviews.
+    %li Exits - The number of exits from the property.
+    %li
+      Exit Rate - The percentage of exits from the property that occurred out of the total pageviews.
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total number of exits divided by the total number of pageviews.
+    %li Bounces - The number of pageviews for a page where it was both the entrance and exit.
+    %li
+      Bounce Rate - The percentage of single-page sessions
+      %ul
+        %li Represented as a daily metric, but can be calculated on longer timescales.
+        %li The total number of bounces divided by the total number of sessions.
+    %li
+      Time on Page - The total duration (in seconds) of a page being open.
+      %ul
+        %li Not tracked for bounced pages or exit pages.
+    %li Avg Time on Page - Average amount of time spent on a page.
+
+  The dimensions used in the various reports are:
+  %ul
+    %li
+      All Reports
+      %ul
+        %li Date - The date of the session.
+    %li
+      Devices
+      %ul
+        %li Browser - The name of users' browsers, for example, Internet Explorer or Firefox.
+        %li Operating System - Users' operating system, for example, Windows, Linux, Macintosh, or iOS.
+    %li
+      Locations
+      %ul
+        %li Continent - Users' continent, derived from users' IP addresses or Geographical IDs.
+        %li Subcontinent - Users' sub-continent, derived from their IP addresses or Geographical IDs.
+        %li Country - Users' country, derived from their IP addresses or Geographical IDs.
+        %li Region - Users' region, derived from their IP addresses or Geographical IDs.
+        %li Metro - The Designated Market Area (DMA) from where traffic arrived.
+        %li City - Users' city, derived from their IP addresses or Geographical IDs.
+        %li Country ISO Code - Users' country's ISO code (in ISO-3166-1 alpha-2 format), derived from their IP addresses or Geographical IDs.
+        %li Region ISO  - Users' region ISO code in ISO-3166-2 format, derived from their IP addresses or Geographical IDs.
+    %li
+      Pageviews
+      %ul
+        %li Page Path - A page on the website specified by path and/or query parameters. Use this with hostname to get the page's full URL.
+    %li
+      Sources
+      %ul
+        %li Source - The domain of the source referring the users.  If users arrived without a referrer, its value is (direct).

@@ -34,6 +34,10 @@ services:
 
       ALMA_API_KEY:
 
+      SPRINGSHARE_LIBCAL_ID:
+      SPRINGSHARE_LIBCAL_SECRET:
+      SPRINGSHARE_LIBCAL_GRANTTYPE:
+
       BORROWDIRECT_RESHARE_DB:
       BORROWDIRECT_RESHARE_HOST:
       BORROWDIRECT_RESHARE_PORT:
@@ -141,7 +145,7 @@ services:
     volumes:
       - ezpaarse_output:/tmp/upenn_ezproxy
       - gate_count:/tmp/gate_count
-      - metridoc_tmp_data:/home/app/webapp/tmp
+      - metridoc_tmp_data_dist:/home/app/webapp/tmp
   delayed_jobs:
     image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
@@ -179,7 +183,7 @@ services:
         gid: "${APP_USER_GID}"
         mode: 0440
     volumes:
-      - metridoc_tmp_data:/home/app/webapp/tmp
+      - metridoc_tmp_data_dist:/home/app/webapp/tmp
     working_dir: /home/app/webapp
 
 networks:
@@ -206,5 +210,5 @@ volumes:
     external: true
   gate_count:
     external: true
-  metridoc_tmp_data:
+  metridoc_tmp_data_dist:
     external: true

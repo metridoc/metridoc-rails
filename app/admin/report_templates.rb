@@ -4,15 +4,15 @@ ActiveAdmin.register Report::Template do
   menu false
 
   permit_params :name,
-                :comments,
-                :full_sql,
-                :from_section,
-                :where_section,
-                :order_direction_section,
-                :order_section,
-                select_section: [],
-                group_by_section: [],
-                report_template_join_clauses_attributes: [:id, :_destroy, :keyword, :table, :on_keys]
+  :comments,
+  :full_sql,
+  :from_section,
+  :where_section,
+  :order_direction_section,
+  :order_section,
+  select_section: [],
+  group_by_section: [],
+  report_template_join_clauses_attributes: [:id, :_destroy, :keyword, :table, :on_keys]
 
   preserve_default_filters!
   remove_filter :report_template_join_clauses

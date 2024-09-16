@@ -1,0 +1,57 @@
+= javascript_include_tag 'application'
+
+-grad_school_names=gc_schools
+
+-furness_table=gc_gen_stats(gc_library_table,2023,"Furness","All")
+-biotech_table=gc_gen_stats(gc_library_table,2023,"Biotech","All")
+-van_pelt_table=gc_gen_stats(gc_library_table,2023,"Van Pelt","All")
+
+%hr
+%h2{style: "text-align:center;"} Fiscal Year 2023 School Population Statistics
+%hr
+
+%h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
+#left-col
+  %h3{style: "text-align:center;"} Furness
+  =pie_chart  gc_calc_percents(furness_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+
+#right-col
+  %h3{style: "text-align:center;"} Biotech Commons
+  =pie_chart gc_calc_percents(biotech_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+
+%h2{style: "text-align:center"} Percentage of Gate Counts By Graduate School Per Library
+
+#data-viz
+  #single-col
+    %h3{style: "text-align:center;"} Van Pelt
+    =pie_chart gc_calc_percents(van_pelt_table,"Counts","Grad Student"), round: 2, suffix: "%", download: true
+
+-grad_enrollment=gc_enrollment_table("Graduate")
+
+-grad_school_pop=Array.new(12,0)
+-gc_enroll_names.each_with_index {|e,i| grad_school_pop[i]=grad_enrollment[e]}
+
+-grad_bar_percents=Hash.new
+-grad_people=gc_calc_percents(van_pelt_table,"Individuals","Grad Student")
+-grad_school_names.each_with_index {|g,i| grad_bar_percents[g]=((grad_people.fetch(g, 0)).fdiv(grad_school_pop[i]))*100}
+
+%h2{style: "text-align:center;"} Percentage of Graduate Students Using the Library Per School
+#data-viz
+  #single-col
+    =column_chart grad_bar_percents, round: 2, suffix: "%", dataset: {borderWidth: 0}, download: true
+
+-med_bio=gc_calc_percents(biotech_table,"Raw Counts","Grad Student")
+-vp_bio=gc_calc_percents(van_pelt_table,"Raw Counts","Grad Student")
+
+-med_schools=["School of Dental Medicine","Perelman School of Medicine","Veterinary Medicine","School of Nursing"]
+-med_bio_counts=med_bio.select{|k,v| med_schools.include? k}
+-med_vp_counts=vp_bio.select{|k,v| med_schools.include? k}
+
+#data-viz
+  #single-col
+    %h3{style: "text-align:center;"} Medical Students Usage of the Libraries (Gate Counts)
+    =column_chart [{name: "BioTech", data: med_bio_counts},
+                   {name: "Van Pelt", data: med_vp_counts}],
+                   dataset: {borderWidth: 0},
+                   stacked: true,
+                   download: true
