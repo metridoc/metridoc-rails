@@ -4,16 +4,7 @@ target_model:          "Borrowdirect::Reshare::Transaction"
 truncate_before_load:  "no"
 sqls:
   - |
-    WITH max_date AS (
-      SELECT
-        COALESCE (
-          MAX(borrower_last_updated),
-          '1970-01-01'
-        ) AS max_date
-      FROM bd_reshare_transactions
-      WHERE lender != 'Unassigned'
-    ),
-    directory_map AS (
+    WITH directory_map AS (
       SELECT
         origin,
         de_name
@@ -47,7 +38,6 @@ sqls:
     	JOIN bd_reshare_status s
     		ON s.st_id = pr.pr_state_fk
     	WHERE pr.pr_is_requester IS TRUE
-        AND pr.last_updated > (SELECT max_date FROM max_date)
     ),
     lender AS (
     	SELECT
@@ -67,7 +57,6 @@ sqls:
       LEFT JOIN bd_reshare_host_lms_locations hll
         ON hll.hll_id = pr.pr_pick_location_fk
     	WHERE pr.pr_is_requester IS FALSE
-        AND pr.last_updated > (SELECT max_date FROM max_date)
     )
     INSERT INTO bd_reshare_transactions (
       borrower,
@@ -136,18 +125,8 @@ sqls:
         EXCLUDED.lender_status
       );
 
-
   - |
-    WITH max_date AS (
-      SELECT
-        COALESCE (
-          MAX(borrower_last_updated),
-          '1970-01-01'
-        ) AS max_date
-      FROM bd_reshare_transactions
-      WHERE lender = 'Unassigned'
-    ),
-    directory_map AS (
+    WITH directory_map AS (
       SELECT
         origin,
         de_name
@@ -160,7 +139,7 @@ sqls:
           'Library Collections and Services Facility'
         )
     ),
-        borrower AS (
+    borrower AS (
     	SELECT
     		dm.de_name AS borrower,
         pr.pr_id,
@@ -182,7 +161,6 @@ sqls:
     		ON s.st_id = pr.pr_state_fk
     	WHERE pr.pr_is_requester IS TRUE
         AND pr.pr_resolved_sup_inst_symbol_fk IS NULL
-        AND pr.last_updated > (SELECT max_date FROM max_date)
         AND st_code IN (
           'REQ_FILLED_LOCALLY', 
           'REQ_END_OF_ROTA', 
