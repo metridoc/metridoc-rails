@@ -1,0 +1,101 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2="Introduction"
+
+  This page is devoted to analysis of trends in the libchats. At the current moment, this includes the use of a predetermined list of codes to capture the meaning of the initial chat questions. The schema of the categories is as follows:
+
+  INSERT TABLE WITH SCHEMA HERE! Or link to pdf!
+
+  Here is an example of how this is useful. Given the following codes:
+
+  %section
+
+  %h2{style: "text-align:center;"}
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Code Type
+        %td{:align => "center"}="Medium"
+        %td{:align => "center"}="Purpose of Search"
+        %td{:align => "center"}="Services"
+        %td{:align => "center"}="Account_Q"
+        %td{:align => "center"}="Top_Searches"
+        %td{:align => "center"}="Subscriptions"
+        %td{:align => "center"}="Newspaper"
+  
+    %tbody
+        %tr
+        -column_title=month_names[m]
+        %td{:align => "center"}="0"
+        %td{:align => "center"}="1"
+        %td{:align => "center"}="2"
+        %td{:align => "center"}="1"
+        %td{:align => "center"}="2"
+        %td{:align => "center"}="2"
+        %td{:align => "center"}="False"
+
+  One might assume that the question is about %strong research or from a researcher about an account for a subscription service that involves citations.
+
+  Here is the actual user question:
+
+  "I would like to gain access to the premium features on Web of Science (e.g. search all citations of a paper). As a CHOP researcher, working under ****, I have access to Penn Libraries. Do I also have access to the Web of Science features? If so can you help me set that up or access them? I have already added my chop email to my Web of Science account but I am not sure how to go from there (it looks like I still have the free account). Thanks!"
+
+  Beyond capturing the problems the user is seeking solutions to in a handful of numbers, this flagging technique solves issues of privacy (i.e.-one does not need to look at the raw chat question to understand what the user is asking). Follow-up work will be done to try to capture: the topics that arise over the course of the full transcript (i.e.-common solutions to problems).
+
+  %ul
+
+  %li
+    %strong The Demographics page
+    This page emphasizes the following variables:
+  
+    Demographics: whether the user is a student, faculty member, alum, or visitor (indicated by true/false columns).
+
+    Categories of questions: breakdown of subcategories relative to their main category.
+  
+    Referrer/Widget: how the libchat user was directed to the libchat.
+
+    %strong The "Sentiment" page
+    This page is devoted to determining whether the chat was useful to the user or not (simply determined by whether the user gives thanks to the librarian or not.) This is not the best indicator of satisfaction (i.e.-the student might just leave after getting an answer, may become disconnected, etc.), but is rather a proxy to gauge whether a solution was found. This "positive sentiment" flag is a "true" or "null"; %strong an empty value should not be taken to be a negative or unsuccessful interaction. This page emphasizes the following variables:
+  
+    Positive Sentiment: as explained above.
+
+    Length of chat: measured in time or in number of messages back and forth.
+
+    Number of chats resulting in tickets.
+  
+    %strong The Statistics page
+    contains trends in the libchat data captured in tabular and plot format for the past five years. This includes such quantities as changes in the types of chats being asked, populations asking the questions, number of chats per year, number of chats per day of the week, how people are finding the chat, and the number of chats resulting in tickets.
+
+  %li
+    %strong Plot Details:
+    For any plot with a legend you may click on a label(/s) to eliminate that data from the plot, showing only the data groups that remain. If you pan your cursor over a plotting element (such as a point or a bar) the value of that element will be displayed.
+
+  User and librarian identities are disaggregated from all of the current qualities and will also be kept separate from any future additions. 
+  
+%hr
+
+%h2> Resources
+
+%h3<= "Dashboards"
+%ul
+   #{link_to "Statistics Dashboard", springshare_libchats_statistics_path}
+   #{link_to "Demographics Dashboard", springshare_libchats_demographics_path}   
+   #{link_to "Sentiment Dashboard", springshare_libchats_sentiment_path}
+      
+%h3 Tables
+%ul
+  - resources.each do |resource|
+    %li= link_to resource.resource_name.human, "/springshare/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+
+%h2 Additional Details
+%ul
+  %li
+    %strong Covid-19:
+    From April 2020 through July 2022 there were closures/restrictions on the libraries due to COVID. 
+  %li
+    %strong Deduplication:
+    Note that it is possible that there exist consecutive chats from an individual, sometimes the chat is interupted due to connectivity issues.

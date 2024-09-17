@@ -13,6 +13,7 @@ class Security::UserRole < ApplicationRecord
     "GateCount",
     "Illiad",
     "Keyserver",
+    "Libchats",
     "Marc",
     "LibraryProfile",
     "SupplementalData",

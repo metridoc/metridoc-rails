@@ -1,0 +1,124 @@
+= javascript_include_tag 'application'
+
+-#Establish the model:
+-libchats=Springshare::Libchats::Flags
+
+-#First make charts for number of chats over the year, per month, chats per day of the week, and chats per time of day.
+
+#Same as Springshare plots (by KG):
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Card Swipes Per Fiscal Year 2018-2023
+    = column_chart libchats.select(:asked_on).map{|u| (u.asked_on + 6.months).year}.tally,
+		   xtitle:"Years",
+		   ytitle: "Number of Chats",
+		   legend: true,
+		   curve: false,
+		   download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Month 2018-2023
+    = line_chart libchats.group_by_month(:timestamp).count,
+		 xtitle: "Month",
+		 ytitle: "Number of Chats",
+		 legend: true,
+		 curve: false,
+		 download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Day of Week 2018-2023
+    =column_chart libchats.group_by_day(:timestamp).count,
+		xtitle:"Day of Week",
+		ytitle: "Number of Chats",
+		legend: true,
+		curve: false,
+                download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Hour of Day 2018-2023
+    = line_chart libchats.group_by_hour_of_day(:timestamp).count,
+		 xtitle: "Hour of Day",
+		 ytitle: "Number of Chats",
+		 legend: true,
+		 curve: false,
+		 download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Referrer Over Time (Yearly)
+    = line_chart  libchats.group(:referrer).group_by_year(:timestamp).count,
+		  xtitle:"Years",
+		  ytitle: "Referrer",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Chats by Affiliation (Yearly)
+    = line_chart  lc_q_cats.group(user_type).group_by_year(:timestamp).count,
+		  xtitle:"Years",
+		  ytitle: "Referrer",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Types of Questions (Yearly)
+    = line_chart  lc_q_cats.group(q_type).group_by_year(:timestamp).count,
+		  xtitle:"Years",
+		  ytitle: "Referrer",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats resulting in Tickets (Yearly)
+    = line_chart libchats.group(:ticket_id).group_by_year(:timestamp).count,
+		  xtitle:"Years",
+		  ytitle: "Number of Chats Resulting in Tickets",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+year_range=(lc_q_cats.minimum("fiscal_year")..lc_q_cats.maximum("fiscal_years")).to_a
+-year_index=(0..year_range.length-1).to_a
+
+-num_dem=(0..demographics_names.length-1).to_a
+
+-visitor_time,alumni_time,faculty_time,student_time=lc_counts(lc_q_cats,"time")
+
+%ul
+%hr
+%section
+  %h2{style: "text-align:center;"} Yearly Chats by Affiliation
+  %p{style: "text-align:center; font-size: 1.25em;"} 
+
+  %h2{style: "text-align:center;"} Van Pelt Monthly Gate Counts
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Affiliation
+         -for n in num_dem
+          %td{:colspan => 2, :align => "center"}="#{demographics_name[n]}"
+      %tbody
+      -for y in year_index
+        %tr
+        -column_title=fiscal_year
+        %td="#{column_title}"
+        -for y in year_index
+          -data_one=visitor_time["{year_range[y]}"]
+          -data_two=alumni_time["{year_range[y]}"]
+          -data_three=faculty_time["{year_range[y]}"]
+          -data_four=student_time["{year_range[y]}"]
+          %td{:align => "center"}="#{data_one}"
+          %td{:align => "center"}="#{data_two}"
+          %td{:align => "center"}="#{data_three}"
+          %td{:align => "center"}="#{data_four}"

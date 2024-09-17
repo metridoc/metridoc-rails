@@ -1,4 +1,4 @@
-class LibChats < ActiveRecord::Migration[7.1]
+class CreateLibchats < ActiveRecord::Migration[7.1]
   def change
     create_table :libchats do |t|
       t.integer :chat_id
