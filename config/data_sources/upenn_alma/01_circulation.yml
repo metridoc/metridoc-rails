@@ -78,11 +78,11 @@ column_mappings:
   "User Primary Identifier": penn_id_number
   "User Id": user_id
   "User Group": user_group
-  "Statistical Category 1": statistical_category_1
-  "Statistical Category 2": statistical_category_2
-  "Statistical Category 3": statistical_category_3
-  "Statistical Category 4": statistical_category_4
-  "Statistical Category 5": statistical_category_5
+  "Statistical Category 01": statistical_category_1
+  "Statistical Category 02": statistical_category_2
+  "Statistical Category 03": statistical_category_3
+  "Statistical Category 04": statistical_category_4
+  "Statistical Category 05": statistical_category_5
 
 # Specify unique keys for the upload
 unique_keys: ["item_loan_id"]
