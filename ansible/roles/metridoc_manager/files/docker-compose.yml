@@ -9,7 +9,7 @@ x-logging: &default-logging
 
 services:
   app:
-    image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-rails/metridoc:${METRIDOC_IMAGE_TAG}
     deploy:
       placement:
         constraints:
@@ -147,7 +147,7 @@ services:
       - gate_count:/tmp/gate_count
       - metridoc_tmp_data_dist:/home/app/webapp/tmp
   delayed_jobs:
-    image: quay.io/upennlibraries/metridoc:${METRIDOC_IMAGE_TAG}
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-rails/metridoc:${METRIDOC_IMAGE_TAG}
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
     deploy:
       replicas: 1

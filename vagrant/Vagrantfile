@@ -80,7 +80,7 @@ Vagrant.configure("2") do |config|
           ansible.galaxy_command = "ansible-galaxy install -r %{role_file} --force"
           ansible.limit = "all"
           ansible.playbook = "../ansible/vagrant.yml"
-          ansible.verbose = false
+          ansible.verbose = true
         end
       end
     end

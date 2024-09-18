@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   python_jobs:
-    image: quay.io/upennlibraries/metridoc-python-jobs:${PYTHON_JOBS_IMAGE_TAG}
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-python-jobs/metridoc_python_jobs:${PYTHON_JOBS_IMAGE_TAG}
     deploy:
       placement:
         constraints:

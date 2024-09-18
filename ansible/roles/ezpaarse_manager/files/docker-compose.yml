@@ -9,7 +9,7 @@ x-logging: &default-logging
 
 services:
   ezpaarse:
-    image: quay.io/upennlibraries/metridoc-ezpaarse:${EZPAARSE_IMAGE_TAG}
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-ezpaarse/metridoc_ezpaarse:${EZPAARSE_IMAGE_TAG}
     environment:
       NODE_ENV: "production"
     deploy:
@@ -37,7 +37,7 @@ services:
     restart: unless-stopped
 
   ezpaarse_db:
-    image: quay.io/upennlibraries/metridoc-ezpaarse-mongodb:${EZPAARSE_MONGODB_IMAGE_TAG}
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-ezpaarse-mongodb/metridoc_ezpaarse_mongodb:${EZPAARSE_MONGODB_IMAGE_TAG}
     command: ["--auth"]
     environment:
       MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/metridoc_ezpaarse_mongodb_root_password

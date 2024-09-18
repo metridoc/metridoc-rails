@@ -96,48 +96,6 @@
           - passlib
           - pyyaml
       tags: deps
-    - name: Create metridoc docker image
-      docker_image:
-        build:
-          path: "/metridoc/"
-          pull: yes
-        force_tag: yes
-        force_source: yes
-        name: "quay.io/upennlibraries/metridoc:local"
-        source: build
-        state: present
-    - name: Create python jobs docker image
-      docker_image:
-        build:
-          path: "/metridoc/ansible/roles/python_jobs_manager/files/src/"
-          pull: yes
-        force_tag: yes
-        force_source: yes
-        name: "quay.io/upennlibraries/metridoc-python-jobs:local"
-        source: build
-        state: present
-    - name: Create ezpaarse docker image
-      docker_image:
-        build:
-          dockerfile: "/metridoc/ansible/roles/ezpaarse_manager/files/ezpaarse/Dockerfile"
-          path: "/metridoc/ansible/roles/ezpaarse_manager/files/ezpaarse/"
-          pull: yes
-        force_tag: yes
-        force_source: yes
-        name: "quay.io/upennlibraries/metridoc-ezpaarse:local"
-        source: build
-        state: present
-    - name: Create ezpaarse mongodb docker image
-      docker_image:
-        build:
-          dockerfile: "/metridoc/ansible/roles/ezpaarse_manager/files/mongodb/Dockerfile"
-          path: "/metridoc/ansible/roles/ezpaarse_manager/files/mongodb/"
-          pull: yes
-        force_tag: yes
-        force_source: yes
-        name: "quay.io/upennlibraries/metridoc-ezpaarse-mongodb:local"
-        source: build
-        state: present
     - import_role:
         name: postgres_primary_manager
     - import_role:
@@ -198,7 +156,7 @@
           command: docker service scale metridoc_python_jobs=1
     - import_role:
         name: jenkins_manager
-    - import_role:
-        name: monitoring_manager
+    #- import_role:
+        #name: monitoring_manager
     - import_role:
         name: shibboleth_sp
