@@ -63,9 +63,6 @@ column_mappings:
   "Classification Code": classification_code
   "LC Classifications.Group1": lc_group1
   "LC Classifications.Group2": lc_group2
-  "LC Classifications.Group3": lc_group3
-  "LC Classifications.Group4": lc_group4
-  "LC Classifications.Group5": lc_group5
   # Dewey classification
   "Dewey Number": dewey_number
   "Dewey Classifications.Group1": dewey_group1
