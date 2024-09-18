@@ -31,9 +31,9 @@
                 ssl:
                   cert: "{{ proxy.ssl.crt.location }}"
                   key: "{{ proxy.ssl.key.location }}"
-                access_log:
-                  - name: main
-                    location: /var/log/nginx/access.log
+                #access_log:
+                  #- name: main
+                    #location: /var/log/nginx/access.log
                 error_log:
                   location: /var/log/nginx/error.log
                   level: warn
