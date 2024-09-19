@@ -88,6 +88,12 @@
   gather_facts: true
   roles:
     - { role: atosatto.docker-swarm }
+  pre_tasks:
+    - name: |
+        "Install specific requests package version"
+        "See: https://github.com/ansible-collections/community.docker/issues/611"
+      ansible.builtin.pip:
+        name: requests<2.29.0
   tasks:
     - name: Install deps
       pip:
