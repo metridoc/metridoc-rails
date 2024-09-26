@@ -61,8 +61,6 @@ column_mappings:
   # LC Classification
   "Permanent Call Number": permanent_call_number
   "Classification Code": classification_code
-  "LC Classifications.Group1": lc_group1
-  "LC Classifications.Group2": lc_group2
   # Dewey classification
   "Dewey Number": dewey_number
   "Dewey Classifications.Group1": dewey_group1
