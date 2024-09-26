@@ -63,7 +63,7 @@ class EzpaarseRunner:
     def _get_ezproxy_log_files(self):
         logging.debug('_get_ezproxy_log_files()')
         return [
-            p.as_posix() for p in self.input_path.glob('ezproxy.log.*.gz')
+            p.as_posix() for p in self.input_path.glob('ezproxy.log_*.gz')
         ]
 
     def _get_secret(self, key, default):
