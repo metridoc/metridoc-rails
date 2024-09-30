@@ -1,10 +1,10 @@
 class CreateLibchats < ActiveRecord::Migration[7.1]
   def change
-    create_table :libchats do |t|
+    create_table :ss_libchats_flags do |t|
       t.integer :chat_id
-      t.string :name
+      t.string :name 
       t.string :contact_info
-      t.string :ip_address
+      t.string :ip_address, null: true
       t.string :browser
       t.string :operating_system
       t.string :user_agent
@@ -27,7 +27,9 @@ class CreateLibchats < ActiveRecord::Migration[7.1]
       t.string :transcript
       t.string :tags
       t.integer :ticket_id
-      t.integer :ra_transaction_ids
+      t.integer :ra_transaction_ids, null: true
+
+      t.index ["chat_id"], unique: true, name: "ss_libchats_chat_id"
     end  
   end
 end  

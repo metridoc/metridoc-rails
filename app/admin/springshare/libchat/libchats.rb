@@ -1,4 +1,4 @@
-ActiveAdmin.register_page "Libchats" do
+ActiveAdmin.register_page "Libchats",
 namespace: :springshare do
   menu false
 

@@ -1,24 +1,105 @@
 module SpringshareHelper
 
-    #define arrays and hashes that are consistently used.
-    def category_names
-    ["Medium", "Type of Search", "Services", "Account_Q", "Top Searches", "Subscription_Issues", "Newspaper"]
+    #Now update the accompanying flags:
+    #for index in (0..ss_libchats_flags.chat_id.length).to_a
+    #    if ss_libchats_flags.user_group=="Undergraduate Student" or ss_libchats_flags.user_group=="Grad Student"
+    #       student_q=1
+    #    elsif ss_libchats_flags.user_group=="Alumni" #double check that this is correct...
+    #       alumni_q=1
+    #    elsif ss_libchats_flags.user_group=="Staff" or ss_libchats_flags.user_group=="Faculty"
+    #       faculty_staff_q=1
+    #    end  
+    #end  
+    #end
+  
+  def self.update_sentiment
+    
+    transcript=ss_libchats_flags.select(:transcript)
+    id=ss_libchats_flags.select(:chat_id)
+    
+    #Need to double check that it's not a librarian:
+    librarians=["Mercy Ayilo", "David Azzolina", "Mary Kate Baker", "Marcella Barnhart", "Alexandra Bartley", "Elizabeth Blake", "Megan Brown", "Michael Carroll", "Melanie Cedrone", "Charles Cobine", "Claire Cornelius","Sarabeth Coyle", "Cynthia Cronin-Kardon", "Mia D'Avanza", "Mety Damte", "Alisha Davis", "Phebe Dickson", "Rory Duffy", "Bethany Falcon", "Gwen Fancy", "Anna-Alexandra Fodde-Reguer", "Brie Gettleson", "Alexandrea Glenn", "Larissa Gordon", "Stephen Hall", "Joe Holub", "Heather Hughes", "Lonya Humphrey", "Madison Jurgens", "Aman Kaur","Sam Kirk", "Connie Kolakowski", "Varvara (Barbara) Kountouzi", "Lippincott Library", "Margy Lindem", "Nicole Mackowiak", "Allison Madar", "Doug McGee", "Rebecca Mendelson", "Nick Okrent", "Kirsten Painter", "Natalie Pendergast", "Mayelin Perez", "Bob Persing", "Jef Pierce", "Dot Porter", "Katie Rawson", "Oliver Seifert-Gram", "Alexandra Servey", "Matthew Sharp", "Erin Sharwell", "Rebecca Stuhr", "Victoria Sun", "Kevin Thomas", "Joanna Thompson", "Matthew Trowbridge", "Liza Vick", "Brian Vivier", "Mia Wells", "Holly Zerbe"]
+  
+    last_q_entry=Array.new
+    trunc_IDS=Array.new
+    sentiment_flag=Array.new
+    
+    #Tokenize into words so can identify where ":" is:
+    for entry in transcript
+      id_sel=transcript.index(entry) 
+      stop=0
+      entry.to_s
+      sep_entry=trunc_entry.split("\n")
+
+      transcript=Array.new
+      
+      for line in sep_entry
+
+        switch=0
+        
+        for name in librarians
+          if name in sep_entry
+             switch=1
+          end
+
+          if switch=1 then next
+          elsif switch=0
+             transcript.push(sep_entry.split(':')[3..])
+          end  
+        end
+      end
+
+      all_compounds=Array.new
+      
+      for user_line in transcript
+  
+          #Produces a hash: but need to average the compound values:
+          user_sentiment=VaderSentimentRuby.polarity_scores(user_line)
+        
+          all_compounds.push(user_sentiment["compound"])
+            
+      end
+
+      avg_compound=all_compouds.sum/all_compounds.length
+      
+      entry_to_edit=ss_libchats_flags.find(chatid: id[id_sel])
+      entry_to_edit.sentiment_score.edit = avg_compound
+      if avg_compound <= -0.05
+         entry_to_edit.sentiment="Negative"
+      elsif avg_compound > -0.05 and avg_compound < 0.05
+         entry_to_edit.sentiment="Neutral"
+      elsif avg_compound >= 0.05 and avg_compound < 0.3
+         entry_to_edit.sentiment="Positive"
+      elsif avg_compound >= 0.3
+         entry_to_edit.sentiment="Ecstatic"
+      entry_to_edit.save
+      end      
+    end  
+  end
+  
+  #define arrays and hashes that are consistently used.
+  def category_names
+    ["Medium", "Type_of_Search", "Services", "Account_Q", "Top_Searches", "Subscription_Issues", "Newspaper"]
   end
   
   def demographics_names
     ["Student", "Faculty", "Visitor", "Alumni"]
+  end
+
+  def sentiment_names
+    ["Negative", "Neutral", "Positive", "Ecstatic"]
   end  
     
     #These first four functions are for the libchats: 
-    def lc_q_cats
+  def lc_q_cats
       
       output_table=Springshare::Libchats::Flags.connection.select_all(
          "SELECT
-           sentiment
-           sentiment_score
-           timestamp
-           message_count
-           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year
+           sentiment,
+           sentiment_score,
+           timestamp,
+           message_count,
+           DATE_PART('year', timestamp + INTERVAL '6 month') AS fiscal_year,
            CASE
                 WHEN visitor_q=='TRUE'
                   THEN 'Visitor'
@@ -28,27 +109,50 @@ module SpringshareHelper
                   THEN 'Student'
                 WHEN faculty_q=='TRUE'
                   THEN 'Faculty'
-           END AS user_type
+           END AS user_type,
            CASE
                 WHEN newspaper=='TRUE'
                   THEN 'Newspaper'
                 WHEN 'Medium' > 0
                   THEN 'Medium'
                 WHEN top_searches > 0
-                  THEN 'top_searches'
+                  THEN 'Top_Searches'
                 WHEN services > 0
-                  THEN 'services'
+                  THEN 'Services'
                 WHEN account_q > 0
-                  THEN 'account'
+                  THEN 'Account'
                 WHEN subscription_issues > 0
-                  THEN 'subscription'
+                  THEN 'Subscription'
                 WHEN type_of_search > 0
-                  THEN 'type_of_search'
+                  THEN 'Type_of_Search'
            END AS q_type
            
-         FROM libchats;")
+         FROM ss_libchats_flags;")
 
       return output_table.to_a
+  end
+
+  def top_referrers
+      
+    output_table=Springshare::Libchats::Flags.connection.select_all(
+         "SELECT
+           timestamp,
+           DATE_PART('year', timestamp + INTERVAL '6 month') AS fiscal_year,
+           CASE
+                WHEN referrer ILIKE 'https://www.library.upenn.edu'
+                  THEN 'Homepage'
+                WHEN referrer LIKE '%Franklin%'
+                  THEN 'Franklin'
+                WHEN referrer LIKE '%guide%' or referrer LIKE '%faq%'
+                  THEN 'Guide'
+                WHEN referrer LIKE '%proxy%'
+                  THEN 'proxy'
+           END AS referrer_type
+           
+         FROM ss_libchats_flags;")
+
+    return output_table.to_a
+    
   end
 
   def filter_chats_dem(params)
@@ -146,6 +250,33 @@ module SpringshareHelper
          end
          return visitor_array,alumni_array,faculty_array,student_array    
       end
+  end 
+
+  def sentiment_bars
+    sentiment_counts=Hash.new
+    for s in sentiment_names
+        sentiment_counts["{s}"]=lc_q_cats.where(sentiment: s).group(:q_type).count
+    end
+    return sentiment_counts
+  end  
+
+  def colormap_vals
+    size_array=Hash.new
+    color_array=Hash.new
+    color_array["Newspaper"]=libchats.where(newspapers: true).count
+    size_array["Newspaper"]=libchats.where(newspapers: true).average(:sentiment_score)
+    for c in category names
+      copy_table=lc_q_cats.select{|h| h["q_type"]==c}
+      unique_vals=copy_table.pluck(c.to_sym).uniq
+      color_array["{c}"]=copy_table.where(c.to_sym > 0).count
+      size_array["{c}"]=copy_table.where(c.to_sym > 0).average(:sentiment_score)
+      for u in unique_vals
+        hash_label=c+"_"+u.to_s
+        color_array["{hash_label}"]=copy_table.where(c.to_sym u).count
+        size_array["{hash_label}"]=copy_table.where(c.to_sym u).average(:sentiment_score) 
+      end
+    end  
+    return size_array,color_array
   end
   
   # Function to calculate all the available fiscal years
