@@ -1,6 +1,21 @@
 = javascript_include_tag 'application'
 
-- fiscal_year = 2024
+- fiscal_year_range = ezproxy_fiscal_years(Ezproxy::EzpaarseHourlyUsage, :fiscal_year)
+
+-# Form to update filters on page
+%center
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(fiscal_year_range,
+              params[:fiscal_year])
+        %td{rowspan:0}= submit_tag "Filter"
+
+- fiscal_year = params[:fiscal_year] || fiscal_year_range.first
 - model = Ezproxy::EzpaarseHourlyUsage.where(:fiscal_year => fiscal_year)
 
 %section
@@ -13,6 +28,13 @@
       The ezPAARSE program does not translate every single log recorded by EZProxy.
     %li
       A session is counted at the first instance of the session identifier in the logs.
+    - if fiscal_year == "2025"
+      %li 
+        Due to issues with data flow after an EZProxy Upgrade the following data is missing:
+        %ul 
+          %li July 15, 2024
+          %li July 29, 2024 through August 17, 2024
+          %li Inconsistent coverage through Mid-September
 
 %hr
 %section
