@@ -4,32 +4,10 @@ target_model: "Ezproxy::EzpaarseLog"
 target_adapter: "csv"
 truncate_before_load: "no"
 file_name: "ezpaarse_out.csv"
-#target_mappings:
-#  datetime: datetime
-#  login: login
-#  platform: platform
-#  platform_name: platform_name
-#  rtype: rtype
-#  mime: mime
-#  print_identifier: print_identifier
-#  online_identifier: online_identifier
-#  title_id: title_id
-#  doi: doi
-#  publication_title: publication_title
-#  publication_date: publication_date
-#  unitid: unitid
-#  domain: domain
-#  on_campus: on_campus
-#  geoip_country: geoip-country
-#  geoip_region: geoip-region
-#  geoip_city: geoip-city
-#  geoip_latitude: geoip-latitude
-#  geoip_longitude: geoip-longitude
-#  host: host
-#  method: method
-#  url: url
-#  status: status
-#  size: size
-#  referer: referer
-#  session_id: session-id
-#  resource_name: resource-name
+
+checksum_index:
+  - login
+  - session_id
+  - url
+  - referer
+  - size

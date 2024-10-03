@@ -94,9 +94,36 @@ class EzpaarseRunner:
         self.log_step('Copy file to temp dir', source_path)
         target_path = shutil.copy(source_path.as_posix(), temp_dir.as_posix())
         target_path = Path(target_path)
-        logging.debug('unzipping %s' % temp_dir.joinpath(source_path.name))
-        completed_process = subprocess.run(['gunzip', temp_dir.joinpath(source_path.name).as_posix()])
+        # Check if the file needs to be unzipped
+        logging.debug('checking file type')
+        file_type = subprocess.run(
+            [
+                'file --mime-type -b', 
+                temp_dir.joinpath(source_path.name).as_posix()
+            ],
+            capture_output = True
+        )
+
+        # If the file is a gzip file unzip the file
+        if file_type.stdout == 'application/gzip':
+            logging.debug('unzipping %s' % temp_dir.joinpath(source_path.name))
+            completed_process = subprocess.run(
+                [
+                    'gunzip', 
+                    temp_dir.joinpath(source_path.name).as_posix()
+                ]
+            )
+        else:
+            logging.debug('renaming %s' % temp_dir.joinpath(source_path.name))
+            completed_process = subprocess.run(
+                [
+                    'mv',
+                    temp_dir.joinpath(source_path.name).as_posix(),
+                    target_path.joinpath(target_path.parent, target_path.stem)
+                ]
+            )
         logging.debug(completed_process)
+        # Return the name of the output file
         return target_path.joinpath(target_path.parent, target_path.stem)
 
     def get_output_file_name(self):

@@ -19,11 +19,11 @@ module Import
         return @log_job_execution_step if @log_job_execution_step.present?
 
         @log_job_execution_step = log_job_execution.job_execution_steps.create!(
-                                                          step_name: task_config["load_sequence"],
-                                                          step_yml: task_config,
-                                                          started_at: Time.now,
-                                                          status: 'running'
-                                                    )
+          step_name: task_config["load_sequence"],
+          step_yml: task_config,
+          started_at: Time.now,
+          status: 'running'
+        )
       end
 
       def global_config
@@ -93,7 +93,7 @@ module Import
 
         return return_value
 
-        rescue => ex
+      rescue => ex
         log "Error => [#{ex.message}]"
         log_job_execution_step.set_status!("failed")
         return false
@@ -121,6 +121,17 @@ module Import
 
       def has_institution_id?
         class_name.has_attribute?('institution_id')
+      end
+
+      # Extract the constructor for a checksum index
+      def checksum_index 
+        return @checksum_index if @checksum_index.present?
+        @checksum_index = task_config['checksum_index']
+      end
+
+      # Query the existance of a checksum index
+      def has_checksum_index?
+        task_config.has_key?('checksum_index')
       end
 
       def has_legacy_flag?
@@ -155,8 +166,15 @@ module Import
           end
         end
 
-
-        class_name.where(filters).delete_all
+        # If there are no filters, do a true truncate of the table
+        if filters.empty? 
+          ActiveRecord::Base.connection.execute(
+            "TRUNCATE #{class_name.table_name} RESTART IDENTITY"
+          )
+        else
+          # Otherwise, only delete the records selected by the filters
+          class_name.where(filters).delete_all
+        end
       end
 
       def sqls
@@ -323,6 +341,17 @@ module Import
               # Add an institution identifier to the attributes list if necessary
               attributes.merge!(institution_id: institution_id) if has_institution_id?
 
+              # Add a checksum column if one is needed.
+              # This creates an md5 hash based on a list of columns 
+              # provided in the configuration file.
+              if has_checksum_index?
+                checksum_columns = checksum_index.map{ 
+                  |ci| attributes.fetch(ci, nil) 
+                }
+                val = Digest::MD5.hexdigest(checksum_columns.join())
+                attributes.merge!(checksum_index: val)
+              end
+              
               if has_ignored_columns
                 # Uploads with ignored columns must be made explicitly via SQL
                 # Pass the hash object rather than a model
