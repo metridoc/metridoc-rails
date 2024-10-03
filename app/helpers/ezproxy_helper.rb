@@ -168,3 +168,9 @@ module EzproxyHelper
   end
 
 end
+  # Function to calculate all the available fiscal years
+  def ezproxy_fiscal_years(model, column)
+    model.maximum(column).downto(
+      model.minimum(column)
+    )
+  end
