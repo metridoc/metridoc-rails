@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_02_184127) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -720,7 +720,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
 
   create_table "ezpaarse_hourly_usages", force: :cascade do |t|
     t.integer "fiscal_year"
-    t.datetime "date", precision: nil
+    t.date "date"
     t.string "day_of_week"
     t.integer "dow_index"
     t.integer "hour_of_day"
@@ -747,7 +747,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
     t.string "title_id"
     t.string "doi"
     t.string "publication_title"
-    t.date "publication_date"
+    t.string "publication_date"
     t.string "unitid"
     t.string "domain"
     t.boolean "on_campus"
@@ -776,6 +776,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
     t.string "type"
     t.string "subject"
     t.string "license"
+    t.string "checksum_index"
+    t.index ["datetime", "checksum_index"], name: "ezpaarse_logs_index", unique: true
     t.index ["datetime"], name: "index_ezpaarse_logs_on_datetime"
     t.index ["host"], name: "index_ezpaarse_logs_on_host"
     t.index ["mime"], name: "index_ezpaarse_logs_on_mime"
