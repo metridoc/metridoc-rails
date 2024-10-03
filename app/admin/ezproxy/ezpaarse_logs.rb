@@ -42,4 +42,23 @@ namespace: :ezproxy do
   :session_id,
   :resource_name
 
+
+  index title: "EZPaarse Logs" do
+
+    id_column
+    # Loop through the columns and truncate the bib record for the index only
+    self.resource_class.column_names.each do |c|
+      next if c == "id"
+
+      if ["url", "referer"].include? c
+        column c.to_sym do |pr|
+          pr[c].truncate 50 unless pr[c].nil?
+        end
+      else 
+        column c.to_sym
+      end
+
+    end
+    actions
+  end
 end
