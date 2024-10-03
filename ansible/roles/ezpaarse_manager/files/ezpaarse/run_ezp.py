@@ -98,14 +98,16 @@ class EzpaarseRunner:
         logging.debug('checking file type')
         file_type = subprocess.run(
             [
-                'file --mime-type -b', 
+                'file',
+                '--mime-type', 
+                '-b', 
                 temp_dir.joinpath(source_path.name).as_posix()
             ],
-            capture_output = True
+            stdout = subprocess.PIPE
         )
 
         # If the file is a gzip file unzip the file
-        if file_type.stdout == 'application/gzip':
+        if file_type.stdout == b'application/gzip\n':
             logging.debug('unzipping %s' % temp_dir.joinpath(source_path.name))
             completed_process = subprocess.run(
                 [
