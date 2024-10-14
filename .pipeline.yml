@@ -119,13 +119,12 @@ deploy_staging:
   extends:
     - .deploy
   variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-prod
+    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-staging
   environment:
     name: ${ENVIRONMENT_NAME}
     url: metridoc-staging.library.upenn.int
   needs:
-    - copy_docker_ui_images
-    - copy_docker_api_images
+    - copy_docker_metridoc_images
   rules:
     - if: $CI_COMMIT_REF_NAME == "staging"
   tags:
