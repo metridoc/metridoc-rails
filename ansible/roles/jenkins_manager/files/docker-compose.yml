@@ -10,7 +10,7 @@ x-logging:
 
 services:
   jenkins:
-    image: quay.io/upennlibraries/jenkins_docker_client:${JENKINS_IMAGE_TAG}
+    image: gitlab.library.upenn.edu/metridoc1/metridoc_jenkins/metridoc_jenkins:${JENKINS_IMAGE_TAG}
     deploy:
       placement:
         constraints:

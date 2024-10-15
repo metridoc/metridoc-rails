@@ -53,7 +53,7 @@
     state: present
   changed_when: false
   environment: "{{ docker_stack_env }}"
-  no_log: true
+  no_log: false
   tags:
     - docker
     - ezpaarse
