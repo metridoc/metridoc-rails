@@ -126,7 +126,7 @@ deploy_staging:
   needs:
     - copy_docker_metridoc_images
   rules:
-    - if: $CI_COMMIT_REF_NAME == "staging"
+    - if: $CI_COMMIT_REF_NAME == "gitlab-staging"
   tags:
     - deploy
 
