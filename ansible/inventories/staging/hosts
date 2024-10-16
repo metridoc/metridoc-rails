@@ -1,5 +1,5 @@
 [swarm_managers]
-mdoc-dev.library.upenn.int
+metridoc-staging.library.upenn.int
 
 [swarm_workers]
-mdoc-dev.library.upenn.int
+metridoc-staging.library.upenn.int

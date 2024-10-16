@@ -1,6 +1,7 @@
 ---
 include:
   - project: devops/gitlab/ci-templates/deploy
+    ref: 2.0.0
     file: .hashicorp_vault.yml
   - project: devops/gitlab/ci-templates/docker
     ref: 1.0.0
@@ -13,11 +14,6 @@ include:
     ref: master
     file:
       - .trivy_container_scanning.yml
-  - project: devops/gitlab/ci-templates/general
-    file:
-      - .install_hashicorp_vault.yml
-      - .vault_jwt_auth.yml
-        #- template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
 
 stages:
   - build_and_push:metridoc_image
@@ -31,18 +27,12 @@ build_and_push_metridoc_image:
   stage: build_and_push:metridoc_image
   extends:
     - .build_and_push_docker_images
-  before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-    - !reference [.install_hashicorp_vault, before_script]
-    - !reference [.vault_jwt_auth, before_script]
-  after_script:
-    - docker logout ${CI_REGISTRY}
   environment:
     name: ${ENVIRONMENT_NAME}
   parallel:
     matrix:
-      - RUNNER: build-arm
-        DOCKER_BUILD_PLATFORM: linux/arm64
+      #- RUNNER: build-arm
+        #DOCKER_BUILD_PLATFORM: linux/arm64
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: linux/amd64
   variables:
@@ -111,7 +101,6 @@ remove_tmp_registry:
   tags:
     - build
 # -- End - remove tmp registry repository
-
 
 # Deploy staging
 deploy_staging:
