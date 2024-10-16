@@ -114,6 +114,16 @@ deploy_staging:
     url: metridoc-staging.library.upenn.int
   needs:
     - copy_docker_metridoc_images
+  script:
+    - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
+    - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
+      
+    # Install ansible requirements
+    - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
+
+    # Run ansible playbook
+    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "ansible_host=${DEPLOY_HOST}" -e "image_tag=${IMAGE_TAG}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
+
   rules:
     - if: $CI_COMMIT_REF_NAME == "gitlab-staging"
   tags:
