@@ -13,7 +13,7 @@ docker_swarm_manager:
   hosts:
     swarm-01:
       swarm_labels:
-        - "postgres_primary_manager"
+        - "postgres_primary"
         - "postgres_replica_manager"
         - "ezpaarse_manager"
         - "shibboleth_sp"
