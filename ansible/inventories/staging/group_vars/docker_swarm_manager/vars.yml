@@ -25,13 +25,13 @@ saml_first_name_attribute: "{{ vault_saml_first_name_attribute }}"
 saml_last_name_attribute: "{{ vault_saml_last_name_attribute }}"
 saml_logout_url: "{{ vault_saml_logout_url }}"
 
-alertmanager_1_swarm_node: mdoc-dev
-alertmanager_2_swarm_node: mdoc-dev
-ezpaarse_swarm_node: mdoc-dev
-jenkins_swarm_node: mdoc-dev
-metridoc_swarm_node: mdoc-dev
-postgres_primary_swarm_node: mdoc-dev
-postgres_replica_swarm_node: mdoc-dev
+alertmanager_1_swarm_node: metridoc-staging
+alertmanager_2_swarm_node: metridoc-staging
+ezpaarse_swarm_node: metridoc-staging
+jenkins_swarm_node: metridoc-staging
+metridoc_swarm_node: metridoc-staging
+postgres_primary_swarm_node: metridoc-staging
+postgres_replica_swarm_node: metridoc-staging
 
 # Docker config / secret versions
 alertmanager_config_version: v2
@@ -72,7 +72,7 @@ docker_stack_env:
   DATABASE_SUBNET: "{{ database_subnet }}"
   EZPAARSE_IMAGE_TAG: "{{ metridoc_image_tag }}"
   EZPAARSE_MONGODB_IMAGE_TAG: "{{ metridoc_image_tag }}"
-  GF_SERVER_ROOT_URL: http://mdoc-dev.library.upenn.int:3000
+  GF_SERVER_ROOT_URL: http://metridoc-staging.library.upenn.int:3000
   GF_SMTP_HOST: "{{ vault_grafana_smtp_host }}"
   JENKINS_IMAGE_TAG: lts-alpine
   MAILER_DEFAULT_FROM: "{{ vault_mailer_default_from }}"
