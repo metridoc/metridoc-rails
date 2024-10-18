@@ -1,4 +1,4 @@
-[swarm_managers]
+[docker_swarm_manager]
 metridoc01.library.upenn.int
 
 [swarm_workers]

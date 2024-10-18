@@ -8,7 +8,7 @@
     become: no
     gather_facts: no
 
-- hosts: swarm_managers
+- hosts: docker_swarm_manager
   gather_facts: no
   tasks:
     - name: update UID and GID in delayed_job containers

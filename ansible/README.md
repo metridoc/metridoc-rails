@@ -136,10 +136,10 @@ environment:
 #...
 ```
 
-4. Open the [Vault-encrypted production variables file](inventories/production/group_vars/swarm_managers/vault.yml) with local Vault credentials:
+4. Open the [Vault-encrypted production variables file](inventories/production/group_vars/docker_swarm_manager/vault.yml) with local Vault credentials:
 
 ```#bash
-ansible-vault edit inventories/production/group_vars/swarm_managers/vault.yml
+ansible-vault edit inventories/production/group_vars/docker_swarm_manager/vault.yml
 ```
 
 5. Add the secret variables corresponding to the earlier environment variables to the Vault-encrypted file:
@@ -157,7 +157,7 @@ vault_institution_service_mssql_uid: 'x'
 6. Save the file, commit it, and push it:
 
 ```#bash
-git add ansible/inventories/production/group_vars/swarm_managers
+git add ansible/inventories/production/group_vars/docker_swarm_manager
 git commit
 git push
 ```

@@ -9,7 +9,7 @@ docker_engine:
     vars:
       ansible_python_interpreter: "/usr/bin/python3"
 
-swarm_managers:
+docker_swarm_manager:
   hosts:
     swarm-01:
       swarm_labels:

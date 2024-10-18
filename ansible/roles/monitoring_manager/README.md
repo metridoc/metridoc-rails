@@ -31,6 +31,6 @@ Role Variables
 Example Playbook
 ----------------
 
-    - hosts: swarm_managers
+    - hosts: docker_swarm_manager
       roles:
          - monitoring_manager

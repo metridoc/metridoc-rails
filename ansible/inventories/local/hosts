@@ -1,4 +1,4 @@
-[swarm_managers]
+[docker_swarm_manager]
 localhost
 
 [swarm_workers]
