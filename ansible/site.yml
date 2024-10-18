@@ -1,15 +1,17 @@
 ---
 - name: Install deps
-  ansible.builtin.pip:
-    name:
-    - requests<2.29.0
-    - jsondiff
-    - passlib
-    - pyyaml
+  tasks:
+  - ansible.builtin.pip:
+      name:
+        - requests<2.29.0
+        - jsondiff
+        - passlib
+        - pyyaml
 
 - name: Provision Docker Swarm Cluster
-  ansible.builtin.import_role:
-    name: atosatto.docker-swarm
+  tasks:
+  - ansible.builtin.import_role:
+      name: atosatto.docker-swarm
 
 - name: Deploy application
   hosts: docker_swarm_manager
