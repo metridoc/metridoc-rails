@@ -10,8 +10,8 @@
 
 - name: Provision Docker Swarm Cluster
   tasks:
-  - ansible.builtin.import_role:
-      name: atosatto.docker-swarm
+    - ansible.builtin.import_role:
+        name: atosatto.docker-swarm
 
 - name: Deploy application
   hosts: docker_swarm_manager
