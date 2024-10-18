@@ -1,6 +1,6 @@
 ---
 - name: Install deps
-  hosts: docker_swarm_manager
+  hosts: swarm_managers
   tasks:
   - ansible.builtin.pip:
       name:
@@ -10,14 +10,14 @@
         - pyyaml
 
 - name: Provision Docker Swarm Cluster
-  hosts: docker_swarm_manager
+  hosts: swarm_managers
   become: true
   tasks:
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
 
 - name: Deploy application
-  hosts: docker_swarm_manager
+  hosts: swarm_managers
   become: true
   gather_facts: true
   tasks:
