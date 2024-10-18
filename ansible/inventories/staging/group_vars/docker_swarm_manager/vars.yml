@@ -70,19 +70,19 @@ docker_stack_env:
   APP_USER_GID: "{{ rails_app_user_gid }}"
   APP_USER_UID: "{{ rails_app_user_uid }}"
   DATABASE_SUBNET: "{{ database_subnet }}"
-  EZPAARSE_IMAGE_TAG: "{{ metridoc_image_tag }}"
-  EZPAARSE_MONGODB_IMAGE_TAG: "{{ metridoc_image_tag }}"
+  EZPAARSE_IMAGE_TAG: "main"
+  EZPAARSE_MONGODB_IMAGE_TAG: "main"
   GF_SERVER_ROOT_URL: http://metridoc-staging.library.upenn.int:3000
   GF_SMTP_HOST: "{{ vault_grafana_smtp_host }}"
   JENKINS_IMAGE_TAG: lts-alpine
   MAILER_DEFAULT_FROM: "{{ vault_mailer_default_from }}"
   MAILER_DOMAIN: "{{ vault_mailer_domain }}"
   MAILER_HOST: "{{ vault_mailer_host }}"
-  METRIDOC_IMAGE_TAG: "{{ metridoc_image_tag }}"
+  METRIDOC_IMAGE_TAG: "staging"
   METRIDOC_REPLICAS: 2
   MONITORING_SUBNET: "{{ monitoring_subnet }}"
   PROMETHEUS_REPLICAS: 1
-  PYTHON_JOBS_IMAGE_TAG: "{{ metridoc_image_tag }}"
+  PYTHON_JOBS_IMAGE_TAG: "main"
   PYTHON_JOBS_REPLICAS: 1
   RAILS_ENV: production
 
