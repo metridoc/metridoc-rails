@@ -3,3 +3,8 @@ roles:
   - name: shibboleth_sp
     src: https://github.com/upenn-libraries/ansible_shibboleth_sp.git
     scm: git
+
+  - name: atosatto.docker-swarm
+    src: https://gitlab.library.upenn.edu/devops/ansible/ansible-dockerswarm.git
+    scm: git
+    version: master
