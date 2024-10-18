@@ -1,17 +1,7 @@
-staging:
-  hosts:
-    swarm-01:
-      ansible_host: metridoc-staging.library.upenn.int
-
-docker_engine:
-  children:
-    staging:
-    vars:
-      ansible_python_interpreter: "/usr/bin/python3"
-
 docker_swarm_manager:
   hosts:
     swarm-01:
+      ansible_host: metridoc-staging.library.upenn.int
       swarm_labels:
         - "postgres_primary"
         - "postgres_replica_manager"

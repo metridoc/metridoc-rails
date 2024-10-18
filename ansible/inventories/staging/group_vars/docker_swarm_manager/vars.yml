@@ -25,13 +25,13 @@ saml_first_name_attribute: "{{ vault_saml_first_name_attribute }}"
 saml_last_name_attribute: "{{ vault_saml_last_name_attribute }}"
 saml_logout_url: "{{ vault_saml_logout_url }}"
 
-alertmanager_1_swarm_node: metridoc-staging
-alertmanager_2_swarm_node: metridoc-staging
-ezpaarse_swarm_node: metridoc-staging
-jenkins_swarm_node: metridoc-staging
-metridoc_swarm_node: metridoc-staging
-postgres_primary_swarm_node: metridoc-staging
-postgres_replica_swarm_node: metridoc-staging
+alertmanager_1_swarm_node: metridoc-stg01
+alertmanager_2_swarm_node: metridoc-stg01
+ezpaarse_swarm_node: metridoc-stg01
+jenkins_swarm_node: metridoc-stg01
+metridoc_swarm_node: metridoc-stg01
+postgres_primary_swarm_node: metridoc-stg01
+postgres_replica_swarm_node: metridoc-stg01
 
 # Docker config / secret versions
 alertmanager_config_version: v2
