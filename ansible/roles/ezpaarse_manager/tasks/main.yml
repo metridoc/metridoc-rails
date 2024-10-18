@@ -1,4 +1,21 @@
 ---
+- name: create nfs volume for ezpaarse_input
+  docker_volume:
+    name: ezpaarse_input_dist
+    driver: local
+    driver_options:
+      type: nfs
+      o: "{{ 'addr=' ~ ezpaarse_nfs_input_volume_address ~ ',rw' }}"
+      device: ":{{ ezpaarse_nfs_input_volume_device }}"
+    state: present
+  tags: ezpaarse_input_volume
+  
+- name: create volume for ezpaarse_output
+  docker_volume:
+    name: ezpaarse_output
+    state: present
+  tags: ezpaarse_output_volume
+
 - name: Create ezpaarse_jobs config directory
   file:
     path: "{{ config_dir }}/ezpaarse"

@@ -162,7 +162,7 @@
           command: docker service scale metridoc_python_jobs=1
     - import_role:
         name: jenkins_manager
-    #- import_role:
-        #name: monitoring_manager
+    - import_role:
+        name: monitoring_manager
     - import_role:
         name: shibboleth_sp

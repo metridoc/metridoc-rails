@@ -1,5 +1,0 @@
----
-- hosts: swarm_managers
-  become: yes
-  roles:
-    - postgres_replica_manager

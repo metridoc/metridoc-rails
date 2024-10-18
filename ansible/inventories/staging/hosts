@@ -1,5 +1,23 @@
-[swarm_managers]
-metridoc-staging.library.upenn.int
+staging:
+  hosts:
+    swarm-01:
+      ansible_host: metridoc-staging.library.upenn.int
 
-[swarm_workers]
-metridoc-staging.library.upenn.int
+docker_engine:
+  children:
+    staging:
+    vars:
+      ansible_python_interpreter: "/usr/bin/python3"
+
+docker_swarm_manager:
+  hosts:
+    swarm-01:
+      swarm_labels:
+        - "postgres_primary_manager"
+        - "postgres_replica_manager"
+        - "ezpaarse_manager"
+        - "shibboleth_sp"
+        - "metridoc_manager"
+        - "python_jobs_manager"
+        - "jenkins_manager"
+        - "monitoring_manager"

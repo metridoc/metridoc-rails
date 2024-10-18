@@ -1,6 +1,0 @@
----
-- hosts: swarm_managers
-  become: yes
-  tasks:
-    - include: "roles/ezpaarse_manager/tasks/ezpaarse_input_volume.yml"
-    - include: "roles/ezpaarse_manager/tasks/ezpaarse_output_volume.yml"
