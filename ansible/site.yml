@@ -1,5 +1,5 @@
 ---
-- name: 'Install deps with default python interpreter: python3'
+- name: Install deps
   ansible.builtin.pip:
     name:
     - requests<2.29.0
