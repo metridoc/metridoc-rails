@@ -15,6 +15,13 @@
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
 
+- name: Install requests dependency
+  hosts: swarm_managers
+  tasks:
+  - ansible.builtin.pip:
+      name:
+        - requests==2.31.0
+
 - name: Deploy application
   hosts: docker_swarm_manager
   become: true
