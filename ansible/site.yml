@@ -4,7 +4,7 @@
   tasks:
   - ansible.builtin.pip:
       name:
-        - requests<2.29.0
+        - requests==2.31.0
         - jsondiff
         - passlib
         - pyyaml
