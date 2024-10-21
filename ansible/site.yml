@@ -1,16 +1,15 @@
 ---
 - name: Install deps
-  hosts: docker_swarm_manager
+  hosts: swarm_managers
   tasks:
   - ansible.builtin.pip:
       name:
-        - requests==2.31.0
         - jsondiff
         - passlib
         - pyyaml
 
 - name: Provision Docker Swarm Cluster
-  hosts: docker_swarm_manager
+  hosts: swarm_managers
   become: true
   tasks:
     - ansible.builtin.import_role:
