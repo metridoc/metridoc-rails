@@ -7,6 +7,8 @@ ezpaarse_mongodb_username: "{{ vault_ezpaarse_mongodb_username }}"
 ezpaarse_mongodb_root_password: "{{ vault_ezpaarse_mongodb_root_password }}"
 ezpaarse_mongodb_root_username: "{{ vault_ezpaarse_mongodb_root_username }}"
 ezpaarse_nfs_input_volume_address: "{{ vault_ezpaarse_nfs_input_volume_address }}"
+nfs_metridoc_tmp_address: '{{ vault_nfs_metridoc_tmp_address }}'
+nfs_metridoc_tmp_device: '{{ vault_nfs_metridoc_tmp_device }}'
 ezpaarse_nfs_input_volume_device: "{{ vault_ezpaarse_nfs_input_volume_device }}"
 grafana_admin_password: "{{ vault_grafana_admin_password }}"
 grafana_database_password: "{{ vault_grafana_database_password }}"
