@@ -15,8 +15,9 @@
   hosts: docker_swarm_manager
   become: true
   pre_tasks:
-    script:
-      - yum install -y nfs-utils
+    - name: Install nfs client
+      script:
+        - yum install -y nfs-utils
   tasks:
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
