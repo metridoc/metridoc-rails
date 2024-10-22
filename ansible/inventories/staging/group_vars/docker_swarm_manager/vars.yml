@@ -80,7 +80,7 @@ docker_stack_env:
   MAILER_DEFAULT_FROM: "{{ vault_mailer_default_from }}"
   MAILER_DOMAIN: "{{ vault_mailer_domain }}"
   MAILER_HOST: "{{ vault_mailer_host }}"
-  METRIDOC_IMAGE_TAG: "staging"
+  METRIDOC_IMAGE_TAG: "{{ image_tag }}"
   METRIDOC_REPLICAS: 2
   MONITORING_SUBNET: "{{ monitoring_subnet }}"
   PROMETHEUS_REPLICAS: 1

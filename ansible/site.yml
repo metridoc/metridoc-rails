@@ -14,6 +14,9 @@
 - name: Provision Docker Swarm Cluster
   hosts: docker_swarm_manager
   become: true
+  pre_tasks:
+    script:
+      - yum install -y nfs-utils
   tasks:
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm

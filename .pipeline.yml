@@ -107,8 +107,6 @@ deploy_staging:
   stage: deploy
   extends:
     - .deploy
-  variables:
-    IMAGE_TAG: ${CI_COMMIT_SHORT_SHA}-staging
   environment:
     name: ${ENVIRONMENT_NAME}
     url: metridoc-staging.library.upenn.int
@@ -122,7 +120,7 @@ deploy_staging:
     - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
 
     # Run ansible playbook
-    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "ansible_host=${DEPLOY_HOST}" -e "image_tag=${IMAGE_TAG}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
+    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "ansible_host=${DEPLOY_HOST}" -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
 
   rules:
     - if: $CI_COMMIT_REF_NAME == "gitlab-staging"
