@@ -13,6 +13,11 @@ namespace: :springshare do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
+  preserve_default_filters!
+  Springshare::Libanswers::Ticket.superadmin_columns.each do |c|
+    remove_filter c.to_sym
+  end
+
   # Set the title on the index page
   index title: "Tickets", download_links: [:csv] do
 
