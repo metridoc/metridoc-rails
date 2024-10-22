@@ -107,7 +107,7 @@ en:
     upenn:
         upenn_menu: "Institutional Data"
     springshare:
-        springshare_menu: "LibApps Data"
+        springshare_menu: "SpringShare LibApps Data"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"
@@ -158,7 +158,7 @@ en:
       alma: "Alma Circulation"
       upennalma: "Alma Demographics"
       ipeds: "IPEDS Data"
-      springshare: "LibApps Data"
+      springshare: "SpringShare LibApps Data"
       ezproxy: "EZProxy Logs"
       librarystaff: "Library Staff Census"
       googleanalytics: "Google Analytics- Universal Analytics"
