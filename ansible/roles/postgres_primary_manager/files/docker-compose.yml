@@ -53,6 +53,7 @@ networks:
   database:
     driver: overlay
     name: database
+    attachable: true
 
 secrets:
   postgres_database_password:
