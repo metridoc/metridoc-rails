@@ -190,10 +190,7 @@ networks:
   app:
     driver: overlay
   database:
-    driver: overlay
-    ipam:
-      config:
-        - subnet: ${DATABASE_SUBNET}
+    external: true
   shibboleth:
     external: true
 

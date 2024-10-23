@@ -41,10 +41,7 @@ services:
 
 networks:
   database:
-    driver: overlay
-    ipam:
-      config:
-        - subnet: ${DATABASE_SUBNET}
+    external: true
 
 secrets:
   metridoc_python_jobs_database_secret:

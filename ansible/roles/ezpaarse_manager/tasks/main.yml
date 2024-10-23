@@ -3,6 +3,7 @@
   community.docker.docker_volume:
     name: ezpaarse_input_dist
     driver: local
+    debug: true
     driver_options:
       type: nfs
       o: "{{ 'addr=' ~ ezpaarse_nfs_input_volume_address ~ ',rw' }}"

@@ -92,10 +92,10 @@ local   replication     all                                     trust
 host    replication     all             127.0.0.1/32            trust
 host    replication     all             ::1/128                 trust
 # Replication over overlay network
-host    replication     replication     {{ database_subnet }}   scram-sha-256
+host    replication     replication     samenet   scram-sha-256
 # Monitoring over overlay network
-host    postgres        monitoring      {{ database_subnet }}   md5
+host    postgres        monitoring      samenet   md5
 # Grafana over overlay network
-host    grafana         grafana         {{ database_subnet }}   md5
+host    grafana         grafana         samenet   md5
 # Database access over overlay network
-host    postgres        postgres        {{ database_subnet }}   md5
+host    postgres        postgres        samenet   md5

@@ -56,10 +56,7 @@ configs:
 
 networks:
   database:
-    driver: overlay
-    ipam:
-      config:
-        - subnet: ${DATABASE_SUBNET}
+    external: true
 
 secrets:
   postgres_database_password:

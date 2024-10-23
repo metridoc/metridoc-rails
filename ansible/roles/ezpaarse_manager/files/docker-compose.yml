@@ -57,10 +57,7 @@ services:
 
 networks:
   database:
-    driver: overlay
-    ipam:
-      config:
-        - subnet: ${DATABASE_SUBNET}
+    external: true
   ezpaarse:
     driver: overlay
 

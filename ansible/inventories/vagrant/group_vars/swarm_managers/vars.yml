@@ -1,7 +1,6 @@
 ---
 config_dir: /opt/metridoc
 alertmanager_slack_api_url: "http://localhost"
-database_subnet: 10.0.2.0/24
 ezpaarse_mongodb_password: "{{ vault_ezpaarse_mongodb_password }}"
 ezpaarse_mongodb_username: "{{ vault_ezpaarse_mongodb_username }}"
 ezpaarse_mongodb_root_password: "{{ vault_ezpaarse_mongodb_root_password }}"
@@ -76,7 +75,6 @@ docker_stack_env:
   ALERTMANAGER_2_EXTERNAL_URL: http://{{ alertmanager_2_swarm_node }}.library.upenn.int:9094
   APP_USER_GID: "{{ rails_app_user_gid }}"
   APP_USER_UID: "{{ rails_app_user_uid }}"
-  DATABASE_SUBNET: "{{ database_subnet }}"
   EZPAARSE_IMAGE_TAG: "main"
   EZPAARSE_MONGODB_IMAGE_TAG: "main"
   GF_SERVER_ROOT_URL: http://metridoc-staging.library.upenn.int:3000
