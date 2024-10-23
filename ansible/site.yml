@@ -16,8 +16,9 @@
   become: true
   pre_tasks:
     - name: Install nfs client
-      ansible.builtin.script:
-        cmd: yum install -y nfs-utils
+      ansible.builtin.package:
+        name: nfs-utils
+        state: present
   tasks:
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
