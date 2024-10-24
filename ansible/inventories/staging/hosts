@@ -1,13 +1,18 @@
 docker_swarm_manager:
   hosts:
     swarm-01:
-      ansible_host: metridoc-staging.library.upenn.int
+      ansible_host: metridoc-st01.library.upenn.int
       swarm_labels:
-        - "postgres_primary"
-        - "postgres_replica_manager"
-        - "ezpaarse_manager"
-        - "shibboleth_sp"
-        - "metridoc_manager"
-        - "python_jobs_manager"
-        - "jenkins_manager"
-        - "monitoring_manager"
+        - "postgres-primary"
+        - "shibboleth"
+        - "metridoc"
+        - "jenkins"
+        - "alertmanager-1"
+
+swarm_workers:
+  hosts:
+    swarm-02:
+      ansible_host: metridoc-st02.library.upenn.int
+      swarm_labels:
+        - "postgres-replica"
+        - "alertmanager-2"
