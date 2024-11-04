@@ -16,11 +16,11 @@ shibboleth:
     secrets:
       attribute_map:
         path: "shibboleth/shibboleth/attribute_map.xml.j2"
-        version: 2
+        version: 3
       metadata:
         path: "shibboleth/metadata.xml.j2"
         value: "{{ vault_metadata_value }}"
-        version: 2
+        version: 3
       shibboleth2:
         path: "shibboleth/shibboleth2.xml.j2"
         values:
@@ -31,19 +31,19 @@ shibboleth:
         path: "shibboleth/sp_encrypt_cert.pem.j2"
         values:
           sp_cert_pem: "{{ vault_sp_encrypt_cert_pem }}"
-        version: 2
+        version: 3
       sp_encrypt_key:
         path: "shibboleth/sp_encrypt_key.pem.j2"
         values:
           sp_key_pem: "{{ vault_sp_encrypt_key_pem }}"
-        version: 2
+        version: 3
       sp_signing_cert:
         path: "shibboleth/sp_signing_cert.pem.j2"
         values:
           sp_cert_pem: "{{ vault_sp_signing_cert_pem }}"
-        version: 2
+        version: 3
       sp_signing_key:
         path: "shibboleth/sp_signing_key.pem.j2"
         values:
           sp_key_pem: "{{ vault_sp_signing_key_pem }}"
-        version: 2
+        version: 3
