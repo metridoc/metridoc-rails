@@ -57,22 +57,6 @@
   tags:
     - docker
 
-- name: label alertmanager-1 swarm node
-  docker_node:
-    hostname: "{{ alertmanager_1_swarm_node }}"
-    labels:
-      alertmanager-1: "true"
-  tags:
-    - docker
-
-- name: label alertmanager-2 swarm node
-  docker_node:
-    hostname: "{{ alertmanager_2_swarm_node }}"
-    labels:
-      alertmanager-2: "true"
-  tags:
-    - docker
-
 - name: start docker services
   environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/postgres/monitoring/docker-compose.yml metridoc
