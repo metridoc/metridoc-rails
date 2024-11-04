@@ -12,7 +12,7 @@
         - urllib3<2.0.0
 
 - name: Provision Docker Swarm Cluster
-  hosts: docker_swarm_manager
+  hosts: all
   become: true
   pre_tasks:
     - name: Install nfs client
