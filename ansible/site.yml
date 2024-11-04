@@ -24,7 +24,7 @@
         name: atosatto.docker-swarm
 
 - name: Deploy application
-  hosts: docker_swarm_manager
+  hosts: all
   become: true
   gather_facts: true
   tasks:
