@@ -26,7 +26,7 @@ shibboleth:
         values:
           sp_entityID: "{{ vault_shibboleth2_sp_entityID }}"
           idp_entityID: "{{ vault_shibboleth2_idp_entityID }}"
-        version: 2
+        version: 3
       sp_encrypt_cert:
         path: "shibboleth/sp_encrypt_cert.pem.j2"
         values:
