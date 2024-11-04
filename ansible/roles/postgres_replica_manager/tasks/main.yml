@@ -41,14 +41,6 @@
   tags:
     - docker
 
-- name: label replica swarm node
-  docker_node:
-    hostname: "{{ postgres_replica_swarm_node }}"
-    labels:
-      postgres-replica: "true"
-  tags:
-    - docker
-
 - name: start docker services
   environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/postgres/replica/docker-compose.yml metridoc

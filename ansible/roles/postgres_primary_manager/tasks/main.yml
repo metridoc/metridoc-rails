@@ -35,14 +35,6 @@
   tags:
     - docker
 
-- name: label primary swarm node
-  docker_node:
-    hostname: "{{ postgres_primary_swarm_node }}"
-    labels:
-      postgres-primary: "true"
-  tags:
-    - docker
-
 - name: start docker services
   environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/postgres/primary/docker-compose.yml metridoc
