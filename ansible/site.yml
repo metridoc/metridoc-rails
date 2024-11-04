@@ -1,7 +1,6 @@
 ---
 - name: Install deps
-  hosts: docker_swarm_manager
-  become: true
+  hosts: all
   tasks:
   - ansible.builtin.pip:
       name:
