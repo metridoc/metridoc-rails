@@ -22,36 +22,36 @@
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
 
-#- name: Deploy application
-#  hosts: all
-#  become: true
-#  gather_facts: true
-#  tasks:
-#    - ansible.builtin.import_role:
-#        name: postgres_primary_manager
-#      tags: postgres_primary_manager
-#    - ansible.builtin.import_role:
-#        name: postgres_replica_manager
-#      tags: postgres_replica_manager
-#    - ansible.builtin.import_role:
-#        name: ezpaarse_manager
-#      tags: ezpaarse_manager
-#    - ansible.builtin.import_role:
-#        name: shibboleth_sp
-#        tasks_from: create_docker_network
-#      tags: shibboleth_sp
-#    - ansible.builtin.import_role:
-#        name: shibboleth_sp
-#      tags: shibboleth_sp
-#    - ansible.builtin.import_role:
-#        name: metridoc_manager
-#      tags: metridoc_manager
-#    - ansible.builtin.import_role:
-#        name: python_jobs_manager
-#      tags: python_jobs_manager
-#    - ansible.builtin.import_role:
-#        name: jenkins_manager
-#      tags: jenkins_manager
-#    - ansible.builtin.import_role:
-#        name: monitoring_manager
-#      tags: monitoring_manager
+- name: Deploy application
+  hosts: docker_swarm_manager
+  become: true
+  gather_facts: true
+  tasks:
+    - ansible.builtin.import_role:
+        name: postgres_primary_manager
+      tags: postgres_primary_manager
+    - ansible.builtin.import_role:
+        name: postgres_replica_manager
+      tags: postgres_replica_manager
+    - ansible.builtin.import_role:
+        name: ezpaarse_manager
+      tags: ezpaarse_manager
+    - ansible.builtin.import_role:
+        name: shibboleth_sp
+        tasks_from: create_docker_network
+      tags: shibboleth_sp
+    - ansible.builtin.import_role:
+        name: shibboleth_sp
+      tags: shibboleth_sp
+    - ansible.builtin.import_role:
+        name: metridoc_manager
+      tags: metridoc_manager
+    - ansible.builtin.import_role:
+        name: python_jobs_manager
+      tags: python_jobs_manager
+    - ansible.builtin.import_role:
+        name: jenkins_manager
+      tags: jenkins_manager
+    - ansible.builtin.import_role:
+        name: monitoring_manager
+      tags: monitoring_manager

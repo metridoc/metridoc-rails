@@ -112,6 +112,8 @@ deploy_staging:
     url: metridoc-staging.library.upenn.int
   needs:
     - copy_docker_metridoc_images
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
   script:
     - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
     - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
