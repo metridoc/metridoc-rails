@@ -9,7 +9,7 @@ docker_swarm_manager:
         - "jenkins"
         - "alertmanager-1"
 
-swarm_workers:
+docker_swarm_worker:
   hosts:
     swarm-02:
       ansible_host: metridoc-stg02.library.upenn.int
