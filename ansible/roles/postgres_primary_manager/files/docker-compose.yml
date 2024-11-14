@@ -13,8 +13,11 @@ services:
     image: postgres:11.3-alpine
     command: >
       postgres
+        -c log_statement=all
+        -c log_connections=on
+        -c log_disconnections=on
         -c hba_file=/var/lib/postgresql/pg_hba.conf
-        -c log_min_error_statement=log
+        -c log_min_error_statement=ERROR
         -c max_wal_size=4GB
         -c wal_keep_segments=80
     configs:
