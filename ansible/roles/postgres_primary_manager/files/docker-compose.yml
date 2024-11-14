@@ -20,6 +20,7 @@ services:
         -c log_min_error_statement=ERROR
         -c max_wal_size=4GB
         -c wal_keep_segments=80
+        -c max_standby_streaming_delay=900s
     configs:
       - source: postgres_primary_pg_hba_conf
         target: /var/lib/postgresql/pg_hba.conf
