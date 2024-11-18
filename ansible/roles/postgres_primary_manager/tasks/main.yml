@@ -1,4 +1,17 @@
 ---
+
+- name: mount temp nfs share
+  community.docker.docker_volume:
+    name: tmp_fileshare
+    driver: local
+    debug: true
+    driver_options:
+      type: nfs
+      o: "{{ 'addr=' ~ tmp_nfs_input_volume_address ~ ',rw' }}"
+      device: ":{{ tmp_nfs_input_volume_device }}"
+    state: present
+  tags: tmp_fileshare
+
 - name: create config directory
   file:
     path: "{{ config_dir }}/postgres/primary"
