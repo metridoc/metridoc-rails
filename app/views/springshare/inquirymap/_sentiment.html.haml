@@ -1,0 +1,164 @@
+= javascript_include_tag 'application'
+
+-#Establish the model:
+-libchats=Springshare::Libchats::Flags
+
+%h2 Description of Sentiment:
+
+We have obtained a sentiment score using the sentiment analysis package #{link_to "VADER", "https://github.com/cjhutto/vaderSentiment"}. Through studies our team enacted (see schema documentation at #{link_to "LibchatDoc.pdf", asset_path("LibchatDoc.pdf"), skip_pipeline: true} for more details) we found that the sentiments aligned well with how we would score them (83% accuracy) and in general correlate well with success rate (positive and ecstatic categories having a success rate of 91% and 95%, respectively). We quantify "success" as the user having received the answer to their question or that they have been referred to someone who can help them further. In general, the scores represent the following categories:
+
+%ul
+
+%li sentiment score less than -0.05: negative
+
+%li sentiment score greater than -0.05 and less than 0.05: neutral
+
+%li sentiment score greater than 0.05 and less than 0.3: positive
+
+%li sentiment score greater than 0.3: ecstatic
+
+%ul
+
+Some disclaimers are necessary: this doesn't tell us information about every interaction (i.e.-the student might just leave the chat after receiving an answer, may become disconnected, etc.) We therefore emphasize that a neutral value should not be taken to be a negative or unsuccessful interaction.
+
+%h2{style: "text-align:center;"} Form to update the plots; the default year is the current fiscal year.
+%center
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on User Affiliation:
+        %td
+        %td
+          = select_tag :user_type,
+            options_for_select(springshare_lc_demographics_names,
+              params[:user_type]),
+            include_blank: "Student"
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(libchats.distinct.order(:fiscal_year).pluck(:fiscal_year),
+              params[:fiscal_year]),
+            include_blank: libchats.maximum("fiscal_year")
+
+-#Define default parameters
+-input_demo=params[:user_type].nil? ? "Student" : params[:user_type]
+-input_year=params[:fiscal_year].nil? ?  libchats.maximum("fiscal_year") : params[:fiscal_year]
+
+-chats_by_user=libchats.where(user_type: input_demo).where(fiscal_year: input_year)
+-chats_by_year=libchats.where(fiscal_year: input_year)
+
+#data-viz
+  #single-col
+    = line_chart springshare_lc_sentiment_names.map {|sent_name| {name: sent_name, data: libchats.where(sentiment: sent_name).group_by_year(:timestamp).count}},
+		  xtitle:"Years",
+                  ytitle: "Number of Chats Per Category",
+                  title: "Number of Chats (Yearly)",
+                  legend: true,
+                  colors: ["blue", "green", "orange", "red"],
+		  curve: false,
+		  download: true
+
+-gen_data = chats_by_year.order(:sentiment).group(:sentiment).count
+-gen_percents = springshare_lc_percents(gen_data)
+-gen_colors=springshare_lc_colors(gen_data,springshare_lc_sentiment_names)
+
+-ticket_data = chats_by_year.where("ticket_id > ?", "0").order(:sentiment).group(:sentiment).count
+-ticket_percents=springshare_lc_percents(ticket_data)
+-ticket_colors=springshare_lc_colors(ticket_data,springshare_lc_sentiment_names)
+
+%center Generally these two plots aren't very different from one another, demonstrating that the sentiment of users doesn't change very much between the chats with and without tickets.
+
+#data-viz
+  #left-col
+    =pie_chart gen_percents, round: 2, download: true, colors: gen_colors, title: "General User Sentiment", suffix: "%"
+
+  #right-col
+    =pie_chart ticket_percents, round: 2, download: true, colors: ticket_colors, title: "Sentiment when the Chat Resulted in a Ticket", suffix: "%"
+
+-negative_bins=springshare_lc_hist_bins(chats_by_year.where(sentiment: "Negative"),"messages")
+-neutral_bins=springshare_lc_hist_bins(chats_by_year.where(sentiment: "Neutral"),"messages")
+-positive_bins=springshare_lc_hist_bins(chats_by_year.where(sentiment: "Positive"),"messages")
+-ecstatic_bins=springshare_lc_hist_bins(chats_by_year.where(sentiment: "Ecstatic"),"messages")
+
+%center The below plot demonstrates that "neutral" chats often arise from shorter chats where the user doesn't necessarily respond back to the librarian. In addition, "ecstatic chats" tend to be shorter, easily answered questions, such as "What are the library hours?" whereas positive chats can be longer, resulting from inquiries about issues such as troubleshooting software use or database access, etc.
+
+#data-viz
+  #single-col
+    =column_chart  [{name: "Ecstatic", data: ecstatic_bins},
+               {name: "Positive", data: positive_bins},
+               {name: "Neutral", data: neutral_bins},
+               {name: "Negative", data: negative_bins}],
+               colors: ["blue", "green", "orange", "red"],
+               discrete: true,
+               xtitle: "Message Count",
+               ytitle: "Number of Chats in Bin",
+               title: "Sentiment vs. Length of Chat",
+               download: true
+
+-duration_bins=springshare_lc_hist_bins(chats_by_year,"seconds")
+-duration_bins_tix=springshare_lc_hist_bins(chats_by_year.where("ticket_id > ?", "0"),"seconds")
+
+%center The below plot demonstrates that the duration of chats with and without tickets is not significantly different.
+
+#single-col
+  =column_chart [{name: "Chats Without Tickets", data: duration_bins},
+               {name: "Chats With Tickets", data: duration_bins_tix}],
+               xmax: 3000,
+               xtitle: "Duration in Seconds",
+               ytitle: "Number of Chats in Bin",
+               title: "Length of Chat",
+               download: true
+
+%center The below plot demonstrates that the number of messages is directly correlated to the duration of the chat in seconds (i.e.-there is a steady flow of conversation).
+
+-#Find the best fit for the below plot using linear least-squares:
+-num_points=chats_by_year.count
+-duration=chats_by_year.pluck(:duration)
+-message_count=chats_by_year.pluck(:message_count)
+
+-sum_xy=Array.new
+-sum_xx=Array.new
+
+-for v in (0..num_points-1).to_a
+  -if duration.nil?
+    -sum_xy.push(0)
+    -sum_xx.push(0)
+  -elsif message_count.nil?
+    -sum_xy.push(0)
+  -elsif not message_count.nil? and not duration.nil?
+    -sum_xy.push(duration[v]*message_count[v])
+    -sum_xx.push(duration[v]*duration[v])
+
+-sum_xy=sum_xy.sum
+-sum_xx=sum_xx.sum
+
+-slope=(num_points*sum_xy-duration.sum*message_count.sum).fdiv(num_points*sum_xx-duration.sum*duration.sum)
+
+-intercept=(message_count.sum-slope*duration.sum).fdiv(num_points)
+
+-line_data=Array.new
+-line_duration=(0..duration.max).step(1).to_a
+
+-for v in line_duration
+  -line_data.push([line_duration[v],slope*line_duration[v]+intercept])
+
+#single-col
+  =scatter_chart [{name: "Linear Best Fit", data: line_data}, {name: "Data", data:chats_by_year.pluck(:duration, :message_count)}],
+               xmax: 3000,
+               ymax: 100,
+               xtitle: "Duration in Seconds",
+               ytitle: "Message Count",
+               title: "Message Count vs. Chat Duration",
+               colors: ["Red","Blue"],
+               library: {:series => {"Linear Best Fit" => {type: "line"}}},
+               download: true
+
+-affil_data = chats_by_user.order(:sentiment).group(:sentiment).count
+-affil_colors=springshare_lc_colors(affil_data,springshare_lc_sentiment_names)
+-affil_percents=springshare_lc_percents(affil_data)
+
+#single-col
+  =pie_chart affil_percents, round: 2, dataset: {borderWidth: 0}, title: "Sentiment of #{input_demo} Population, Fiscal Year #{input_year}", download: true, colors: affil_colors, suffix: "%"

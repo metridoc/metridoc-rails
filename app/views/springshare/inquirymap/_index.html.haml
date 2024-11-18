@@ -1,0 +1,136 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2="Introduction"
+
+InquiryMap is an automated tagging process designed to tag Libchat data with content, sentiment, and affiliation tags. #{link_to "InquiryMap.pdf", asset_path("LibchatDoc.pdf"), skip_pipeline: true} describes the schema and the assigned tags in detail. We assign these tags for the purpose of identifying trends in the chat questions over time, including what types of questions are being asked, the number of chats resulting in tickets, the rate of user satisfaction, the groups of users encountering specific problems, etc.
+
+%center Below is an example of how the content flagging is useful. Given the following codes:
+
+%section
+
+  %h2{style: "text-align:center;"}
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Code Type
+        %td{:align => "center"}="Medium"
+        %td{:align => "center"}="Purpose of Search"
+        %td{:align => "center"}="Services"
+        %td{:align => "center"}="Account_Q"
+        %td{:align => "center"}="Top_Searches"
+        %td{:align => "center"}="Subscriptions"
+        %td{:align => "center"}="Newspaper"
+  
+    %tbody
+      %tr
+        %td Flag Type
+        %td{:align => "center"}="0"
+        %td{:align => "center"}="1"
+        %td{:align => "center"}="2"
+        %td{:align => "center"}="1"
+        %td{:align => "center"}="2"
+        %td{:align => "center"}="2"
+        %td{:align => "center"}="0"
+
+  %ul
+
+  One might infer from these tags (and the schema) that the question is about research or from a researcher about an account for a subscription service that involves citations.
+
+  Here is the actual user question:
+
+  "I would like to gain access to the premium features on Web of Science (e.g. search all citations of a paper). As a CHOP researcher, working under ****, I have access to Penn Libraries. Do I also have access to the Web of Science features? If so can you help me set that up or access them? I have already added my chop email to my Web of Science account but I am not sure how to go from there (it looks like I still have the free account). Thanks!"
+
+  Beyond capturing the problems the user is seeking solutions to in a handful of numbers, this flagging technique solves issues of privacy (i.e.-one does not need to look at the raw chat question to understand what the user is asking).
+
+  %hr
+%section
+  %h2 Resources
+
+  We make the flagged data available in table format for MetriDoc users to query with our new filters.
+
+  %h3 Tables:
+  - resources.each do |resource|
+    %li= link_to resource.resource_name.human, "/springshare/#{resource.resource_name.param_key.pluralize}"
+
+  %ul
+
+  %h3 Dashboards:
+
+  We also make available several precompiled plot dashboards which highlight various aspects and trends of the data. We provide brief descriptions of each dashboard below. For any plot with a legend you may click on a label(/s) to eliminate that data from the plot, showing only the data groups that remain. If you pan your cursor over a plotting element (such as a point or a bar) the value of that element will be displayed.
+
+  %ul
+
+  #{link_to "The Demographics Dashboard", springshare_inquirymap_demographics_path}: emphasizes the following variables:
+
+  %ul
+
+  %li Demographics: whether the user is a student, faculty member, alum, or visitor, and to which school they belong. Note that users are not required to self-identify, so these plots are not fully reflective of the population of chat users. Nevertheless, they can be used to help identify trends in the pain points of different users.
+
+  %li Main categories of question.
+  
+  %li Referrer: from which page the user navigated to the Libchat.
+
+  %li Librarian: there are two plots that show the number of chats a particular librarian answered, and from which populations.
+
+  %ul
+
+  #{link_to "The Subcategories Dashboard", springshare_inquirymap_subcategories_path}: displays subcategories by time, sentiment, and breakdown of main category into its constituent subcategories.
+
+  %ul
+
+  #{link_to "The Statistics Dashboard", springshare_inquirymap_statistics_path}: contains trends in the libchat data captured in tabular and plot format. We have chat data going back to 2013: all of this data is included in our database. This dashboard includes tracking such quantities as changes in the types of chats being asked, populations asking the questions, how people are finding the chat, and the number of chats resulting in tickets.
+
+  %ul
+
+  #{link_to "The Sentiment Dashboard", springshare_inquirymap_sentiment_path}: is devoted to determining whether the chat was useful to the user or not. This page emphasizes the following variables:
+  
+  %li Sentiment score: as explained below and in the InquiryMap Documentation.
+
+  %li Length of chat: measured in time or in number of messages back and forth.
+
+  %li The number of chats resulting in tickets.
+
+  %ul
+
+  We have obtained a sentiment score for each user chat using the sentiment analysis package #{link_to "VADER", "https://github.com/cjhutto/vaderSentiment"}. Through studies our team enacted (see InquiryMap documentation above for a short description) we found that the sentiments aligned well with how humans would score them (83% accuracy) and in general correlate well with the success rate (chats in the positive and ecstatic categories exhibiting a success rate of 91% and 95%, respectively). We quantify "success" as the user having received the answer to their question or having been referred to someone who can assist them further.
+
+  %ul
+
+  The sentiment scores represent the following categories:
+
+  %ul
+
+    %li sentiment score < -0.05: negative
+
+    %li sentiment score greater than -0.05 and less than 0.05: neutral
+
+    %li sentiment score greater than 0.05 and less than 0.3: positive
+
+    %li sentiment score greater than 0.3: ecstatic
+
+  %ul
+
+  Some disclaimers are necessary: we do not possess the necessary information to derive a sentiment or "success measurement" from every interaction (i.e.-the student might just leave the chat after receiving an answer, may become disconnected, etc.) We therefore emphasize that a neutral value should not be assumed to be a negative or unsuccessful interaction.
+
+%hr
+
+%h3 Privacy:
+			  
+This page and all flagged data are only available to individuals possessing the appropriate level of MetriDoc credentials. We remove anything that may contain user identifying information from our tables, including the initial question asked by the user and the full transcript. If you would like to use our flagged data in tandem with examining user questions and transcripts, it is recommended that you download the chats from Springshare, our flagged data table above, and match by chat id.
+			  
+%hr
+
+%h3 Additional Details
+%ul
+  %li
+    %strong Covid-19:
+    From April 2020 through July 2022 there were closures/restrictions on the libraries due to COVID. 
+  %li
+    %strong Deduplication:
+    Note that it is possible that there exist consecutive chats from an individual, sometimes the chat is interupted due to connectivity issues.
+
+  %li
+    %strong Survey:
+    We welcome feedback on our dashboards and schema. If you have any suggestions as to how to improve either (or you just want to share something cool you found using these data/tools) please fill out our #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.

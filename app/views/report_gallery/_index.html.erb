@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MetriDoc</title>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <%= favicon_link_tag(asset_path('favicon.ico')) %>
+</head>
+
+<body class="index active_admin">
+<div id="header">
+  <h1 class="site_title" id="site_title"><%= image_tag('logo.png', :alt => 'MetriDoc', :id => 'site_title_image') %></h1>
+  <ul class="header-item tabs" id="tabs">
+    <li id="login_homepage"><a data-method="get" href="/sso">Log in</a></li>
+    <li id="report_gallery"><a data-method="get" href="/report_gallery">Report Gallery</a></li>
+    <li id="library_facts"><a data-method="get" href="/library_facts">Penn Library Selected Facts</a></li>
+  </ul>
+</div>
+
+<div id="active_admin_content" class="without_sidebar">
+  <div id="main_content_wrapper">
+    <div id="main_content">
+      <div id="dashboard_default_message">
+        <h1>Report Gallery</h1>
+        <ul>
+          <li><a href="/report_gallery/pcc">Where in the World Do Penn Scholars Have Co-Authors?</a></li>
+          <li><a href="/report_gallery/psc">Where in the US Do Penn Scholars Have Co-Authors?</a></li>
+          <li><a href="/report_gallery/wpp">Where in the World Are Penn Scholars Published?</a></li>
+          <li><a href="/report_gallery/wwp">Where in the World Are Journals Published?</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

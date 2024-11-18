@@ -1,0 +1,149 @@
+= javascript_include_tag 'application'
+
+-#Establish the model:
+-libchats=Springshare::Libchats::Flags
+
+-yearly_chats=springshare_lc_fiscal_counts(libchats)
+-yearly_chats_tix=springshare_lc_fiscal_counts(libchats.where('ticket_id > ?', '0'))
+
+-yearly_chats_ratio=Hash.new
+
+-for f in yearly_chats.keys
+  -yearly_chats_ratio["#{f.to_int}"]=yearly_chats_tix[f.to_int].fdiv(yearly_chats[f.to_int])*100
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Fiscal Year 
+    = line_chart yearly_chats,
+		   xtitle:"Years",
+                   ytitle: "Number of Chats",
+		   curve: false,
+                   download: true,
+                   discrete: true
+
+%center Note that the below plot is relatively flat, indicating a consistent annual percentage of chats resulting in tickets.
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Percent of Chats resulting in Tickets Per Fiscal Year
+    = line_chart yearly_chats_ratio,
+		  xtitle:"Years",
+		  ytitle: "Percent of Chats Resulting in Tickets",
+		  curve: false,
+                  download: true,
+                  discrete: true,
+                  round: 2,
+                  suffix: "%"
+
+-referrer_names=["Homepage","Franklin","Guide","Proxy","FAQ","Find","Summon", "Van Pelt", "Holman", "Lippincott"]
+
+%center Note the change in top referrer from Franklin(/the catalog) to the Homepage for the years 2023-2024.
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Referrer Over Time Per Fiscal Year
+    = line_chart  referrer_names.map {|ref_name| {name: ref_name, data: springshare_lc_fiscal_counts(libchats.where(top_referrer: ref_name))}},
+		  xtitle:"Year",
+		  ytitle: "Number of Chats",
+		  legend: true,
+		  curve: false,
+                  download: true,
+                  discrete: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Chats by Affiliation Per Fiscal Year
+    = line_chart  springshare_lc_demographics_names.map {|demo_name| {name: demo_name, data: springshare_lc_fiscal_counts(libchats.where(user_type: demo_name))}},
+		  xtitle:"Year",
+		  ytitle: "Number of chats",
+		  legend: true,
+		  curve: false,
+		  download: true,
+                  discrete: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Types of Questions Per Fiscal Year
+    = line_chart springshare_lc_category_names.map {|cat_name| {name: cat_name, data: springshare_lc_fiscal_counts(libchats.where(cat_name + "!= 0"))}},
+		  xtitle:"Years",
+		  ytitle: "Number of Chats Per Category",
+		  legend: true,
+		  curve: false,
+		  download: true,
+                  discrete: true
+
+%center The below two monthly plots can provide insight as to when there is chat behavior related to semesters, finals, etc.
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Month 
+    = line_chart [{name: "All Chats", data: libchats.group_by_month(:timestamp).count}, {name: "Chats With Tickets", data: libchats.where('ticket_id > ?', '0').group_by_month(:timestamp).count}],
+		 xtitle: "Month",
+		 ytitle: "Number of Chats",
+		 curve: false,
+		 download: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Chats By Categories of Question Per Month
+    = line_chart springshare_lc_category_names.map {|cat_name| {name: cat_name, data: libchats.where(cat_name + "!= 0").group_by_month(:timestamp).count}},
+		 xtitle: "Month",
+		 ytitle: "Number of Chats",
+		 curve: false,
+		 download: true
+
+
+%center We can see from the below plot that there seems to be a slight increase in the number of chats on Tuesdays, and a slight decrease in the number of chats on Fridays.
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Day of Week
+    =column_chart libchats.group_by_day_of_week(:timestamp, format: "%a").count,
+                xmin: 0.5,
+                xmax: 5,
+		xtitle:"Day of Week",
+		ytitle: "Number of Chats",
+		curve: false,
+                download: true
+
+%center Note that UTC (Universal Coordinated Time) is a standard time shifted by 4 to 5 hours from Philadelphia time depending on Daylight Savings. This means the peak chat time is about 10am-4pm EST.
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Number of Chats Per Hour of Day (UTC)
+    = line_chart libchats.group_by_hour_of_day(:timestamp).count,
+                 xmin: 10,
+                 xmax: 24,
+                 xtitle: "Hour of Day (UTC)",
+		 ytitle: "Number of Chats",
+		 curve: false,
+		 download: true
+
+-year_range=(libchats.minimum(:fiscal_year)..libchats.maximum(:fiscal_year)).to_a
+-num_dem=(0..springshare_lc_demographics_names.length-1).to_a
+-visitor_time,alumni_time,faculty_time,student_time=springshare_lc_counts(libchats,"time")
+
+%ul
+%hr
+%section
+  %h2{style: "text-align:center;"} Chats by Affiliation (Fiscal Years)
+  %p{style: "text-align:center; font-size: 1.25em;"} 
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Affiliation
+        -for n in num_dem
+          %td{:colspan => 1, :align => "center"}="#{springshare_lc_demographics_names[n]}"
+      %tbody
+      -for y in year_range
+        %tr
+        %td="#{y}"
+        -data_one=student_time["#{y}"]
+        -data_two=faculty_time["#{y}"]
+        -data_three=visitor_time["#{y}"]
+        -data_four=alumni_time["#{y}"]
+        %td{:align => "center"}="#{data_one}"
+        %td{:align => "center"}="#{data_two}"
+        %td{:align => "center"}="#{data_three}"
+        %td{:align => "center"}="#{data_four}"

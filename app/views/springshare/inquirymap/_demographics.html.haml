@@ -1,0 +1,231 @@
+= javascript_include_tag 'application'
+
+-#Establish the model
+-libchats=Springshare::Libchats::Flags
+
+-#Form to update filters on page
+%center
+  All filters are optional. The default year is the current fiscal year, the category selection is for two plots on this page.
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Category of Question:
+        %td
+        %td
+          = select_tag :q_type, 
+            options_for_select(springshare_lc_category_names,
+              params[:q_type]),
+            include_blank: "type_of_search"
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(libchats.distinct.order(:fiscal_year).pluck(:fiscal_year),
+              params[:fiscal_year]),
+            include_blank: libchats.maximum("fiscal_year")
+
+%center For plots showing the progression of different variables over time, please see the Statistics page.
+
+-#Designate default values:
+-input_year=params[:fiscal_year].nil? ? libchats.maximum("fiscal_year") : params[:fiscal_year]
+-input_q=params[:q_type].nil? ? "type_of_search" : params[:q_type]
+
+-chats_by_q=libchats.where(input_q + '> 0').where(fiscal_year: input_year)
+-chats_by_year=libchats.where(fiscal_year: input_year)
+
+-num_cats=springshare_lc_q_cats("counts",chats_by_year)
+-cat_percents=springshare_lc_percents(num_cats)
+
+-num_tix=springshare_lc_q_cats("counts",chats_by_year.where('ticket_id > 0'))
+-tix_percents=springshare_lc_percents(num_tix)
+
+#data-viz
+  #left-col
+    =pie_chart cat_percents, round: 2, download: true, title: "Main Category of Questions", suffix: "%"
+
+  #right-col
+    =pie_chart tix_percents, round: 2, download: true, title: "Main Category of Questions When Chat Results in a ticket", suffix: "%"
+
+-ref_data=springshare_lc_percents(chats_by_year.group(:top_referrer).count)
+
+%center Note that Referrer refers to the webpage from which the user navigated to the Libchat app.
+
+#data-viz
+  #single-col
+    =pie_chart ref_data, suffix: "%", round: 2, download: true,title: "Main Types of Referrer"
+
+-cooccurrence_array=springshare_lc_cooccurrence(chats_by_year)
+-chat_avg=(cooccurrence_array.values.sum)/(cooccurrence_array.length)
+
+%section
+  %h2{style: "font-weight:bold; text-align:center;"} Cooccurence Matrix for Main Categories of Question
+  %p{style: "text-align:center; font-size: 1.25em;"} Entries in the below table are highlighted from light to dark blue based on their percent relative to the highest entry.
+  
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Main Category of Question
+        -for c in springshare_lc_category_names
+          %td{:colspan => 1, :align => "center"}="#{c}"
+      %tbody
+      -for c in (0..springshare_lc_category_names.length-1).to_a
+        %tr
+        -cat=springshare_lc_category_names[c]
+        %td="#{cat}"
+        -for second_c in (0..springshare_lc_category_names.length-1).to_a
+          -#This requirement makes it necessary to designate indices rather than just using names.
+          -if second_c <= c 
+            -second_cat=springshare_lc_category_names[second_c]
+            -data=cooccurrence_array["#{cat}_#{second_cat}"]
+            -cell_color=((data).fdiv(cooccurrence_array.values.max)).to_s	
+            %td{:style => 'background-color: rgba(0,0,255,'+cell_color+');', :align => "center"}="#{data}"
+
+%ul
+  
+%center The following three pie charts examine the breakdown of the main categories of questions by the top 3 category flags, respectively. Many of these flags can be combined with other pieces of data, i.e.-medium tells you whether an individual was looking for a book or article, type_of_search tells you whether the individual was trying to complete a class assignment, get help with software, etc. They are particularly useful for determining subsets of data for further analysis.
+
+%ul  
+
+-medium_chats=springshare_lc_q_cats("medium",chats_by_year)
+-medium_percents=springshare_lc_percents(medium_chats)
+
+-type_chats=springshare_lc_q_cats("type",chats_by_year)
+-type_percents=springshare_lc_percents(type_chats)
+
+-sub_chats=springshare_lc_q_cats("subscription",chats_by_year)
+-sub_percents=springshare_lc_percents(sub_chats)
+    
+#data-viz
+  #left-col
+    =pie_chart medium_percents, round: 2, download: true, title: "Categories of Question With a Medium Flag", suffix: "%"
+
+  #right-col
+    =pie_chart type_percents, round: 2, download: true, title: "Categories of Question With a Type of Search Flag", suffix: "%"
+
+#single-col
+  =pie_chart sub_percents, round: 2, download: true, title: "Categories of Question With a Subscription_Issues Flag", suffix: "%"
+
+-positive_data, ecstatic_data, negative_data, neutral_data=springshare_lc_sentiment_bars(chats_by_year)
+  
+%center Note the extremely small numbers of negative chats across all categories in the following plot.
+  
+#data-viz
+  #single-col
+    = column_chart [{name: "Negative < -0.05", data: negative_data},
+      {name: "-0.05 < Neutral < 0.05", data:  neutral_data},
+      {name: "0.05 < Positive < 0.3", data:  positive_data},
+      {name: "0.3 < Ecstatic", data:  ecstatic_data}],
+      xtitle:"Category",
+      ytitle: "Number of Chats",
+      title: "Number of Chats per Sentiment per Category",
+      legend: true,
+      colors: ["red", "orange", "green", "blue"],
+      stacked: true,
+      dataset:{borderWidth:0},
+      download: true
+
+-affil_data =  chats_by_year.where(user_type: springshare_lc_demographics_names).order(:user_type).group(:user_type).count
+-affil_percents=springshare_lc_percents(affil_data)    
+-affil_colors=springshare_lc_colors(affil_data,springshare_lc_demographics_names)
+
+-#Get the bins for the following histogram:
+-message_hist=springshare_lc_hist_bins(chats_by_q,"messages")
+
+#data-viz
+  #single-col
+    =column_chart message_hist, xtitle: "Message Count", ytitle: "Number of Chats", download: true, title: "Length of Chat in #{input_q} Category in Fiscal Year #{input_year}"
+
+%center Please note that Libchat users are not required to identify themselves by pennid or email. This means that the following few plots are representative only of the users who choose to self-identify.
+
+#data-viz 
+  #single-col
+    =pie_chart affil_percents, round: 2, title: "Affiliation of Libchat Users in Fiscal Year #{input_year}", download: true, colors: affil_colors, suffix: "%"
+
+-num_cat=(0..springshare_lc_category_names.length-1).to_a
+-num_dem=(0..springshare_lc_demographics_names.length-1).to_a
+-year_range=(libchats.minimum(:fiscal_year)..libchats.maximum(:fiscal_year)).to_a
+
+-visitor_cats,alumni_cats,faculty_cats,student_cats=springshare_lc_counts(chats_by_year,"categories")
+
+%ul
+%hr
+%section
+  %h2{style: "font-weight:bold; text-align:center;"} Types of Chats by Affiliation in Fiscal Year #{input_year}
+  %p{style: "text-align:center; font-size: 1.25em;"} 
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Affiliation
+        -for demographic in springshare_lc_demographics_names
+          %td{:colspan => 1, :align => "center"}="#{demographic}"
+      %tbody
+      -for cat in springshare_lc_category_names
+        %tr
+        %td="#{cat}"
+        -data_one=student_cats["#{cat}"]
+        -data_two=faculty_cats["#{cat}"]
+        -data_three=visitor_cats["#{cat}"]
+        -data_four=alumni_cats["#{cat}"]
+        %td{:align => "center"}="#{data_one}"
+        %td{:align => "center"}="#{data_two}"
+        %td{:align => "center"}="#{data_three}"
+        %td{:align => "center"}="#{data_four}"
+
+#data-viz
+  #single-col
+    =column_chart chats_by_year.where(school: lc_school_names).group(:school).count,
+               xtitle: "School",
+               ytitle: "Number of Users",
+               title: "Number of Users per School in Fiscal Year #{input_year}",
+               legend: true,
+               download: true
+
+-#This time affiliation is by question type AND fiscal year.
+-affil_data = chats_by_q.where(user_type: springshare_lc_demographics_names).order(:user_type).group(:user_type).count
+-affil_percents=springshare_lc_percents(affil_data)    
+-affil_colors=springshare_lc_colors(affil_data,springshare_lc_demographics_names)
+
+#data-viz
+  #single-col
+    =pie_chart affil_percents, title: "Affiliation Breakdown in  #{input_q} Category in Fiscal Year #{input_year}", round: 2, dataset: {borderWidth: 0}, download: true, colors: affil_colors, suffix: "%"
+
+-#Form to update filters on page
+%center
+  Select a librarian and a fiscal year to see how many chats they answered and which populations they served.
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Category of Question:
+        %td
+        %td
+          = select_tag :answerer, 
+            options_for_select(libchats.distinct.order(:answerer).pluck(:answerer),
+              params[:answerer]),
+            include_blank: "Lippincott Library"
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(libchats.distinct.order(:fiscal_year).pluck(:fiscal_year),
+              params[:fiscal_year]),
+            include_blank: libchats.maximum("fiscal_year")
+
+-#Designate parameters if none specified
+-input_year=params[:fiscal_year].nil? ? libchats.maximum("fiscal_year") : params[:fiscal_year]
+-input_lib=params[:answerer].nil? ? "Lippincott Library" : params[:answerer]
+
+-chats_by_lib=libchats.where(answerer: input_lib).where(fiscal_year: input_year)
+-chats_by_school=chats_by_lib.where(school: lc_school_names).group(:school).count
+
+#data-viz
+  #left-col
+    =pie_chart chats_by_lib.group(:user_type).count, title: "Affiliation Breakdown of #{input_lib}'s Chats in Fiscal Year #{input_year}", round: 2, dataset: {borderWidth: 0}, download: true
+
+  -puts(chats_by_lib.where(school: lc_school_names).group(:school).count)									   
+  #right-col
+    =pie_chart chats_by_school, title: "School Breakdown in  #{input_lib}'s Chats in Fiscal Year #{input_year}", round: 2, dataset: {borderWidth: 0}, download: true

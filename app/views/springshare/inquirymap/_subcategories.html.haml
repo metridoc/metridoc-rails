@@ -1,0 +1,99 @@
+= javascript_include_tag 'application'
+
+-#Establish the model
+-libchats=Springshare::Libchats::Flags
+
+-#Form to update filters on page
+%center
+  All filters are optional. The default year is the current fiscal year for the last two plots on this page.
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Category of Question:
+        %td
+        %td
+          = select_tag :q_type, 
+            options_for_select(springshare_lc_category_names,
+              params[:q_type]),
+            include_blank: "type_of_search"
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(libchats.distinct.order(:fiscal_year).pluck(:fiscal_year),
+              params[:fiscal_year]),
+            include_blank: libchats.maximum("fiscal_year")
+
+-input_q=params[:q_type].nil? ? "type_of_search" : params[:q_type]
+-input_year=params[:fiscal_year].nil? ? libchats.maximum("fiscal_year") : params[:fiscal_year]
+
+-chats_by_q=libchats.where(input_q + '> 0')
+-subcats=libchats.where(input_q + '> 0').distinct.pluck(input_q.to_sym)
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Chats in Category #{input_q} Per Fiscal Year
+    =line_chart subcats.map {|subcat| {name: springshare_lc_subcat_names[input_q][subcat-1], data: libchats.where(input_q + "=#{subcat}").order(:timestamp).select(:timestamp).map{|u| (u.timestamp + 6.months).year}.tally}},		
+		  xtitle: "Years",
+		  ytitle: "Number of Chats Per Subcategory",
+		  legend: true,
+		  curve: false,
+                  download: true,
+                  discrete: true
+
+#data-viz
+  #single-col
+    %h2{style: "text-align:center;"} Chats in Category #{input_q} Per Month
+    =line_chart subcats.map {|subcat| {name: springshare_lc_subcat_names[input_q][subcat-1], data: libchats.where(input_q + "=#{subcat}").group_by_month(:timestamp).count}},
+		  xtitle:"Years",
+		  ytitle: "Number of Chats Per Subcategory",
+		  legend: true,
+		  curve: false,
+		  download: true
+
+-chats_by_q=libchats.where(input_q + '> 0').where(fiscal_year: input_year)
+-chats_by_year=libchats.where(fiscal_year: input_year)
+
+-neg_counts=chats_by_q.group(input_q).where(sentiment: "Negative").count
+-neg_counts=springshare_lc_transform_keys(neg_counts,input_q)
+
+-neutral_counts=chats_by_q.group(input_q).where(sentiment: "Neutral").count
+-neutral_counts=springshare_lc_transform_keys(neutral_counts,input_q)
+
+-pos_counts=chats_by_q.group(input_q).where(sentiment: "Positive").count
+-pos_counts=springshare_lc_transform_keys(pos_counts,input_q)
+
+-ecstatic_counts=chats_by_q.group(input_q).where(sentiment: "Ecstatic").count
+-ecstatic_counts=springshare_lc_transform_keys(ecstatic_counts,input_q)
+
+#data-viz
+  #single-col
+    = column_chart [{name: 'Negative < -0.05', data: neg_counts},
+      {name: '-0.05 < Neutral < 0.05', data: neutral_counts},
+      {name:'0.05 < Positive < 0.3', data: pos_counts},
+      {name:'0.3 < Ecstatic', data: ecstatic_counts}],
+      xtitle:'Subcategory',
+      ytitle: 'Number of Chats',
+      title: "Sentiment of Category #{input_q}  Broken into Subcategories for Fiscal Year #{input_year}",
+      colors: ['red', 'orange', 'green', 'blue'],
+      legend: true,
+      stacked: true,
+      dataset:{borderWidth:0},
+      download: true
+
+-subcat_counts=chats_by_q.group(input_q).count
+-subcat_counts=springshare_lc_transform_keys(subcat_counts,input_q)
+-subcat_percents=springshare_lc_percents(subcat_counts)
+
+-subcat_tickets=chats_by_q.where('ticket_id > ?', '0').group(input_q).count
+-subcat_tickets=springshare_lc_transform_keys(subcat_tickets,input_q)
+-subcat_tix_percents=springshare_lc_percents(subcat_tickets)
+
+#data-viz
+  #left-col
+    =pie_chart subcat_percents, title:"#{input_q} Broken into Subcategories for Fiscal Year #{input_year}", round: 2, empty: "Please select a category", dataset: {borderWidth: 0}, download: true, suffix: "%"
+
+  #right-col
+    =pie_chart subcat_tix_percents, title:"#{input_q} Broken into Subcategories When Chat Resulted in a Ticket", round: 2, empty: "Please select a category", dataset: {borderWidth: 0}, download: true, suffix: "%"

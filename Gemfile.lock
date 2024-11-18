@@ -421,6 +421,7 @@ GEM
       tzinfo (>= 1.0.0)
     unicode-display_width (2.5.0)
     uri (0.13.0)
+    vader_sentiment_ruby (0.1.1)
     version_gem (1.1.3)
     warden (1.2.9)
       rack (>= 2.0.9)
@@ -474,7 +475,6 @@ DEPENDENCIES
   groupdate
   haml
   jbuilder (~> 2.5)
-  jquery-rails
   letter_opener
   listen (>= 3.0.5, < 4.0)
   mail
@@ -506,6 +506,7 @@ DEPENDENCIES
   tiny_tds (~> 2.1.0)
   turbo-rails
   tzinfo-data
+  vader_sentiment_ruby
   web-console (>= 4.2.0)
 
 BUNDLED WITH

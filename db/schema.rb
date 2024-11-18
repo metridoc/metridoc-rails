@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
-
+ActiveRecord::Schema[7.1].define(version: 2024_09_06_124930) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1507,21 +1506,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
 
   create_table "library_staff_census", force: :cascade do |t|
     t.string "employment_status"
-<<<<<<< HEAD
-    t.datetime "employment_status_date"
-    t.string "position_id"
-    t.integer "penn_id"
-    t.integer "workday_id"
-    t.datetime "hire_date"
-    t.datetime "occupant_from_date"
-=======
     t.datetime "employment_status_date", precision: nil
     t.string "position_id"
     t.integer "penn_id"
     t.integer "workday_id"
     t.datetime "hire_date", precision: nil
     t.datetime "occupant_from_date", precision: nil
->>>>>>> new_home/master
     t.string "legal_last_name"
     t.string "legal_first_name"
     t.decimal "calculated_total_fte"
@@ -1956,6 +1946,58 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_22_180641) do
     t.string "last_name"
     t.string "email"
     t.index ["staff_id"], name: "ss_libcal_users_id", unique: true
+  end
+
+  create_table "ss_libchats_flags", force: :cascade do |t|
+    t.integer "chat_id"
+    t.string "name"
+    t.string "contact_info"
+    t.string "ip"
+    t.string "browser"
+    t.string "operating_system"
+    t.string "user_agent"
+    t.string "referrer"
+    t.string "widget"
+    t.string "department"
+    t.string "answerer"
+    t.datetime "timestamp"
+    t.integer "wait_time"
+    t.integer "duration"
+    t.integer "rating"
+    t.string "comment"
+    t.string "user_field_1"
+    t.string "user_field_2"
+    t.string "user_field_3"
+    t.string "initial_question"
+    t.string "transfer_history"
+    t.integer "message_count"
+    t.string "internal_note"
+    t.string "transcript"
+    t.string "tags"
+    t.integer "ticket_id"
+    t.integer "ra"
+    t.integer "fiscal_year"
+    t.string "user_type"
+    t.float "sentiment_score"
+    t.string "sentiment"
+    t.integer "newspaper"
+    t.integer "medium"
+    t.integer "top_searches"
+    t.integer "services"
+    t.integer "account_q"
+    t.integer "subscription_issues"
+    t.integer "type_of_search"
+    t.string "top_referrer"
+    t.string "statistical_category_1"
+    t.string "statistical_category_2"
+    t.string "statistical_category_3"
+    t.string "statistical_category_4"
+    t.string "statistical_category_5"
+    t.string "user_group", default: "Unknown"
+    t.string "school", default: "Unknown"
+    t.string "penn_id"
+    t.string "pennkey"
+    t.index ["chat_id"], name: "ss_libchats_chat_id", unique: true
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|

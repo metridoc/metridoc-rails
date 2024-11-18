@@ -1,4 +1,4 @@
-ActiveAdmin.register_page "Libchats",
+ActiveAdmin.register_page "InquiryMap",
 namespace: :springshare do
   menu false
 
@@ -9,7 +9,7 @@ namespace: :springshare do
     ]
   end
   
-  content title: I18n.t("Springshare::Libchats") do
+  content title: "InquiryMap" do
     resource_collection = ActiveAdmin.application.namespaces[:springshare].resources
     resources = resource_collection.select { |resource| resource.respond_to? :resource_class }
     resources = resources.select{|r| /^Libchats::/.match(r.resource_name.name) }
@@ -17,5 +17,5 @@ namespace: :springshare do
 
     render partial: 'index', locals: {resources: resources}
   end
-  
+
 end

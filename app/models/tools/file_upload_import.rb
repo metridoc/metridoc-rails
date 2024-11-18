@@ -33,7 +33,7 @@ class Tools::FileUploadImport < ApplicationRecord
     Ipeds::Cipcode,
     Upenn::Enrollment,
     LibraryStaff::Census,
-    Springshare::Libchats,
+    Springshare::Libchats::Flags,
     Springshare::Libanswers::Queue,
     Springshare::Libanswers::Ticket
   ]

@@ -1,25 +1,25 @@
-ActiveAdmin.register Springshare::Libanswers::Ticket,
-as: "Libanswers::Ticket",
+ActiveAdmin.register Springshare::Libchats::Flags,
+as: "Libchats::Inquirymap::Table",
 namespace: :springshare do
   menu false
-
+  
   breadcrumb do
     # Custom breadcrumb links
     [
       link_to('Springshare', :springshare_root),
-      link_to('LibAnswers', :springshare_libanswers)
+      link_to('InquiryMap', :springshare_inquirymap)
     ]
   end
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
   preserve_default_filters!
-  Springshare::Libanswers::Ticket.superadmin_columns.each do |c|
+  Springshare::Libchats::Flags.superadmin_columns.each do |c|
     remove_filter c.to_sym
   end
   
   # Set the title on the index page
-  index title: "Tickets", download_links: [:csv] do
+  index title: "Table", download_links: [:csv] do
 
     id_column
     # Loop through the columns and hide it if not super admin

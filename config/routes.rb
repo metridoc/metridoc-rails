@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get 'library_facts/' => "library_facts#index"
   get 'library_facts/factbook_2020', :to => redirect('FACTS2020.epub')
   get 'library_facts/factbook_2023', :to => redirect('PENN_LIBRARIES_FACTS_2023.pdf')
-
+  
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 

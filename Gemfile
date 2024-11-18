@@ -261,3 +261,6 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 # Some versions of Ubuntu also requires this gem
 gem 'tzinfo-data'
+
+#
+gem 'vader_sentiment_ruby'

@@ -1,104 +1,39 @@
 class Springshare::Libchats::Flags < Springshare::Libchats::Base
 
-#Put columns to privatize here:
+require 'vader_sentiment_ruby'
   
+#Put columns to privatize here:
+
   def self.superadmin_columns
-  [
-    "name", "contact_info", "ip", "answerer", "timestamp", "user_field_1", "user_field_2", "user_field_3", "initial_question", "internal_note", "transcript"
-  ]
+    ["name", "contact_info", "ip","user_agent", "answerer", "timestamp", "user_field_1", "user_field_2", "user_field_3", "initial_question","internal_note", "transcript", "penn_id","pennkey"]
   end
 
-  #Not sure if I need or not?
   def self.alternate_id
     "chat_id"
   end
-
-  # Should only activate when they've already been read in...for now just set for the first functions flags, might need to add others later?
-
-  #def self.on_conflict_update 
-  #  {
-  #    conflict_target: [:chat_id],
-  #    columns: [
-  #      :visitor_q,
-  #      :alumni_q,
-  #      :faculty_staff_q,
-  #      :student_q,
-  #      :sentiment_score,
-  #      :sentiment,
-  #      :newspaper,
-  #      :medium,
-  #      :top_searches,
-  #      :services,
-  #      :account_q,
-  #      :subscription_issues,
-  #      :type_of_search,
-  #      :statistical_category_1,
-  #      :statistical_category_2,
-  #      :statistical_category_3,
-  #      :statistical_category_4,
-  #      :statistical_category_5,
-  #      :user_group,
-  #      :school,
-  #      :penn_id,
-  #      :pennkey
-  #    ]
-  #  }
-  #end
   
-#Some notes:
-
-#Sounds like Karin wants all the columns available to us...so modify the table and hide the columns from everyone but admins...think that already happens with the ignored columns and the calls below...double check later! .
-  
-#Add the following columns:
-#One conflict: want to hide penn_id and pennkey, but not initially a column in the table...where to put the superadmin call then/how to privatize? Can I just add to the end of the migration and have it fill with nulls? Need to confirm...
-#Think that's going to be dependent on how KG is reading these files in? Ask?
-    
   def self.update_flags
     query= <<-SQL
 
-      ALTER TABLE ss_libchats_flags
-      ADD visitor_q BOOL,
-      ADD alumni_q BOOL,
-      ADD faculty_staff_q BOOL,
-      ADD student_q BOOL,
-      ADD sentiment_score FLOAT(4),
-      ADD sentiment CHAR(50),
-      ADD newspaper BOOL,
-      ADD medium SMALLINT,
-      ADD top_searches SMALLINT,
-      ADD services SMALLINT,
-      ADD account_q SMALLINT,
-      ADD subscription_issues SMALLINT,
-      ADD type_of_search SMALLINT,
-      ADD statistical_category_1 CHAR(50),
-      ADD statistical_category_2 CHAR(50),
-      ADD statistical_category_3 CHAR(50),
-      ADD statistical_category_4 CHAR(50),
-      ADD statistical_category_5 CHAR(50),
-      ADD user_group CHAR(50),
-      ADD school CHAR(50),
-      ADD penn_id CHAR(8),
-      ADD pennkey CHAR(8);
+      UPDATE ss_libchats_flags
+      SET fiscal_year=DATE_PART('year', timestamp + INTERVAL '6 month');
 
       UPDATE ss_libchats_flags
-      SET visitor_q=true
-      WHERE initial_question LIKE '%visitor%';
+      SET user_type=
+      (CASE
+        WHEN initial_question LIKE '%visitor%' or transcript LIKE '%visitor'
+          THEN 'Visitor'
+        WHEN initial_question LIKE '%alum%' OR initial_question LIKE '%alumna%' OR initial_question LIKE '%alumni%' or transcript LIKE '%alum%' OR transcript LIKE '%alumna%' OR transcript LIKE '%alumni%'
+          THEN 'Alumni'
+        WHEN initial_question LIKE '%student%'
+          THEN 'Student'
+        WHEN initial_question LIKE '%faculty%' OR initial_question LIKE '%staff%' OR initial_question LIKE '%prof%' OR initial_question LIKE '%professor%'
+          THEN 'Faculty'
+      END);
 
       UPDATE ss_libchats_flags
-      SET alumni_q=true
-      WHERE initial_question LIKE '%alum%' OR initial_question LIKE '%alumna%' OR initial_question LIKE '%alumni%';
-
-      UPDATE ss_libchats_flags
-      SET faculty_staff_q=true
-      WHERE initial_question LIKE '%faculty%' OR initial_question LIKE '%staff%' OR initial_question LIKE '%prof%' OR initial_question LIKE '%professor%';
-
-      UPDATE ss_libchats_flags
-      SET student_q=true
-      WHERE initial_question LIKE '%student%';
-
-      UPDATE ss_libchats_flags
-      SET newspaper=true
-      WHERE initial_question LIKE '%news%' OR initial_question LIKE '%newspaper%' OR initial_question LIKE '%Newspaper%' OR initial_question LIKE '%NYT%' OR initial_question LIKE '%News%' OR initial_question LIKE '%New York Times%';
+      SET newspaper=1
+      WHERE initial_question LIKE '%news%' OR initial_question LIKE '%newspaper%' OR initial_question LIKE '%Newspaper%' OR initial_question LIKE '%NYT%' OR initial_question LIKE '%News%' OR initial_question LIKE '%New York Times%' OR initial_question LIKE '%Philadelphia Inquirer%';
 
       UPDATE ss_libchats_flags
       SET medium=
@@ -131,7 +66,7 @@ class Springshare::Libchats::Flags < Springshare::Libchats::Base
       ( CASE
             WHEN initial_question LIKE '%Interlibrary Loan%' OR initial_question LIKE '%interlibrary loan%' OR initial_question LIKE '%ILL%' OR initial_question LIKE '%Illiad%'
               THEN 1
-            WHEN initial_question LIKE '%Franklin%' OR initial_question LIKE '%library website%' OR initial_question LIKE '%catalogue%' OR initial_question LIKE '%FIND%'
+            WHEN initial_question LIKE '%Franklin%' OR initial_question LIKE '%library website%' OR initial_question LIKE '%catalogue%' OR initial_question LIKE '%catalog%' OR initial_question LIKE '%FIND%'
               THEN 2
             ELSE 0
         END );
@@ -181,13 +116,37 @@ class Springshare::Libchats::Flags < Springshare::Libchats::Base
               THEN 7
             ELSE 0
         END );
-    SQL
 
+      UPDATE ss_libchats_flags
+      SET top_referrer=
+      ( CASE
+            WHEN referrer ILIKE 'https://www.library.upenn.edu/'
+              THEN 'Homepage'
+            WHEN referrer LIKE '%franklin%'
+              THEN 'Franklin'
+            WHEN referrer LIKE '%guide%'
+              THEN 'Guide'
+            WHEN referrer LIKE '%faq'
+              THEN 'FAQ'
+            WHEN referrer LIKE '%proxy%'
+              THEN 'Proxy'
+            WHEN referrer LIKE '%find%'
+              THEN 'Find'
+            WHEN referrer LIKE '%summon%'
+              THEN 'Summon'
+            WHEN referrer LIKE '%vanpelt%'
+              THEN 'Van Pelt'
+            WHEN referrer LIKE '%holman%'
+              THEN 'Holman'
+            WHEN referrer LIKE '%lippincott%'
+              THEN 'Lippincott'
+      END);
+    SQL
+    
     ActiveRecord::Base.connection.execute(query)
   end
 
   #Similar to update_demographics for Libanswers, written by KG.
-  
   def self.update_demographics
     # SQL query to update demographic information based on either pennkey or email, depending on which was given
     query = <<-SQL
@@ -220,21 +179,117 @@ class Springshare::Libchats::Flags < Springshare::Libchats::Base
           SPLIT_PART(ss_libchats_flags.contact_info, '@', '1')
         OR ss_libchats_flags.name LIKE '%upenn%'
         AND upenn_alma_demographics.pennkey = 
-          SPLIT_PART(ss_libchats_flags.name, '@', '1')
-        OR upenn_alma_demographics.pennkey = ss_libchats_flags.name
-    SQL
+          SPLIT_PART(ss_libchats_flags.name, '@', '1');
 
+    SQL
+    
     # Execute the raw SQL
     ActiveRecord::Base.connection.execute(query)
-    
-  end
 
+    ss_libchats_inquirymap = Springshare::Libchats::Flags
+
+    test_chats=ss_libchats_inquirymap.where.not(user_group: "Unknown").or(ss_libchats_inquirymap.where.not(user_group: nil)).all
+    
+    #Now update the accompanying flags:
+    for chat in test_chats
+        if chat.user_group.eql?("Undergraduate Student")
+           chat.user_type="Student"
+        elsif chat.user_group.eql?("Grad Student")
+           chat.user_type="Student"  
+        elsif chat.user_group.eql?("Alumni") 
+           chat.user_type="Alumni"
+        elsif chat.user_group.eql?("Staff")
+          chat.user_type="Faculty"
+        elsif chat.user_group.eql?("Faculty")
+          chat.user_type="Faculty"
+        elsif chat.user_group.eql?("Faculty Express")
+          chat.user_type="Faculty"
+        end
+        chat.save
+    end      
+  end
+  
+  def self.update_sentiment
+
+    ss_libchats_inquirymap = Springshare::Libchats::Flags
+    librarians=ss_libchats_inquirymap.distinct.order(:answerer).pluck(:answerer)
+    
+    #Make sure only the chats without a calculated sentiment score are involved in this labeling.
+    #Also make sure none of the nil transcripts gets selected here.
+    all_chats=ss_libchats_inquirymap.where(sentiment_score: nil).where.not(transcript: nil).all
+    
+    #Tokenize into words so can identify where ":"'s are:
+    for entry in all_chats
+
+      if not entry.transcript == nil
+        sep_entry=entry.transcript&.split("\n")
+      else
+        sep_entry=""
+      end
+
+      user_transcript=Array.new
+
+      if sep_entry != "" and sep_entry != nil
+        for line in sep_entry
+
+            switch=0
+            #Need to double check that it's not a librarian:
+            if line.include?(entry.answerer)==true
+               switch=1
+            end  
+            
+            if switch==0
+               if line.include?(":")
+                  if line.split(':').length >= 3
+                     #Split after the timestamp:  
+                     user_transcript.push(line.split(':')[2..].join(" "))
+                  end  
+               end
+            end
+            
+         end  
+      end
+
+      #All compounds keeps the compound score for *every* user line.
+      all_compounds=Array.new
+
+      if user_transcript != Array.new
+         for user_line in user_transcript
+             user_sentiment=VaderSentimentRuby.polarity_scores(user_line)
+             all_compounds.push(user_sentiment['compound'.to_sym])
+         end
+      end
+
+      print all_compounds
+      
+      if all_compounds==Array.new
+         avg_compound=0
+      else 
+         puts all_compounds.length
+         avg_compound=all_compounds.sum/all_compounds.length
+      end  
+      
+      entry.sentiment_score = avg_compound
+      if avg_compound <= -0.05
+         entry.sentiment = "Negative"
+      elsif avg_compound > -0.05 and avg_compound < 0.05
+         entry.sentiment = "Neutral"
+      elsif avg_compound >= 0.05 and avg_compound < 0.3
+         entry.sentiment = "Positive"
+      elsif avg_compound >= 0.3
+         entry.sentiment = "Ecstatic"
+      end
+      entry.save
+    end  
+  end
+  
   # Function to auto update tables after upload via file import tool
   def self.update_after_import
 
     self.update_flags
     self.update_demographics
-    #self.update_sentiment
+    self.update_sentiment
     
   end
 end
+

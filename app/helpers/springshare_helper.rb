@@ -1,283 +1,216 @@
 module SpringshareHelper
-
-    #Now update the accompanying flags:
-    #for index in (0..ss_libchats_flags.chat_id.length).to_a
-    #    if ss_libchats_flags.user_group=="Undergraduate Student" or ss_libchats_flags.user_group=="Grad Student"
-    #       student_q=1
-    #    elsif ss_libchats_flags.user_group=="Alumni" #double check that this is correct...
-    #       alumni_q=1
-    #    elsif ss_libchats_flags.user_group=="Staff" or ss_libchats_flags.user_group=="Faculty"
-    #       faculty_staff_q=1
-    #    end  
-    #end  
-    #end
-  
-  def self.update_sentiment
-    
-    transcript=ss_libchats_flags.select(:transcript)
-    id=ss_libchats_flags.select(:chat_id)
-    
-    #Need to double check that it's not a librarian:
-    librarians=["Mercy Ayilo", "David Azzolina", "Mary Kate Baker", "Marcella Barnhart", "Alexandra Bartley", "Elizabeth Blake", "Megan Brown", "Michael Carroll", "Melanie Cedrone", "Charles Cobine", "Claire Cornelius","Sarabeth Coyle", "Cynthia Cronin-Kardon", "Mia D'Avanza", "Mety Damte", "Alisha Davis", "Phebe Dickson", "Rory Duffy", "Bethany Falcon", "Gwen Fancy", "Anna-Alexandra Fodde-Reguer", "Brie Gettleson", "Alexandrea Glenn", "Larissa Gordon", "Stephen Hall", "Joe Holub", "Heather Hughes", "Lonya Humphrey", "Madison Jurgens", "Aman Kaur","Sam Kirk", "Connie Kolakowski", "Varvara (Barbara) Kountouzi", "Lippincott Library", "Margy Lindem", "Nicole Mackowiak", "Allison Madar", "Doug McGee", "Rebecca Mendelson", "Nick Okrent", "Kirsten Painter", "Natalie Pendergast", "Mayelin Perez", "Bob Persing", "Jef Pierce", "Dot Porter", "Katie Rawson", "Oliver Seifert-Gram", "Alexandra Servey", "Matthew Sharp", "Erin Sharwell", "Rebecca Stuhr", "Victoria Sun", "Kevin Thomas", "Joanna Thompson", "Matthew Trowbridge", "Liza Vick", "Brian Vivier", "Mia Wells", "Holly Zerbe"]
-  
-    last_q_entry=Array.new
-    trunc_IDS=Array.new
-    sentiment_flag=Array.new
-    
-    #Tokenize into words so can identify where ":" is:
-    for entry in transcript
-      id_sel=transcript.index(entry) 
-      stop=0
-      entry.to_s
-      sep_entry=trunc_entry.split("\n")
-
-      transcript=Array.new
-      
-      for line in sep_entry
-
-        switch=0
-        
-        for name in librarians
-          if name in sep_entry
-             switch=1
-          end
-
-          if switch=1 then next
-          elsif switch=0
-             transcript.push(sep_entry.split(':')[3..])
-          end  
-        end
-      end
-
-      all_compounds=Array.new
-      
-      for user_line in transcript
-  
-          #Produces a hash: but need to average the compound values:
-          user_sentiment=VaderSentimentRuby.polarity_scores(user_line)
-        
-          all_compounds.push(user_sentiment["compound"])
-            
-      end
-
-      avg_compound=all_compouds.sum/all_compounds.length
-      
-      entry_to_edit=ss_libchats_flags.find(chatid: id[id_sel])
-      entry_to_edit.sentiment_score.edit = avg_compound
-      if avg_compound <= -0.05
-         entry_to_edit.sentiment="Negative"
-      elsif avg_compound > -0.05 and avg_compound < 0.05
-         entry_to_edit.sentiment="Neutral"
-      elsif avg_compound >= 0.05 and avg_compound < 0.3
-         entry_to_edit.sentiment="Positive"
-      elsif avg_compound >= 0.3
-         entry_to_edit.sentiment="Ecstatic"
-      entry_to_edit.save
-      end      
-    end  
-  end
   
   #define arrays and hashes that are consistently used.
-  def category_names
-    ["Medium", "Type_of_Search", "Services", "Account_Q", "Top_Searches", "Subscription_Issues", "Newspaper"]
+  def springshare_lc_category_names
+    ["medium", "type_of_search", "services", "account_q", "top_searches", "subscription_issues", "newspaper"]
   end
   
-  def demographics_names
+  def springshare_lc_demographics_names
     ["Student", "Faculty", "Visitor", "Alumni"]
   end
 
-  def sentiment_names
-    ["Negative", "Neutral", "Positive", "Ecstatic"]
+  def springshare_lc_sentiment_names
+    ["Ecstatic", "Positive", "Neutral", "Negative"]
   end  
-    
-    #These first four functions are for the libchats: 
-  def lc_q_cats
-      
-      output_table=Springshare::Libchats::Flags.connection.select_all(
-         "SELECT
-           sentiment,
-           sentiment_score,
-           timestamp,
-           message_count,
-           DATE_PART('year', timestamp + INTERVAL '6 month') AS fiscal_year,
-           CASE
-                WHEN visitor_q=='TRUE'
-                  THEN 'Visitor'
-                WHEN alumni_q=='TRUE'
-                  THEN 'Alumni'
-                WHEN student_q=='TRUE'
-                  THEN 'Student'
-                WHEN faculty_q=='TRUE'
-                  THEN 'Faculty'
-           END AS user_type,
-           CASE
-                WHEN newspaper=='TRUE'
-                  THEN 'Newspaper'
-                WHEN 'Medium' > 0
-                  THEN 'Medium'
-                WHEN top_searches > 0
-                  THEN 'Top_Searches'
-                WHEN services > 0
-                  THEN 'Services'
-                WHEN account_q > 0
-                  THEN 'Account'
-                WHEN subscription_issues > 0
-                  THEN 'Subscription'
-                WHEN type_of_search > 0
-                  THEN 'Type_of_Search'
-           END AS q_type
-           
-         FROM ss_libchats_flags;")
 
-      return output_table.to_a
+  def lc_school_names
+      ["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
+"School of Dental Medicine","School of Design","Graduate School of Education",
+"School of Engineering and Applied Science","Law School","Perelman School of Medicine",
+"Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+  end    
+    
+  def springshare_lc_subcat_names
+    subcats=Hash.new
+    subcats['newspaper']=["True"]
+    subcats['medium']=['Book', "Article", "Music", "Microfilm", "Movie"]
+    subcats['services']=['Interlibrary Loan', "Franklin/Find"]
+    subcats['type_of_search']=['Research', 'Class', 'Librarian', 'Thesis', 'Database/Software', 'Search', 'Local']
+    subcats['account_q']=['Account','Overdue Books','Physical Borrow','Equipment Rental']
+    subcats['top_searches']=['Printing/Posters','Citations']
+    subcats['subscription_issues']=['Subscription','Access','Sign-in']
+    return subcats
   end
 
-  def top_referrers
-      
-    output_table=Springshare::Libchats::Flags.connection.select_all(
-         "SELECT
-           timestamp,
-           DATE_PART('year', timestamp + INTERVAL '6 month') AS fiscal_year,
-           CASE
-                WHEN referrer ILIKE 'https://www.library.upenn.edu'
-                  THEN 'Homepage'
-                WHEN referrer LIKE '%Franklin%'
-                  THEN 'Franklin'
-                WHEN referrer LIKE '%guide%' or referrer LIKE '%faq%'
-                  THEN 'Guide'
-                WHEN referrer LIKE '%proxy%'
-                  THEN 'proxy'
-           END AS referrer_type
-           
-         FROM ss_libchats_flags;")
+  def springshare_lc_sublabels(data, main_cat)
 
-    return output_table.to_a
+    my_labels=Array.new
     
+    for d in data
+        my_labels.push(springshare_lc_subcat_names[main_cat][data[d-1]])
+    end
+    
+    return my_labels 
   end
 
-  def filter_chats_dem(params)
+  def springshare_lc_transform_keys(input_hash,input_q)
 
-      # Filter tickets based on input of parameters
-      chats_by_q = lc_q_cats.where(
-      user_type: params[:user_type]
-      ) unless params[:user_type].blank?
+    input_hash.transform_keys! {|k| springshare_lc_subcat_names[input_q][k-1]}
+    return input_hash
     
-      unless params[:fiscal_year].blank?
-        this_year, _ = lc_q_cats.maximum(:fiscal_year)
+  end  
 
-        chats_by_q = chats_by_q.where(fiscal_year: this_year)
+  def springshare_lc_fiscal_counts(input_table)
+
+    yearly_chats=input_table.order(:timestamp).select(:timestamp).map{|u| (u.timestamp + 6.months).year}.tally
+    return yearly_chats
+      
+  end  
+  
+  #Construct hashes for the number of chats in each category. The type determiens whether all categories are used, or if tandem counts between two categories should be used.
+  def springshare_lc_q_cats(type, input_table)
+
+      cats_by_med=["type_of_search", "services", "account_q", "top_searches", "subscription_issues", "newspaper"]
+      cats_by_type=["medium", "services", "account_q", "top_searches", "subscription_issues", "newspaper"]
+      cats_by_type=["medium", "services", "account_q", "top_searches", "type_of_search", "newspaper"]
+      
+      count_array=Hash.new
+    
+      if type=="counts"
+         for c in springshare_lc_category_names     
+             count_array["#{c}"]=input_table.where(c + "> 0").count
+         end
+      elsif type=="medium"
+         for c in cats_by_med   
+             count_array["#{c}"]=input_table.where('medium > 0').where(c + "> 0").count
+         end
+      elsif type=="type"         
+         for c in cats_by_type   
+             count_array["#{c}"]=input_table.where('type_of_search > 0').where(c + "> 0").count
+         end
+      elsif type=="subscription"         
+         for c in cats_by_type   
+             count_array["#{c}"]=input_table.where('subscription_issues > 0').where(c + "> 0").count
+         end  
       end
+      return count_array
+  end
 
-      #Return this value
-      chats_by_q
+  #Change numbers of chats to percents:
+  def springshare_lc_percents(input_hash)
+
+    total=input_hash.values.sum  
+    input_hash.transform_values! {|v| v.fdiv(total)*100}
+    return input_hash
     
   end
 
-  def filter_chats_q(params)
-
-      # Filter tickets based on input of parameters
-      chats_by_q = lc_q_cats.where(
-      user_type: params[:user_type]
-      ) unless params[:user_type].blank?
-
-      chats_by_q = chats_by_q.where(
-      q_type: params[:q_type]
-      ) unless params[:q_type].blank?
+  #Make a cooccurrence plot for all of the chats in different categories:
+  def springshare_lc_cooccurrence(input_table)
       
-      unless params[:fiscal_year].blank?
-        this_year, _ = lc_q_cats.maximum(:fiscal_year)
-
-        chats_by_q = chats_by_q.where(fiscal_year: this_year)
+      count_array=Hash.new
+      
+      for c in springshare_lc_category_names
+        for second_c in springshare_lc_category_names    
+          count_array["#{c}_#{second_c}"]=input_table.where(c + "> 0").where(second_c + "> 0").count
+        end  
       end
+      return count_array
+  end
 
-      #Return this value
-      chats_by_q
+  #Get the number of chats with a given sentiment for a particular category of question:
+  def springshare_lc_sentiment_bars(input_table)
+    positive_data=Hash.new
+    ecstatic_data=Hash.new
+    negative_data=Hash.new
+    neutral_data=Hash.new
+    for c in springshare_lc_category_names
+        positive_data["#{c}"]=input_table.where(sentiment: "Positive").where(c.to_s + "> 0").count
+        ecstatic_data["#{c}"]=input_table.where(sentiment: "Ecstatic").where(c.to_s + "> 0").count
+        negative_data["#{c}"]=input_table.where(sentiment: "Negative").where(c.to_s + "> 0").count
+        neutral_data["#{c}"]=input_table.where(sentiment: "Neutral").where(c.to_s + "> 0").count
+    end
+    return positive_data, ecstatic_data, negative_data, neutral_data
+  end  
+
+  #Assign consistent color labels to affiliation plots and sentiment plots:
+  def springshare_lc_colors(data, labels)
+
+    score_colors= {labels[0] => "blue", labels[1] => "green", labels[2] => "orange", labels[3] => "red"}
+    my_colors= []
+    data.each do |name, _|
+      my_colors << score_colors[name]
+    end
     
+    return my_colors  
   end
   
-  #Put the demographic data in bins. Options for count_type are "time" and "categories".
-  #This function is used for the tables generated in "_libchat_statistics.html.haml" and "demographics.html.haml"
+  #Get bins for number of messages/length of chat histograms.
+  def springshare_lc_hist_bins(input_table,type)
+
+    if type=="messages"
+       binsize=5
+       bin_ranges=(5..65).step(binsize).to_a
+    elsif type=="seconds"
+       binsize=250
+       bin_ranges=(250..3500).step(binsize).to_a
+    end
+
+    hist_counts=Hash.new
+
+    for bin in bin_ranges
+        bin_start=bin-binsize
+        if type=="messages"
+           hist_counts["#{bin_start}-#{bin}"]=input_table.where("message_count < #{bin}").where("message_count > #{bin}-#{binsize}").count
+        elsif type=="seconds"
+           hist_counts["#{bin_start}-#{bin}"]=input_table.where("duration < #{bin}").where("duration > #{bin}-#{binsize}").count
+        end  
+    end
+    return hist_counts
+  end  
   
-  def lc_counts(input_table,count_type)
+  #Put the demographic data in bins. Options for count_type are "time" and "categories". This function is used for the tables generated in "_statistics.html.haml" and "demographics.html.haml"
+  
+  def springshare_lc_counts(input_table,count_type)
 
       visitor_array=Hash.new
       student_array=Hash.new
       alumni_array=Hash.new
       faculty_array=Hash.new
+
+      year_range=(input_table.pluck(:fiscal_year).min..input_table.pluck(:fiscal_year).max).to_a
       
-      year_range=(lc_demographics.minimum("fiscal_year")..lc_demographics.maximum("fiscal_years")).to_a
-
       if count_type=="time"
-      #first select, then pluck, then count?
-         for d in demographics_names
-           copy_table=input_table.select{|h| h["user_type"]==d}
-
+         for d in springshare_lc_demographics_names
+           copy_table=input_table.where(user_type: d)
+           
            for y in year_range
-             fiscal_year_count=copy_table.select{|h| h["fiscal_year"]==y}.count
+             fiscal_year_count=copy_table.where(fiscal_year: y).count
 
-             if d=="visitor"
-                visitor_array["{y}"]=fiscal_year_count
-             elsif d=="alumni"
-                alumni_array["{y}"]=fiscal_year_count
-             elsif d=="faculty"
-                faculty_array["{y}"]=fiscal_year_count
-             elsif d=="student"
-                student_array["{y}"]=fiscal_year_count
+             if d=="Visitor"
+                visitor_array["#{y}"]=fiscal_year_count
+             elsif d=="Alumni"
+                alumni_array["#{y}"]=fiscal_year_count
+             elsif d=="Faculty"
+                faculty_array["#{y}"]=fiscal_year_count
+             elsif d=="Student"
+                student_array["#{y}"]=fiscal_year_count
              end  
            end  
-         end
-         return visitor_array,alumni_array,faculty_array,student_array    
+         end    
       end
 
       if count_type=="categories"
-      #first select, then pluck, then count?
-         for d in demographics_names
-           copy_table=input_table.select{|h| h["user_type"]==d}
+         for d in springshare_lc_demographics_names
+           copy_table=input_table.where(user_type: d)
 
-           for c in category_names
-             category_count=copy_table.select{|h| h["q_type"]==c}.count
+           for c in springshare_lc_category_names
+             category_count=copy_table.where(c + " > 0").count
 
-             if d=="visitor"
-                visitor_array["{c}"]=category_count
-             elsif d=="alumni"
-                alumni_array["{c}"]=category_count
-             elsif d=="faculty"
-                faculty_array["{c}"]=category_count
-             elsif d=="student"
-                student_array["{c}"]=category_count
+             if d=="Visitor"
+                visitor_array["#{c}"]=category_count
+             elsif d=="Alumni"
+                alumni_array["#{c}"]=category_count
+             elsif d=="Faculty"
+                faculty_array["#{c}"]=category_count
+             elsif d=="Student"
+                student_array["#{c}"]=category_count
              end  
            end  
-         end
-         return visitor_array,alumni_array,faculty_array,student_array    
+         end  
       end
+      return visitor_array,alumni_array,faculty_array,student_array  
   end 
-
-  def sentiment_bars
-    sentiment_counts=Hash.new
-    for s in sentiment_names
-        sentiment_counts["{s}"]=lc_q_cats.where(sentiment: s).group(:q_type).count
-    end
-    return sentiment_counts
-  end  
-
-  def colormap_vals
-    size_array=Hash.new
-    color_array=Hash.new
-    color_array["Newspaper"]=libchats.where(newspapers: true).count
-    size_array["Newspaper"]=libchats.where(newspapers: true).average(:sentiment_score)
-    for c in category names
-      copy_table=lc_q_cats.select{|h| h["q_type"]==c}
-      unique_vals=copy_table.pluck(c.to_sym).uniq
-      color_array["{c}"]=copy_table.where(c.to_sym > 0).count
-      size_array["{c}"]=copy_table.where(c.to_sym > 0).average(:sentiment_score)
-      for u in unique_vals
-        hash_label=c+"_"+u.to_s
-        color_array["{hash_label}"]=copy_table.where(c.to_sym u).count
-        size_array["{hash_label}"]=copy_table.where(c.to_sym u).average(:sentiment_score) 
-      end
-    end  
-    return size_array,color_array
-  end
   
   # Function to calculate all the available fiscal years
   def springshare_libanswers_fiscal_years
