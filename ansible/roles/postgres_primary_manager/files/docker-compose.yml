@@ -47,6 +47,7 @@ services:
         target: /dev/shm
         tmpfs:
           size: 1073741824
+      - temp_fileshare:/mnt/mdxfertmp
 
 configs:
   postgres_primary_pg_hba_conf:
@@ -69,3 +70,4 @@ secrets:
 
 volumes:
   postgres_primary_data:
+  temp_fileshare:
