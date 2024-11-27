@@ -1,0 +1,115 @@
+= javascript_include_tag 'application'
+%h3
+
+  We welcome feedback on our dashboards. If you have any suggestions for 
+  improvement (or to share something cool about the data) 
+  please fill out our 
+  #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.
+
+-# Establish the model
+- chats = Springshare::Libchat::Chat
+
+- params[:fiscal_year] ||= chats.maximum(:fiscal_year)
+
+-# Form to update filters on page
+%center
+  The default year is set to the current fiscal year.
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(chats.distinct.order(:fiscal_year).pluck(:fiscal_year),
+              params[:fiscal_year])
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Category:
+        %td
+        %td
+          = select_tag :category, 
+            options_for_select(springshare_libchat_category_mapping.map{|k,v| [v[:name], k]},
+              params[:category]),
+            include_blank: "All Categories"
+
+-# Filter results for time plots - uses entire mode
+- chat_models = springshare_libchat_filtered_chats(params)
+-# Filter result for inquirymap - uses streamlined hash
+- chats = springshare_inquirymap_filtered_chats(params)
+
+- category_name = if params[:category].blank? then "All Categories" else springshare_libchat_category_mapping[params[:category].to_sym][:name] + " Subcategories" end
+%hr
+%h2 InquiryMap Categorical Summary for FY#{params[:fiscal_year]} and #{category_name}
+
+- data = springshare_inquirymap_subcategories(chat_models, "month", params[:category])
+= line_chart data,
+  title: "Category of Chats by Month",
+  download: true,
+  xtitle: "Month of Year",
+  ytitle: "Number of Chats",
+  curve: false,
+  legend: "right"
+
+- crosstab = springshare_inquirymap_subcategories_crosstab(chats, params[:category])
+%table.data_summary{style: "border-width: 0px"}
+  %thead
+    %caption Co-occurrence of Categories
+    %tr 
+      - crosstab.shift.each do |cell|
+        %th= cell
+    %tbody
+      - crosstab.each do |row|
+        %tr
+          %th= row.shift
+          - row.each do |cell|
+            - if cell.blank?
+              %td{style: "border-width: 0px"}= cell
+            - else
+              %td{style: "text-align: right;"}= cell
+%br
+%hr
+%h2 InquiryMap Sentiment Statistics for FY#{params[:fiscal_year]} and #{category_name}
+- data, colors = springshare_inquirymap_sentiment(chat_models, "month")
+= line_chart data,
+  title: "Sentiment of Chats by Month",
+  download: true,
+  xtitle: "Month of Year",
+  ytitle: "Number of Chats",
+  curve: false,
+  colors: colors
+
+
+
+-# Define the data rollup, either with subcategories or by category
+- data, colors = springshare_inquirymap_rollup(chats, "sentiment", params[:category])
+= bar_chart data,
+  title: "Sentiment by Chat Category",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Category",
+  colors: colors,
+  stacked: true
+
+%hr 
+%h2 InquiryMap Patron Demographics for FY#{params[:fiscal_year]} and #{category_name}
+
+-# Group by affiliation
+- data = springshare_inquirymap_rollup(chats, "school", params[:category])
+= bar_chart data,
+  title: "Affiliation of Patrons by Chat Category",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Category",
+  stacked: true,
+  legend: "right"
+
+-# Group by User Group
+- data = springshare_inquirymap_rollup(chats, "user_group", params[:category])
+= bar_chart data,
+  title: "Type of Patrons by Chat Category",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Category",
+  stacked: true,
+  legend: "right"
