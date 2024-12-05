@@ -35,7 +35,8 @@
   title: "Chats by Month",
   download: true,
   xtitle: "Months",
-  ytitle: "Number of Chats"
+  ytitle: "Number of Chats",
+  curve: false
 
 %hr
 %h2 Traffic Sources
@@ -45,17 +46,23 @@
   download: true,
   xtitle: "Fiscal Year",
   ytitle: "Number of Chats",
-  legend: "left"
+  legend: "left",
+  curve: false
 
 %hr
 %h2 Patron Demographics
+%center 
+  * Note that although patrons are asked to identify by PennKey, it is not required to start a chat *
+
 - data = springshare_libchat_rollup_fiscal_year(chats, "school")
 = line_chart data,
   title: "Affiliation by Fiscal Year",
   download: true,
   xtitle: "Fiscal Year",
   ytitle: "Number of Chats",
-  legend: "left"
+  legend: "left",
+  curve: false,
+  height: "400px"
 
 - data = springshare_libchat_rollup_fiscal_year(chats, "user_group")
 = line_chart data,
@@ -63,5 +70,7 @@
   download: true,
   xtitle: "Fiscal Year",
   ytitle: "Number of Chats",
-  legend: "left"
+  legend: "left",
+  curve: false,
+  height: "400px"
 
