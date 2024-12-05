@@ -2,7 +2,7 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
 
   # Define relation to InquiryMap
   has_one :inquiry_map, 
-    class_name: "Springshare::Libchat::Inquirymap"
+    class_name: "Springshare::Inquirymap::Inquirymap"
 
   # For URL Parsing
   require 'uri'
@@ -306,11 +306,11 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
       }
 
       # Create a new instance of InquiryMap for each chat
-      maps << Springshare::Libchat::Inquirymap.new(inquiry_map)
+      maps << Springshare::Inquirymap::Inquirymap.new(inquiry_map)
     end
 
     # Import in bulk
-    Springshare::Libchat::Inquirymap.import maps, batch_size: 500
+    Springshare::Inquirymap::Inquirymap.import maps, batch_size: 500
   end
   
   # Function to auto update tables after upload via file import tool

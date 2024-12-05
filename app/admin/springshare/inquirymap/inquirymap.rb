@@ -1,5 +1,5 @@
-ActiveAdmin.register Springshare::Libchat::Inquirymap,
-as: "Libchat::InquiryMap",
+ActiveAdmin.register Springshare::Inquirymap::Inquirymap,
+as: "Inquirymap::Inquirymap",
 namespace: :springshare do
   menu false
   
@@ -7,7 +7,7 @@ namespace: :springshare do
     # Custom breadcrumb links
     [
       link_to('Springshare', :springshare_root),
-      link_to('LibChat', :springshare_libchat)
+      link_to('InquiryMap', :springshare_inquirymap)
     ]
   end
 

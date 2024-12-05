@@ -7,13 +7,13 @@ namespace: :springshare do
     [
       link_to('Springshare', :springshare_root),
       link_to('LibChat', :springshare_libchat),
-      link_to('LibChat Statistics', :springshare_libchat_statistics)
+      link_to('Longitudinal Statistics', :springshare_libchat_statistics)
     ]
   end
 
   # General title for the page
-  content title: "LibChat Yearly Statistics" do
+  content title: "Fiscal Year LibChat Statistics" do
     # Direct path to dashboard template
-    render partial: 'springshare/libchat/chat_statistics_fy'
+    render partial: 'springshare/libchat/statistics_fy'
   end
 end

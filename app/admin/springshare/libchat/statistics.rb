@@ -11,7 +11,7 @@ namespace: :springshare do
   end
 
   # General title for the page
-  content title: "LibChat Statistics" do
+  content title: "Longitudinal LibChat Statistics" do
     # Direct path to dashboard template
     render partial: 'springshare/libchat/statistics'
   end
