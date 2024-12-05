@@ -73,6 +73,66 @@ module SpringshareHelper
     }
   end
 
+  def springshare_inquirymap_palette
+    [
+      "#011F5B",
+      "#990000",
+      "#82AFC3",
+      "#F2C100",
+      "#3479BE",
+      "#FAA755",
+      "#BBD86B",
+      "#BD60A5",
+      "#7094DB",
+      "#661414",
+      "#42678C",
+      "#C7996B",
+      "#98A674",
+      "#8A6280"
+    ]
+  end
+
+  # Function to set up a gradient shading
+  def springshare_inquirymap_cell_shading(value, maximum)
+    style = "text-align: right;"
+
+    # Skip "blank" cells
+    unless value.to_i.is_a? Integer
+      return style
+    end
+
+    # Special case for maximum value
+    if value.to_i == maximum
+      style += "background-color: #011F5B; color: #FFFFFF;"
+      return style
+    end
+
+    # Set a monochromatic gradient of blue shades
+    gradient = [
+      "#011F5B",
+      "#1D386D",
+      "#39517F",
+      "#566A92",
+      "#7283A4",
+      "#8E9BB6",
+      "#AAB4C8",
+      "#C7CDDB",
+      "#E3E6ED",
+      "#FFFFFF"
+    ]
+
+
+    # Find the fractional value of the maximum
+    x = value.to_i.fdiv(maximum)
+    # Build the style that should be used
+    style = style + "background-color: " + gradient.reverse[
+      (x * gradient.length).floor
+      ] + ";"
+    style += "color: #FFFFFF;" if x > 0.7
+
+    style
+  end
+
   def springshare_libchat_category_mapping
     {
       "newspaper": {
@@ -113,7 +173,7 @@ module SpringshareHelper
         ]
       },
       "subscription_issues": {
-        name: "Account Access",
+        name: "Subscription Services",
         subcategories: [
           "Unassigned", "Subscription", "Access", "Sign-In"
         ]
@@ -198,7 +258,7 @@ module SpringshareHelper
 
   # Get a list of User Types in an alphabetized array
   def springshare_libchat_user_groups
-    user_groups = {
+    {
       "Alumni": "Alumni",
       "Associate": "Faculty",
       "Borrow Direct Plus": "Faculty",
@@ -219,8 +279,6 @@ module SpringshareHelper
       "Unknown": "Unknown",
       "": "Unknown"
     }
-
-    user_groups
   end
 
   # Get an ordered list of the sentiment names
@@ -302,30 +360,26 @@ module SpringshareHelper
       totals[key] = totals.fetch(key, 0) + v
     end
 
-    # Sort based on column name
     if  column_name == "school"
       ending_order = ["Penn Libraries", "Other", "Unknown"]
-      totals = totals.sort_by do |k,_|
-        [
-          [ending_order.include?(k.first) ? 1 : 0, k.first],
-          k.last
-        ]
-      end.to_h
     elsif column_name == "user_group"
       ending_order = ["Library Staff", "Other", "Unknown"]
-      totals = totals.sort_by do |k,_|
-        [
-          [ending_order.include?(k.first) ? 1 : 0, k.first],
-          k.last
-        ]        
-      end.to_h
-    else 
-      # Alphabetically sort
-      totals = totals.sort_by(&:first).to_h
     end
 
-    return totals
-    
+    # Sort based on column name
+    totals = totals.sort_by do |k,_|
+      if ["school", "user_group"].include?(column_name)
+        [
+          ending_order.include?(k.first) ? ending_order.index(k.first) + 1 : 0,
+          k.first,
+          k.last
+        ]
+      else
+        k.first
+      end
+    end.to_h
+
+    totals
   end
 
   # Function to perform rollups of columns
@@ -348,8 +402,24 @@ module SpringshareHelper
       }
     end
 
+    # Define sort orders
+    if column_name == "school"
+      ending_order = ["Penn Libraries", "Other", "Unknown"]
+    elsif column_name == "user_group"
+      ending_order = ["Library Staff", "Other", "Unknown"]
+    end
+
     # Tally up the column values
-    totals = totals.tally.sort_by{|k,_| k}.to_h
+    totals = totals.tally.sort_by do |k,_|
+      if ["school", "user_group"].include?(column_name)
+        [
+          ending_order.include?(k) ? ending_order.index(k) + 1 : 0, 
+          k
+        ]
+      else 
+        k
+      end
+    end.to_h
 
     # Calculate the percentage of school affiliations
     percentages = totals
@@ -542,6 +612,11 @@ module SpringshareHelper
       fiscal_year: params[:fiscal_year]
       ) unless params[:fiscal_year].blank?
 
+    # Filter chats by presence of ticket_id
+    chats = chats.where.not(
+      ticket_id: 0
+      ) if params[:ticket_id]
+
     # Pull in the category names
     categories = springshare_libchat_category_mapping.keys
 
@@ -660,6 +735,142 @@ module SpringshareHelper
     end
 
     return totals
+  end
+
+  # Function builds a crosstab of category and ticket status
+  def springshare_inquirymap_category_tickets(
+    chats, chats_with_tickets, params
+    )
+    # Extract a hash of the sentiment to the number of chats
+    categories = springshare_inquirymap_rollup(
+      chats, "sentiment", params[:category]
+      ).first
+      .group_by {|k,v| k.last}
+      .map{|k,v| [
+        k,
+        v.inject(0){ |sum, i| sum + i.last }
+      ]}.to_h
+    # Extract a hash of the sentiment of chats with tickets
+    categories_with_tickets = springshare_inquirymap_rollup(
+      chats_with_tickets, "sentiment", params[:category]
+      ).first
+      .group_by {|k,v| k.last}
+      .map{|k,v| [
+        k,
+        v.inject(0){ |sum, i| sum + i.last }
+      ]}.to_h
+
+    keys = if params[:category].blank? 
+      springshare_libchat_category_mapping.map{
+        |k, v| v[:name]
+      }
+    else
+      springshare_libchat_category_mapping[
+        params[:category].to_sym
+      ][:subcategories] - ["Unassigned"]
+    end
+
+    # Build a table.
+    output = []
+    keys.sort.each do |k|
+      output.append(
+        [
+          k.to_s,
+          format_big_number(
+            categories.fetch(k.to_s, 0)
+          ),
+          format_big_number(
+            categories_with_tickets.fetch(k.to_s, 0)
+          ),
+          format_percent(
+            categories_with_tickets.fetch(k.to_s, 0)
+            .fdiv(categories.fetch(k.to_s, 1))
+          )
+        ]
+      )
+    end
+    output
+  end
+
+
+
+  # Function builds a crosstab of sentiment and ticket status
+  def springshare_inquirymap_sentiment_crosstab(chats, chats_with_tickets, params)
+    # Extract a hash of the sentiment to the number of chats
+    sentiment = springshare_inquirymap_rollup(
+      chats, "sentiment", params[:category]
+      ).first
+      .group_by {|k,v| k.first}
+      .map{|k,v| [
+        k,
+        v.inject(0){ |sum, i| sum + i.last }
+      ]}.to_h
+    # Extract a hash of the sentiment of chats with tickets
+    sentiment_with_tickets = springshare_inquirymap_rollup(
+      chats_with_tickets, "sentiment", params[:category]
+      ).first
+      .group_by {|k,v| k.first}
+      .map{|k,v| [
+        k,
+        v.inject(0){ |sum, i| sum + i.last }
+      ]}.to_h
+    # Build a table.
+    output = []
+    springshare_libchat_sentiment_names.keys.each do |k|
+      output.append(
+        [
+          k.to_s,
+          format_big_number(
+            sentiment.fetch(k.to_s, 0)
+          ),
+          format_big_number(
+            sentiment_with_tickets.fetch(k.to_s, 0)
+          ),
+          format_percent(
+            sentiment_with_tickets.fetch(k.to_s, 0)
+            .fdiv(sentiment.fetch(k.to_s, 1))
+          )
+        ]
+      )
+    end
+    output
+  end
+
+  def springshare_inquirymap_patron_sentiment(chats, column_name)
+
+    # Select the ending order and keys to use
+    if column_name == "school"
+      ending_order = ["Penn Libraries", "Other", "Unknown"]
+      keys = springshare_libchat_school_names
+    elsif column_name == "user_group"
+      ending_order = ["Library Staff", "Other", "Unknown"]
+      keys = springshare_libchat_user_groups
+    end
+
+    # Sort the keys Alphabetically, but put the last elements at the end
+    sorted_keys = keys.values.uniq.sort_by{
+      |v| [
+        ending_order.include?(v) ? ending_order.index(v) + 1 : 0, 
+        v
+      ]
+    } - ["Unknown"]
+
+    # Make a combination of all sentiments and all schools or user groups
+    output = springshare_libchat_sentiment_names.keys.map(&:to_s)
+    .product(sorted_keys)
+    .map{|v| [v, 0]}.to_h
+
+    chats.reject{
+      # Drop Unknown Patrons
+      |v| v[column_name.to_sym] == "Unknown"
+    }.each do |v|
+      # Calculate the key for the element
+      key = [v[:sentiment].to_s, v[column_name.to_sym].to_s]
+      # Add the value to the key's current value
+      output[key] += v[:value]
+    end
+    
+    output
   end
 
   # Build a crosstab table of the subcategories to other categories
