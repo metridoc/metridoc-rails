@@ -39,7 +39,7 @@
 
   %h3 Data Tables
   %ul
-    %li= link_to "InquiryMap Results", "/springshare/libchat_inquiry_maps"
+    %li= link_to "InquiryMap Results", "/springshare/inquirymap_inquirymaps"
 
   %h3 Statistics 
   %ul 
@@ -89,13 +89,13 @@
       %tbody
         %tr
           %th Column Name
-          %th Medium
-          %th Purpose of Search
-          %th Services
-          %th Account_Q
-          %th Top_Searches
-          %th Subscriptions
-          %th Newspaper
+          %th medium
+          %th type_of_search
+          %th services
+          %th account_q
+          %th top_searches
+          %th subscription_issues
+          %th newspaper
         %tr
           %th Flag Value
           %td{style: "text-align: right;"} 0
@@ -162,13 +162,13 @@
   %ul
     %li Chat Identifier - The Springshare Unique Identifier for the Chat that corresponds to this record
     %li User Type - The derived user type
-    %li Sentiment Score - The average numerical sentiment value of the chat, evaluated by Vader (see #{link_to "above", "#sentiment"})
-    %li Sentiment - A human readable reflection of the numerical sentiment value.
+    %li Sentiment Score - The average numerical sentiment value of the chat, evaluated by Vader (see #{link_to "above", "#sentiment"}), hidden from the website interface.
+    %li Sentiment - A human readable reflection of the numerical sentiment value, hidden from the website interface.
     %li Newspaper - Flag for if the chat was related to access to a newspaper ("Newspaper Related")
     %li Medium - Flag for what type of item the patron is looking for ("Physical Item Type")
     %li Top Searches - Flag for frequent requests from patrons ("Frequent Requests")
     %li Services - Flag for help with library services ("Library Services")
     %li Account Question - Flag for assistance with library accounts ("Library Account")
-    %li Subscription Issues - Flag for help with accessing online resources ("Account Access")
-    %li Type of Search - Flag for the type of research assistance needed ("Research Assistance")
+    %li Subscription Issues - Flag for help with accessing online resources ("Subscription Services")
+    %li Type of Search - Flag for the type of research assistance needed ("Purpose of Request")
 
