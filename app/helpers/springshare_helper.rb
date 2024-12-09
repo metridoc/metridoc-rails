@@ -128,7 +128,7 @@ module SpringshareHelper
     style = style + "background-color: " + gradient.reverse[
       (x * gradient.length).floor
       ] + ";"
-    style += "color: #FFFFFF;" if x > 0.7
+    style += "color: #FFFFFF;" if x > 0.5
 
     style
   end
@@ -153,7 +153,7 @@ module SpringshareHelper
         ]
       },
       "type_of_search": {
-        name: "Research Assistance",
+        name: "Purpose of Request",
         subcategories: [
           "Unassigned", "Research", "Coursework", "Librarian", "Thesis", 
           "Database/Software", "Search", "Local"
@@ -438,12 +438,12 @@ module SpringshareHelper
     # Group chat durations into smaller chunks
     durations.group_by { |v| 
       case
-      when v < 60*15 then "#{v/60.ceil} to #{v/60.ceil + 1}"
-      else '> 15'
+      when v < 60*24 then "#{v/(3*60).ceil * 3} to #{(v/(3*60).ceil + 1) * 3}"
+      else '> 24'
       end
     }.map { | k, v |
       [k, v.size]
-    }
+    }.reverse
   end
 
   # Function turns the number of messages into a set of bins.
@@ -457,7 +457,7 @@ module SpringshareHelper
     messages.group_by { |v| 
       case
       when v < 30 then "#{v/5.ceil * 5} to #{v/5.ceil * 5 + 5}"
-      else '>30'
+      else '> 30'
       end
     }.map { | k, v |
       [k, v.size]
@@ -789,6 +789,25 @@ module SpringshareHelper
         ]
       )
     end
+
+    # Add a total number of chats row to the output
+    n_chats = chats.reject{ |v|
+      !params[:category].blank? && v[params[:category].to_sym] == "Unassigned"
+    }.map{|v| v[:value]}.sum
+    n_chats_with_tickets = chats_with_tickets.reject{ |v|
+      !params[:category].blank? && v[params[:category].to_sym] == "Unassigned"
+    }.map{|v| v[:value]}.sum
+    output.append(
+      [
+        "Total Chats",
+        format_big_number(n_chats),
+        format_big_number(n_chats_with_tickets),
+        format_percent(
+          n_chats_with_tickets.fdiv(n_chats)
+        )
+      ]
+    )
+
     output
   end
 
@@ -797,23 +816,36 @@ module SpringshareHelper
   # Function builds a crosstab of sentiment and ticket status
   def springshare_inquirymap_sentiment_crosstab(chats, chats_with_tickets, params)
     # Extract a hash of the sentiment to the number of chats
-    sentiment = springshare_inquirymap_rollup(
-      chats, "sentiment", params[:category]
-      ).first
-      .group_by {|k,v| k.first}
-      .map{|k,v| [
-        k,
-        v.inject(0){ |sum, i| sum + i.last }
-      ]}.to_h
+    sentiment = chats.select{
+      # Filter by the category
+      |v| 
+      if params.key?(:category) 
+      then v[params[:category].to_sym] != "Unassigned"
+      else true
+      end
+    }.map{
+      # Map to pairs of sentiment and their value
+      |v| [v[:sentiment], v[:value]]
+    }.group_by(&:first).map{
+      |k, v| [k, v.map(&:last).sum]
+    }.sort_by{
+      |v| springshare_libchat_sentiment_names.keys.index(v.first)
+    }.to_h
     # Extract a hash of the sentiment of chats with tickets
-    sentiment_with_tickets = springshare_inquirymap_rollup(
-      chats_with_tickets, "sentiment", params[:category]
-      ).first
-      .group_by {|k,v| k.first}
-      .map{|k,v| [
-        k,
-        v.inject(0){ |sum, i| sum + i.last }
-      ]}.to_h
+    sentiment_with_tickets = chats_with_tickets.select{
+      # Filter by the category
+      |v| if params.key?(:category) 
+      then v[params[:category].to_sym] != "Unassigned"
+      else true
+      end
+    }.map{
+      # Map to pairs of sentiment and their value
+      |v| [v[:sentiment], v[:value]]
+    }.group_by(&:first).map{
+      |k, v| [k, v.map(&:last).sum]
+    }.sort_by{
+      |v| springshare_libchat_sentiment_names.keys.index(v.first)
+    }.to_h
     # Build a table.
     output = []
     springshare_libchat_sentiment_names.keys.each do |k|
@@ -823,8 +855,18 @@ module SpringshareHelper
           format_big_number(
             sentiment.fetch(k.to_s, 0)
           ),
+          format_percent(
+            sentiment.fetch(k.to_s, 0).fdiv(
+              sentiment.values.sum
+            )
+          ),
           format_big_number(
             sentiment_with_tickets.fetch(k.to_s, 0)
+          ),
+          format_percent(
+            sentiment_with_tickets.fetch(k.to_s, 0).fdiv(
+              sentiment_with_tickets.values.sum
+            )
           ),
           format_percent(
             sentiment_with_tickets.fetch(k.to_s, 0)
