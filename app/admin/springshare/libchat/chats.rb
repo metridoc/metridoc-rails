@@ -36,7 +36,7 @@ namespace: :springshare do
     actions
   end
 
-   show title: :chat_id do
+  show title: :chat_id do
     attributes_table do
       # Loop through the columns and hide it if not super admin
       self.resource_class.column_names.each do |c|
