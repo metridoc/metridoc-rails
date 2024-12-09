@@ -93,25 +93,50 @@
 %h2 Interaction Statistics of #{params[:answerer] || "All Librarians"} in FY#{params[:fiscal_year]}
 %div{style: "width: 100%; display: flex; align-items: stretch;"}
   %div{style: "width: 47%;"}
+    %table.data_summary
+      %thead 
+        %tr 
+          %th 
+          %th{style: "text-align: right"} Minimum
+          %th{style: "text-align: right"} Average
+          %th{style: "text-align: right"} Maximum 
+      %tbody
+        %tr
+          %th Chat Duration (minutes)
+          %td{style: "text-align: right"}= chats.minimum(:duration).fdiv(60).round(0)
+          %td{style: "text-align: right"}= chats.average(:duration).fdiv(60).round(0)
+          %td{style: "text-align: right"}= chats.maximum(:duration).fdiv(60).round(0)
+        %tr
+          %th Number of Messages
+          %td{style: "text-align: right"}= chats.minimum(:message_count)
+          %td{style: "text-align: right"}= chats.average(:message_count).round(0)
+          %td{style: "text-align: right"}= chats.maximum(:message_count)
+        %tr
+          %th Patron Wait Time (Seconds)
+          %td{style: "text-align: right"}= chats.minimum(:wait_time)
+          %td{style: "text-align: right"}= chats.average(:wait_time).round(0)
+          %td{style: "text-align: right"}= chats.maximum(:wait_time)
+
     = bar_chart springshare_libchat_group_duration(chats),
       title: "Duration of Chats",
       download: true,
       xtitle: "Number of Chats",
       ytitle: "Length of Chat (minutes)",
-      height: "600px"
+      height: "500px"
 
   %div{style: "margin-left: 6%; width: 47%;"}
-    = bar_chart springshare_libchat_group_messages(chats),
+    = bar_chart springshare_libchat_group_messages(chats).reverse,
       title: "Number of Chat Messages Exchanged",
       download: true,
       xtitle: "Number of Chats",
       ytitle: "Number of Messages"
 
-    = bar_chart springshare_libchat_group_wait_time(chats),
+    = bar_chart springshare_libchat_group_wait_time(chats).reverse,
       title: "Patron Wait Time for Chats",
       download: true,
       xtitle: "Number of Chats",
       ytitle: "Wait Time (Seconds)"
+    %center * Bins are Variable in size *
 
 %hr
 %h2 Patron Demographics for #{params[:answerer] || "All Librarians"} in FY#{params[:fiscal_year]}

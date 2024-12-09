@@ -102,10 +102,18 @@
   %thead
     %caption Sentiment and Ticket Creation
     %tr
-      %th Sentiment
-      %th Number of Chats
-      %th Number of Chats with Tickets
-      %th Percent of Chats with Tickets
+      %th{rowspan: 2, style: "text-align: center;"} Sentiment
+      %th{colspan: 2, style: "text-align: center;"} Chats
+      %th{colspan: 2, style: "text-align: center;"} Resulting in Tickets
+      %th{rowspan: 2, style: "text-align: center;"} 
+        Percent of Chats 
+        %br
+        Resulting in Tickets
+    %tr 
+      %th{style: "text-align: right;"} Number
+      %th{style: "text-align: right;"} Percent 
+      %th{style: "text-align: right;"} Number 
+      %th{style: "text-align: right;"} Percent 
   %tbody
     - data.each do |row|
       %tr
