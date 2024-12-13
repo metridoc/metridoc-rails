@@ -36,37 +36,21 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
     }
   end
 
-  # Calculate the fiscal year from the timestamp
-  def self.set_chat_fiscal_year
-    self.where(fiscal_year: nil)
-    .where.not(timestamp: nil)
+  # Extract additional columns for each chat record.
+  def self.calculate_chat_columns
+    self.where(pennkey: nil)
     .each do |row|
-      # Calculate the fiscal year
-      row.fiscal_year = (row.timestamp + 6.months).year
+      # Extract the fiscal year from the timestamp
+      unless row.timestamp.nil?
+        row.fiscal_year = (row.timestamp + 6.months).year
+      end
 
-      # Save the record
-      row.save
-    end
-  end
+      # Extract the referrer URL Host
+      unless row.referrer.nil?
+        row.referrer_basename = URI.parse(row.referrer).host
+      end
 
-  # Take the full url and get the hostname of the website
-  def self.set_chat_referrer
-    # Extract the referrer URL host
-    self.where(referrer_basename: nil)
-    .where.not(referrer: nil)
-    .each do |row|
-      # Parse the URL
-      row.referrer_basename = URI.parse(row.referrer).host
-
-      # Save the record
-      row.save
-    end
-  end
-  
-  # Parse the PennKey from contact info, name, or user field 1
-  def self.set_chat_pennkey
-    # The PennKey is the best guess based on the record
-    self.where(pennkey: nil).each do |row|
+      # Extract the pennkey
       if row.contact_info.include?("upenn") && row.contact_info.include?("@")
         row.pennkey = row.contact_info.split('@').first
       elsif row.name.include?("upenn") && row.name.include?("@")
@@ -84,32 +68,52 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
     end
   end
 
+  # Set the display name for the chat
+  def self.update_chat_display_name
+    # SQL query to set the display name
+    query = <<-SQL
+      UPDATE ss_libchat_chats
+      SET display_name = chat_id
+      WHERE display_name IS NULL
+    SQL
+
+    # Execute the raw SQL
+    ActiveRecord::Base.connection.execute(query)
+  end
+  
   # Fill in the remaining demographic information
-  def self.set_chat_demographics
-    self.where(penn_id: nil)
-    .where.not(pennkey: "anonymous")
-    .each do |row|
-      # Search the demographic database for the pennkey
-      people = UpennAlma::Demographic.where(pennkey: row.pennkey)
-      # If nothing is found, continue to next record
-      next if people.empty?
+  def self.update_chat_demographics
+    # SQL query to update demographic information based on potential pennkey
+    query = <<-SQL
+      UPDATE ss_libchat_chats
+      SET (
+        statistical_category_1,
+        statistical_category_2,
+        statistical_category_3,
+        statistical_category_4,
+        statistical_category_5,
+        user_group,
+        school,
+        penn_id
+      ) = (
+        upenn_alma_demographics.statistical_category_1,
+        upenn_alma_demographics.statistical_category_2,
+        upenn_alma_demographics.statistical_category_3,
+        upenn_alma_demographics.statistical_category_4,
+        upenn_alma_demographics.statistical_category_5,
+        COALESCE(upenn_alma_demographics.user_group, 'Unknown'),
+        COALESCE(upenn_alma_demographics.school, 'Unknown'),
+        upenn_alma_demographics.penn_id
+      )
+      FROM upenn_alma_demographics
+      WHERE
+        ss_libchat_chats.penn_id IS NULL
+        AND NOT ss_libchat_chats.pennkey = 'anonymous'
+        AND ss_libchat_chats.pennkey = upenn_alma_demographics.pennkey
+    SQL
 
-      # Assume the first entry is the right person
-      person = people.first
-
-      # Set demographic information
-      row.statistical_category_1 = person.statistical_category_1
-      row.statistical_category_2 = person.statistical_category_2
-      row.statistical_category_3 = person.statistical_category_3
-      row.statistical_category_4 = person.statistical_category_4
-      row.statistical_category_5 = person.statistical_category_5
-      row.penn_id = person.penn_id
-      row.user_group = person.user_group
-      row.school = person.school
-
-      # Save the Record
-      row.save
-    end
+    # Execute the raw SQL
+    ActiveRecord::Base.connection.execute(query)
   end
   
   # Case statement to derive the user type from the 
@@ -317,16 +321,11 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
   def self.update_after_import
 
     # Update the display name to be the chat id
-    self.where(display_name: nil).each do |chat|
-      chat.display_name = chat.chat_id
-      chat.save
-    end
+    self.update_chat_display_name
 
     # Update the chat table with extra information
-    self.set_chat_fiscal_year
-    self.set_chat_referrer
-    self.set_chat_pennkey
-    self.set_chat_demographics
+    self.calculate_chat_columns
+    self.update_chat_demographics
 
     # Create records for the inquiry map table
     self.create_inquiry_map

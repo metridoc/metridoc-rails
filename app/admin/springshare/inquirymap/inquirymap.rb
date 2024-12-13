@@ -23,9 +23,13 @@ namespace: :springshare do
   index title: "InquiryMap", download_links: [:csv] do
 
     id_column
+    # Maintain link to LibChat even though we are hiding some columns.
+    column :chat_id do |inquirymap|
+      link_to inquirymap.chat.display_name, springshare_libchat_chat_path(inquirymap.chat_id)
+    end
     # Loop through the columns and hide it if not super admin
     self.resource_class.column_names.each do |c|
-      next if c == "id"
+      next if ["id", "chat_id"].include?(c)
       next if (
         self.resource_class.superadmin_columns.include?(c) && 
         !current_admin_user.super_admin?
@@ -38,9 +42,16 @@ namespace: :springshare do
 
   show title: :chat_id do
     attributes_table do
+
+      row :id
+      # Special case to maintain link between chat id and LibChat
+      row :chat_id do |inquirymap|
+        link_to inquirymap.chat.display_name, springshare_libchat_chat_path(inquirymap.chat_id)
+      end
+
       # Loop through the columns and hide it if not super admin
       self.resource_class.column_names.each do |c|
-
+        next if ["id", "chat_id"].include?(c)
         next if (
           self.resource_class.superadmin_columns.include?(c) && 
           !current_admin_user.super_admin?
@@ -52,9 +63,14 @@ namespace: :springshare do
   end  
 
   csv do
-
+    id_column
+    # Specify the Springshare Chat Id
+    column :chat_id do |inquirymap|
+      inquirymap.chat.display_name
+    end
     # Loop through the columns and hide it if not super admin
     self.resource_class.column_names.each do |c|
+      next if ["id", "chat_id"].include?(c)
       next if (
         self.resource_class.superadmin_columns.include?(c) &&
         !current_admin_user.super_admin?
