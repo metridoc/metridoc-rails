@@ -305,6 +305,12 @@ en:
       springshare/libanswers/ticket:
         one: "LibAnswers Ticket"
         other: "LibAnswers Tickets"
+      springshare/libchat:
+        one: "LibChat"
+        other: "LibChat"
+      springshare/libchat/chat:
+        one: "LibChat Chat"
+        other: "LibChat Chats"
     attributes:
       borrowdirect/reshare/borrowing_turnaround:
         request_id: "Request Id"

@@ -1,0 +1,194 @@
+= javascript_include_tag 'application'
+%h3
+
+  We welcome feedback on our dashboards. If you have any suggestions for 
+  improvement (or to share something cool about the data) 
+  please fill out our 
+  #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.
+
+-# Establish the model
+- chats = Springshare::Libchat::Chat
+
+- params[:fiscal_year] ||= chats.maximum(:fiscal_year)
+
+-# Form to update filters on page
+%center
+  The default year is set to the current fiscal year.
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(chats.distinct.order(:fiscal_year).pluck(:fiscal_year),
+              params[:fiscal_year])
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Category:
+        %td
+        %td
+          = select_tag :category, 
+            options_for_select(springshare_libchat_category_mapping.map{|k,v| [v[:name], k]},
+              params[:category]),
+            include_blank: "All Categories"
+
+-# Filter results for time plots - uses entire model
+- chat_models = springshare_libchat_filtered_chats(params)
+-# Filter result for inquirymap - uses streamlined hash
+- chats = springshare_inquirymap_filtered_chats(params)
+- chats_with_tickets = springshare_inquirymap_filtered_chats(params.merge(ticket_id: true))
+
+- category_name = if params[:category].blank? then "All Categories" else springshare_libchat_category_mapping[params[:category].to_sym][:name] + " Subcategories" end
+%hr
+%h2 InquiryMap Categorical Summary for FY#{params[:fiscal_year]} and #{category_name}
+
+- data = springshare_inquirymap_category_tickets(chats, chats_with_tickets, params)
+%table.data_summary
+  %thead
+    %caption Category and Ticket Creation
+    %tr
+      %th Category
+      %th Number of Chats
+      %th Number of Chats with Tickets
+      %th Percent of Chats with Tickets
+  %tbody
+    - data.each do |row|
+      %tr
+        %th= row.shift
+        - row.each do |cell|
+          - if cell.blank?
+            %td{style: "border-width: 0px"}= cell
+          - else
+            %td{style: "text-align: right;"}= cell
+
+- data = springshare_inquirymap_subcategories(chat_models, "month", params[:category])
+= line_chart data,
+  title: "Category of Chats by Month",
+  download: true,
+  xtitle: "Month of Year",
+  ytitle: "Number of Chats",
+  curve: false,
+  legend: "right",
+  colors: springshare_inquirymap_palette
+
+- crosstab = springshare_inquirymap_subcategories_crosstab(chats, params[:category])
+- max_cell = crosstab.flatten.map(&:to_i).max
+%table.data_summary{style: "border-width: 0px"}
+  %thead
+    %caption Co-occurrence of Categories
+    %tr 
+      - crosstab.shift.each do |cell|
+        %th= cell
+    %tbody
+      - crosstab.each do |row|
+        %tr
+          %th= row.shift
+          - row.each do |cell|
+            - if cell.blank?
+              %td{style: "border-width: 0px"}= cell
+            - else
+              - style = springshare_inquirymap_cell_shading(cell, max_cell)
+              %td{style: style}= cell
+
+%center 
+  * Darker shading indicates stronger correlations *
+%br
+%hr
+%h2 InquiryMap Sentiment Statistics for FY#{params[:fiscal_year]} and #{category_name}
+
+- data = springshare_inquirymap_sentiment_crosstab(chats, chats_with_tickets, params)
+%table.data_summary
+  %thead
+    %caption Sentiment and Ticket Creation
+    %tr
+      %th{rowspan: 2, style: "text-align: center;"} Sentiment
+      %th{colspan: 2, style: "text-align: center;"} Chats
+      %th{colspan: 2, style: "text-align: center;"} Resulting in Tickets
+      %th{rowspan: 2, style: "text-align: center;"} 
+        Percent of Chats 
+        %br
+        Resulting in Tickets
+    %tr 
+      %th{style: "text-align: right;"} Number
+      %th{style: "text-align: right;"} Percent 
+      %th{style: "text-align: right;"} Number 
+      %th{style: "text-align: right;"} Percent 
+  %tbody
+    - data.each do |row|
+      %tr
+        %th= row.shift
+        - row.each do |cell|
+          - if cell.blank?
+            %td{style: "border-width: 0px"}= cell
+          - else
+            %td{style: "text-align: right;"}= cell
+
+- data, colors = springshare_inquirymap_sentiment(chat_models, "month")
+= line_chart data,
+  title: "Sentiment of Chats by Month",
+  download: true,
+  xtitle: "Month of Year",
+  ytitle: "Number of Chats",
+  curve: false,
+  colors: colors
+
+-# Define the data rollup, either with subcategories or by category
+- data, colors = springshare_inquirymap_rollup(chats, "sentiment", params[:category])
+= bar_chart data,
+  title: "Sentiment by Chat Category",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Category",
+  colors: colors,
+  stacked: true
+
+%hr 
+%h2 InquiryMap Patron Demographics for FY#{params[:fiscal_year]} and #{category_name}
+%center 
+  * Note that although patrons are asked to identify by PennKey, it is not required to start a chat *
+
+-# Group by affiliation
+- data = springshare_inquirymap_rollup(chats, "school", params[:category])
+= bar_chart data,
+  title: "Affiliation of Patrons by Chat Category",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Category",
+  stacked: true,
+  legend: "right",
+  colors: springshare_inquirymap_palette,
+  height: "400px"
+
+-# Group by User Group
+- data = springshare_inquirymap_rollup(chats, "user_group", params[:category])
+= bar_chart data,
+  title: "Type of Patrons by Chat Category",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Category",
+  stacked: true,
+  legend: "right",
+  colors: springshare_inquirymap_palette,
+  height: "400px"
+
+- data = springshare_inquirymap_patron_sentiment(chats, "school")
+= bar_chart data,
+  title: "Sentiment by Known Patron Affiliation",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Affiliation",
+  stacked: true,
+  legend: "right",
+  colors: springshare_libchat_sentiment_names.values,
+  height: "600px"
+
+- data = springshare_inquirymap_patron_sentiment(chats, "user_group")
+= bar_chart data,
+  title: "Sentiment by Known Patron Type",
+  download: true,
+  xtitle: "Number of Chats",
+  ytitle: "Patron Type",
+  stacked: true,
+  legend: "right",
+  colors: springshare_libchat_sentiment_names.values
