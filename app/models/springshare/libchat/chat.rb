@@ -234,7 +234,7 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
     } then 5
     when ['local', 'community', 'philadelphia', 'philly'].any? {
       |s| initial_question.include?(s)
-    } then 5
+    } then 7
     when initial_question.include?("research") then 1
     when ['find', 'search'].any? {
       |s| initial_question.include?(s)
