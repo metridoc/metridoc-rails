@@ -262,3 +262,12 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 # Some versions of Ubuntu also requires this gem
 gem 'tzinfo-data'
+
+##############
+# Natural Language Processing
+##############
+
+# VADER (Valence Aware Dictionary and sEntiment Reasoner) is a lexicon and 
+# rule-based sentiment analysis tool that is specifically attuned to sentiments 
+# expressed in social media.
+gem 'vader_sentiment_ruby'

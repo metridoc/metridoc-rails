@@ -1,0 +1,173 @@
+= javascript_include_tag 'application'
+
+%section
+  %div{style: "width: 100%; display: flex; align-items: stretch;"}
+    %div{style: "width: 70%;"}
+      %h2{id: "introduction"} Introduction
+
+      #{link_to "InquiryMap", "#inquirymap"} is an automated tagging process designed to tag 
+      #{link_to "LibChat data", :springshare_libchat} with content, sentiment, and affiliation tags.
+      We assign these tags for the purpose of identifying trends in the chat 
+      questions over time, including, but not limited to: 
+      %ul
+        %li what types of questions are being asked 
+        %li the number of chats resulting in tickets
+        %li the rate of user satisfaction
+        %li the groups of users encountering specific problems
+
+      We welcome feedback on our dashboards and schema. If you have any suggestions 
+      (or to share something cool you discovered) please fill out our 
+      #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.
+
+    %div{style: "margin-left: 5%; width: 25%;"}
+
+      %h2 Table of Contents
+      %ul
+        %li= link_to "Introduction", "#introduction"
+        %li= link_to "Data Table Links", "#data_resources"
+        %li= link_to "InquiryMap Analysis", "#inquirymap"
+        %li= link_to "Sentiment Analysis", "#sentiment"
+        %li= link_to "Table Information", "#table_information"
+  
+%hr
+%section
+  %h2{id: "data_resources"} Resources
+
+  %h3 Database Access 
+  For those who are connecting directly to the PostgreSQL database or 
+  who are using the report exporting tool, the InquiryMap table is "ss_libchat_inquirymap".
+
+  %h3 Data Tables
+  %ul
+    %li= link_to "InquiryMap Results", "/springshare/inquirymap_inquirymaps"
+
+  %h3 Statistics 
+  %ul 
+    %li 
+      #{link_to "Longitudinal InquiryMap Statistics", springshare_inquirymap_statistics_path} 
+    %li 
+      #{link_to "Fiscal Year InquiryMap Statistics", springshare_inquirymap_yearly_statistics_path}
+      %ul
+        %li Filter by Fiscal Year 
+        %li Filter by Category
+
+%hr 
+%section 
+  %h2{id: "inquirymap"} InquiryMap Analysis 
+  InquiryMap is a service designed to enhance the library chat data with 
+  automatically labelled content, sentiment, and affiliation tags.
+  More details about the InquiryMap process can be found on 
+  #{link_to "Confluence", "https://upennlibrary.atlassian.net/wiki/spaces/IAOA/pages/1243971619/SpringShare+LibApps+Data#Libchats%2FInquiryMap"}.
+  %br
+  The content tags arise from a schema of 7 main categories and 24 
+  subcategories derived by UX Researcher Virshae Campbell and 
+  Bollinger Fellow in Innovation Angelica Rivera. 
+  The first 4 categories are from hand-scanning chats and frequently 
+  searched terms from the library website. 
+  The last 3 categories were created to capture as many of the 
+  remaining chats as possible. 
+  These categories and numbers were derived from the 1,924 LibChat
+  interactions from 05/01/2023-05/31/2024.
+  %br
+  Testing the original sample, 77% of the interactions are labelled 
+  through keywords,  13% are missed due to typos and capitalization, 
+  but otherwise match the schema, and 10% contain miscellaneous requests.
+  %p{:style => "font-weight: 700; display: inline"} 
+    Up to 90% of incoming chats can be labelled with the schema.
+  The subcategories are assigned by themes found inside the categories.
+
+  %figure{:style => "text-align: center; max-width: 1000px; width: 100%; margin: auto; padding: 0px 0px;"}
+    %figcaption Schema for assigning categories and subcategories with InquiryMap.
+    =image_tag asset_path("SpringshareInquiryMapSchema.png"), :alt => "Image of InquiryMap Schema", :width => "100%", :title => "InquiryMap Schema"
+
+  %center 
+    Below is an example of how InquiryMap can be used to extract details 
+    about a chat without reading the text. 
+    Given the following codes:
+    %table.data_summary
+      %tbody
+        %tr
+          %th Column Name
+          %th medium
+          %th type_of_search
+          %th services
+          %th account_q
+          %th top_searches
+          %th subscription_issues
+          %th newspaper
+        %tr
+          %th Flag Value
+          %td{style: "text-align: right;"} 0
+          %td{style: "text-align: right;"} 1
+          %td{style: "text-align: right;"} 2
+          %td{style: "text-align: right;"} 1
+          %td{style: "text-align: right;"} 2
+          %td{style: "text-align: right;"} 2
+          %td{style: "text-align: right;"} 0
+
+  Reversing the tagging schema, this question is about research or from a researcher 
+  about an account for a subscription service that involves citations.
+
+  Here is the redacted user question:
+  %blockquote
+    I would like to gain access to the premium features on Web of Science
+    (e.g. search all citations of a paper). As a CHOP researcher, working under 
+    ****, I have access to Penn Libraries. Do I also have access to the Web of 
+    Science features? If so can you help me set that up or access them? 
+    I have already added my chop email to my Web of Science account but I 
+    am not sure how to go from there (it looks like I still have the free account).
+    Thanks!
+
+  The user issues are captured in a handful of numbers and maintains 
+  the patron's privacy.
+
+%hr
+%section
+  %h2{id: "sentiment"} Sentiment Analysis
+
+  A sentiment score for each user chat is calculated using the sentiment analysis package 
+  #{link_to "VADER", "https://github.com/cjhutto/vaderSentiment"}.
+  VADER is trained on social media posts, with a human-assigned lexicon 
+  designed to handle colloquial input such as emojis and internet 
+  shorthand (such as “lol”). 
+  It is also capable of recognizing mixed sentiment in a single sentence.
+  %br 
+  A sentiment score is calculated for each patron message then averaged 
+  to a final sentiment score for the entire interaction.
+  Previous studies have shown that the sentiments aligned with manual scoring (83% accuracy) 
+  and correlate well with the success rate of the chat.
+  Success is defined as the Patron receiving either the answer to the question or a referral for further assistance. 
+  Chats in the positive and ecstatic categories for the sample examined had success rates of 91% and 95%, respectively.
+  Neutral chats may also be successful, but the patron interaction could be too short to evaluate the sentiment accurately
+  if the chat was disconnected or if the patron preemptively left the chat.
+  Additionally, ecstatic chats tend to be short easily answered questions where longer chats trend more to positive sentiment.
+  %br
+  %br
+  The sentiment scores represent the following categories:
+
+  %ul
+    %li Negative: -1 < x < -0.05
+    %li Neutral: -0.05 < x < 0.05 
+    %li Positive: 0.05 < x < 0.3
+    %li Ecstatic: 0.3 < x < 1
+
+%hr
+%section 
+  %h2{id: "table_information"} InquiryMap Table Structure 
+
+  %h3 InquiryMap
+  The table contains the flags from the InquiryMap coding and the sentiment of each chat as evaluated by Vader. 
+  For a more complete description of InquiryMap see #{link_to "above", "#inquirymap"}.
+  %ul
+    %li Chat Identifier - The Springshare Unique Identifier for the Chat that corresponds to this record
+    %li User Type - The derived user type
+    %li Sentiment Score - The average numerical sentiment value of the chat, evaluated by Vader (see #{link_to "above", "#sentiment"}), hidden from the website interface.
+    %li Sentiment - A human readable reflection of the numerical sentiment value, hidden from the website interface.
+    %li Newspaper - Flag for if the chat was related to access to a newspaper ("Newspaper Related")
+    %li Medium - Flag for what type of item the patron is looking for ("Physical Item Type")
+    %li Top Searches - Flag for frequent requests from patrons ("Frequent Requests")
+    %li Services - Flag for help with library services ("Library Services")
+    %li Account Question - Flag for assistance with library accounts ("Library Account")
+    %li Subscription Issues - Flag for help with accessing online resources ("Subscription Services")
+    %li Type of Search - Flag for the type of research assistance needed ("Purpose of Request")
+
