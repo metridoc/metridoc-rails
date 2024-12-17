@@ -510,4 +510,4 @@ DEPENDENCIES
   web-console (>= 4.2.0)
 
 BUNDLED WITH
-   2.5.4
+   2.6.0
