@@ -46,8 +46,11 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
       end
 
       # Extract the referrer URL Host
-      unless row.referrer.nil?
-        row.referrer_basename = URI.parse(row.referrer).host
+      unless row.referrer.empty?
+        # Remove the query part of the string, it can contain non-ASCII characters
+        row.referrer_basename = URI.parse(
+          row.referrer.split("?").first 
+        ).host
       end
 
       # Extract the pennkey

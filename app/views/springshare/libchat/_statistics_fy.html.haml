@@ -40,7 +40,7 @@
 
 %h2 Showing Chat Statistics for FY#{params[:fiscal_year]} and #{params[:answerer] || "All Librarians"}
 %center
-  In FY#{params[:fiscal_year]}, you answered #{chats.count} LibChat Queries.
+  In FY#{params[:fiscal_year]}, you answered #{format_big_number(chats.count)} LibChat Queries.
   %br
   In FY#{params[:fiscal_year]}, you created 
   #{chats.where.not(ticket_id: 0).count} 
