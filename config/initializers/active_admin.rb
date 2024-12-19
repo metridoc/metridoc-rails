@@ -328,11 +328,11 @@ ActiveAdmin.setup do |config|
         if: proc { authorized?(:read, 'Springshare') },
         parent: I18n.t('active_admin.resource_sharing')
 
-      # EZ Proxy
-      menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
-        url: :ezproxy_root_path,
-        if: proc{ authorized?(:read, "Ezproxy") },
-        parent: I18n.t("active_admin.resource_sharing")
+      # # EZ Proxy
+      # menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
+      #   url: :ezproxy_root_path,
+      #   if: proc{ authorized?(:read, "Ezproxy") },
+      #   parent: I18n.t("active_admin.resource_sharing")
 
       # Gate Counts
       menu.add label: I18n.t("active_admin.gate_counts"),
