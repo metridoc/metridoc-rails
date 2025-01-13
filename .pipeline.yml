@@ -129,27 +129,28 @@ deploy_staging:
     - deploy
 
 # Deploy production
-deploy_production:
-  stage: deploy
-  extends:
-    - .deploy
-  environment:
-    name: ${ENVIRONMENT_NAME}
-    url: metridoc.library.upenn.edu
-  needs:
-    - copy_docker_metridoc_images
-  variables:
-    ANSIBLE_HOST_KEY_CHECKING: "false"
-  script:
-    - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
-    - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
-      
-    # Install ansible requirements
-    - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
-
-    # Run ansible playbook
-    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
-  rules:
-    - if: $CI_COMMIT_REF_NAME == "gitlab-prod"
-  tags:
-    - deploy
+#deploy_production:
+#  stage: deploy
+#  extends:
+#    - .deploy
+#  environment:
+#    name: ${ENVIRONMENT_NAME}
+#    url: metridoc.library.upenn.edu
+#  needs:
+#    - copy_docker_metridoc_images
+#  variables:
+#    ANSIBLE_HOST_KEY_CHECKING: "false"
+#  script:
+#    - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
+#    - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
+#      
+#    # Install ansible requirements
+#    - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
+#
+#    # Run ansible playbook
+#    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
+#  rules:
+#    - if: $CI_COMMIT_REF_NAME == "gitlab-prod"
+#  tags:
+#    - deploy
+#
