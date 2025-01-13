@@ -27,7 +27,7 @@ main:
         job: secret_detection
     strategy: depend
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "gitlab-prod"
       variables:
         ENVIRONMENT_NAME: production
     - if: $CI_COMMIT_BRANCH == "gitlab-staging"

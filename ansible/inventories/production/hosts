@@ -1,6 +1,18 @@
-[docker_swarm_manager]
-metridoc01.library.upenn.int
+docker_swarm_manager:
+  hosts:
+    swarm-01:
+      ansible_host: metridoc-prod01.library.upenn.int
+      swarm_labels:
+        - "postgres-primary"
+        - "shibboleth"
+        - "metridoc"
+        - "jenkins"
+        - "alertmanager-1"
 
-[swarm_workers]
-metridoc01.library.upenn.int
-metridoc02.library.upenn.int
+docker_swarm_worker:
+  hosts:
+    swarm-02:
+      ansible_host: metridoc-prod02.library.upenn.int
+      swarm_labels:
+        - "postgres-replica"
+        - "alertmanager-2"

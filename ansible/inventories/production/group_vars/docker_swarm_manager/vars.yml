@@ -6,6 +6,10 @@ ezpaarse_mongodb_username: "{{ vault_ezpaarse_mongodb_username }}"
 ezpaarse_mongodb_root_password: "{{ vault_ezpaarse_mongodb_root_password }}"
 ezpaarse_mongodb_root_username: "{{ vault_ezpaarse_mongodb_root_username }}"
 ezpaarse_nfs_input_volume_address: "{{ vault_ezpaarse_nfs_input_volume_address }}"
+tmp_nfs_input_volume_address: "{{ vault_tmp_nfs_input_volume_address }}"
+tmp_nfs_input_volume_device: "{{ vault_tmp_nfs_input_volume_device }}"
+nfs_metridoc_tmp_address: '{{ vault_nfs_metridoc_tmp_address }}'
+nfs_metridoc_tmp_device: '{{ vault_nfs_metridoc_tmp_device }}'
 ezpaarse_nfs_input_volume_device: "{{ vault_ezpaarse_nfs_input_volume_device }}"
 grafana_admin_password: "{{ vault_grafana_admin_password }}"
 grafana_database_password: "{{ vault_grafana_database_password }}"
@@ -24,13 +28,13 @@ saml_first_name_attribute: "{{ vault_saml_first_name_attribute }}"
 saml_last_name_attribute: "{{ vault_saml_last_name_attribute }}"
 saml_logout_url: "{{ vault_saml_logout_url }}"
 
-alertmanager_1_swarm_node: metridoc01
-alertmanager_2_swarm_node: metridoc02
-ezpaarse_swarm_node: metridoc01
-jenkins_swarm_node: metridoc01
-metridoc_swarm_node: metridoc01
-postgres_primary_swarm_node: metridoc01
-postgres_replica_swarm_node: metridoc02
+alertmanager_1_swarm_node: metridoc-prod01
+alertmanager_2_swarm_node: metridoc-prod02
+ezpaarse_swarm_node: metridoc-prod01
+jenkins_swarm_node: metridoc-prod01
+metridoc_swarm_node: metridoc-prod01
+postgres_primary_swarm_node: metridoc-prod01
+postgres_replica_swarm_node: metridoc-prod02
 
 # Docker config / secret versions
 alertmanager_config_version: v2
@@ -68,19 +72,19 @@ docker_stack_env:
   ALERTMANAGER_2_EXTERNAL_URL: http://{{ alertmanager_2_swarm_node }}.library.upenn.int:9094
   APP_USER_GID: "{{ rails_app_user_gid }}"
   APP_USER_UID: "{{ rails_app_user_uid }}"
-  EZPAARSE_IMAGE_TAG: "{{ metridoc_image_tag }}"
-  EZPAARSE_MONGODB_IMAGE_TAG: "{{ metridoc_image_tag }}"
-  GF_SERVER_ROOT_URL: http://metridoc01.library.upenn.int:3000
+  EZPAARSE_IMAGE_TAG: "main"
+  EZPAARSE_MONGODB_IMAGE_TAG: "main"
+  GF_SERVER_ROOT_URL: http://metridoc-prod01.library.upenn.int:3000
   GF_SMTP_HOST: "{{ vault_grafana_smtp_host }}"
-  JENKINS_IMAGE_TAG: lts
+  JENKINS_IMAGE_TAG: main
   MAILER_DEFAULT_FROM: "{{ vault_mailer_default_from }}"
   MAILER_DOMAIN: "{{ vault_mailer_domain }}"
   MAILER_HOST: "{{ vault_mailer_host }}"
-  METRIDOC_IMAGE_TAG: "{{ metridoc_image_tag }}"
+  METRIDOC_IMAGE_TAG: "{{ image_tag }}"
   METRIDOC_REPLICAS: 2
   MONITORING_SUBNET: "{{ monitoring_subnet }}"
-  PROMETHEUS_REPLICAS: 2
-  PYTHON_JOBS_IMAGE_TAG: "{{ metridoc_image_tag }}"
+  PROMETHEUS_REPLICAS: 1
+  PYTHON_JOBS_IMAGE_TAG: "main"
   PYTHON_JOBS_REPLICAS: 1
   RAILS_ENV: production
 
