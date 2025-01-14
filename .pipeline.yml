@@ -123,6 +123,13 @@ deploy_staging:
   variables:
     ANSIBLE_HOST_KEY_CHECKING: "false"
   script:
+    # Create onetime key pair
+    - ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -P ""
+
+    # Generate signed key and write to a new pub key
+    - vault write -field=signed_key $[[ inputs.vault_ssh_client_endpoint ]]/sign/$[[ inputs.vault_ssh_client_role ]] public_key=@${HOME}/.ssh/id_ed25519.pub valid_principals=$[[ inputs.valid_principals ]] > ~/.ssh/id_ed25519-cert.pub
+    - chmod 0400 ~/.ssh/id_ed25519-cert.pub
+
     - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
     - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
       
