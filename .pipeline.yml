@@ -1,8 +1,5 @@
 ---
 include:
-  - project: devops/gitlab/ci-templates/deploy
-    ref: 2.0.0
-    file: .hashicorp_vault.yml
   - project: devops/gitlab/ci-templates/docker
     ref: 1.0.0
     file:
@@ -14,6 +11,22 @@ include:
     ref: master
     file:
       - .trivy_container_scanning.yml
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
+    inputs:
+      deploy_environment_url: "https://metridoc-staging.library.upenn.int"
+      deploy_host: "${DEPLOY_HOST}"
+      valid_principals: "${VALID_PRINCIPALS}"
+      vault_auth_role: "${VAULT_AUTH_ROLE}"
+      vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
+  - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
+    inputs:
+      deploy_environment: "production"
+      deploy_environment_url: "https://metridoc.library.upenn.int"
+      deploy_host: "${DEPLOY_HOST}"
+      job_suffix: "production"
+      valid_principals: "${VALID_PRINCIPALS}"
+      vault_auth_role: "${VAULT_AUTH_ROLE}"
+      vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
 
 stages:
   - build_and_push:metridoc_image
@@ -105,11 +118,6 @@ remove_tmp_registry:
 # Deploy staging
 deploy_staging:
   stage: deploy
-  extends:
-    - .deploy
-  environment:
-    name: ${ENVIRONMENT_NAME}
-    url: metridoc-staging.library.upenn.int
   needs:
     - copy_docker_metridoc_images
   variables:
@@ -131,11 +139,6 @@ deploy_staging:
 # Deploy production
 #deploy_production:
 #  stage: deploy
-#  extends:
-#    - .deploy
-#  environment:
-#    name: ${ENVIRONMENT_NAME}
-#    url: metridoc.library.upenn.edu
 #  needs:
 #    - copy_docker_metridoc_images
 #  variables:
