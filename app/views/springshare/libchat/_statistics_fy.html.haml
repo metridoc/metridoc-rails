@@ -79,8 +79,8 @@
   ytitle: "Number of Chats",
   curve: false
 
-- chat_data = chats.group_by_hour_of_day(:timestamp, format: "%l%p", time_zone: "Eastern Time (US & Canada)").count.select{|k,v| !v.nil? && (v > 0)}
-- ticket_data = chats.where.not(ticket_id: 0).group_by_hour_of_day(:timestamp, format: "%l%p", time_zone: "Eastern Time (US & Canada)").count.select{|k,v| !v.nil? && (v > 0)}
+- chat_data = chats.group_by_hour_of_day(:timestamp, format: "%l%p").count.select{|k,v| !v.nil? && (v > 0)}
+- ticket_data = chats.where.not(ticket_id: 0).group_by_hour_of_day(:timestamp, format: "%l%p").count.select{|k,v| !v.nil? && (v > 0)}
 = line_chart [{name: "All Chats", data: chat_data},
   {name: "Chats with Tickets", data: ticket_data}],
   title: "Chats by Hour of Day",
