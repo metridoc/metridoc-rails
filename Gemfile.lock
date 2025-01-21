@@ -336,7 +336,7 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     rb-readline (0.5.5)
-    rdoc (6.7.0)
+    rdoc (6.11.0)
       psych (>= 4.0.0)
     regexp_parser (2.9.0)
     reline (0.5.9)
@@ -493,7 +493,7 @@ DEPENDENCIES
   rails (>= 7.1.3.4)
   rails_db
   rb-readline
-  rdoc (>= 6.6.3.1)
+  rdoc (~> 6.11)
   rexml (>= 3.2.7)
   roo
   sassc

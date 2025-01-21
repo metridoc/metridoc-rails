@@ -11,7 +11,7 @@ gem 'rails', '>= 7.1.3.4'
 # includes the +rdoc+ and +ri+ tools for generating and displaying documentation
 # from the command-line.
 # Required by IRB
-gem 'rdoc', '>= 6.6.3.1'
+gem 'rdoc', '~> 6.11'
 
 ###########
 # Databases
