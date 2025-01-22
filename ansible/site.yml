@@ -7,8 +7,6 @@
         - jsondiff
         - passlib
         - pyyaml
-        - requests==2.31.0
-        - urllib3==1.26.20
 
 - name: Provision Docker Swarm Cluster
   hosts: all
@@ -21,6 +19,15 @@
   tasks:
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
+
+- name: Install requests dependency
+  hosts: docker_swarm_manager
+  tasks:
+  - ansible.builtin.pip:
+      name:
+        - requests==2.31.0
+        - urllib3==1.26.20
+
 
 - name: Deploy application
   hosts: docker_swarm_manager
