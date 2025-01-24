@@ -248,8 +248,6 @@ GEM
       net-imap
       net-pop
       net-smtp
-    makara (0.5.1)
-      activerecord (>= 5.2.0)
     marcel (1.0.4)
     matrix (0.4.2)
     mini_mime (1.1.5)
@@ -511,7 +509,6 @@ DEPENDENCIES
   letter_opener
   listen (>= 3.0.5, < 4.0)
   mail
-  makara (~> 0.5.1)
   mysql2
   net-http
   net-sftp

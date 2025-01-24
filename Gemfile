@@ -92,11 +92,11 @@ gem 'nokogiri', '>= 1.16.5'
 # ActiveRecord
 ##############
 
-# Makara is generic primary/replica proxy. It handles the heavy lifting of
-# managing, choosing, blacklisting, and cycling through connections. It comes
-# with an ActiveRecord database adapter implementation.
-# Last updated 2021
-gem 'makara', '~> 0.5.1'
+# # Makara is generic primary/replica proxy. It handles the heavy lifting of
+# # managing, choosing, blacklisting, and cycling through connections. It comes
+# # with an ActiveRecord database adapter implementation.
+# # Last updated 2021
+# gem 'makara', '~> 0.5.1'
 
 # A library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import'
