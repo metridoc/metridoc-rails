@@ -1,17 +1,18 @@
 default: &default
-  adapter: postgresql_makara
-  database: postgres
-  username: postgres
-  password: {{ postgres_database_password }}
-  pool: 8
-  makara:
-    sticky: false
-    connections:
-      - role: master
-        host: primary-db
-        disable_blacklist: true
-      - role: slave
-        host: replica-db
+  primary:
+    host: primary-db
+    adapter: postgresql
+    database: postgres
+    username: postgres
+    password: {{ postgres_database_password }}
+    pool: 8
+  primary_replica:
+    replica: true
+    adapter: postgresql
+    database: postgres
+    username: postgres
+    password: {{ postgres_database_password }}
+    pool: 8
   variables:
     tcp_keepalives_idle: 60
     tcp_keepalives_interval: 60
