@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '>= 7.1.3.4'
+gem 'rails', '>= 7.2.2.1'
 
 # RDoc produces HTML and command-line documentation for Ruby projects. RDoc
 # includes the +rdoc+ and +ri+ tools for generating and displaying documentation
@@ -66,7 +66,6 @@ gem 'net-http'
 gem "turbo-rails"
 
 # Create JSON structures via a Builder-style DSL
-# Last updated 2021
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 2.5'
 
@@ -152,7 +151,7 @@ gem 'roo'
 # Gem for OAuth2 operations
 # A Ruby wrapper for the OAuth 2.0 protocol built with a similar style to the
 # original OAuth spec.
-# Last updated 2021
+# Last updated 2022
 gem 'oauth2', '~> 2.0'
 
 # Chronic is a natural language date/time parser written in pure Ruby.
@@ -166,8 +165,7 @@ gem 'chronic'
 gem 'daemons'
 
 # Autoload dotenv in Rails.
-# Last updated 2022
-gem 'dotenv-rails'
+gem 'dotenv'
 
 # A pure Ruby implementation of the SFTP client protocol
 # Last updated 2022
@@ -177,40 +175,14 @@ gem 'net-sftp'
 gem 'terser'
 
 group :development, :test do
-  # The readline library provides a pure Ruby implementation of the GNU
-  # readline C library, as well as the Readline extension that ships as
-  # part of the standard library.
-  # Last updated 2017
-  gem 'rb-readline'
-
-  # Pry is a runtime developer console and IRB alternative with powerful
-  # introspection capabilities.
-  # Last updated 2013
-  gem 'pry'
-
-  # Use Pry as your rails console
-  # Last updated 2018
-  gem 'pry-rails'
-
-  # Combine 'pry' with 'byebug'. Adds 'step', 'next', 'finish', 'continue'
-  # and 'break' commands to control execution.
-  # Last updated 2022
-  gem 'pry-byebug'
-
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger
-  # console
-  # Byebug is a Ruby debugger. It's implemented using the TracePoint C API for
-  # execution control and the Debug Inspector C API for call stack navigation
-  # Last updated 2020
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   # Adds support for Capybara system testing and selenium driver
   # Capybara is an integration testing tool for rack based web applications.
   # It simulates how a user would interact with a website
-  gem 'capybara', '~> 3.39', '>= 3.39.2'
+  gem 'capybara', '~> 3.40'
 
   # Dependancy of Selenium webdriver
-  gem 'rexml', ">= 3.2.7"
+  gem 'rexml', ">= 3.4.0"
 
   # Selenium implements the W3C WebDriver protocol to automate popular browsers.
   # It aims to mimic the behaviour of a real user as it interacts with the
@@ -244,7 +216,7 @@ group :development do
 
   # TinyTDS - A modern, simple and fast FreeTDS library for Ruby using DB-Library.
   # Developed for the ActiveRecord SQL Server adapter.
-  gem 'tiny_tds', '~> 2.1.0'
+  gem 'tiny_tds'
 
   # ActiveRecord SQL Server Adapter. SQL Server 2012 and upward.
   gem 'activerecord-sqlserver-adapter', '~> 7.1'
