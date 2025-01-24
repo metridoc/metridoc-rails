@@ -1,12 +1,15 @@
 ---
 - name: Install deps
-  hosts: all
+  hosts: docker_swarm_manager
+  become: true
   tasks:
   - ansible.builtin.pip:
       name:
         - jsondiff
         - passlib
         - pyyaml
+        - requests<2.32.0
+        - urllib3<2.0.0
 
 - name: Provision Docker Swarm Cluster
   hosts: all
@@ -19,15 +22,6 @@
   tasks:
     - ansible.builtin.import_role:
         name: atosatto.docker-swarm
-
-- name: Install requests dependency
-  hosts: docker_swarm_manager
-  tasks:
-  - ansible.builtin.pip:
-      name:
-        - requests==2.31.0
-        - urllib3==1.26.20
-
 
 - name: Deploy application
   hosts: docker_swarm_manager
