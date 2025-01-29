@@ -32,9 +32,6 @@
         name: postgres_primary_manager
       tags: postgres_primary_manager
     - ansible.builtin.import_role:
-        name: postgres_replica_manager
-      tags: postgres_replica_manager
-    - ansible.builtin.import_role:
         name: ezpaarse_manager
       tags: ezpaarse_manager
     - ansible.builtin.import_role:
@@ -56,3 +53,12 @@
     - ansible.builtin.import_role:
         name: monitoring_manager
       tags: monitoring_manager
+    - name: "Wait for metridoc app to finish migrations"
+      docker_container_info:
+      register: metridoc_app_container
+      until: metridoc_app_container.container.State.Health.Status == 'healthy'
+      retries: 15
+      delay: 25
+    - ansible.builtin.import_role:
+        name: postgres_replica_manager
+      tags: postgres_replica_manager
