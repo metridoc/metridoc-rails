@@ -57,6 +57,7 @@
       docker_container_info:
         name: metridoc_app
       register: metridoc_app_container
+      ansible.builtin.shell: echo {{ metridoc_app_container }}
       until: metridoc_app_container.container.State.Health.Status == 'healthy'
       retries: 15
       delay: 25
