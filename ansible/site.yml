@@ -32,6 +32,9 @@
         name: postgres_primary_manager
       tags: postgres_primary_manager
     - ansible.builtin.import_role:
+        name: postgres_replica_manager
+      tags: postgres_replica_manager
+    - ansible.builtin.import_role:
         name: ezpaarse_manager
       tags: ezpaarse_manager
     - ansible.builtin.import_role:
@@ -53,10 +56,3 @@
     - ansible.builtin.import_role:
         name: monitoring_manager
       tags: monitoring_manager
-    - name: "Register metridoc app container"
-      docker_container_info:
-        name: metridoc_app
-      register: metridoc_app_container
-    - ansible.builtin.import_role:
-        name: postgres_replica_manager
-      tags: postgres_replica_manager
