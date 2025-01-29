@@ -53,6 +53,8 @@
     - ansible.builtin.import_role:
         name: monitoring_manager
       tags: monitoring_manager
+    - ansible.builtin.pause:
+        minutes: 5
     - name: "Register app container info"
       docker_container_info:
         name: metridoc_app
