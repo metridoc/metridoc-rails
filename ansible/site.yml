@@ -55,17 +55,14 @@
       tags: monitoring_manager
     - ansible.builtin.pause:
         minutes: 5
-    - name: "docker container ls -a"
+    - name: "Get metridoc container name"
       become: True
       shell:
-        "docker container ls -a"
-      register: container_info
-    - name: "docker container ls -a result"
-      debug:
-        msg: "{{container_info.stdout_lines}}"
-    - name: "Register app container info"
+        "docker ps -f name=metridoc_app.1 --format \"{{.Names}}\""
+      register: container_name
+    - name: "Get metridoc container info"
       docker_container_info:
-        name: metridoc_app
+        name: container_name
       register: metridoc_app_container
     - name: "print container info"
       debug: 
