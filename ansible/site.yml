@@ -62,7 +62,6 @@
     - name: "print container info"
       debug: 
         var: metridoc_app_container
-        verbosity: 2
 
 #    - name: "Wait for metridoc app to finish migrations"
 #      docker_container_info:
