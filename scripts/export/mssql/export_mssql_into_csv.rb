@@ -2,7 +2,6 @@
 ENV['BUNDLE_GEMFILE'] = 'Gemfile.sqlserver'
 require 'bundler/setup'
 require 'optparse'
-require 'makara'
 Bundler.require(:default)
 
 # hack to get the activerecord 4.1.2 work with Ruby 2.5.1
