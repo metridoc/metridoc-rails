@@ -57,12 +57,6 @@
       docker_container_info:
         name: metridoc_app
       register: metridoc_app_container
-    - name: "print for sanity"
-      ansible.builtin.shell: echo {{ metridoc_app_container }} 
-    - name: "Wait for metridoc app to finish booting."
-      until: metridoc_app_container.container.State.Health.Status == "healthy"
-      retries: 10
-      delay: 20
     - ansible.builtin.import_role:
         name: postgres_replica_manager
       tags: postgres_replica_manager
