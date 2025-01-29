@@ -55,6 +55,7 @@
       tags: monitoring_manager
     - name: "Wait for metridoc app to finish migrations"
       docker_container_info:
+        name: metridoc_app
       register: metridoc_app_container
       until: metridoc_app_container.container.State.Health.Status == 'healthy'
       retries: 15
