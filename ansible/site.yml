@@ -77,8 +77,8 @@
       become: True
       shell:
         "docker inspect {{ container_name2.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
-      register: result
-      until: result.stdout == 'healthy'
+      register: result2
+      until: result2.stdout == 'healthy'
       retries: 10
       delay: 20
     
