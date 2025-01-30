@@ -60,6 +60,9 @@
       shell:
         "docker ps -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
       register: container_name
+    - name: "Print container name"
+      debug:
+        var: container_name
     - name: "Get metridoc container info"
       docker_container_info:
         name: container_name
@@ -67,7 +70,14 @@
     - name: "print container info"
       debug: 
         var: metridoc_app_container
-
+    - name: "run manually"
+      become: True
+      shell:
+        "docker inspect {{ container_name }} --format='{{.State.Health.Status}}'"
+      register: result
+    - name: "debug result"
+      debug:
+        var: result
 #    - name: "Wait for metridoc app to finish migrations"
 #      docker_container_info:
 #        name: metridoc_app
