@@ -53,24 +53,19 @@
     - ansible.builtin.import_role:
         name: monitoring_manager
       tags: monitoring_manager
-#    - ansible.builtin.pause:
-#        minutes: 5
-    - name: "Get metridoc container name"
+    
+    # We do the following 4 tasks before doing the postgres replica task because errors will occur when metridoc_app does not finish db migrations.
+    - name: "Get metridoc 1 container name"
       become: True
       shell:
         "docker ps -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
       register: container_name
-    - name: "Print container name again"
-      debug:
-        var: container_name.stdout_lines[0]
-#    - name: "Get metridoc container info"
-#      docker_container_info:
-#        name: container_name.stdout_lines[0]
-#      register: metridoc_app_container
-#    - name: "print container info"
-#      debug: 
-#        var: metridoc_app_container
-    - name: "Wait for metridoc app container to finish booting"
+    - name: "Get metridoc 2 container name"
+      become: True
+      shell:
+        "docker ps -f name=metridoc_app.2 --format \"{{ '{{' }}.Names{{ '}}' }}\""
+      register: container_name2
+    - name: "Wait for metridoc app container 1 to finish booting"
       become: True
       shell:
         "docker inspect {{ container_name.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
@@ -78,16 +73,15 @@
       until: result.stdout == 'healthy'
       retries: 10
       delay: 20
-    - name: "debug result"
-      debug:
-        var: result
-#    - name: "Wait for metridoc app to finish migrations"
-#      docker_container_info:
-#        name: metridoc_app
-#      register: metridoc_app_container
-#      until: metridoc_app_container.container.State.Health.Status == 'healthy'
-#      retries: 15
-#      delay: 25
+    - name: "Wait for metridoc app container 2 to finish booting"
+      become: True
+      shell:
+        "docker inspect {{ container_name2.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
+      register: result
+      until: result.stdout == 'healthy'
+      retries: 10
+      delay: 20
+    
     - ansible.builtin.import_role:
         name: postgres_replica_manager
       tags: postgres_replica_manager
