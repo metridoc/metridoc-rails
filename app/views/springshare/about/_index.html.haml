@@ -12,5 +12,10 @@
   %h2 Data
   %ul
     %li #{link_to "LibCal Data - Appointments and Bookings", :springshare_libcal}
-    %li #{link_to "LibAnswers Data - Tickets", :springshare_libanswers}
+    %li 
+      LibAnswers Data 
+      %ul 
+        %li #{link_to "LibTickets", :springshare_libanswers}
+        %li #{link_to "LibChat", :springshare_libchat}
+        %li #{link_to "InquiryMap", :springshare_inquirymap} - Text mining LibChats
     %li #{link_to "Consultation/Instruction Data", :admin_consultation}

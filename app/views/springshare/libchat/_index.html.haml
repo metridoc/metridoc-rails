@@ -1,0 +1,114 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2{id: "introduction"} Introduction
+
+  Springshare's #{link_to "LibChat", "https://www.springshare.com/libanswers/"}
+  widgets are a full-featured chat system to bring library reference to any webpage.  
+  All times will show up in the interface in coordinated universal 
+  time (UTC).  There is no API for the chat database. The expected refresh 
+  of the data is monthly manual uploads. After uploading, the chats are passed 
+  through an automated categorical and sentiment analysis which is called
+  #{link_to "InquiryMap", :springshare_inquirymap}. 
+  %br
+  %br
+  We welcome feedback on our dashboards and schema. If you have any suggestions 
+  (or to share something cool you discovered) please fill out our 
+  #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.
+
+%hr
+%section
+  %h2{id: "data_resources"} Resources
+
+  %h3 Database Access 
+  For those who are connecting directly to the PostgreSQL database or 
+  who are using the report exporting tool, the table for Springshare 
+  LibChat data is "ss_libchat_chats".
+
+  %h3 Data Tables
+  %ul
+    %li= link_to "LibChat Chats", "/springshare/libchat_chats"
+
+  %h3 Statistics 
+  %ul 
+    %li 
+      #{link_to "Longitudinal LibChat Statistics", springshare_libchat_statistics_path} 
+    %li
+      #{link_to "Fiscal Year LibChat Statistics", springshare_libchat_yearly_statistics_path}
+      %ul
+        %li Filter by Fiscal Year 
+        %li Filter by Librarian
+
+%hr
+%section
+  %h2{id: "upload_information"} Data Upload Process
+  Impact Assessment & Organizational Analysis expect to refresh data monthly.  
+  If users want more recent data, please navigate to Springshare. However, 
+  InquiryMap results will only be available in MetriDoc.
+  %ul
+    %li 
+      Navigate to the 
+      #{link_to "SpringShare LibAnswers Chat Reports Export Tab", "https://faq.library.upenn.edu/admin/chatbrowse/export"}.
+    %li Increase filter on "Asked from" to the past month.
+    %li Click on the "Export Transcripts" button.
+    %li 
+      Update the resulting csv file via the 
+      #{link_to "File Upload Tool", admin_tools_file_upload_imports_path}
+      %ul
+        %li 
+          Note that the database will update records with the new information 
+          whilst maintaining the unique index. (It handles duplicates on the backend).
+        %li
+          Note that interactions may not be distinct if a patron continues a chat after being disconnected.
+
+%hr
+%section 
+  %h2{id: "table_information"} LibChat Table Information 
+  This table contains LibChat transcripts downloaded from Springshare then enriched with demographic information.
+  %ul 
+    %li Chat Identifier - Springshare's Unique Identifier for the ticket.
+    %li Name - Self Identified Patron Name, hidden from the website interface.
+    %li Contact Information - Self Identified Patron Email Address, hidden from the website interface.
+    %li Referrer - The website page where the chat was initiated.
+    %li Widget - The name of the widget used for the chat.
+    %li Department - 
+    %li Answerer - The person answering the chat request.
+    %li Timestamp - The time of the initiation of the chat.
+    %li Wait Time - The patron wait time in seconds before the first response.
+    %li Duration - The total time of the chat interaction in seconds.
+    %li Comment - Field for follow up comment on the chat.
+    %li User Field 1 - Widget specific field, the "Sidebar flyout widget 1435" uses this to request the Patron email, hidden from the website interface.
+    %li User Field 2 - Widget specific field, hidden from the website interface.
+    %li User Field 3 - Widget specific field, hidden from the website interface.
+    %li User Field 4 - Widget specific field, hidden from the website interface.
+    %li Initial Question - Opening Chat Question, hidden from the website interface.
+    %li Transfer History - Record of if the chat was transferred between librarians.
+    %li Message Count - The number of messages exchanged during the chat.
+    %li Internal Note - 
+    %li Transcript - The entire chat exchange, hidden from the website interface.
+    %li Ticket Identifier - If the chat resulted in a ticket, the Springshare Unique Identifier for the ticket.
+    %li Referrer Basename - The host url of the website that the chat was initiated from.
+    %li Fiscal Year - The fiscal year of the chat, derived from the timestamp.
+    %li Display Name - The display name for linking from an InquiryMap record to the LibChat record, derived from the LibChat Identifier.
+    %li 
+      Demographics - Data is enriched with Demographic information if a Penn Email address 
+      can be derived from the Contact Info, the Name or User Field 1.
+      %ul 
+        %li Statistical Category 1
+        %li Statistical Category 2
+        %li Statistical Category 3
+        %li Statistical Category 4
+        %li Statistical Category 5
+        %li User Group
+        %li School
+        %li Penn Id - Patron Penn Card Number, hidden from the website interface.
+        %li Pennkey - Patron Pennkey, hidden from the website interface.
+
+%hr
+%section
+  %h2{id: "privacy"} Patron Privacy
+  This area of MetriDoc is only accessible to approved users.
+  All personnel who want to read their original chats should have access 
+  through Springshare, those transcripts and other personal identifying 
+  information are obfuscated on this platform.
+  Data can be matched by the Springshare assigned Chat Identifier.

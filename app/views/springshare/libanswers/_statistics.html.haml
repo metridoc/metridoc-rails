@@ -14,7 +14,7 @@
         %td
         %td
           = select_tag :queue_id, 
-            options_from_collection_for_select(queues.all, 
+            options_from_collection_for_select(queues.order(:name).all, 
               "queue_id", 
               "name", 
               params[:queue_id]),
@@ -25,7 +25,7 @@
         %td
         %td
           = select_tag :owner, 
-            options_for_select(tickets.distinct.pluck(:owner),
+            options_for_select(tickets.distinct.order(:owner).pluck(:owner),
               params[:owner]),
             include_blank: "All Owners"
       %tr
@@ -33,7 +33,7 @@
         %td
         %td
           = select_tag :user_group, 
-            options_for_select(tickets.distinct.pluck(:user_group),
+            options_for_select(tickets.distinct.order(:user_group).pluck(:user_group),
               params[:user_group]),
             include_blank: "All User Groups"
       %tr
@@ -41,7 +41,7 @@
         %td
         %td
           = select_tag :school, 
-            options_for_select(tickets.distinct.pluck(:school),
+            options_for_select(tickets.distinct.order(:school).pluck(:school),
               params[:school]),
             include_blank: "All Affiliations"
       %tr

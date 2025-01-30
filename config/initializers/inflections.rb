@@ -47,4 +47,11 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "item_history"
   inflect.uncountable "ares_item_history"
   inflect.uncountable "cr_ares_item_history"
+
+  # InquiryMap should be uncountable
+  inflect.uncountable "Inquirymap"
+  inflect.uncountable "InquiryMap"
+  inflect.uncountable "inquirymap"
+  inflect.uncountable "libchat_inquirymap"
+  inflect.uncountable "ss_libchat_inquirymap"
 end
