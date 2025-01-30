@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '>= 7.1.3.4'
+gem 'rails', '>= 7.1.5.1'
 
 # RDoc produces HTML and command-line documentation for Ruby projects. RDoc
 # includes the +rdoc+ and +ri+ tools for generating and displaying documentation
@@ -44,7 +44,7 @@ gem 'puma', '~> 6.4'
 # applications in Ruby. By wrapping HTTP requests and responses in the simplest
 # way possible, it unifies and distills the API for web servers, web frameworks,
 # and software in between (the so-called middleware) into a single method call.
-gem 'rack', '>=3.0.9.1'
+gem 'rack', '>=3.1.5'
 
 ###########
 # Mail
