@@ -1,0 +1,76 @@
+= javascript_include_tag 'application'
+
+%h3
+  Only interested in the current fiscal year? 
+  Check out the chat statistics by the fiscal year 
+  #{link_to "here", springshare_libchat_yearly_statistics_path}.
+  %br
+  %br
+  We welcome feedback on our dashboards. If you have any suggestions for 
+  improvement (or to share something cool about the data) 
+  please fill out our 
+  #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.
+
+-# Establish the model
+- chats = Springshare::Libchat::Chat
+%hr
+%h2 Longitudinal Interactions
+-# Calculate the chat rates by fiscal year
+- fiscal_year_table = springshare_libcal_chats_by_fiscal_year(chats)
+%table.data_summary
+  %thead 
+    %tr 
+      %th Fiscal Year
+      %th Number of Chats
+      %th Number of Chats with Tickets
+      %th Percent of Chats with Tickets 
+  %tbody
+    - fiscal_year_table.each do |row|
+      %tr
+        - row.each do |cell|
+          %td= cell
+
+= line_chart [{name: "All Chats", data: chats.group_by_month(:timestamp).count},
+  {name: "Chats with Tickets", data: chats.where.not(ticket_id: 0).group_by_month(:timestamp).count}],
+  title: "Chats by Month",
+  download: true,
+  xtitle: "Months",
+  ytitle: "Number of Chats",
+  curve: false
+
+%hr
+%h2 Traffic Sources
+- data = springshare_libchat_rollup_fiscal_year(chats, "referrer_basename")
+= line_chart data,
+  title: "Chat Website by Fiscal Year",
+  download: true,
+  xtitle: "Fiscal Year",
+  ytitle: "Number of Chats",
+  legend: "left",
+  curve: false
+
+%hr
+%h2 Patron Demographics
+%center 
+  * Note that although patrons are asked to identify by PennKey, it is not required to start a chat *
+
+- data = springshare_libchat_rollup_fiscal_year(chats, "school")
+= line_chart data,
+  title: "Affiliation by Fiscal Year",
+  download: true,
+  xtitle: "Fiscal Year",
+  ytitle: "Number of Chats",
+  legend: "left",
+  curve: false,
+  height: "400px"
+
+- data = springshare_libchat_rollup_fiscal_year(chats, "user_group")
+= line_chart data,
+  title: "Patron Type by Fiscal Year",
+  download: true,
+  xtitle: "Fiscal Year",
+  ytitle: "Number of Chats",
+  legend: "left",
+  curve: false,
+  height: "400px"
+

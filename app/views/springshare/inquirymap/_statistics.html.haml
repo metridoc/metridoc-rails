@@ -1,0 +1,51 @@
+= javascript_include_tag 'application'
+
+%h3
+  Only interested in the current fiscal year? 
+  Check out the InquiryMap statistics by the fiscal year 
+  #{link_to "here", springshare_inquirymap_yearly_statistics_path}.
+  %br
+  %br
+  We welcome feedback on our dashboards. If you have any suggestions for 
+  improvement (or to share something cool about the data) 
+  please fill out our 
+  #{link_to "survey", "https://forms.office.com/Pages/ResponsePage.aspx?id=nZRNbBy5RUyarmbXZEMRDUHfwE8JsXJPj5x7kxzooBlUN1RENjE3NTJNR1AwS0sxU0IySUxWVEJEUi4u"}.
+
+
+-# Establish the model
+- chats = Springshare::Libchat::Chat.joins(:inquiry_map)
+- fiscal_year_categories = springshare_inquirymap_categories(chats, "fiscal_year")
+
+%hr
+%h2 InquiryMap Categories 
+= line_chart fiscal_year_categories,
+  title: "Identified Categories of Chats by Fiscal Year",
+  download: true,
+  xtitle: "Fiscal Year",
+  ytitle: "Number of Chats",
+  legend: "right",
+  colors: springshare_inquirymap_palette
+
+%hr
+%h2 InquiryMap Sentiment
+- data, colors = springshare_inquirymap_sentiment(chats, "fiscal_year")
+= line_chart data,
+  title: "Sentiment of Chats by Fiscal Year",
+  download: true,
+  xtitle: "Fiscal Year",
+  ytitle: "Number of Chats",
+  legend: "left",
+  colors: colors
+
+%hr
+%h2 InquiryMap Subcategories 
+
+- springshare_libchat_category_mapping.keys.each do |category|
+  - data = springshare_inquirymap_subcategories(chats, "fiscal_year", category)
+  = line_chart data,
+    title: springshare_libchat_category_mapping[category][:name] + " Subcategories by Fiscal Year",
+    download: true,
+    xtitle: "Fiscal Year",
+    ytitle: "Number of Chats",
+    legend: "left",
+    colors: springshare_inquirymap_palette

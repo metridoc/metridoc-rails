@@ -34,7 +34,8 @@ class Tools::FileUploadImport < ApplicationRecord
     Upenn::Enrollment,
     LibraryStaff::Census,
     Springshare::Libanswers::Queue,
-    Springshare::Libanswers::Ticket
+    Springshare::Libanswers::Ticket,
+    Springshare::Libchat::Chat
   ]
 
   validates :target_model, presence: true
