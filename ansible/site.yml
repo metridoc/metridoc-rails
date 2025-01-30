@@ -68,7 +68,7 @@
         var: container_name.stdout_lines[0]
     - name: "Get metridoc container info"
       docker_container_info:
-        name: container_name.stdout_lines
+        name: container_name.stdout_lines[0]
       register: metridoc_app_container
     - name: "print container info"
       debug: 
@@ -76,7 +76,7 @@
     - name: "run manually"
       become: True
       shell:
-        "docker inspect {{ container_name }} --format=\"{{ '{{' }}'.State.Health.Status{{  '}}' }}\""
+        "docker inspect {{ container_name.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
       register: result
     - name: "debug result"
       debug:
