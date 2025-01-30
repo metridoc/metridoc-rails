@@ -73,7 +73,7 @@
     - name: "run manually"
       become: True
       shell:
-        "docker inspect {{ container_name }} --format='{{.State.Health.Status}}'"
+        "docker inspect {{ container_name }} --format=\"{{ '{{' }}'.State.Health.Status{{  '}}' }}\""
       register: result
     - name: "debug result"
       debug:
