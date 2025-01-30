@@ -62,10 +62,13 @@
       register: container_name
     - name: "Print container name"
       debug:
-        var: container_name
+        var: container_name.stdout_lines
+    - name: "Print container name again"
+      debug:
+        var: container_name.stdout_lines[0]
     - name: "Get metridoc container info"
       docker_container_info:
-        name: container_name
+        name: container_name.stdout_lines
       register: metridoc_app_container
     - name: "print container info"
       debug: 
