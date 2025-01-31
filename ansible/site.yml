@@ -60,11 +60,6 @@
       shell:
         "docker ps -n 1 -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
       register: container_name
-    - name: "Get metridoc 2 container name"
-      become: True
-      shell:
-        "docker ps -n 1 -f name=metridoc_app.2 --format \"{{ '{{' }}.Names{{ '}}' }}\""
-      register: container_name2
     - name: "Wait for metridoc app container 1 to finish booting"
       become: True
       shell:
@@ -73,15 +68,6 @@
       until: result.stdout == 'healthy'
       retries: 10
       delay: 20
-    - name: "Wait for metridoc app container 2 to finish booting"
-      become: True
-      shell:
-        "docker inspect {{ container_name2.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
-      register: result2
-      until: result2.stdout == 'healthy'
-      retries: 10
-      delay: 20
-    
     - ansible.builtin.import_role:
         name: postgres_replica_manager
       tags: postgres_replica_manager
