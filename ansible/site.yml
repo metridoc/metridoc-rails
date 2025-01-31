@@ -58,12 +58,12 @@
     - name: "Get metridoc 1 container name"
       become: True
       shell:
-        "docker ps -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
+        "docker ps -n 1 -f name=metridoc_app.1 status=!exited --format \"{{ '{{' }}.Names{{ '}}' }}\""
       register: container_name
     - name: "Get metridoc 2 container name"
       become: True
       shell:
-        "docker ps -f name=metridoc_app.2 --format \"{{ '{{' }}.Names{{ '}}' }}\""
+        "docker ps -n 1 -f name=metridoc_app.2 status!=exited --format \"{{ '{{' }}.Names{{ '}}' }}\""
       register: container_name2
     - name: "Wait for metridoc app container 1 to finish booting"
       become: True
