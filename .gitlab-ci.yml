@@ -30,6 +30,6 @@ main:
     - if: $CI_COMMIT_BRANCH == "gitlab-prod"
       variables:
         ENVIRONMENT_NAME: production
-    - if: $CI_COMMIT_BRANCH == "gitlab-staging"
+    - if: $CI_COMMIT_BRANCH == "staging"
       variables:
         ENVIRONMENT_NAME: staging
