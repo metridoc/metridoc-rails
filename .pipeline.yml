@@ -137,7 +137,7 @@ deploy_staging:
     # Run ansible playbook
     - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
   rules:
-    - if: $CI_COMMIT_REF_NAME == "gitlab-staging"
+    - if: $CI_COMMIT_REF_NAME == "staging"
   tags:
     - deploy
   
