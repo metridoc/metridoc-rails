@@ -1,35 +1,30 @@
 import argparse
-import logging
-import shutil
-import tempfile
 import datetime
 import subprocess
-import shlex
-import sys
 import csv
 from pathlib import Path
 import re
-import os
 
 import psycopg2
+from psycopg2.extensions import AsIs
+import json
 
-logging.basicConfig(filename='run_ezp.log', level=logging.WARN)
-
-# INPUT_PATH contains gzipped EZproxy log files
-INPUT_PATH = '/tmp/ezpaarse_input'
-# OUTPUT_PATH is where Ezpaarse's output will be written (as csv)
-OUTPUT_PATH = '/tmp/ezpaarse_output'
-# EZP_PATH is the ezpaarse application
+# EZP_INPUT_PATH contains the default location of the gzipped EZproxy log files
+EZP_INPUT_PATH = '/tmp/ezpaarse_input'
+# EZP_OUTPUT_PATH contains the default location where ezPAARSE's output will be written (as csv)
+EZP_OUTPUT_PATH = '/tmp/ezpaarse_output'
+# EZP_PATH is the default location of the ezPAARSE application
 EZP_PATH = '/opt/ezpaarse/node_modules/.bin/ezp'
+
 # Before handling by MetriDoc preprocess/import, combine all output files
-CSV_INPUT_PATH = OUTPUT_PATH
+CSV_INPUT_PATH = EZP_OUTPUT_PATH
 CSV_OUTPUT_PATH = '/tmp/ezpaarse_output/ezpaarse_out.csv'
-# Are we keeping processed logs or no?
-PURGE_PROCESSED_LOGS = False
-CLEAN_UP_EZPAARSE_OUTPUT = True
+
+# Values for Database Connection
 DB_HOST = 'primary-db'
 DB_NAME = 'postgres'
 DB_USER = 'postgres'
+DB_KEY_FILE = '/run/secrets/postgres_database_password'
 
 """
 Example invocation of ezp for reference:
@@ -43,197 +38,355 @@ ezp process --out output_file.csv \
 -H "Geoip: geoip-country, geoip-region, geoip-city, geoip-latitude, geoip-longitude" \
 -H "ezPAARSE-Middlewares: (only) filter, parser, deduplicator, enhancer, geolocalizer, on-campus-counter, qualifier" \
 -H "Reject-Files: all" input_file.log
+
+Header adjustments are set in templates/config.local.json.j2
 """
 
-
 class EzpaarseRunner:
-    def __init__(self, ezp_path, input_path, output_path, purge_processed_logs):
+    """
+    Class to handle finding files to process with ezPAARSE then running them through ezPAARSE
+
+    Attributes
+    ----------
+    ezp_path: str
+        The path to the ezPAARSE executable.
+    input_path: str
+        The path to the folder where input files are waiting to be processed
+    output_path: str
+        The path to the folder where the output files should be held.
+
+    current_file: str
+        The path of the current file being processed, initialized to None.
+    current_file_date: str
+        A string of the extracted date of the current file being processed, initialized to None.
+
+    output_file: Path or None
+        The output file from the ezPAARSE process
+    output_report: Path or None
+        The report downloaded after running a file through ezPAARSE
+
+    db_password: str
+        The password to access the database.
+    db_connection: psycopg2.connection
+        An active connection to the database.
+
+    Methods
+    ----------
+
+    set_current_file(log_file)
+        Set the current file to the input and set the current file date based on a regex search of the filename.
+
+    log_step(msg, path=None)
+        Send logging information to the database.
+
+    get_ezp_command
+        Build the shell command for ezPAARSE
+
+    process_log_file
+        Process a single log file through ezPAARSE.
+
+    process_report
+        Process a single ezPAARSE report.
+
+    process_queue
+        Search for input log files and process each file in the queue.
+
+    """
+    def __init__(self, ezp_path, input_path, output_path):
+        """
+        Parameters
+        ----------
+        ezp_path: str
+            The path to the ezPAARSE executable.
+        input_path: str
+            The path to the set of input files.
+        output_path: str
+            The path to store the output files.
+        """
         self.ezp_path = ezp_path
         self.input_path = Path(input_path)
         self.output_path = Path(output_path)
-        # shutil.copy() expects normal path names, so use as_posix()
-        self._ezproxy_log_files = self._get_ezproxy_log_files()
+
         self.current_file = None
-        self.temp_dir = tempfile.TemporaryDirectory()
-        self.failed_log_files = []
-        self.db_password = self._get_secret("/run/secrets/postgres_database_password", "")
-        self.db_connection = self.get_db_connection()
-        self._cursor = None
+        self.current_file_date = None
 
-    def _get_ezproxy_log_files(self):
-        logging.debug('_get_ezproxy_log_files()')
-        return [
-            p.as_posix() for p in self.input_path.glob('ezproxy.log_*.gz')
-        ]
+        self.output_file = None
+        self.output_report = None
 
-    def _get_secret(self, key, default):
-        if os.path.exists(key):
-            with open(key) as f:
-                return f.read()
-
-        return default
-
-    @property
-    def ezproxy_log_files(self):
-        return self._ezproxy_log_files
-
-    @property
-    def cursor(self):
-        if not self._cursor:
-            self._cursor = self.db_connection.cursor()
-        return self._cursor
-
-    def get_db_connection(self):
-        return psycopg2.connect("dbname=%s host=%s user=%s password=%s" % (DB_NAME, DB_HOST, DB_USER, self.db_password))
-
-    def copy_and_unzip_file(self, source_path):
-        # copy file to temp location
-        source_path = Path(source_path)
-        temp_dir = Path(self.temp_dir.name)
-        logging.debug('copying %s to %s' % (source_path.as_posix(), self.temp_dir.name))
-        self.log_step('Copy file to temp dir', source_path)
-        target_path = shutil.copy(source_path.as_posix(), temp_dir.as_posix())
-        target_path = Path(target_path)
-        # Check if the file needs to be unzipped
-        logging.debug('checking file type')
-        file_type = subprocess.run(
-            [
-                'file',
-                '--mime-type', 
-                '-b', 
-                temp_dir.joinpath(source_path.name).as_posix()
-            ],
-            stdout = subprocess.PIPE
+        # Read in the keyfile or return an emtpy string
+        self.db_password = Path(DB_KEY_FILE).read_text() if Path(DB_KEY_FILE).exists() else ""
+        # Setup a connection to the database
+        self.db_connection = psycopg2.connect(
+            f"dbname={DB_NAME} host={DB_HOST} user={DB_USER} password={self.db_password}"
         )
 
-        # If the file is a gzip file unzip the file
-        if file_type.stdout == b'application/gzip\n':
-            logging.debug('unzipping %s' % temp_dir.joinpath(source_path.name))
-            completed_process = subprocess.run(
-                [
-                    'gunzip', 
-                    temp_dir.joinpath(source_path.name).as_posix()
-                ]
-            )
-        else:
-            logging.debug('renaming %s' % temp_dir.joinpath(source_path.name))
-            completed_process = subprocess.run(
-                [
-                    'mv',
-                    temp_dir.joinpath(source_path.name).as_posix(),
-                    target_path.joinpath(target_path.parent, target_path.stem)
-                ]
-            )
-        logging.debug(completed_process)
-        # Return the name of the output file
-        return target_path.joinpath(target_path.parent, target_path.stem)
+    def set_current_file(self, log_file):
+        """
+        Function sets the current file as a path and extracts the date of the file from the name.  
+        The filename is expected to have the following pattern: ezproxy.log_YYYYMMDD.gz or ezproxy.log.YYYYMMDD.gz
 
-    def get_output_file_name(self):
-        # output file will be csv from Ezpaarse
-        # input file format: ezproxy.log.YYYYMMDD
-        output_file = Path(OUTPUT_PATH).joinpath('ezpaarse_output_%s.csv' % self.current_file.name.split('.')[-1])
-        return output_file.as_posix()
+        Parameters
+        ----------
+        log_file: str
+            The path to a log_file to save as the current file.
+        """
+        # Set the current file
+        self.current_file = Path(log_file)
+
+        # Search for a string of 8 digits in the path
+        m = re.search(r'(?P<dt>\d{8})', self.current_file.name)
+        # Set the datestring of the current file
+        self.current_file_date = m.group() if m else None
 
     def log_step(self, msg, path=None):
-        # insert event into table
+        """
+        Function to log an event into the log table.
+        
+        Parameters
+        ----------
+        msg: str
+            The message to log.
+        path: str
+            The optional location of a file. Default None.
+        """
         path = path or self.current_file
-        sql = "INSERT INTO ezpaarse_jobs (file_name, log_date, message, run_date) VALUES (%s, %s, %s, %s)"
-        self.cursor.execute(sql, (path.name, self.parse_date_from_path(path), msg, datetime.datetime.now()))
-        self.db_connection.commit()
-        self.cursor.close()
-        self._cursor = None
 
-    def parse_date_from_path(self, path, format='%Y%m%d'):
-        # file names should be the following pattern: ezproxy.log.YYYYMMDD.gz
-        logging.debug('parse_date_from_path()')
-        m = re.search(r'(?P<dt>\d{8})', path.name)
-        if m:
-            return datetime.datetime.strptime(
-                m.group(),
-                format
+        # Prepare the insert command
+        sql = "INSERT INTO ezpaarse_jobs (file_name, log_date, message, run_date) VALUES (%s, %s, %s, %s)"
+
+        # Insert command with timestamp
+        with self.db_connection.cursor() as cursor:
+            cursor.execute(
+                sql,
+                (
+                    path.name, 
+                    datetime.datetime.strptime(self.current_file_date, '%Y%m%d') 
+                    if self.current_file_date is not None else None, 
+                    msg, 
+                    datetime.datetime.now()
+                )
             )
+            self.db_connection.commit()
 
     def get_ezp_command(self):
-        logging.debug('get_ezp_command()')
-        # was having problems attempting to use format placeholders, so went with building the string iteratively ...
-        ezp_cmd = Path(self.ezp_path).expanduser().as_posix() + ' process --out '
-        ezp_cmd += self.get_output_file_name()
-        ezp_cmd += """  -H "Log-Format-ezproxy: %h||%{city}<[^|]*>||%{state}<[^|]*>||%{country}<[^|]*>||%{ezproxy-group}<[^|]*>||%u||%t||%m||%U||%s||%b||%{referer}<[^ ]+>||%{user-agent}<.*>||%{session-id}<[a-zA-Z0-9-]*>||%{cookies}<.*>||%{resource-name}<.*>" \
-    -H "Crypted-Fields: none" \
-    -H "Output-Fields: -user-agent,-cookies,-date,-ezpaarse_version,-ezpaarse_date,-middlewares_version,-middlewares_date,-platforms_version,-platforms_date,-city,-state,-country,-ezproxy-group,-publisher_name" \
-    -H "Geoip: geoip-country, geoip-region, geoip-city, geoip-latitude, geoip-longitude" -H "ezPAARSE-Middlewares: (only) filter, parser, deduplicator, enhancer, geolocalizer, on-campus-counter, qualifier" -H "Reject-Files: none"
         """
-        ezp_cmd += self.current_file.as_posix()
-        return shlex.split(ezp_cmd)
+        Build the command for ezPAARSE
+
+        Returns
+        ----------
+        list
+            The ezPAARSE command to run in list format.
+        """
+        # Create the output file name
+        self.output_file = self.output_path.joinpath(f'ezpaarse_output_{self.current_file_date}.csv')
+
+        # Create the output report name
+        self.output_report = self.output_path.joinpath(f'ezpaarse_output_{self.current_file_date}.json')
+
+        # Build the ezPAARSE command
+        ezp_cmd = [
+            Path(self.ezp_path).expanduser().as_posix(),
+            'process', 
+            '--out',
+            self.output_file.as_posix(),
+            '--download',
+            'report.json:' + self.output_report.as_posix(),
+            self.current_file.as_posix()
+        ]
+        return ezp_cmd
 
     def process_log_file(self, log_file):
-        self.current_file = self.copy_and_unzip_file(log_file)
-        logging.debug('parsing %s via ezp' % self.current_file.as_posix())
-        self.log_step('Parse through ezp')
-        completed_process = subprocess.run(self.get_ezp_command())
-        logging.debug(completed_process)
+        """
+        Process a single log file though ezPAARSE.
+
+        Parameters
+        ----------
+        log_file: str
+            The full path to the log file to process.
+
+        Returns
+        ----------
+        Path
+            The path to the output file of the ezPAARSE process.
+        """
+        # Set the current file and extract the file's date string
+        self.set_current_file(log_file)
+
+        # Log job process
+        self.log_step('Running ezPAARSE.')
+
+        # Prepare the ezPAARSE command
+        command = self.get_ezp_command()
+
+        # Run ezPAARSE
+        completed_process = subprocess.run(command)
+
+        # If ezPAARSE failed, report the error and reset the output file
         if completed_process.returncode != 0:
-            logging.warning(
-                'ezp error: [%s] [return code: %s]' % (completed_process.stderr, completed_process.returncode))
-            sys.stderr.write(
-                'ezp error: [%s] [return code: %s]' % (completed_process.stderr, completed_process.returncode))
+            self.log_step(
+                'ezp error: [%s] [return code: %s]' % 
+                (completed_process.stderr, completed_process.returncode)
+            )
+
+            # Reset the output file to None if the ezpaarse job failed.
+            self.output_file = None
             return
-        return Path(self.get_output_file_name())
+
+        # If ezPAARSE is successful, upload the output report to the database
+        self.process_report()
+        return
+    
+    def process_report(self):
+        """
+        Process a single ezPAARSE report and upload it to the database
+        """
+        # Return nothing if the output report does not exist
+        if not self.output_report.exists():
+            return
+
+        # Keys of values to extract from the "general" part of the report
+        general_keys = [
+            'nb-ecs', 'nb-denied-ecs', 'nb-lines-input', 
+            'on-campus-accesses', 'off-campus-accesses'
+        ]
+
+        # Open and read the JSON file
+        data = json.loads(self.output_report.read_text()) 
+
+        # Create the output object for entry into the database 
+        output = {
+            "date": self.current_file_date,
+            "filename": data['files']['1']
+            } | {
+                k.replace("nb-", "").replace("-accesses", "").replace("-", "_"): v 
+                for k, v in data['general'].items() 
+                if k in general_keys
+            } | {
+                k.replace("nb-lines-", "").replace("-", "_"): v 
+                for k, v in data['rejets'].items() 
+                if "nb-lines" in k
+            }
+
+        # Upload output to the database here
+        sql_insert = """
+        INSERT INTO ezpaarse_job_reports 
+            (%s) VALUES %s 
+        ON CONFLICT (filename) DO UPDATE SET (%s) = (%s)
+        """
+        with self.db_connection.cursor() as cursor:
+
+            cursor.execute(
+                sql_insert,
+                (
+                    AsIs(','.join(output.keys())),
+                    tuple(output.values()),
+                    AsIs(','.join([x for x in output.keys() if x != "filename"])),
+                    AsIs(','.join(["EXCLUDED."+x for x in output.keys() if x != "filename"]))
+                )
+            )
+
+            self.db_connection.commit()
+        self.log_step("Job report statistics uploaded.")
+
+        # Remove and reset the output report
+        self.output_report.unlink()
+        self.output_report = None
+        return
 
     def process_queue(self):
-        logging.debug('process_queue()')
-        for log_file in self.ezproxy_log_files:
-            output_file = self.process_log_file(log_file)
-            logging.warning('Preparing to process file [%s]' % log_file)
-            if not output_file:
-                logging.warning('Failed to process file [%s]' % log_file)
-                self.log_step('Failed to process file')
-                self.failed_log_files.append(log_file)
+        """
+        Search for input log files and process each file in the queue.
+        """
+
+        # Get a list of ezproxy log files
+        ezproxy_log_files = [
+            p.as_posix() for p in self.input_path.glob('ezproxy.log[_.]*.gz')
+        ]
+
+        # Loop through the log files and process them
+        for log_file in ezproxy_log_files:
+            self.process_log_file(log_file)
+            if not self.output_file:
+                self.log_step('Failed to process file: [%s]' % log_file)
                 continue
-                # sys.exit(1)
-            self.log_step('File processed.')
-            self.current_file.unlink()
+            self.log_step('Finished Processing File: [%s]' % log_file)
 
-            # cleanup tempdir if there's an interruption:
-            # def __del__(self):
-            #     if self.temp_dir:
-            #         try:
-            #             temp_dir = Path(self.temp_dir.name)
-            #             for f in os.listdir(temp_dir.as_posix()):
-            #                 os.remove(temp_dir.joinpath(f).as_posix())
-            #             temp_dir.rmdir()
-            #         except IOError:
-            #             sys.stderr.write('Unable to remove temp dir [%s]' % self.temp_dir.name)
-            #             raise
-
+            # Reset the output file to none for the next iteration
+            self.output_file = None
+            self.output_report = None
 
 class CsvCombiner:
+    """
+    The CsvCombiner class combines several csv files into one output csv file.
+
+    Attributes
+    ----------
+    input_path: str
+        The full path of the folder with the csv files to combine.
+    output_path: str
+        The full file name of the combined csv.
+    input_files: list
+        The list of files ending with *.csv in the folder specifed by the input_path
+    csv_header: str
+        A string that will be filled with the csv header of the first processed file.
+    records: list
+        A list to add each row of the csv into in preparation for writing to a file
+
+    Methods
+    ----------
+    _check_output_dir()
+        Protected method to ensure the output directory exists.
+    write_csv()
+        Combine csv files in input directory into one output file.
+    """
     def __init__(self, csv_input_path, csv_output_path):
+        """
+        Parameters
+        ----------
+        csv_input_path: str 
+            The full path to a folder of csv files to combine.
+        csv_output_path: str
+            The full path to the combined output file to create.
+        """
+        # Expand User will replace a ~/ with the full path
         self.input_path = Path(csv_input_path).expanduser()
         self.output_path = Path(csv_output_path)
+        # Make a list of all CSV files in the output
         self.input_files = [x for x in self.input_path.glob('*.csv') if x != self.output_path]
-        self.check_output_dir()
+        self._check_output_dir()
+        # Initialize variables for the CSV
         self.csv_header = ''
         self.records = []
 
-    def check_output_dir(self):
+    def _check_output_dir(self):
+        """
+        Function to ensure an output directory exists.  
+        If the output directory does not exist, it will create a new one.
+        """
         output_dir = Path(self.output_path.parent)
         if not output_dir.exists():
             output_dir.mkdir()
 
     def write_csv(self):
-        for i in range(len(self.input_files)):
-            with self.input_files[i].open(encoding='utf-8-sig', newline='') as c:
+        """Function to combine several input CSV files into one output file.
+        """
+        # Loop through the input files
+        for i,f in enumerate(self.input_files):
+            with f.open(encoding='utf-8-sig', newline='') as c:
+                # Read in CSV line by line
                 r = csv.reader(c, delimiter=';')
                 for l in r:
+                    # Extract the csv header of the first file and reformat names
                     if r.line_num == 1:
                         if i == 0:
                             self.csv_header = [x.strip().replace('-','_') for x in l]
                         continue
+                    # Add the record to the object list
                     self.records.append(l)
-            if CLEAN_UP_EZPAARSE_OUTPUT:
-                logging.warning('Removing file [%s]' % self.input_files[i].name)
-                self.input_files[i].unlink()
+            # Remove the CSV file after it is processed
+            f.unlink()
+
+        # Create an output file and append rows
         with self.output_path.open('w', newline='', encoding='utf-8') as c:
             w = csv.DictWriter(c, fieldnames=self.csv_header, delimiter=',')
             w.writeheader()
@@ -242,34 +395,39 @@ class CsvCombiner:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser('Process EZproxy log files through Ezpaarse')
+    parser = argparse.ArgumentParser('Process EZproxy log files through ezPAARSE')
     parser.add_argument('--ezp-path',
                         dest='ezp_path',
-                        help='Path to Ezpaarse ezp script',
+                        help='Path to ezPAARSE ezp script',
                         default=EZP_PATH)
     parser.add_argument('--ezp-input',
                         dest='ezp_input_path',
                         help='Location of gzipped EZproxy log files',
-                        default=INPUT_PATH)
+                        default=EZP_INPUT_PATH)
     parser.add_argument('--ezp-output',
                         dest='ezp_output_path',
-                        help='Location of Ezpaarse output csv',
-                        default=OUTPUT_PATH)
+                        help='Location of ezPAARSE output csv',
+                        default=EZP_OUTPUT_PATH)
     parser.add_argument('--csv-input',
                         dest='csv_input',
-                        help='Location of csv file(s) output by Ezpaarse (most likeley same as ezp-output',
+                        help='Location of csv file(s) output by ezPAARSE (most likely same as ezp-output)',
                         default=CSV_INPUT_PATH)
     parser.add_argument('--csv-output',
                         dest='csv_output',
                         help='Location of combined csv files',
                         default=CSV_OUTPUT_PATH)
-    parser.add_argument('--purge-processed-logs',
-                        dest='purge_processed',
-                        help='Whether to retain/delete processed EZproxy logs',
-                        default=PURGE_PROCESSED_LOGS)
+
     args = parser.parse_args()
-    ezp_runner = EzpaarseRunner(ezp_path=args.ezp_path, input_path=args.ezp_input_path,
-                                output_path=args.ezp_output_path, purge_processed_logs=args.purge_processed)
+    ezp_runner = EzpaarseRunner(
+        ezp_path=args.ezp_path, 
+        input_path=args.ezp_input_path,
+        output_path=args.ezp_output_path
+    )
     ezp_runner.process_queue()
-    csv_combiner = CsvCombiner(csv_input_path=args.csv_input, csv_output_path=args.csv_output)
+
+    # Combine the parsed CSV files into one CSV file
+    csv_combiner = CsvCombiner(
+        csv_input_path=args.csv_input, 
+        csv_output_path=args.csv_output
+    )
     csv_combiner.write_csv()

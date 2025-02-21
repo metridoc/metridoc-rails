@@ -2,4 +2,21 @@
   "EZPAARSE_MONGO_URL": "{{ 'mongodb://' ~ ezpaarse_mongodb_username ~ ':' ~ ezpaarse_mongodb_password ~ '@ezpaarse_db:27017/ezpaarse' }}",
   "EZPAARSE_ENV": "production",
   "EZPAARSE_NODEJS_PORT": "59599",
+  "DEFAULT_LOCALE": "en",
+  "EZPAARSE_MIDDLEWARES": [
+    "filter",
+    "parser",
+    "deduplicator",
+    "enhancer",
+    "geolocalizer",
+    "on-campus-counter",
+    "qualifier"
+  ],
+  "EZPAARSE_DEFAULT_HEADERS": {
+    "Geoip": "geoip-country, geoip-region, geoip-city, geoip-latitude, geoip-longitude",
+    "Crypted-Fields": "none",
+    "Log-Format-ezproxy": "%h||%{city}<[^|]*>||%{state}<[^|]*>||%{country}<[^|]*>||%{ezproxy-group}<[^|]*>||%u||%t||%m||%U||%s||%b||%{referer}<[^ ]+>||%{user-agent}<.*>||%{session-id}<[a-zA-Z0-9-]*>||%{cookies}<.*>||%{resource-name}<.*>",
+    "Output-Fields": "-user-agent,-cookies,-date,-ezpaarse_version,-ezpaarse_date,-middlewares_version,-middlewares_date,-platforms_version,-platforms_date,-city,-state,-country,-ezproxy-group,-publisher_name"
+  },
+  "EZMESURE_INSTANCES": []
 }
