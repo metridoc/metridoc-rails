@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_19_202430) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_11_175711) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -727,6 +727,27 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_19_202430) do
     t.integer "hour_of_day"
     t.integer "requests"
     t.integer "sessions"
+  end
+
+  create_table "ezpaarse_job_reports", force: :cascade do |t|
+    t.date "date"
+    t.string "filename"
+    t.float "lines_input"
+    t.float "ecs"
+    t.float "denied_ecs"
+    t.float "ignored"
+    t.float "duplicate_ecs"
+    t.float "ignored_domains"
+    t.float "unknown_domains"
+    t.float "unknown_formats"
+    t.float "unqualified_ecs"
+    t.float "unordered_ecs"
+    t.float "ignored_hosts"
+    t.float "robots_ecs"
+    t.float "unknown_errors"
+    t.float "on_campus"
+    t.float "off_campus"
+    t.index ["filename"], name: "ezpaarse_job_report_date", unique: true
   end
 
   create_table "ezpaarse_jobs", force: :cascade do |t|
