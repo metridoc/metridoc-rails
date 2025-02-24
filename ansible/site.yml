@@ -58,7 +58,7 @@
       ansible.builtin.group:
         name: docker
         state: present
-        gid: 993
+        gid: 1254
     
     # We do the following 4 tasks before doing the postgres replica task because errors will occur when metridoc_app does not finish db migrations.
     - name: "Get metridoc 1 container name"
