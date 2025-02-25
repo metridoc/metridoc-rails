@@ -55,10 +55,12 @@
       tags: monitoring_manager
     
     - name: "Update Docker group ID"
+      become: True
       ansible.builtin.group:
         name: docker
         state: present
-        gid: 1254
+        system: True
+        gid: 458
     
     # We do the following 4 tasks before doing the postgres replica task because errors will occur when metridoc_app does not finish db migrations.
     - name: "Get metridoc 1 container name"
