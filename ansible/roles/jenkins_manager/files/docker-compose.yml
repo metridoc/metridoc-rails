@@ -15,7 +15,6 @@ services:
       placement:
         constraints:
           - node.labels.jenkins == true
-    entrypoint: docker-entrypoint.sh
     logging: *default-logging
     networks:
       - jenkins

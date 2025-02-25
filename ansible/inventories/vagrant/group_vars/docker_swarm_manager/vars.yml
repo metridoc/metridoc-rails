@@ -79,7 +79,7 @@ docker_stack_env:
   EZPAARSE_MONGODB_IMAGE_TAG: "main"
   GF_SERVER_ROOT_URL: http://metridoc-staging.library.upenn.int:3000
   GF_SMTP_HOST: "{{ vault_grafana_smtp_host }}"
-  JENKINS_IMAGE_TAG: main
+  JENKINS_IMAGE_TAG: 6ceb4af6
   MAILER_DEFAULT_FROM: "{{ vault_mailer_default_from }}"
   MAILER_DOMAIN: "{{ vault_mailer_domain }}"
   MAILER_HOST: "{{ vault_mailer_host }}"
