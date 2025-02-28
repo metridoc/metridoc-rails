@@ -159,6 +159,9 @@ services:
     deploy:
       mode: replicated
       replicas: ${PROMETHEUS_REPLICAS}
+      placement:
+        constraints:
+          - node.labels.prometheus == true
     logging: *default-logging
     networks:
       - monitoring
@@ -177,6 +180,10 @@ services:
       DATA_SOURCE_USER: monitoring
       DATA_SOURCE_URI: primary-db:5432/postgres?sslmode=disable
       PG_EXPORTER_EXTEND_QUERY_PATH: /queries.yml
+    deploy:
+      placement:
+        constraints:
+          - node.labels.postgres-exporter == true
     logging: *default-logging
     networks:
       - database

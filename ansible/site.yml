@@ -54,20 +54,22 @@
         name: monitoring_manager
       tags: monitoring_manager
     
-    # We do the following 4 tasks before doing the postgres replica task because errors will occur when metridoc_app does not finish db migrations.
-    - name: "Get metridoc 1 container name"
-      become: True
-      shell:
-        "docker ps -n 1 -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
-      register: container_name
-    - name: "Wait for metridoc app container 1 to finish booting"
-      become: True
-      shell:
-        "docker inspect {{ container_name.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
-      register: result
-      until: result.stdout == 'healthy'
-      retries: 10
-      delay: 20
-    - ansible.builtin.import_role:
-        name: postgres_replica_manager
-      tags: postgres_replica_manager
+#   # We do the following 4 tasks before doing the postgres replica task because errors will occur when metridoc_app does not finish db migrations.
+#   # Commenting out this job because it's flaky, but may need it again one day...
+#
+#   - name: "Get metridoc 1 container name"
+#     become: True
+#     shell:
+#       "docker ps -n 1 -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
+#     register: container_name
+#   - name: "Wait for metridoc app container 1 to finish booting"
+#     become: True
+#     shell:
+#       "docker inspect {{ container_name.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
+#     register: result
+#     until: result.stdout == 'healthy'
+#     retries: 10
+#     delay: 20
+#   - ansible.builtin.import_role:
+#       name: postgres_replica_manager
+#     tags: postgres_replica_manager
