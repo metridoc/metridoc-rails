@@ -8,6 +8,8 @@ docker_swarm_manager:
         - "metridoc"
         - "jenkins"
         - "alertmanager-1"
+        - "postgres-exporter"
+        - "prometheus"
 
 docker_swarm_worker:
   hosts:
