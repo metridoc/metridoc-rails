@@ -63,7 +63,7 @@ namespace: :springshare do
   end  
 
   csv do
-    id_column
+    column :id
     # Specify the Springshare Chat Id
     column :chat_id do |inquirymap|
       inquirymap.chat.display_name
