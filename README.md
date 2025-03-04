@@ -38,7 +38,7 @@ Staging nodes: metridoc-stg01 & metridoc-stg02
 
 We use Vagrant to create a local virtual machine that the Metridoc Docker Swarm lives on. There is only one manager node and there is also an NGINX reverse proxy service responsible for directing traffic into the application.
 
-![alt text](img/metridoc-local_infra.png "Local Development Infrastructure")
+![alt text](img/metridoc_local_infra.png "Local Development Infrastructure")
 
 ### External Dependencies
 
