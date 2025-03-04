@@ -2,7 +2,7 @@
 
 Metridoc is a web application whose purpose is to view and maintain library statistics/reports. It provides tools for data collection from a variety sources. Metridoc seeks to improve business intelligence in libraries by making data available in a normalized and resolved form, in a repository that supports analysis and use of visualization tools. Visit https://metridoc.library.upenn.edu/ to see the application.
 
-## Application Information
+## 1. Application Information
 
 Metridoc is a Docker Swarm microservice web application made up of the docker services listed below:
 
@@ -25,22 +25,22 @@ Metridoc is a Docker Swarm microservice web application made up of the docker se
 | node-exporter | Prometheus exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors. Visit https://hub.docker.com/r/prom/node-exporter for more info. |
 | postgres-exporter | Prometheus exporter for sending postgres information. Visit https://github.com/prometheus-community/postgres_exporter for more info. |
 
-## Infrastructure Information
+## 2. Infrastructure Information
 
-Metridoc is a Docker Swarm application made up of two nodes. The application services are split up between these nodes for healthchecks and fault tolerance.
+Metridoc is a Docker Swarm application made up of two nodes. The application services are split up between these nodes for healthchecks and fault tolerance. Infrastructure is automated via Terraform in a separate repository. See https://gitlab.library.upenn.edu/core-services/infra/metridoc. Deployment of the application happens via Gitlab pipeline and Ansible playbooks.
 
 Production nodes: metridoc-prod01 & metridoc-prod02
 Staging nodes: metridoc-stg01 & metridoc-stg02
 
 ![alt text](img/metridoc-infra.png "Production/Staging Infrastructure")
 
-### Local Infrastructure
+### 2.1 Local Infrastructure
 
 We use Vagrant to create a local virtual machine that the Metridoc Docker Swarm lives on. There is only one manager node and there is also an NGINX reverse proxy service responsible for directing traffic into the application.
 
 ![alt text](img/metridoc_local_infra.png "Local Development Infrastructure")
 
-### External Dependencies
+### 3. External Data Dependencies
 
 Metridoc depends on external data sources. API requests, queries, and data migrations are frequently run from the sources listed below:
 
@@ -51,7 +51,7 @@ Metridoc depends on external data sources. API requests, queries, and data migra
 | Illiad       | ???? |
 | BorrowDirect |  ????? |
 
-## Getting Started with Local Development
+## 4. Getting Started with Local Development
 
 To get started:
 
@@ -70,10 +70,11 @@ To restart Vagrant from scratch:
 
 To access the Vagrant virtual machine:
 1. Run `vagrant ssh`
+2. From here, you can run docker commands as usual.
 
-### Developing
+### 5. Developing
 
-#### Load a DB snapshot to staging
+#### 5.1 Load a DB snapshot to staging
 
 The staging DB is also being used by the prototype Production environment, and privileges need to be reestablished after each load:
 cd ~/application/current/ && RAILS_ENV=staging rake db:environment:set db:drop db:create # update this next line with your snapshot timestamp
@@ -84,12 +85,12 @@ time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postg
     echo "\dt;" | sudo -u postgres psql metridoc_staging | tail -n +4 | awk '{print $3}' > /tmp/tables.txt
     for i in `cat /tmp/tables.txt`; do echo "GRANT ALL PRIVILEGES ON $i TO serano;" | sudo -u postgres psql metridoc_staging; done
 
-#### Importing data
+#### 5.2 Importing data
 
 There are two data source types planned at the moment, import:csv and import:mysql.
 When importing CSV data, you will need the (full or relative) path to a folder containing all CSVs to be imported.
 
-#### CSV:Keyserver
+#### 5.3 CSV:Keyserver
 
 First, generate a migration from the CSV files:
 (NOTE it would be preferable for this rake task to create the migration file itself,
@@ -107,7 +108,7 @@ After data conversions, invoke the importer task:
 
     rake import:csv:keyserver[/path/to/csv/files]
 
-#### MySql:borrowdirect
+#### 5.4 MySql:borrowdirect
 
 To generate schema for borrowdirect mysql database, first `config/database_borrrowdirect.yml` needs to be created with connection properties.
 
@@ -123,7 +124,7 @@ Finally run the migration:
 
     rake db:migrate
 
-#### MySql:ezborrow
+#### 5.5 MySql:ezborrow
 
 To generate schema for ezborrow mysql database, first `config/database_ezborrow.yml` needs to be created with connection properties.
 
@@ -139,7 +140,7 @@ Finally run the migration:
 
     rake db:migrate
 
-#### MySql:illiad
+#### 5.6 MySql:illiad
 
 To generate schema for ezborrow mysql database, first `config/database_illiad.yml` needs to be created with connection properties.
 
@@ -155,7 +156,7 @@ Finally run the migration:
 
     rake db:migrate
 
-#### ActiveAdmin
+#### 5.7 ActiveAdmin
 
 Activeadmin should already be setup with the `db:migrate`, after db:migrate to set ActiveAdmin sample user:
 
@@ -167,7 +168,7 @@ Then login using:
     Username: admin@example.com
     Password: password
 
-#### ActionMailer Config
+#### 5.8 ActionMailer Config
 
 The following ENV variables need to be set for actionmailer to work:
 
@@ -177,7 +178,7 @@ The following ENV variables need to be set for actionmailer to work:
     MAILER_DOMAIN='...'
     MAILER_DEFAULT_FROM='...'
 
-#### Setting up a new table for CSV upload
+#### 5.9 Setting up a new table for CSV upload
 
 Metridoc supports uploading csv's into existing tables in the schema. The following steps will allow to create a brand new table and get it to be available for importing as csv:
 
