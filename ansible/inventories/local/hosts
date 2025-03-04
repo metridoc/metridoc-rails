@@ -1,5 +1,0 @@
-[docker_swarm_manager]
-localhost
-
-[swarm_workers]
-localhost

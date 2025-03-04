@@ -44,14 +44,7 @@ We use Vagrant to create a local virtual machine that the Metridoc Docker Swarm 
 
 ### 3. External Data Dependencies
 
-Metridoc depends on external data sources. API requests, queries, and data migrations are frequently run from the sources listed below:
-
-| External Data Source | Purpose  |
-| ---          | ---      |
-| EzPaarse     | ?????  |
-| EzBorrow      | ?????   |
-| Illiad       | ???? |
-| BorrowDirect |  ????? |
+Metridoc depends on external data sources. API requests, queries, and data migrations are frequently run. Check out https://upennlibrary.atlassian.net/wiki/spaces/IAOA/pages/1243938829/All+Things+MetriDoc for more information.
 
 ## 4. Getting Started with Local Development
 
