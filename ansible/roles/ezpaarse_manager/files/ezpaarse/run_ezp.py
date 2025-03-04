@@ -329,13 +329,19 @@ class CsvCombiner:
         The list of files ending with *.csv in the folder specifed by the input_path
     csv_header: str
         A string that will be filled with the csv header of the first processed file.
-    records: list
-        A list to add each row of the csv into in preparation for writing to a file
+    records: set
+        A set to add each unique row of the csv into in preparation for writing to a file
+    db_password: str
+        The password to access the database.
+    db_connection: psycopg2.connection
+        An active connection to the database.        
 
     Methods
     ----------
     _check_output_dir()
         Protected method to ensure the output directory exists.
+    update_duplicate_count()
+        Add missed duplicates as a count to the job report
     write_csv()
         Combine csv files in input directory into one output file.
     """
@@ -351,12 +357,21 @@ class CsvCombiner:
         # Expand User will replace a ~/ with the full path
         self.input_path = Path(csv_input_path).expanduser()
         self.output_path = Path(csv_output_path)
+
         # Make a list of all CSV files in the output
         self.input_files = [x for x in self.input_path.glob('*.csv') if x != self.output_path]
         self._check_output_dir()
+
         # Initialize variables for the CSV
         self.csv_header = ''
-        self.records = []
+        self.records = set()
+
+        # Read in the keyfile or return an emtpy string
+        self.db_password = Path(DB_KEY_FILE).read_text() if Path(DB_KEY_FILE).exists() else ""
+        # Setup a connection to the database
+        self.db_connection = psycopg2.connect(
+            f"dbname={DB_NAME} host={DB_HOST} user={DB_USER} password={self.db_password}"
+        )
 
     def _check_output_dir(self):
         """
@@ -367,22 +382,67 @@ class CsvCombiner:
         if not output_dir.exists():
             output_dir.mkdir()
 
+    def update_duplicate_count(self, filename, duplicates):
+        """Function to update the number of ecs and the number of duplicates for a file.
+
+                Parameters
+        ----------
+        filename: str
+            The filename of the ezproxy file that needs adjustment
+        duplicates: integer
+            The number of duplicate records found.
+        """
+        # Upload output to the database here
+        sql_insert = """
+        UPDATE ezpaarse_job_reports 
+            SET 
+                ecs = ecs - %s,
+                duplicate_ecs = duplicate_ecs + %s
+        WHERE filename = '%s'
+        """
+        with self.db_connection.cursor() as cursor:
+
+            cursor.execute(
+                sql_insert,
+                (
+                    str(duplicates),
+                    str(duplicates),
+                    filename
+                )
+            )
+
+            self.db_connection.commit()
+        
+
     def write_csv(self):
         """Function to combine several input CSV files into one output file.
         """
         # Loop through the input files
         for i,f in enumerate(self.input_files):
+
+            # Start a duplicate counter
+            duplicates = 0
             with f.open(encoding='utf-8-sig', newline='') as c:
                 # Read in CSV line by line
-                r = csv.reader(c, delimiter=';')
-                for l in r:
+                reader = csv.reader(c, delimiter=';')
+
+                for line in reader:
                     # Extract the csv header of the first file and reformat names
-                    if r.line_num == 1:
+                    if reader.line_num == 1:
                         if i == 0:
-                            self.csv_header = [x.strip().replace('-','_') for x in l]
+                            self.csv_header = [x.strip().replace('-','_') for x in line]
                         continue
+
+                    # If the line is a duplicate, count it
+                    if line in self.records:
+                        duplicates = duplicates + 1
+
                     # Add the record to the object list
-                    self.records.append(l)
+                    self.records.add(line)
+
+            # Adjust the number of duplicates for this file
+            if duplicates > 0:
+                self.update_duplicate_count(f.name, duplicates)
             # Remove the CSV file after it is processed
             f.unlink()
 
