@@ -48,3 +48,4 @@ USER root
 
 # Clean up
 RUN rm -rf /tmp/* /var/tmp/*
+

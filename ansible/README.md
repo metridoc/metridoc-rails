@@ -162,19 +162,6 @@ git commit
 git push
 ```
 
-## Testing
-
-Role testing is done with [Molecule](https://molecule.readthedocs.io/en/stable/). To run tests locally against a role using a Docker container:
-
-```#bash
-docker run \
-  --rm \
-  -w /project/ansible/roles/role_name \
-  -v $PWD:/project \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  quay.io/ansible/molecule:2.22rc3 \
-    molecule test
-```
 
 ## Deployment
 

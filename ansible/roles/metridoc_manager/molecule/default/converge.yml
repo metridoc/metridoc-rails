@@ -1,7 +1,0 @@
----
-- name: Converge
-  hosts: all
-  tasks:
-    - name: "Include metridoc"
-      include_role:
-        name: metridoc_manager
