@@ -25,6 +25,8 @@ Metridoc is a Docker Swarm microservice web application made up of the docker se
 | node-exporter | Prometheus exporter for hardware and OS metrics exposed by *NIX kernels, written in Go with pluggable metric collectors. Visit https://hub.docker.com/r/prom/node-exporter for more info. |
 | postgres-exporter | Prometheus exporter for sending postgres information. Visit https://github.com/prometheus-community/postgres_exporter for more info. |
 
+![alt text](img/metridoc-flowchart.png "Application Flowchart")
+
 ## 2. Infrastructure Information
 
 Metridoc is a Docker Swarm application made up of two nodes. The application services are split up between these nodes for healthchecks and fault tolerance. Infrastructure is automated via Terraform in a separate repository. See https://gitlab.library.upenn.edu/core-services/infra/metridoc. Deployment of the application happens via Gitlab pipeline and Ansible playbooks.
