@@ -352,6 +352,9 @@ module Import
                 attributes.merge!(checksum_index: val)
               end
               
+              # Make sure all the keys are strings
+              attributes.stringify_keys!
+
               if has_ignored_columns
                 # Uploads with ignored columns must be made explicitly via SQL
                 # Pass the hash object rather than a model
