@@ -364,7 +364,7 @@ class CsvCombiner:
 
         # Initialize variables for the CSV
         self.csv_header = ''
-        self.records = set()
+        self.records = []
 
         # Read in the keyfile or return an emtpy string
         self.db_password = Path(DB_KEY_FILE).read_text() if Path(DB_KEY_FILE).exists() else ""
@@ -392,13 +392,21 @@ class CsvCombiner:
         duplicates: integer
             The number of duplicate records found.
         """
+        # Build original filename
+        # Search for a string of 8 digits in the path
+        m = re.search(r'(?P<dt>\d{8})', filename)
+        # Set the datestring of the current file
+        current_file_date = m.group() if m else None
+        # Reconstruct the output name
+        original_file = "ezproxy.log_" + current_file_date + ".gz"
+
         # Upload output to the database here
         sql_insert = """
         UPDATE ezpaarse_job_reports 
             SET 
                 ecs = ecs - %s,
                 duplicate_ecs = duplicate_ecs + %s
-        WHERE filename = '%s'
+        WHERE filename = %s
         """
         with self.db_connection.cursor() as cursor:
 
@@ -407,7 +415,7 @@ class CsvCombiner:
                 (
                     str(duplicates),
                     str(duplicates),
-                    filename
+                    original_file
                 )
             )
 
@@ -436,13 +444,15 @@ class CsvCombiner:
                     # If the line is a duplicate, count it
                     if line in self.records:
                         duplicates = duplicates + 1
-
-                    # Add the record to the object list
-                    self.records.add(line)
+                    else:
+                        # Add the record to the object list
+                        self.records.append(line)
 
             # Adjust the number of duplicates for this file
             if duplicates > 0:
                 self.update_duplicate_count(f.name, duplicates)
+
+            print("Filename:", f.name, "had", duplicates, "duplicates.")
             # Remove the CSV file after it is processed
             f.unlink()
 
