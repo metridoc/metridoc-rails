@@ -11,3 +11,8 @@ checksum_index:
   - url
   - referer
   - size
+
+unique_keys:
+  - datetime
+  - checksum_index
+upsert: true
