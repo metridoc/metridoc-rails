@@ -10,6 +10,7 @@ docker_swarm_manager:
         - "alertmanager-1"
         - "postgres-exporter"
         - "prometheus"
+        - "delayed-jobs"
 
 docker_swarm_worker:
   hosts:

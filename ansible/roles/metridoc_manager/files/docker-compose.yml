@@ -151,6 +151,9 @@ services:
     command: bash -c "/sbin/my_init --skip-startup-files --skip-runit -- /sbin/setuser app bundle exec rails jobs:work"
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.labels.delayed-jobs == true
     environment:
       MAILER_DEFAULT_FROM:
       MAILER_DOMAIN:
