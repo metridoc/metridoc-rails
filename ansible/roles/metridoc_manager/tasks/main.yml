@@ -19,7 +19,7 @@
       o: "{{ 'addr=' ~ ezpaarse_nfs_input_volume_address ~ ',rw' }}"
       device: ":{{ ezpaarse_nfs_input_volume_device }}"
     state: present
-  tags: nfs_mount
+  tags: gate_count_volume
 
 - name: create metridoc config directory
   file:
