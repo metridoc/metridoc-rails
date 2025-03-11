@@ -10,14 +10,9 @@
     state: present
   tags: nfs_mount
 
-- name: create nfs volume for gate_count
+- name: create volume for gate_count
   docker_volume:
     name: gate_count
-    driver: local
-    driver_options:
-      type: nfs
-      o: "{{ 'addr=' ~ ezpaarse_nfs_input_volume_address ~ ',rw' }}"
-      device: ":{{ ezpaarse_nfs_input_volume_device }}"
     state: present
   tags: gate_count_volume
 
