@@ -54,6 +54,10 @@ class Tools::FileUploadImport < ApplicationRecord
     import
 
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
+    rescue SignalException => se
+      log "Process terminated => #{se.message}"
+      update_columns(status: 'pending')
+      raise se
   end
 
   # Get the extension of the uploaded file
