@@ -10,9 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_11_175711) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pgstattuple"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|
@@ -22,11 +21,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_175711) do
     t.bigint "resource_id"
     t.string "author_type"
     t.bigint "author_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -621,6 +620,77 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_175711) do
     t.string "item_barcode"
     t.index ["course_id"], name: "cr_legacy_items_course_id"
     t.index ["item_id"], name: "cr_legacy_items_item_id"
+  end
+
+  create_table "cr_leganto_courses", force: :cascade do |t|
+    t.integer "course_id"
+    t.string "course_code"
+    t.string "course_term"
+    t.string "course_year"
+    t.string "academic_department"
+    t.datetime "course_start_date"
+    t.datetime "course_end_date"
+    t.integer "course_enrollment"
+    t.string "course_name"
+    t.string "processing_department"
+    t.datetime "last_updated_at"
+    t.index ["course_id"], name: "cr_leganto_courses_course_id"
+    t.index ["course_year"], name: "cr_leganto_courses_course_year"
+  end
+
+  create_table "cr_leganto_courses_items", id: false, force: :cascade do |t|
+    t.bigint "cr_leganto_course_id", null: false
+    t.bigint "cr_leganto_item_id", null: false
+    t.index ["cr_leganto_course_id", "cr_leganto_item_id"], name: "idx_on_cr_leganto_course_id_cr_leganto_item_id_b622f3ee4f"
+    t.index ["cr_leganto_item_id", "cr_leganto_course_id"], name: "idx_on_cr_leganto_item_id_cr_leganto_course_id_822cd4349c"
+  end
+
+  create_table "cr_leganto_items", force: :cascade do |t|
+    t.integer "citation_id"
+    t.string "citation_title"
+    t.string "citation_author"
+    t.string "citation_publisher"
+    t.string "citation_pub_year"
+    t.string "citation_isbn"
+    t.string "citation_issn"
+    t.string "citation_journal_title"
+    t.string "citation_journal_issue"
+    t.string "citation_material_type"
+    t.datetime "citation_creation_date"
+    t.string "citation_origin"
+    t.string "citation_type"
+    t.string "citation_copyright_status"
+    t.boolean "is_repository_citation"
+    t.string "citation_created_by"
+    t.string "citation_uploaded_file"
+    t.string "external_source_id"
+    t.datetime "last_updated_at"
+    t.index ["citation_id"], name: "cr_leganto_items_citation_id"
+  end
+
+  create_table "cr_leganto_usages", force: :cascade do |t|
+    t.string "usage_type"
+    t.string "format"
+    t.datetime "time_of_use"
+    t.string "username"
+    t.string "last_name"
+    t.string "first_name"
+    t.string "pennkey"
+    t.string "penn_id"
+    t.string "statistical_category_01"
+    t.string "statistical_category_02"
+    t.string "statistical_category_03"
+    t.string "statistical_category_04"
+    t.string "statistical_category_05"
+    t.string "user_group"
+    t.string "school"
+    t.datetime "last_updated_at"
+    t.bigint "cr_leganto_course_id", null: false
+    t.bigint "cr_leganto_item_id", null: false
+    t.index ["cr_leganto_course_id"], name: "index_cr_leganto_usages_on_cr_leganto_course_id"
+    t.index ["cr_leganto_item_id"], name: "index_cr_leganto_usages_on_cr_leganto_item_id"
+    t.index ["penn_id"], name: "cr_leganto_usages_penn_id"
+    t.index ["pennkey"], name: "cr_leganto_usages_pennkey"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -2084,6 +2154,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_175711) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
+  add_foreign_key "cr_leganto_usages", "cr_leganto_courses"
+  add_foreign_key "cr_leganto_usages", "cr_leganto_items"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
