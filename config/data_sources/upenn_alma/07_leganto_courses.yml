@@ -1,0 +1,41 @@
+---
+load_sequence: 7
+
+target_model: "CourseReserve::Leganto::CrLegantoCourse"
+target_adapter: "csv"
+
+export_file_name: "course_reserves_courses.csv"
+
+# Flag for the Alma API
+source_adapter: "alma"
+# URL Encoded report path
+report_path: "path=%2Fshared%2FUniversity%20of%20Pennsylvania%2FReports%2FShared%20Reports%2Fmetridoc_reports%2Fleganto%2Fcourse_reserves_courses"
+apikey_string: "&apikey="
+# Limit must be between 25 and 1000 and a multiple of 25
+limit: "&limit=1000"
+
+# API columns to MetriDoc column mapping
+# Alma Uses the original column names, not what is assigned in the GUI
+# As such, the SQL for any calculations need to be used as column names
+column_mappings:
+  "Course ID": course_id
+  "Course Code": course_code
+  "Course Term": course_term
+  "Course Year": course_year
+  "Academic Department": academic_department
+  "Current Course Start Date": course_start_date
+  "Current Course End Date": course_end_date
+  "Number Of Participants": course_enrollment
+  "Course Name": course_name
+  "Processing Department": processing_department
+
+# Specify unique keys for the upload
+unique_keys: ["course_id"]
+upsert: true
+# List of specific columns to update on conflict
+upsert_columns:
+- "last_status_update"
+
+# Filter for request
+#export_filter_start_date: "2017-07-01"
+#export_filter_end_date: "2018-01-01"

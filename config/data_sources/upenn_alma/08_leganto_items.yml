@@ -1,0 +1,49 @@
+---
+load_sequence: 8
+
+target_model: "CourseReserve::Leganto::CrLegantoItem"
+target_adapter: "csv"
+
+export_file_name: "course_reserves_items.csv"
+
+# Flag for the Alma API
+source_adapter: "alma"
+# URL Encoded report path
+report_path: "path=%2Fshared%2FUniversity%20of%20Pennsylvania%2FReports%2FShared%20Reports%2Fmetridoc_reports%2Fleganto%2Fcourse_reserves_courses"
+apikey_string: "&apikey="
+# Limit must be between 25 and 1000 and a multiple of 25
+limit: "&limit=1000"
+
+# API columns to MetriDoc column mapping
+# Alma Uses the original column names, not what is assigned in the GUI
+# As such, the SQL for any calculations need to be used as column names
+column_mappings:
+  "Citation Id": citation_id
+  "Title": citation_title
+  "Author": citation_author
+  "Publisher": citation_publisher
+  "Publication Date": citation_pub_year
+  "Normalized ISBN": citation_isbn
+  "Normalized ISSN": citation_issn
+  "Journal Title": citation_journal_title
+  "Issue": citation_journal_issue
+  "Material Type": citation_material_type
+  "Citation Creation Date": citation_creation_date
+  "Citation Origin": citation_origin
+  "Citation Type": citation_type
+  "Citation Copyright Status": citation_copyright_status
+  "Is Repository Citation": is_repository_citation
+  "Citation Created By": citation_created_by
+  "Citation Uploaded File": citation_uploaded_file
+  "External Source Id": external_source_id
+
+# Specify unique keys for the upload
+unique_keys: ["citation_id"]
+upsert: true
+# List of specific columns to update on conflict
+upsert_columns:
+- "last_updated_at"
+
+# Filter for request
+#export_filter_start_date: "2017-07-01"
+#export_filter_end_date: "2018-01-01"
