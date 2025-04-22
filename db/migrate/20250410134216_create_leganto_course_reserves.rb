@@ -40,25 +40,11 @@ class CreateLegantoCourseReserves < ActiveRecord::Migration[7.1]
       t.index ["citation_id"], name: "cr_leganto_items_citation_id"
     end
 
-    create_table :cr_leganto_usages do |t|
+    create_table :cr_leganto_usage do |t|
       t.string :usage_type
       t.string :format
       t.datetime :time_of_use
-      t.string :username
-      t.string :last_name
-      t.string :first_name
-      t.string :pennkey
-      t.string :penn_id
-      t.string :statistical_category_01
-      t.string :statistical_category_02
-      t.string :statistical_category_03
-      t.string :statistical_category_04
-      t.string :statistical_category_05
-      t.string :user_group
-      t.string :school
       t.datetime :last_updated_at
-      t.index ["pennkey"], name: "cr_leganto_usages_pennkey"
-      t.index ["penn_id"], name: "cr_leganto_usages_penn_id"
     end
 
   end

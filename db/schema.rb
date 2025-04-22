@@ -668,29 +668,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
     t.index ["citation_id"], name: "cr_leganto_items_citation_id"
   end
 
-  create_table "cr_leganto_usages", force: :cascade do |t|
+  create_table "cr_leganto_usage", force: :cascade do |t|
     t.string "usage_type"
     t.string "format"
     t.datetime "time_of_use"
-    t.string "username"
-    t.string "last_name"
-    t.string "first_name"
-    t.string "pennkey"
-    t.string "penn_id"
-    t.string "statistical_category_01"
-    t.string "statistical_category_02"
-    t.string "statistical_category_03"
-    t.string "statistical_category_04"
-    t.string "statistical_category_05"
-    t.string "user_group"
-    t.string "school"
     t.datetime "last_updated_at"
     t.bigint "cr_leganto_course_id", null: false
     t.bigint "cr_leganto_item_id", null: false
-    t.index ["cr_leganto_course_id"], name: "index_cr_leganto_usages_on_cr_leganto_course_id"
-    t.index ["cr_leganto_item_id"], name: "index_cr_leganto_usages_on_cr_leganto_item_id"
-    t.index ["penn_id"], name: "cr_leganto_usages_penn_id"
-    t.index ["pennkey"], name: "cr_leganto_usages_pennkey"
+    t.index ["cr_leganto_course_id"], name: "index_cr_leganto_usage_on_cr_leganto_course_id"
+    t.index ["cr_leganto_item_id"], name: "index_cr_leganto_usage_on_cr_leganto_item_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -2154,8 +2140,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
-  add_foreign_key "cr_leganto_usages", "cr_leganto_courses"
-  add_foreign_key "cr_leganto_usages", "cr_leganto_items"
+  add_foreign_key "cr_leganto_usage", "cr_leganto_courses"
+  add_foreign_key "cr_leganto_usage", "cr_leganto_items"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
