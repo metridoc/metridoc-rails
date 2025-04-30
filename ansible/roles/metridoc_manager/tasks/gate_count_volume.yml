@@ -1,0 +1,5 @@
+- name: create volume for gate_count
+  docker_volume:
+    name: gate_count
+    state: present
+  tags: gate_count_volume

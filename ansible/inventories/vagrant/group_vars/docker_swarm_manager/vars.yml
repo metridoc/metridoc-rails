@@ -23,6 +23,8 @@ saml_email_attribute: "{{ vault_saml_email_attribute }}"
 saml_first_name_attribute: "{{ vault_saml_first_name_attribute }}"
 saml_last_name_attribute: "{{ vault_saml_last_name_attribute }}"
 saml_logout_url: "{{ vault_saml_logout_url }}"
+nfs_metridoc_tmp_address: '{{ vault_nfs_metridoc_tmp_address }}'
+nfs_metridoc_tmp_device: '{{ vault_nfs_metridoc_tmp_device }}'
 
 alertmanager_1_swarm_node: metridoc-manager
 alertmanager_2_swarm_node: metridoc-manager
