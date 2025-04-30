@@ -18,7 +18,7 @@ Vagrant.configure("2") do |config|
 
   # Select correct box for arch
   if arm_architecture?
-    config.vm.box = "bento/ubuntu-22.04-arm64"
+    config.vm.box = "bento/ubuntu-22.04"
   else
     config.vm.box = "ubuntu/focal64"
   end

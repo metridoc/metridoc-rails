@@ -10,4 +10,4 @@ ansible_user=vagrant
 ansible_ssh_private_key_file='~/.vagrant.d/insecure_private_key'
 
 [docker_swarm_manager]
-swarm-01 swarm_labels='["alertmanager-1" ,"alertmanager-2", "ezpaarse", "jenkins", "metridoc", "postgres-primary", "postgres-replica", "postgres-exporter", "prometheus", "delayed-jobs]'
+swarm-01 swarm_labels='["alertmanager-1" ,"alertmanager-2", "ezpaarse", "jenkins", "metridoc", "postgres-primary", "postgres-replica", "postgres-exporter", "prometheus", "delayed-jobs"]'

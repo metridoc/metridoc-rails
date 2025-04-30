@@ -47,6 +47,8 @@ ezpaarse_mongodb_password_version: v1
 ezpaarse_mongodb_username_version: v1
 ezpaarse_mongodb_root_password_version: v1
 ezpaarse_mongodb_root_username_version: v1
+nfs_metridoc_tmp_address: "{{ vault_nfs_metridoc_tmp_address }}"
+nfs_metridoc_tmp_device: "{{ vault_nfs_metridoc_tmp_device }}"
 grafana_admin_password_version: v1
 grafana_dashboards_version: v1
 grafana_dashboard_home_version: v1

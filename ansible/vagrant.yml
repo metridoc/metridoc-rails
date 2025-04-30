@@ -108,9 +108,6 @@
         name: postgres_primary_manager
     - import_role:
         name: postgres_replica_manager
-    - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_input_volume.yml"
-    - import_tasks: "roles/ezpaarse_manager/tasks/ezpaarse_output_volume.yml"
-    - import_tasks: "roles/metridoc_manager/tasks/gate_count_volume.yml"
     - import_tasks: "roles/shibboleth_sp/tasks/create_docker_network.yml"
     - import_role:
         name: metridoc_manager

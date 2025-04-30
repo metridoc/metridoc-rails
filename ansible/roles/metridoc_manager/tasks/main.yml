@@ -24,7 +24,7 @@
 
 - name: copy docker compose file
   copy:
-    src: docker-compose.yml
+    src: ../files/docker-compose.yml
     dest: "{{ config_dir }}/metridoc/docker-compose.yml"
     mode: 0440
 
@@ -36,15 +36,21 @@
   tags:
     - docker
 
+# - name: check template lookup
+  # debug: msg=metridoc_rails_{{ item }}_config_{{ lookup('vars', 'rails_' + item + '_config_version') }}
+  # loop:
+    # - database
+    # - secrets
+
 - name: create docker secrets for rails configs
   docker_secret:
     name: metridoc_rails_{{ item }}_config_{{ lookup('vars', 'rails_' + item + '_config_version') }}
-    data: '{{ lookup("template", item + ".yml.j2") }}'
+    data: '{{ lookup("template", "../templates/" + item + ".yml.j2") }}'
     state: present
   loop:
     - database
     - secrets
-  no_log: true
+  no_log: false
   tags:
     - docker
 
