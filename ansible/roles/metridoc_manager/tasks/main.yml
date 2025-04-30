@@ -9,6 +9,15 @@
       device: ":{{ nfs_metridoc_tmp_device }}"
     state: present
   tags: nfs_mount
+  when: not is_development
+
+- name: create nfs volume for /home/app/webapp/tmp for development
+  docker_volume:
+    name: metridoc_tmp_data_dist
+    state: present
+  tags: nfs_mount
+  when: is_development
+
 
 - name: create metridoc config directory
   file:
@@ -18,7 +27,7 @@
 
 - name: copy docker compose file
   copy:
-    src: ../files/docker-compose.yml
+    src: docker-compose.yml
     dest: "{{ config_dir }}/metridoc/docker-compose.yml"
     mode: 0440
 
@@ -39,7 +48,7 @@
 - name: create docker secrets for rails configs
   docker_secret:
     name: metridoc_rails_{{ item }}_config_{{ lookup('vars', 'rails_' + item + '_config_version') }}
-    data: '{{ lookup("template", "../templates/" + item + ".yml.j2") }}'
+    data: '{{ lookup("template", item + ".yml.j2") }}'
     state: present
   loop:
     - database

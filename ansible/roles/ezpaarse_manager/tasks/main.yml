@@ -7,7 +7,7 @@
 
 - name: Copy docker compose file
   copy:
-    src: ../files/docker-compose.yml
+    src: docker-compose.yml
     dest: "{{ config_dir }}/ezpaarse/docker-compose.yml"
   tags: ezpaarse
 
@@ -38,7 +38,7 @@
 - name: Create docker config secret for ezpaarse
   docker_secret:
     name: "{{ 'metridoc_ezpaarse_config_' ~ ezpaarse_config_version }}"
-    data: "{{ lookup('template', '../templates/config.local.json.j2') | to_json }}"
+    data: "{{ lookup('template', 'config.local.json.j2') | to_json }}"
     state: present
   no_log: true
   tags:
