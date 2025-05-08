@@ -1,0 +1,42 @@
+---
+- import_playbook: primary_database.yml
+  vars:
+    become: no
+    gather_facts: no
+- import_playbook: metridoc.yml
+  vars:
+    become: no
+    gather_facts: no
+
+- hosts: docker_swarm_manager
+  gather_facts: no
+  tasks:
+    - name: update UID and GID in delayed_job containers
+      command: >
+        docker service update
+          --env-add APP_USER_UID={{ rails_app_user_uid }}
+          --env-add APP_USER_GID={{ rails_app_user_gid }}
+          --mount-add type=bind,source={{ metridoc_repo_dir }},target=/home/app/webapp
+          --mount-add type=bind,source={{ metridoc_repo_dir }}/local_docker_job_init.sh,target=/local_docker_job_init.sh
+          --args /local_docker_job_init.sh
+          metridoc_delayed_jobs
+    - name: mount local source repository into development container
+      command: >
+        docker service update
+          --env-add APP_USER_UID={{ rails_app_user_uid }}
+          --env-add APP_USER_GID={{ rails_app_user_gid }}
+          --mount-add type=bind,source={{ metridoc_repo_dir }},target=/home/app/webapp
+          --mount-add type=bind,source={{ metridoc_repo_dir }}/local_docker_init.sh,target=/local_docker_init.sh
+          --args /local_docker_init.sh
+          metridoc_app
+    - name: get container id
+      command: docker ps -qlf name=metridoc_app
+      register: container_id
+      until: container_id.stdout != ''
+      retries: 5
+      delay: 3
+    - name: migrate and seed database
+      command: >
+        docker exec
+          {{ container_id.stdout }}
+          bundle exec rake db:migrate db:seed

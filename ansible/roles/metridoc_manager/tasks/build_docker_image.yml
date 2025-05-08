@@ -1,0 +1,11 @@
+- name: Create custom docker image
+  community.docker.docker_image:
+    build:
+      dockerfile: Dockerfile
+      path: ../../metridoc
+      pull: true
+    force_tag: true
+    force_source: true
+    name: "metridoc_app:latest"
+    source: build
+    state: present

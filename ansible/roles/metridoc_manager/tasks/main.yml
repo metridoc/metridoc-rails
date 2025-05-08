@@ -57,6 +57,12 @@
   tags:
     - docker
 
+# Build the docker image
+- name: Build docker image
+  import_tasks: ./build_docker_image.yml
+  when: is_development
+  tags: dev_environment
+
 - name: start docker services
   environment: "{{ docker_stack_env }}"
   command: docker stack deploy -c {{ config_dir }}/metridoc/docker-compose.yml metridoc

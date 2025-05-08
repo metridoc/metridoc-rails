@@ -114,54 +114,12 @@
     - import_tasks: "roles/shibboleth_sp/tasks/create_docker_network.yml"
     - import_role:
         name: metridoc_manager
+      #tags: 
+        #- metridoc_app
     - import_role:
         name: ezpaarse_manager
-    - name: Update permissions and mounts for dev env
-      block:
-        - name: Scale down metridoc_app, metridoc_delayed_jobs, and metridoc_replica-db services
-          command: docker service scale metridoc_app=0 metridoc_delayed_jobs=0 metridoc_replica-db=0
-        - getent:
-            database: passwd
-            key: vagrant
-        - name: update UID and GID and mount folders in metridoc_app containers
-          command: >
-            docker service update
-              --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
-              --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
-              --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
-              --args /home/app/webapp/local_docker_init.sh
-              metridoc_app
-        - name: Scale up metridoc_app
-          command: docker service scale metridoc_app={{ docker_stack_env.METRIDOC_REPLICAS }}
-        - name: update UID and GID and mount folders in delayed_job containers
-          command: >
-            docker service update
-              --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
-              --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
-              --mount-add type=bind,source=/metridoc/,target=/home/app/webapp/
-              --args /home/app/webapp/local_docker_job_init.sh
-              metridoc_delayed_jobs
-        - name: Scale up metridoc_delayed_jobs and metridoc_replica-db
-          # command: docker service scale metridoc_delayed_jobs=1 metridoc_replica-db=1
-          command: docker service scale metridoc_delayed_jobs=1
     - import_role:
         name: python_jobs_manager
-    - name: Update permissions and mounts for dev env
-      block:
-        - name: Scale down metridoc_python_jobs service
-          command: docker service scale metridoc_python_jobs=0
-        - getent:
-            database: passwd
-            key: vagrant
-        - name: update UID and GID and mount folders in metridoc_python_jobs container
-          command: >
-            docker service update
-              --env-add APP_USER_UID={{ getent_passwd.vagrant.1 }}
-              --env-add APP_USER_GID={{ getent_passwd.vagrant.2 }}
-              --mount-add type=bind,source=/metridoc/ansible/roles/python_jobs_manager/files/src/,target=/home/app/
-              metridoc_python_jobs
-        - name: Scale up metridoc_python_jobs service
-          command: docker service scale metridoc_python_jobs=1
     - import_role:
         name: jenkins_manager
     - import_role:
