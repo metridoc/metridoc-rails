@@ -1,71 +1,40 @@
 ---
-- name: create config directories
-  file:
-    path: "{{ config_dir }}/postgres/monitoring/{{ item }}"
-    mode: 0440
-    state: directory
-  loop:
-    - alertmanager
-    - grafana
-    - grafana_db
-    - node_exporter
-    - postgres_exporter
-    - prometheus
+- name: Create configs
+  community.docker.docker_config:
+    name: "{{ item.name }}"
+    data: "{{ lookup(item.type, item.file) }}"
+    rolling_versions: true
+    state: present
+  no_log: true
+  register: monitoring_docker_configs
+  loop: "{{ monitoring_configs }}"
 
-- name: copy configs
-  copy:
-    src: "{{ item }}"
-    dest: "{{ config_dir }}/postgres/monitoring/{{ item }}"
-    mode: 0440
-  loop:
-    - docker-compose.yml
-    - alertmanager/templates.tmpl
-    - grafana/dashboards.yml
-    - grafana/dashboard_home.json
-    - grafana/dashboard_postgres.json
-    - grafana/datasources.yml
-    - node_exporter/docker-entrypoint.sh
-    - postgres_exporter/queries.yml
-    - prometheus/alerts.yml
-    - prometheus/prometheus.yml
-
-- name: create grafana database pg_hba config file
-  template:
-    src: grafana_db/pg_hba.conf.j2
-    dest: "{{ config_dir }}/postgres/monitoring/grafana_db/pg_hba.conf"
-    mode: 0440
-
-- name: create docker secrets
-  docker_secret:
-    name: metridoc_{{ item }}_{{ lookup("vars", item + "_version") }}
+- name: Create docker secrets
+  community.docker.docker_secret:
+    name: metridoc_{{ item }}_v{{ metridoc_secrets_version }}
     data: '{{ lookup("vars", item) }}'
     state: present
+  register: monitoring_docker_secrets
   loop:
     - grafana_admin_password
     - grafana_database_password
     - postgres_monitoring_password
   no_log: true
-  tags:
-    - docker
 
-- name: create docker secret for alertmanager config template
-  docker_secret:
-    name: metridoc_alertmanager_config_{{ alertmanager_config_version }}
+- name: Create docker secret for alertmanager config template
+  community.docker.docker_secret:
+    name: metridoc_alertmanager_config
     data: '{{ lookup("template", "alertmanager/alertmanager.yml.j2") }}'
+    rolling_versions: true
     state: present
+  register: metridoc_alertmanager_secret_config
   no_log: true
-  tags:
-    - docker
 
-- name: start docker services
-  environment: "{{ docker_stack_env }}"
-  command: docker stack deploy -c {{ config_dir }}/postgres/monitoring/docker-compose.yml metridoc
+- name: Deploy monitoring
+  community.docker.docker_stack:
+    name: "metridoc"
+    compose:
+      - "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"
+    state: present
   changed_when: false
-  tags:
-    - docker
-
-- name: display notification
-  debug:
-    msg: Docker services are deploying in the background. Check host to see progress.
-  tags:
-    - docker
+  no_log: true

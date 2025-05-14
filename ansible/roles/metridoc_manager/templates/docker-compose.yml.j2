@@ -1,0 +1,216 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+version: "3.7"
+services:
+  app:
+    image: "{{ metridoc_image_name }}:{{ metridoc_image_tag }}"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.metridoc == true
+      replicas: {{ metridoc_replicas }}
+      update_config:
+        parallelism: 1
+    environment:
+      MAILER_DEFAULT_FROM: "{{ mailer_default_from }}"
+      MAILER_DOMAIN: "{{ mailer_domain }}"
+      MAILER_HOST: "{{ mailer_host }}"
+      RAILS_ENV: "{{ rails_env }}"
+
+      SAML_EMAIL_ATTRIBUTE: "{{ saml_email_attribute }}"
+      SAML_FIRST_NAME_ATTRIBUTE: "{{ saml_first_name_attribute }}"
+      SAML_LAST_NAME_ATTRIBUTE: "{{ saml_last_name_attribute }}"
+      SAML_LOGOUT_URL: "{{ saml_logout_url }}"
+
+      ALMA_API_KEY: "{{ alma_api_key }}"
+
+      SPRINGSHARE_LIBCAL_ID: "{{ springshare_libcal_id }}"
+      SPRINGSHARE_LIBCAL_SECRET: "{{ springshare_libcal_secret }}"
+      SPRINGSHARE_LIBCAL_GRANTTYPE: "{{ springshare_libcal_granttype }}"
+
+      BORROWDIRECT_RESHARE_DB: "{{ borrowdirect_reshare_db }}"
+      BORROWDIRECT_RESHARE_HOST: "{{ borrowdirect_reshare_host }}"
+      BORROWDIRECT_RESHARE_PORT: "{{ borrowdirect_reshare_port }}"
+      BORROWDIRECT_RESHARE_PWD: "{{ borrowdirect_reshare_pwd }}"
+      BORROWDIRECT_RESHARE_UID: "{{ borrowdirect_reshare_uid }}"
+
+      COLUMBIA_ILLIAD_MSSQL_DB: "{{ columbia_illiad_mssql_db }}"
+      COLUMBIA_ILLIAD_MSSQL_HOST: "{{ columbia_illiad_mssql_host }}"
+      COLUMBIA_ILLIAD_MSSQL_PORT: "{{ columbia_illiad_mssql_port }}"
+      COLUMBIA_ILLIAD_MSSQL_PWD: "{{ columbia_illiad_mssql_pwd }}"
+      COLUMBIA_ILLIAD_MSSQL_UID: "{{ columbia_illiad_mssql_uid }}"
+
+      CORNELL_ILLIAD_MSSQL_DB: "{{ cornell_illiad_mssql_db }}"
+      CORNELL_ILLIAD_MSSQL_HOST: "{{ cornell_illiad_mssql_host }}"
+      CORNELL_ILLIAD_MSSQL_PORT: "{{ cornell_illiad_mssql_port }}"
+      CORNELL_ILLIAD_MSSQL_PWD: "{{ cornell_illiad_mssql_pwd }}"
+      CORNELL_ILLIAD_MSSQL_UID: "{{ cornell_illiad_mssql_uid }}"
+
+      DARTMOUTH_ILLIAD_MSSQL_DB: "{{ dartmouth_illiad_mssql_db }}"
+      DARTMOUTH_ILLIAD_MSSQL_HOST: "{{ dartmouth_illiad_mssql_host }}"
+      DARTMOUTH_ILLIAD_MSSQL_PORT: "{{ dartmouth_illiad_mssql_port }}"
+      DARTMOUTH_ILLIAD_MSSQL_PWD: "{{ dartmouth_illiad_mssql_pwd }}"
+      DARTMOUTH_ILLIAD_MSSQL_UID: "{{ dartmouth_illiad_mssql_uid }}"
+
+      DUKE_ILLIAD_MSSQL_DB: "{{ duke_illiad_mssql_db }}"
+      DUKE_ILLIAD_MSSQL_HOST: "{{ duke_illiad_mssql_host }}"
+      DUKE_ILLIAD_MSSQL_PORT: "{{ duke_illiad_mssql_port }}"
+      DUKE_ILLIAD_MSSQL_PWD: "{{ duke_illiad_mssql_pwd }}"
+      DUKE_ILLIAD_MSSQL_UID: "{{ duke_illiad_mssql_uid }}"
+
+      HARVARD_ILLIAD_MSSQL_DB: "{{ harvard_illiad_mssql_db }}"
+      HARVARD_ILLIAD_MSSQL_HOST: "{{ harvard_illiad_mssql_host }}"
+      HARVARD_ILLIAD_MSSQL_PORT: "{{ harvard_illiad_mssql_port }}"
+      HARVARD_ILLIAD_MSSQL_PWD: "{{ harvard_illiad_mssql_pwd }}"
+      HARVARD_ILLIAD_MSSQL_UID: "{{ harvard_illiad_mssql_uid }}"
+
+      MIT_ILLIAD_MSSQL_DB: "{{ mit_illiad_mssql_db }}"
+      MIT_ILLIAD_MSSQL_HOST: "{{ mit_illiad_mssql_host }}"
+      MIT_ILLIAD_MSSQL_PORT: "{{ mit_illiad_mssql_port }}"
+      MIT_ILLIAD_MSSQL_PWD: "{{ mit_illiad_mssql_pwd }}"
+      MIT_ILLIAD_MSSQL_UID: "{{ mit_illiad_mssql_uid }}"
+
+      PRINCETON_ILLIAD_MSSQL_DB: "{{ princeton_illiad_mssql_db }}"
+      PRINCETON_ILLIAD_MSSQL_HOST: "{{ princeton_illiad_mssql_host }}"
+      PRINCETON_ILLIAD_MSSQL_PORT: "{{ princeton_illiad_mssql_port }}"
+      PRINCETON_ILLIAD_MSSQL_PWD: "{{ princeton_illiad_mssql_pwd }}"
+      PRINCETON_ILLIAD_MSSQL_UID: "{{ princeton_illiad_mssql_uid }}"
+
+      RESHARE_DB: "{{ reshare_db }}"
+      RESHARE_HOST: "{{ reshare_host }}"
+      RESHARE_PORT: "{{ reshare_port }}"
+      RESHARE_PWD: "{{ reshare_pwd }}"
+      RESHARE_UID: "{{ reshare_uid }}"
+
+      UPENN_BORROWDIRECT_MSSQL_DB: "{{ upenn_borrowdirect_mssql_db }}"
+      UPENN_BORROWDIRECT_MSSQL_HOST: "{{ upenn_borrowdirect_mssql_host }}"
+      UPENN_BORROWDIRECT_MSSQL_PORT: "{{ upenn_borrowdirect_mssql_port }}"
+      UPENN_BORROWDIRECT_MSSQL_PWD: "{{ upenn_borrowdirect_mssql_pwd }}"
+      UPENN_BORROWDIRECT_MSSQL_UID: "{{ upenn_borrowdirect_mssql_uid }}"
+
+      UPENN_EZBORROW_MSSQL_DB: "{{ upenn_ezborrow_mssql_db }}"
+      UPENN_EZBORROW_MSSQL_HOST: "{{ upenn_ezborrow_mssql_host }}"
+      UPENN_EZBORROW_MSSQL_PORT: "{{ upenn_ezborrow_mssql_port }}"
+      UPENN_EZBORROW_MSSQL_PWD: "{{ upenn_ezborrow_mssql_pwd }}"
+      UPENN_EZBORROW_MSSQL_UID: "{{ upenn_ezborrow_mssql_uid }}"
+
+      UPENN_GATECOUNT_SFTP_HOST: "{{ upenn_gatecount_sftp_host }}"
+      UPENN_GATECOUNT_SFTP_PWD: "{{ upenn_gatecount_sftp_pwd }}"
+      UPENN_GATECOUNT_SFTP_USER: "{{ upenn_gatecount_sftp_user }}"
+
+      UPENN_ILLIAD_MSSQL_DB: "{{ upenn_illiad_mssql_db }}"
+      UPENN_ILLIAD_MSSQL_HOST: "{{ upenn_illiad_mssql_host }}"
+      UPENN_ILLIAD_MSSQL_PORT: "{{ upenn_illiad_mssql_port }}"
+      UPENN_ILLIAD_MSSQL_PWD: "{{ upenn_illiad_mssql_pwd }}"
+      UPENN_ILLIAD_MSSQL_UID: "{{ upenn_illiad_mssql_uid }}"
+
+      YALE_ILLIAD_MSSQL_DB: "{{ yale_illiad_mssql_db }}"
+      YALE_ILLIAD_MSSQL_HOST: "{{ yale_illiad_mssql_host }}"
+      YALE_ILLIAD_MSSQL_PORT: "{{ yale_illiad_mssql_port }}"
+      YALE_ILLIAD_MSSQL_PWD: "{{ yale_illiad_mssql_pwd }}"
+      YALE_ILLIAD_MSSQL_UID: "{{ yale_illiad_mssql_uid }}"
+    healthcheck:
+      test: ["CMD", "/home/app/healthcheck.rb"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 1m30s
+    logging:
+      driver: json-file
+      options:
+        max-file: "3"
+        max-size: "10m"
+    networks:
+      - app
+      - database
+      - shibboleth
+    secrets:
+      - postgres_database_password
+      - source: metridoc_rails_secrets_config
+        target: /home/app/config/secrets.yml
+        uid: "{{ rails_app_user_uid }}"
+        gid: "{{ rails_app_user_gid }}"
+        mode: 0440
+    volumes:
+      - ezpaarse_output:/tmp/upenn_ezproxy
+      - gate_count:/tmp/gate_count
+      - metridoc_tmp_data_dist:/home/app/tmp
+      {% if is_development %}
+      - /metridoc:/home/app
+      {% endif %}
+
+  delayed_jobs:
+    image: "{{ metridoc_image_name }}:{{ metridoc_image_tag }}"
+    command: "bundle exec rails jobs:work"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.delayed-jobs == true
+    environment:
+      MAILER_DEFAULT_FROM: "{{ mailer_default_from }}"
+      MAILER_DOMAIN: "{{ mailer_domain }}"
+      MAILER_HOST: "{{ mailer_host }}"
+      RAILS_ENV: "{{ rails_env }}"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "ps aux | grep -m 1 -c 'bundle exec rails jobs:work' || exit 1",
+        ]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 2m
+    logging:
+      driver: json-file
+      options:
+        max-file: "3"
+        max-size: "10m"
+    networks:
+      - app
+      - database
+    secrets:
+      - postgres_database_password
+      - source: metridoc_rails_secrets_config
+        target: /home/app/config/secrets.yml
+        uid: "{{ rails_app_user_uid }}"
+        gid: "{{ rails_app_user_gid }}"
+        mode: 0440
+    volumes:
+      - metridoc_tmp_data_dist:/home/app/tmp
+      {% if is_development %}
+      - /metridoc:/home/app
+      {% endif %}
+    working_dir: /home/app
+
+networks:
+  app:
+    driver: overlay
+  database:
+    external: true
+  shibboleth:
+    external: true
+
+secrets:
+  postgres_database_password:
+    name: metridoc_postgres_database_password_{{ metridoc_secrets_version }}
+    external: true
+  {% for config_secret in metridoc_config_secrets.results %}
+  {{ config_secret.item.name }}:
+    name: "{{ config_secret.secret_name }}"
+    external: true
+  {% endfor %}
+
+volumes:
+  ezpaarse_output:
+    external: true
+  gate_count:
+  metridoc_tmp_data_dist:
+    {% if not is_development %}
+    driver: local
+    driver_options:
+      type: nfs
+      o: "{{ 'addr=' ~ nfs_metridoc_tmp_address ~ ',rw' }}"
+      device: ":{{ nfs_metridoc_tmp_device }}"
+    {% endif %}

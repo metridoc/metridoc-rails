@@ -1,45 +1,21 @@
 ---
-- name: Create python_jobs config directory
-  file:
-    path: "{{ config_dir }}/python_jobs"
-    state: directory
-  tags: python_jobs
-
-- name: Copy docker compose file
-  copy:
-    src: docker-compose.yml
-    dest: "{{ config_dir }}/python_jobs/docker-compose.yml"
-  tags: python_jobs
-
-- name: Create docker database secret for python_jobs
-  docker_secret:
-    name: "{{ 'metridoc_python_jobs_database_secret_' ~ python_jobs_database_secret_version }}"
-    data: '{{ lookup("template", "metridoc.ini.j2") }}'
-    state: present
-  no_log: true
-  tags:
-    - docker
-    - python_jobs
-
 - name: Create libwizard database secret for python_jobs
-  docker_secret:
-    name: "{{ 'metridoc_python_jobs_libwizard_secret_' ~ python_jobs_libwizard_secret_version }}"
-    data: '{{ lookup("template", "libwizard.ini.j2") }}'
+  community.docker.docker_secret:
+    name: "{{ item.prefix ~ metridoc_secrets_version }}"
+    data: '{{ lookup("template", item.template) }}'
     state: present
   no_log: true
-  tags:
-    - docker
-    - python_jobs
+  loop:
+    - prefix: "metridoc_python_jobs_libwizard_secret_v"
+      template: "libwizard.ini.j2"
+    - prefix: "metridoc_python_jobs_database_secret_v"
+      template: "metridoc.ini.j2"
 
-- name: Deploy Python Jobs
-  docker_stack:
+- name: Deploy python jobs
+  community.docker.docker_stack:
     name: "metridoc"
     compose:
-      - "{{ config_dir ~ '/python_jobs/docker-compose.yml' }}"
+      - "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"
     state: present
   changed_when: false
-  environment: "{{ docker_stack_env }}"
   no_log: true
-  tags:
-    - docker
-    - python_jobs

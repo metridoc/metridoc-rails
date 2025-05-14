@@ -1,5 +1,0 @@
-- name: create volume for ezpaarse_output
-  docker_volume:
-    name: ezpaarse_output
-    state: present
-  tags: ezpaarse_output_volume

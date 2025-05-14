@@ -15,11 +15,14 @@ if [ "$1" = "bundle" -a "$2" = "exec" -a "$3" = "puma" ] || [ "$1" = "bundle" -a
     # run db migrations
     if [ "$1" = "bundle" -a "$2" = "exec" -a "$3" = "puma" ]; then
         if [ "${RAILS_ENV}" = "development" ]; then
+            echo "Setting up local rails env"
             bundle config --local path ${PROJECT_ROOT}/vendor/bundle
             bundle config set --local with 'development:test:assets'
             bundle install -j$(nproc) --retry 3
         fi
-        #bundle exec rake db:migrate
+
+        echo "Setting up database"
+        bundle exec rake db:migrate db:seed
     fi
 
     # chown all dirs

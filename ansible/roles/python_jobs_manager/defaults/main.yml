@@ -1,4 +1,7 @@
 ---
-libwizard_client_id: x
-libwizard_client_secret: x
-libwizard_base_url: http://libwizard_base_url
+python_jobs_image_name: "gitlab.library.upenn.edu/metridoc1/metridoc-python-jobs/metridoc_python_jobs"
+python_jobs_image_tag: "main"
+python_jobs_libwizard_base_url: http://libwizard_base_url
+python_jobs_libwizard_client_id: x
+python_jobs_libwizard_client_secret: x
+python_jobs_replicas: 1

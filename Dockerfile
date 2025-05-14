@@ -70,26 +70,24 @@ RUN bundle config path ${PROJECT_ROOT}/${BUNDLE_HOME} && \
 COPY . .
 
 RUN addgroup app && useradd -m -d ${PROJECT_ROOT} -s /bin/bash -g app app && \
-mkdir -p ${PROJECT_ROOT}/tmp/pids && \
-mkdir -p ${PROJECT_ROOT}/app/assets/builds/
+    mkdir -p ${PROJECT_ROOT}/tmp/pids && \
+    mkdir -p ${PROJECT_ROOT}/app/assets/builds/
 
-RUN mv config/database.yml.example config/database.yml && \
-    find . -type d -exec chmod 755 {} + && \
+RUN find . -type d -exec chmod 755 {} + && \
     chmod 744 -R ./bin && \
     chmod +x -R ${PROJECT_ROOT}/${BUNDLE_HOME}/ruby/${RUBY_MAJOR}/bin/
 
 RUN yarn install
 
-RUN find . -type d -exec chown app:app {} \;
-
-RUN find . -type f \( ! -name "*.key" \) -exec chown app:app {} \;
+RUN find . -type d -exec chown app:app {} \; && \
+    find . -type f \( ! -name "*.key" \) -exec chown app:app {} \;
 
 EXPOSE 3000
 VOLUME ${PROJECT_ROOT}
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 
-CMD ["bundle", "exec", "puma", "-b", "tcp://0.0.0.0:80"]
+CMD ["bundle", "exec", "puma", "-b", "tcp://0.0.0.0:3000"]
 
 # Development Stage ----------------------------------
 FROM base AS development
@@ -99,7 +97,6 @@ ENV RAILS_ENV=${RAILS_ENV}
 
 RUN SECRET_KEY_BASE=x bundle exec rake assets:precompile
 
-RUN rm config/database.yml
 
 # Production Stage -----------------------------------
 FROM base AS production
@@ -111,5 +108,3 @@ ENV RAILS_ENV=${RAILS_ENV}
 ENV RAILS_LOG_TO_STDOUT=true
 ENV RAILS_SERVE_STATIC_FILES=true
 RUN SECRET_KEY_BASE=x bundle exec rake assets:precompile
-
-RUN rm config/database.yml

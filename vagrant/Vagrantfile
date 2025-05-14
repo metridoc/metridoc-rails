@@ -3,6 +3,34 @@
 
 require 'rbconfig'
 
+# Class to grab the users token locally or from hashicorp vault v2 endpoint using ldap
+class Token
+  def to_s
+    begin
+      Vault.address = "https://vault.library.upenn.edu"
+      vault_instance = Vault.auth.token(ENV.fetch('VAULT_TOKEN', ''))
+      token = ENV.fetch('VAULT_TOKEN')
+
+    rescue
+      begin
+        puts "\nInvalid local Vault token, or local Vault token does not exist. Please enter Vault credentials."
+
+        print "HashiCorp Vault username: "
+        hv_user = STDIN.gets.chomp
+        print "HashiCorp Vault password: "
+        hv_pass = STDIN.noecho(&:gets).chomp
+        
+        Vault.address = "https://vault.library.upenn.edu"
+        vault_instance = Vault.auth.ldap(hv_user, hv_pass)
+        vault_instance.auth.client_token
+      rescue
+        puts "Invalid Vault credentials, try again."
+        retry
+      end
+    end
+  end
+end
+
 # Determine if arch is ARM
 def arm_architecture?
   RbConfig::CONFIG['host_cpu'].downcase.start_with?('arm')
@@ -20,8 +48,10 @@ Vagrant.configure("2") do |config|
   if arm_architecture?
     config.vm.box = "bento/ubuntu-22.04"
   else
-    config.vm.box = "ubuntu/focal64"
+    config.vm.box = "bento/ubuntu-22.04"
   end
+
+  config.vbguest.auto_update = false
 
   # Install parallels plugin if user is on mac
   if Vagrant::Util::Platform::darwin?
@@ -71,27 +101,28 @@ Vagrant.configure("2") do |config|
         #   override.vm.network :forwarded_port, id: "http", host: 8080, guest: 80
         # end
 
-        cfg.vm.provision :ansible do |ansible|
-          ansible.ask_vault_pass = true
-          ansible.config_file = "../ansible/ansible.vagrant.cfg"
-          ansible.inventory_path = "../ansible/inventories/vagrant"
-          ansible.galaxy_role_file = "../ansible/roles/requirements.dev.yml"
-          ansible.galaxy_roles_path = "../ansible/roles"
+        # Add volumes for development
+        config.vm.synced_folder "../", "/metridoc"
+
+        cfg.vm.provision :ansible_local do |ansible|
+          ansible.config_file = "/metridoc/ansible/ansible.cfg"
+          ansible.extra_vars = {
+            ansible_hashi_vault_token: Token.new,
+            ansible_hashi_vault_url: "https://vault.library.upenn.edu",
+            ansible_user: "vagrant"
+          }
+          ansible.install_mode = "pip3"
+          ansible.inventory_path = "/metridoc/ansible/inventories/vagrant"
+          ansible.galaxy_role_file = "/metridoc/ansible/roles/requirements.dev.yml"
+          ansible.galaxy_roles_path = "/metridoc/ansible/roles"
           ansible.galaxy_command = "ansible-galaxy install -r %{role_file} --force"
           ansible.limit = "all"
           ansible.tags = "all"
-          ansible.playbook = "../ansible/vagrant.yml"
+          ansible.playbook = "/metridoc/ansible/site.yml"
           ansible.verbose = true
         end
       end
     end
-
-    # Add volumes for development
-    config.vm.synced_folder "../", "/metridoc"
-
-    # TODO: will be needed when testing process for Windows users
-    # https://github.com/npm/npm/issues/992#issuecomment-289935776
-    # vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/Folder_Name", "1"]
 
     # Add domains to hosts file
     config.hostsupdater.aliases = {

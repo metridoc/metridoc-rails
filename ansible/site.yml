@@ -3,73 +3,136 @@
   hosts: docker_swarm_manager
   become: true
   tasks:
-  - ansible.builtin.pip:
-      name:
-        - jsondiff
-        - passlib
-        - pyyaml
-        - requests<2.32.0
-        - urllib3<2.0.0
+    - name: Install dependencies via pip
+      ansible.builtin.pip:
+        name:
+          - jsondiff
+          - hvac
+          - passlib
+          - pyyaml
+          - requests<2.32.0
+          - urllib3<2.0.0
 
 - name: Provision Docker Swarm Cluster
   hosts: all
   become: true
-  pre_tasks:
-    - name: Install nfs client
-      ansible.builtin.package:
-        name: nfs-utils
-        state: present
   tasks:
-    - ansible.builtin.import_role:
+    - name: "Set up docker swarm"
+      ansible.builtin.import_role:
         name: atosatto.docker-swarm
+
+- name: "Set up nginx reverse proxy with ssl termination to mimic a reverse-proxy/loadbalancer"
+  become: true
+  hosts: docker_swarm_manager
+  tasks:
+    - name: Set up server for dev env
+      when: is_development | default(false, true)
+      block:
+        - name: Ensure OpenSSL private key is generated
+          community.crypto.openssl_privatekey:
+            path: "{{ nginx_config_http_template[0].config.servers[0].ssl.certificate_key }}"
+            size: 4096
+            type: RSA
+            mode: '0600'
+            state: present
+
+        - name: Generate an OpenSSL Certificate Signing Request
+          community.crypto.openssl_csr:
+            path: "/etc/ssl/proxy.csr"
+            privatekey_path: "{{ nginx_config_http_template[0].config.servers[0].ssl.certificate_key }}"
+            common_name: "{{ shibboleth['templates']['configs']['shib2']['values']['fqdn'] }}"
+
+        - name: Generate a Self Signed OpenSSL certificate
+          community.crypto.x509_certificate:
+            path: "{{ nginx_config_http_template[0].config.servers[0].ssl.certificate }}"
+            privatekey_path: "{{ nginx_config_http_template[0].config.servers[0].ssl.certificate_key }}"
+            csr_path: "/etc/ssl/proxy.csr"
+            provider: selfsigned
+
+        - name: Install dependencies via pip
+          ansible.builtin.pip:
+            name:
+              - jinja2==3.1.1
+
+        - name: Install nginx
+          ansible.builtin.include_role:
+            name: nginxinc.nginx
+
+        - name: Install nginx config
+          ansible.builtin.include_role:
+            name: nginxinc.nginx_config
 
 - name: Deploy application
   hosts: docker_swarm_manager
   become: true
   gather_facts: true
   tasks:
-    - ansible.builtin.import_role:
+    - name: "Import primary postgres role"
+      ansible.builtin.import_role:
         name: postgres_primary_manager
-      tags: postgres_primary_manager
-    - ansible.builtin.import_role:
+      tags: postgres_primary
+
+    - name: "Import ezpaarse role"
+      ansible.builtin.import_role:
         name: ezpaarse_manager
-      tags: ezpaarse_manager
-    - ansible.builtin.import_role:
+      tags: ezpaarse
+
+    - name: "Import shibboleth role - create docker network"
+      ansible.builtin.import_role:
         name: shibboleth_sp
         tasks_from: create_docker_network
       tags: shibboleth_sp
-    - ansible.builtin.import_role:
+
+    - name: "Import shibboleth role"
+      ansible.builtin.import_role:
         name: shibboleth_sp
       tags: shibboleth_sp
-    - ansible.builtin.import_role:
+
+    - name: "Import metridoc role"
+      ansible.builtin.import_role:
         name: metridoc_manager
-      tags: metridoc_manager
-    - ansible.builtin.import_role:
+      tags: metridoc
+
+    - name: "Import python jobs role"
+      ansible.builtin.import_role:
         name: python_jobs_manager
-      tags: python_jobs_manager
-    - ansible.builtin.import_role:
+      tags: python_jobs
+
+    - name: "Import jenkins role"
+      ansible.builtin.import_role:
         name: jenkins_manager
-      tags: jenkins_manager
-    - ansible.builtin.import_role:
+      tags: jenkins
+
+    - name: "Import monitoring role"
+      ansible.builtin.import_role:
         name: monitoring_manager
-      tags: monitoring_manager
-    
-#   # We do the following 4 tasks before doing the postgres replica task because errors will occur when metridoc_app does not finish db migrations.
-#   # Commenting out this job because it's flaky, but may need it again one day...
-#
-#   - name: "Get metridoc 1 container name"
-#     become: True
-#     shell:
-#       "docker ps -n 1 -f name=metridoc_app.1 --format \"{{ '{{' }}.Names{{ '}}' }}\""
-#     register: container_name
-#   - name: "Wait for metridoc app container 1 to finish booting"
-#     become: True
-#     shell:
-#       "docker inspect {{ container_name.stdout_lines[0] }} --format=\"{{ '{{' }}.State.Health.Status{{  '}}' }}\""
-#     register: result
-#     until: result.stdout == 'healthy'
-#     retries: 10
-#     delay: 20
-#   - ansible.builtin.import_role:
-#       name: postgres_replica_manager
-#     tags: postgres_replica_manager
+      tags: monitoring
+
+    - name: "Wait for app to be running prior to setting up replica db"
+      when: is_development | default(false, true)
+      block:
+        - name: "Get info from app service"
+          community.docker.docker_swarm_service_info:
+            name: metridoc_app
+          register: metridoc_app_info
+
+        - name: "Wait for app container"
+          ansible.builtin.debug:
+            msg: "Waiting for app container"
+          until: metridoc_app_info.service != None
+          retries: 10
+          delay: 20
+
+    - name: "Import replica postgres role"
+      ansible.builtin.import_role:
+        name: postgres_replica_manager
+      tags: postgres_replica
+
+  post_tasks:
+    - name: Prune images that are older than 2+ hours
+      community.docker.docker_prune:
+        images: true
+        images_filters:
+          dangling: false
+          until: 2h
+      when: not is_development | default(false, true)

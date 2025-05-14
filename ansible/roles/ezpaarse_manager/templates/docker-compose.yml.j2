@@ -1,0 +1,99 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+version: "3.7"
+services:
+  ezpaarse:
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-ezpaarse/metridoc_ezpaarse:{{ ezpaarse_image_tag }}
+    environment:
+      NODE_ENV: "production"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.metridoc == true
+    logging:
+      driver: json-file
+      options:
+        max-file: "3"
+        max-size: "10m"
+    networks:
+      - database
+      - ezpaarse
+    volumes:
+      - ezpaarse_platforms:/opt/ezpaarse/platforms
+      - ezpaarse_middlewares:/opt/ezpaarse/middlewares
+      - ezpaarse_resources:/opt/ezpaarse/resources
+      - ezpaarse_exclusions:/opt/ezpaarse/exclusions
+      - ezpaarse_input_dist:/tmp/ezpaarse_input
+      - ezpaarse_output:/tmp/ezpaarse_output
+    secrets:
+      - source: metridoc_ezpaarse_config
+        target: /opt/ezpaarse/config.local.json
+        uid: "1000"
+        gid: "1000"
+        mode: 0440
+      - postgres_database_password
+    restart: unless-stopped
+
+  ezpaarse_db:
+    image: gitlab.library.upenn.edu/metridoc1/metridoc-ezpaarse-mongodb/metridoc_ezpaarse_mongodb:{{ ezpaarse_mongodb_image_tag }}
+    command: ["--auth"]
+    environment:
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/metridoc_ezpaarse_mongodb_root_password
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/metridoc_ezpaarse_mongodb_root_username
+      MONGO_INITDB_DATABASE: ezpaarse
+      MONGO_USERNAME_FILE: /run/secrets/metridoc_ezpaarse_mongodb_username
+      MONGO_PASSWORD_FILE: /run/secrets/metridoc_ezpaarse_mongodb_password
+    logging:
+      driver: json-file
+      options:
+        max-file: "3"
+        max-size: "10m"
+    networks:
+      - ezpaarse
+    restart: unless-stopped
+    secrets:
+      - metridoc_ezpaarse_mongodb_root_password
+      - metridoc_ezpaarse_mongodb_root_username
+      - metridoc_ezpaarse_mongodb_password
+      - metridoc_ezpaarse_mongodb_username
+
+networks:
+  database:
+    external: true
+  ezpaarse:
+    driver: overlay
+
+secrets:
+  metridoc_ezpaarse_config:
+    name: {{ ezpaarse_config.secret_name }}
+    external: true
+  metridoc_ezpaarse_mongodb_root_password:
+    name: metridoc_ezpaarse_mongodb_root_password_{{ metridoc_secrets_version }}
+    external: true
+  metridoc_ezpaarse_mongodb_root_username:
+    name: metridoc_ezpaarse_mongodb_root_username_{{ metridoc_secrets_version }}
+    external: true
+  metridoc_ezpaarse_mongodb_password:
+    name: metridoc_ezpaarse_mongodb_password_{{ metridoc_secrets_version }}
+    external: true
+  metridoc_ezpaarse_mongodb_username:
+    name: metridoc_ezpaarse_mongodb_username_{{ metridoc_secrets_version }}
+    external: true
+  postgres_database_password:
+    name: metridoc_postgres_database_password_{{ metridoc_secrets_version }}
+    external: true
+
+volumes:
+  ezpaarse_exclusions:
+  ezpaarse_input_dist:
+    {% if not is_development %}
+    driver: local
+    driver_options:
+      type: nfs
+      o: "{{ 'addr=' ~ ezpaarse_nfs_input_volume_address ~ ',rw' }}"
+      device: ":{{ ezpaarse_nfs_input_volume_device }}"
+    {% endif %}
+  ezpaarse_middlewares:
+  ezpaarse_output:
+  ezpaarse_platforms:
+  ezpaarse_resources:

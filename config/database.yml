@@ -1,0 +1,27 @@
+default: &default
+  adapter: postgresql_makara
+  database: postgres
+  username: postgres
+  password: <%= File.exist?('/run/secrets/postgres_database_password') ? File.read('/run/secrets/postgres_database_password').strip : ENV['POSTGRES_DATABASE_PASSWORD'] %>
+  pool: 8
+  makara:
+    sticky: false
+    connections:
+      - role: master
+        host: primary-db
+        disable_blacklist: true
+      - role: slave
+        host: replica-db
+  variables:
+    tcp_keepalives_idle: 60
+    tcp_keepalives_interval: 60
+    tcp_keepalives_count: 100
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

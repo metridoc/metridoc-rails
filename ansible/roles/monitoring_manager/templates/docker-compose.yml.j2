@@ -1,0 +1,212 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+version: '3.7'
+services:
+  alertmanager-1:
+    image: prom/alertmanager:v0.17.0
+    command: >
+      --cluster.peer=alertmanager-2:9094
+      --config.file=/etc/alertmanager/alertmanager.yml
+      --storage.path=/alertmanager
+      --web.external-url="{{ alertmanager_1_external_url }}"
+    configs:
+      - source: alertmanager_templates
+        target: /etc/alertmanager/template/templates.tmpl
+    deploy:
+      mode: replicated
+      placement:
+        constraints:
+          - node.labels.alertmanager-1 == true
+      replicas: 1
+    networks:
+      - monitoring
+    ports:
+      - "9093:9093"
+    secrets:
+      - source: alertmanager_config
+        target: /etc/alertmanager/template/alertmanager.yml
+    volumes:
+      - alertmanager_1_data:/alertmanager
+
+  alertmanager-2:
+    image: prom/alertmanager:v0.17.0
+    command: >
+      --cluster.peer=alertmanager-1:9094
+      --config.file=/etc/alertmanager/alertmanager.yml
+      --storage.path=/alertmanager
+      --web.external-url="{{ alertmanager_2_external_url }}"
+    configs:
+      - source: alertmanager_templates
+        target: /etc/alertmanager/templates.tmpl
+    deploy:
+      mode: replicated
+      placement:
+        constraints:
+          - node.labels.alertmanager-2 == true
+      replicas: 1
+    networks:
+      - monitoring
+    ports:
+      - "9094:9093"
+    secrets:
+      - source: alertmanager_config
+        target: /etc/alertmanager/alertmanager.yml
+    volumes:
+      - alertmanager_2_data:/alertmanager
+
+  grafana:
+    image: grafana/grafana:6.2.1
+    configs:
+      - source: grafana_dashboards
+        target: /etc/grafana/provisioning/dashboards/dashboards.yml
+      - source: grafana_dashboard_postgres
+        target: /etc/grafana/provisioning/dashboards/postgres.json
+      - source: grafana_dashboard_home
+        target: /etc/grafana/provisioning/dashboards/home.json
+      - source: grafana_datasources
+        target: /etc/grafana/provisioning/datasources/datasources.yml
+    environment:
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: grafana-db
+      GF_DATABASE_NAME: grafana
+      GF_DATABASE_USER: grafana
+      GF_DATABASE_PASSWORD__FILE: /run/secrets/grafana_database_password
+      GF_DATABASE_SSL_MODE: disable
+      GF_SECURITY_ADMIN_PASSWORD__FILE: /run/secrets/grafana_admin_password
+      GF_SERVER_ROOT_URL: "{{ grafana_server_root_url }}"
+      GF_SMTP_ENABLED: "true"
+      GF_SMTP_FROM_ADDRESS: grafana@metridoc.library.upenn.edu
+      GF_SMTP_HOST: "{{ grafana_smtp_host }}"
+    networks:
+      - monitoring
+    ports:
+      - "3000:3000"
+    secrets:
+      - grafana_admin_password
+      - grafana_database_password
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  grafana-db:
+    image: postgres:11.3-alpine
+    command: >
+      postgres
+        -c hba_file=/var/lib/postgresql/pg_hba.conf
+    configs:
+      - source: grafana_database_pg_hba_conf
+        target: /var/lib/postgresql/pg_hba.conf
+        uid: "70"
+        gid: "70"
+    deploy:
+      mode: replicated
+      placement:
+        constraints:
+          - node.labels.postgres-primary == true
+      replicas: 1
+    environment:
+      POSTGRES_DB: grafana
+      POSTGRES_PASSWORD_FILE: /run/secrets/grafana_database_password
+      POSTGRES_USER: grafana
+    networks:
+      - monitoring
+    secrets:
+      - grafana_database_password
+    volumes:
+      - grafana_db_data:/var/lib/postgresql/data
+
+  node-exporter:
+    image: prom/node-exporter:v0.18.0
+    command: >
+      --collector.textfile.directory=/home
+      --path.procfs=/host/proc
+      --path.rootfs=/rootfs
+      --path.sysfs=/host/sys
+    configs:
+      - source: node_exporter_entrypoint
+        target: /home/docker-entrypoint.sh
+        mode: 0555
+    deploy:
+      mode: global
+    entrypoint: /home/docker-entrypoint.sh
+    environment:
+      NODE_ID: "{% raw %}{{.Node.ID}}{% endraw %}"
+      NODE_NAME: "{% raw %}{{.Node.Hostname}}{% endraw %}"
+    networks:
+      - monitoring
+    volumes:
+      - /:/rootfs:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+
+  prometheus:
+    image: prom/prometheus:v2.10.0
+    configs:
+      - source: prometheus_alerts
+        target: /etc/prometheus/rules/alerts.yml
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    deploy:
+      mode: replicated
+      replicas: {{ prometheus_replicas }}
+      placement:
+        constraints:
+          - node.labels.prometheus == true
+    networks:
+      - monitoring
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+
+  postgres-exporter:
+    image: wrouesnel/postgres_exporter:v0.4.7
+    configs:
+      - source: postgres_exporter_queries
+        target: /queries.yml
+    environment:
+      DATA_SOURCE_PASS_FILE: /run/secrets/postgres_monitoring_password
+      DATA_SOURCE_USER: monitoring
+      DATA_SOURCE_URI: primary-db:5432/postgres?sslmode=disable
+      PG_EXPORTER_EXTEND_QUERY_PATH: /queries.yml
+    deploy:
+      placement:
+        constraints:
+          - node.labels.postgres-exporter == true
+    networks:
+      - database
+      - monitoring
+    secrets:
+      - postgres_monitoring_password
+
+configs:
+  {% for config in monitoring_docker_configs.results %}
+  {{ config.item.name }}:
+    name: "{{ config.config_name }}"
+    external: true
+  {% endfor %}
+
+networks:
+  database:
+    external: true
+  monitoring:
+    driver: overlay
+    ipam:
+      config:
+        - subnet: "{{ monitoring_subnet }}"
+
+secrets:
+  {% for secret in monitoring_docker_secrets.results %}
+  {{ secret.item }}:
+    name: "{{ secret.secret_name }}"
+    external: true
+  {% endfor %}
+  alertmanager_config:
+    name: "{{ metridoc_alertmanager_secret_config.secret_name }}"
+    external: true
+
+volumes:
+  alertmanager_1_data:
+  alertmanager_2_data:
+  grafana_data:
+  grafana_db_data:
+  prometheus_data:

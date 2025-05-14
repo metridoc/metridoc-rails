@@ -1,55 +1,33 @@
 ---
-- name: create config directory
-  file:
-    path: "{{ config_dir }}/postgres/replica"
-    mode: 0440
-    state: directory
+- name: Create configs
+  community.docker.docker_config:
+    name: "{{ item.name }}"
+    data: "{{ lookup(item.type, item.file) }}"
+    rolling_versions: true
+    state: present
+  no_log: true
+  register: replica_docker_configs
+  loop: "{{ replica_configs }}"
 
-- name: copy docker compose file
-  copy:
-    src: docker-compose.yml
-    dest: "{{ config_dir }}/postgres/replica/docker-compose.yml"
-    mode: 0440
-
-- name: copy start_replica script
-  copy:
-    src: start_replica.sh
-    dest: "{{ config_dir }}/postgres/replica/start_replica.sh"
-    mode: 0440
-
-- name: create pg_hba config file
-  template:
-    src: pg_hba.conf.j2
-    dest: "{{ config_dir }}/postgres/replica/pg_hba.conf"
-    mode: 0440
-
-- name: create docker secret for database password
-  docker_secret:
-    name: metridoc_postgres_database_password_{{ postgres_database_password_version }}
+- name: Create docker secret for database password
+  community.docker.docker_secret:
+    name: metridoc_postgres_database_password_v{{ metridoc_secrets_version }}
     data: "{{ postgres_database_password }}"
     state: present
   no_log: true
-  tags:
-    - docker
 
-- name: create docker secret for .pgpass file
-  docker_secret:
-    name: metridoc_postgres_pgpass_{{ postgres_pgpass_version }}
+- name: Create docker secret for .pgpass file
+  community.docker.docker_secret:
+    name: metridoc_postgres_pgpass_v{{ metridoc_secrets_version }}
     data: '{{ lookup("template", ".pgpass.j2") }}'
     state: present
   no_log: true
-  tags:
-    - docker
 
-- name: start docker services
-  environment: "{{ docker_stack_env }}"
-  command: docker stack deploy -c {{ config_dir }}/postgres/replica/docker-compose.yml metridoc
+- name: Deploy postgres replica
+  community.docker.docker_stack:
+    name: "metridoc"
+    compose:
+      - "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"
+    state: present
   changed_when: false
-  tags:
-    - docker
-
-- name: display notification
-  debug:
-    msg: Docker services are deploying in the background. Check host to see progress.
-  tags:
-    - docker
+  no_log: true

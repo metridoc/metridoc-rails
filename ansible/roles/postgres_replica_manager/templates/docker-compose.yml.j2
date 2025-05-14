@@ -1,0 +1,63 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+version: "3.7"
+services:
+  replica-db:
+    image: postgres:11.3-alpine
+    command: [ "postgres", "-c", "hba_file=/var/lib/postgresql/pg_hba.conf" ]
+    configs:
+      - source: postgres_replica_pg_hba_conf
+        target: /var/lib/postgresql/pg_hba.conf
+        uid: '70'
+        gid: '70'
+      - source: postgres_start_replica
+        target: /docker-entrypoint-initdb.d/start_replica.sh
+        mode: 0555
+    deploy:
+      mode: replicated
+      placement:
+        constraints:
+          - node.labels.postgres-replica == true
+      replicas: 1
+    environment:
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_database_password
+    logging:
+      driver: json-file
+      options:
+        max-file: '3'
+        max-size: '10m'
+    networks:
+      - database
+    ports:
+      - '5432:5432'
+    secrets:
+      - postgres_database_password
+      - source: postgres_pgpass
+        target: /var/lib/postgresql/.pgpass
+        uid: '70'
+        gid: '70'
+        mode: 0400
+    volumes:
+      - postgres_replica_data:/var/lib/postgresql/data
+
+configs:
+  {% for config in replica_docker_configs.results %}
+  {{ config.item.name }}:
+    name: "{{ config.config_name }}"
+    external: true
+  {% endfor %}
+
+networks:
+  database:
+    external: true
+
+secrets:
+  postgres_database_password:
+    external: true
+    name: metridoc_postgres_database_password_v{{ metridoc_secrets_version }}
+  postgres_pgpass:
+    external: true
+    name: metridoc_postgres_pgpass_v{{ metridoc_secrets_version }}
+
+volumes:
+  postgres_replica_data:
