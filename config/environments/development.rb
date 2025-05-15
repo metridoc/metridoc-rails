@@ -86,6 +86,7 @@ Rails.application.configure do
   config.hosts = [
     "metridoc_app",
     "localhost",
+    "127.0.0.1",
     "metridoc-dev.library.upenn.edu"
   ]
 end
