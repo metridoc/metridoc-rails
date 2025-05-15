@@ -49,11 +49,6 @@
             csr_path: "/etc/ssl/proxy.csr"
             provider: selfsigned
 
-        - name: Install dependencies via pip
-          ansible.builtin.pip:
-            name:
-              - jinja2==3.1.1
-
         - name: Install nginx
           ansible.builtin.include_role:
             name: nginxinc.nginx
