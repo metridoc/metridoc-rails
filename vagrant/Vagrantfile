@@ -19,7 +19,7 @@ class Token
         hv_user = STDIN.gets.chomp
         print "HashiCorp Vault password: "
         hv_pass = STDIN.noecho(&:gets).chomp
-        
+
         Vault.address = "https://vault.library.upenn.edu"
         vault_instance = Vault.auth.ldap(hv_user, hv_pass)
         vault_instance.auth.client_token
@@ -42,7 +42,7 @@ cluster = {
 }
 
 Vagrant.configure("2") do |config|
-  config.vagrant.plugins = ["vagrant-env", "vagrant-vbguest", "vagrant-hostsupdater"]
+  config.vagrant.plugins = ["vagrant-env", "vagrant-vbguest", "vagrant-hostsupdater", "vault"]
 
   # Select correct box for arch
   if arm_architecture?
