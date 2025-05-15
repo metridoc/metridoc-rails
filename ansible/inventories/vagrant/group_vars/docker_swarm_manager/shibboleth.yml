@@ -3,7 +3,7 @@ shibboleth:
   image:
     name: "shibboleth_dev"
     tag: "latest"
-  is_development: false
+  is_development: true
   swarm_node_constraint: "metridoc"
   templates:
     configs:
