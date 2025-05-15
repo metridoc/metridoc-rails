@@ -2,7 +2,7 @@
 alertmanager_1_external_url: http://{{ alertmanager_1_swarm_node }}.library.upenn.int:9093
 alertmanager_2_external_url: http://{{ alertmanager_2_swarm_node }}.library.upenn.int:9094
 alertmanager_slack_api_url: "http://localhost"
-grafana_server_root_url: http://metridoc-staging.library.upenn.int:3000
+grafana_server_root_url: http://metridoc-staging.library.upenn.int:3030
 alertmanager_1_swarm_node: "metridoc-manager"
 alertmanager_2_swarm_node: "metridoc-manager"
 monitoring_subnet: 10.0.10.0/24
