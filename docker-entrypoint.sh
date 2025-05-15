@@ -19,6 +19,8 @@ if [ "$1" = "bundle" -a "$2" = "exec" -a "$3" = "puma" ] || [ "$1" = "bundle" -a
             bundle config --local path ${PROJECT_ROOT}/vendor/bundle
             bundle config set --local with 'development:test:assets'
             bundle install -j$(nproc) --retry 3
+
+            yarn install
         fi
 
         echo "Setting up database"
