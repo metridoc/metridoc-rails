@@ -119,6 +119,7 @@
           delay: 20
 
     - name: "Import replica postgres role"
+      when: not is_development | default(false, true)
       ansible.builtin.import_role:
         name: postgres_replica_manager
       tags: postgres_replica

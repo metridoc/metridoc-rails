@@ -108,7 +108,15 @@ services:
       YALE_ILLIAD_MSSQL_HOST: "{{ yale_illiad_mssql_host }}"
       YALE_ILLIAD_MSSQL_PORT: "{{ yale_illiad_mssql_port }}"
       YALE_ILLIAD_MSSQL_PWD: "{{ yale_illiad_mssql_pwd }}"
-      YALE_ILLIAD_MSSQL_UID: "{{ yale_illiad_mssql_uid }}"ß
+      YALE_ILLIAD_MSSQL_UID: "{{ yale_illiad_mssql_uid }}"
+    {% if not is_development %}
+    healthcheck:
+      test: ["CMD", "/home/app/healthcheck.rb"]
+      interval: 30s
+      timeout: 15s
+      retries: 3
+      start_period: 5m
+    {% endif %}
     logging:
       driver: json-file
       options:
