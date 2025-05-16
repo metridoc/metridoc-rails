@@ -104,7 +104,7 @@
       tags: monitoring
 
     - name: "Wait for app to be running prior to setting up replica db"
-      when: is_development | default(false, true)
+      when: not is_development | default(false, true)
       block:
         - name: "Get info from app service"
           community.docker.docker_swarm_service_info:
