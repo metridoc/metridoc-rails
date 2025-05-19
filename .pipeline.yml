@@ -128,14 +128,11 @@ deploy_staging:
     - vault write -field=signed_key ${VAULT_SSH_CLIENT_ENDPOINT}/sign/${VAULT_SSH_CLIENT_ROLE} public_key=@${HOME}/.ssh/id_ed25519.pub valid_principals=${VALID_PRINCIPALS} > ~/.ssh/id_ed25519-cert.pub
     - chmod 0400 ~/.ssh/id_ed25519-cert.pub
 
-    - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
-    - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
-      
     # Install ansible requirements
     - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
 
     # Run ansible playbook
-    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
+    - ansible-playbook -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
   rules:
     - if: $CI_COMMIT_REF_NAME == "staging"
   tags:

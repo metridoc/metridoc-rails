@@ -1,0 +1,4 @@
+---
+python_jobs_libwizard_base_url: "{{ metridoc_vault_values.secret.libwizard_base_url }}"
+python_jobs_libwizard_client_id: "{{ metridoc_vault_values.secret.libwizard_client_id }}"
+python_jobs_libwizard_client_secret: "{{ metridoc_vault_values.secret.libwizard_client_secret }}"
