@@ -1,0 +1,7 @@
+---
+ezpaarse_mongodb_password: "{{ metridoc_vault_values.secret.ezpaarse_mongodb_password }}"
+ezpaarse_mongodb_username: "{{ metridoc_vault_values.secret.ezpaarse_mongodb_username }}"
+ezpaarse_mongodb_root_password: "{{ metridoc_vault_values.secret.ezpaarse_mongodb_root_password }}"
+ezpaarse_mongodb_root_username: "{{ metridoc_vault_values.secret.ezpaarse_mongodb_root_username }}"
+ezpaarse_nfs_input_volume_address: "{{ metridoc_vault_values.secret.ezpaarse_nfs_input_volume_address }}"
+ezpaarse_nfs_input_volume_device: "{{ metridoc_vault_values.secret.ezpaarse_nfs_input_volume_device }}"

@@ -1,0 +1,4 @@
+---
+grafana_admin_password: "{{ metridoc_vault_values.secret.grafana_admin_password }}"
+grafana_database_password: "{{ metridoc_vault_values.secret.grafana_database_password }}"
+grafana_smtp_host: "{{ metridoc_vault_values.secret.grafana_smtp_host }}"
