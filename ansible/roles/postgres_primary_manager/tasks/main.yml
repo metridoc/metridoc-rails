@@ -19,7 +19,7 @@
 
 - name: create docker secret for init_primary query
   docker_secret:
-    name: metridoc_postgres_init_primary_{{ postgres_init_primary_version }}
+    name: metridoc_postgres_init_primary
     data: '{{ lookup("template", "init_primary.sql.j2") }}'
     state: present
   no_log: true
@@ -28,7 +28,7 @@
 
 - name: create docker secret for database password
   docker_secret:
-    name: metridoc_postgres_database_password_{{ postgres_database_password_version }}
+    name: metridoc_postgres_database_password
     data: "{{ postgres_database_password }}"
     state: present
   no_log: true
