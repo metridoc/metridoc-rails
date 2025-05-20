@@ -211,7 +211,7 @@ volumes:
   metridoc_tmp_data_dist:
     {% if not is_development %}
     driver: local
-    driver_options:
+    driver_opts:
       type: nfs
       o: "{{ 'addr=' ~ nfs_metridoc_tmp_address ~ ',rw' }}"
       device: ":{{ nfs_metridoc_tmp_device }}"
