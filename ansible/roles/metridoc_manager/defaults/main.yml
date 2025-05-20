@@ -3,7 +3,7 @@ metridoc_configs:
   - name: metridoc_rails_secrets_config
     file: secrets.yml.j2
 
-metridoc_image_name: "gitlab.library.upenn.edu/metridoc1/metridoc-rails/metridoc"
+metridoc_image_name: "gitlab.library.upenn.edu/metridoc1/metridoc-rails"
 metridoc_image_tag: "latest"
 metridoc_replicas: 1
 rails_app_user_gid: 1000
