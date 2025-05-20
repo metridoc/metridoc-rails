@@ -1,17 +1,18 @@
 ---
-RAILS_ENV: production
 mailer_default_from: "{{ metridoc_vault_values.secret.mailer_default_from }}"
 mailer_domain: "{{ metridoc_vault_values.secret.mailer_domain }}"
 mailer_host: "{{ metridoc_vault_values.secret.mailer_host }}"
+metridoc_image_tag: "{{ image_tag }}"
 nfs_metridoc_tmp_address: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_address }}'
 nfs_metridoc_tmp_device: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_device }}'
+rails_env: production
 rails_secret_key_base: "{{ metridoc_vault_values.secret.rails_secret_key_base }}"
-
 saml_email_attribute: "{{ metridoc_vault_values.secret.saml_email_attribute }}"
 saml_first_name_attribute: "{{ metridoc_vault_values.secret.saml_first_name_attribute }}"
 saml_last_name_attribute: "{{ metridoc_vault_values.secret.saml_last_name_attribute }}"
 saml_logout_url: "{{ metridoc_vault_values.secret.saml_logout_url }}"
 
+# Remote connection params
 alma_api_key: "{{ metridoc_vault_values.secret.alma_api_key }}"
 
 borrowdirect_reshare_db: "{{ metridoc_vault_values.secret.borrowdirect_reshare_db }}"
