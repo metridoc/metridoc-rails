@@ -45,8 +45,8 @@ build_and_push_base_image:
     - .build_and_push_docker_images
   parallel:
     matrix:
-      - RUNNER: build-arm
-        DOCKER_BUILD_PLATFORM: linux/arm64
+      # - RUNNER: build-arm
+      #   DOCKER_BUILD_PLATFORM: linux/arm64
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: linux/amd64
   variables:
