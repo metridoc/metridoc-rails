@@ -50,6 +50,7 @@ build_and_push_base_image:
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: linux/amd64
   variables:
+    DOCKER_ADDITIONAL_CACHE_TARGETS: "base"
     DOCKER_TARGET: "base"
   tags:
     - ${RUNNER}
@@ -65,7 +66,7 @@ build_and_push_dev_image:
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: linux/amd64
   variables:
-    DOCKER_ADDITIONAL_CACHE_TARGETS: "base"
+    DOCKER_ADDITIONAL_CACHE_TARGETS: "base development"
     DOCKER_TARGET: "development"
   tags:
     - ${RUNNER}
@@ -95,7 +96,7 @@ build_and_push_prod_image:
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: "linux/amd64"
   variables:
-    DOCKER_ADDITIONAL_CACHE_TARGETS: "base development"
+    DOCKER_ADDITIONAL_CACHE_TARGETS: "base development production"
     DOCKER_TARGET: "production"
   tags:
     - ${RUNNER}
