@@ -11,7 +11,6 @@ include:
     ref: master
     file:
       - .trivy_container_scanning.yml
-  - template: "Workflows/MergeRequest-Pipelines.gitlab-ci.yml"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
     inputs:
       deploy_environment_url: "https://metridoc-staging.library.upenn.edu"
