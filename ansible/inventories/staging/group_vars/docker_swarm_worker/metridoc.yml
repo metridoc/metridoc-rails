@@ -1,3 +1,3 @@
 ---
-nfs_metridoc_tmp_address: '{{ {{ metridoc_vault_values.secret.nfs_metridoc_tmp_address }}'
-nfs_metridoc_tmp_device: '{{ {{ metridoc_vault_values.secret.nfs_metridoc_tmp_device }}'
+nfs_metridoc_tmp_address: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_address }}'
+nfs_metridoc_tmp_device: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_device }}'
