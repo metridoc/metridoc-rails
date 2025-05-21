@@ -136,7 +136,7 @@ services:
     volumes:
       - ezpaarse_output:/tmp/upenn_ezproxy
       - gate_count:/tmp/gate_count
-      - metridoc_tmp_data_dist:/home/app/tmp
+      - metridoc_tmp_data:/home/app/tmp
       {% if is_development %}
       - /metridoc:/home/app
       {% endif %}
@@ -180,7 +180,7 @@ services:
         gid: "{{ rails_app_user_gid }}"
         mode: 0440
     volumes:
-      - metridoc_tmp_data_dist:/home/app/tmp
+      - metridoc_tmp_data:/home/app/tmp
       {% if is_development %}
       - /metridoc:/home/app
       {% endif %}
@@ -208,8 +208,9 @@ volumes:
   ezpaarse_output:
     external: true
   gate_count:
-  metridoc_tmp_data_dist:
-    {% if not is_development %}
+  metridoc_tmp_data:
+    {% if "production" in groups %}
+    name: metridoc_tmp_data
     driver: local
     driver_opts:
       type: nfs
