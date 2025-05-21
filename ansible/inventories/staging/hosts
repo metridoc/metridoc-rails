@@ -19,6 +19,7 @@ all:
             - "prometheus"
             - "delayed-jobs"
     docker_swarm_worker:
+      hosts:
         swarm-02:
           swarm_labels:
             - "postgres-replica"
