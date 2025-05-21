@@ -20,10 +20,6 @@
   register: ezpaarse_config
   no_log: true
 
-- name: debug
-  debug:
-    var: ezpaarse_config
-
 - name: Deploy ezpaarse
   community.docker.docker_stack:
     name: "metridoc"
@@ -31,4 +27,4 @@
       - "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"
     state: present
   changed_when: false
-  # no_log: true
+  no_log: true
