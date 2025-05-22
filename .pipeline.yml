@@ -14,7 +14,6 @@ include:
   - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
     inputs:
       deploy_environment_url: "https://metridoc-staging.library.upenn.edu"
-      deploy_host: "${DEPLOY_HOST}"
       valid_principals: "${VALID_PRINCIPALS}"
       vault_auth_role: "${VAULT_AUTH_ROLE}"
       vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
@@ -22,7 +21,6 @@ include:
     inputs:
       deploy_environment: "production"
       deploy_environment_url: "https://metridoc.library.upenn.edu"
-      deploy_host: "${DEPLOY_HOST}"
       job_suffix: "production"
       valid_principals: "${VALID_PRINCIPALS}"
       vault_auth_role: "${VAULT_AUTH_ROLE}"
