@@ -1,7 +1,7 @@
 ---
 load_sequence: 7
 
-target_model: "CourseReserve::Leganto::CrLegantoCourse"
+target_model: "CourseReserves::Leganto::Course"
 target_adapter: "csv"
 
 export_file_name: "course_reserves_courses.csv"

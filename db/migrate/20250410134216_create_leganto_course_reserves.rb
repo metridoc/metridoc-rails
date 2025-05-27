@@ -3,21 +3,21 @@ class CreateLegantoCourseReserves < ActiveRecord::Migration[7.1]
     create_table :cr_leganto_courses do |t|
       t.integer :course_id
       t.string :course_code
+      t.string :course_name
+      t.string :academic_department
       t.string :course_term
       t.string :course_year
-      t.string :academic_department
       t.datetime :course_start_date
       t.datetime :course_end_date
       t.integer :course_enrollment
-      t.string :course_name
       t.string :processing_department
       t.datetime :last_updated_at
 
-      t.index ["course_id"], name: "cr_leganto_courses_course_id"
-      t.index ["course_year"], name: "cr_leganto_courses_course_year"
+      t.index ["course_id"], unique: true, name: "cr_leganto_courses_course_id"
+      t.index ["course_code"], unique: true, name: "cr_leganto_courses_course_code"
     end
 
-    create_table :cr_leganto_items do |t|
+    create_table :cr_leganto_citations do |t|
       t.integer :citation_id
       t.string :citation_title
       t.string :citation_author
@@ -37,14 +37,22 @@ class CreateLegantoCourseReserves < ActiveRecord::Migration[7.1]
       t.string :citation_uploaded_file
       t.string :external_source_id
       t.datetime :last_updated_at
-      t.index ["citation_id"], name: "cr_leganto_items_citation_id"
+      t.index ["citation_id"], unique: true, name: "cr_leganto_items_citation_id"
     end
 
     create_table :cr_leganto_usage do |t|
+      t.integer :course_id
+      t.integer :citation_id
+      t.datetime :event_date
       t.string :usage_type
-      t.string :format
-      t.datetime :time_of_use
       t.datetime :last_updated_at
+    end
+
+    create_table :cr_leganto_course_citations do |t|
+      t.integer :course_id
+      t.integer :citation_id
+      t.index ["course_id"], name: "cr_leganto_course_citations_course_id"
+      t.index ["citation_id"], name: "cr_leganto_course_citations_citation_id"
     end
 
   end

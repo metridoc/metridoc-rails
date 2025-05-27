@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_11_145044) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -622,30 +622,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
     t.index ["item_id"], name: "cr_legacy_items_item_id"
   end
 
-  create_table "cr_leganto_courses", force: :cascade do |t|
-    t.integer "course_id"
-    t.string "course_code"
-    t.string "course_term"
-    t.string "course_year"
-    t.string "academic_department"
-    t.datetime "course_start_date"
-    t.datetime "course_end_date"
-    t.integer "course_enrollment"
-    t.string "course_name"
-    t.string "processing_department"
-    t.datetime "last_updated_at"
-    t.index ["course_id"], name: "cr_leganto_courses_course_id"
-    t.index ["course_year"], name: "cr_leganto_courses_course_year"
-  end
-
-  create_table "cr_leganto_courses_items", id: false, force: :cascade do |t|
-    t.bigint "cr_leganto_course_id", null: false
-    t.bigint "cr_leganto_item_id", null: false
-    t.index ["cr_leganto_course_id", "cr_leganto_item_id"], name: "idx_on_cr_leganto_course_id_cr_leganto_item_id_b622f3ee4f"
-    t.index ["cr_leganto_item_id", "cr_leganto_course_id"], name: "idx_on_cr_leganto_item_id_cr_leganto_course_id_822cd4349c"
-  end
-
-  create_table "cr_leganto_items", force: :cascade do |t|
+  create_table "cr_leganto_citations", force: :cascade do |t|
     t.integer "citation_id"
     t.string "citation_title"
     t.string "citation_author"
@@ -665,18 +642,42 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
     t.string "citation_uploaded_file"
     t.string "external_source_id"
     t.datetime "last_updated_at"
-    t.index ["citation_id"], name: "cr_leganto_items_citation_id"
+    t.index ["citation_id"], name: "cr_leganto_items_citation_id", unique: true
+  end
+
+  create_table "cr_leganto_course_citations", force: :cascade do |t|
+    t.integer "course_id"
+    t.integer "citation_id"
+    t.index ["citation_id"], name: "cr_leganto_course_citations_citation_id"
+    t.index ["course_id"], name: "cr_leganto_course_citations_course_id"
+  end
+
+  create_table "cr_leganto_courses", force: :cascade do |t|
+    t.integer "course_id"
+    t.string "course_code"
+    t.string "course_name"
+    t.string "academic_department"
+    t.string "course_term"
+    t.string "course_year"
+    t.datetime "course_start_date"
+    t.datetime "course_end_date"
+    t.integer "course_enrollment"
+    t.string "processing_department"
+    t.datetime "last_updated_at"
+    t.index ["course_code"], name: "cr_leganto_courses_course_code", unique: true
+    t.index ["course_id"], name: "cr_leganto_courses_course_id", unique: true
   end
 
   create_table "cr_leganto_usage", force: :cascade do |t|
+    t.integer "course_id"
+    t.integer "citation_id"
+    t.datetime "event_date"
     t.string "usage_type"
-    t.string "format"
-    t.datetime "time_of_use"
     t.datetime "last_updated_at"
     t.bigint "cr_leganto_course_id", null: false
-    t.bigint "cr_leganto_item_id", null: false
+    t.bigint "cr_leganto_citation_id", null: false
+    t.index ["cr_leganto_citation_id"], name: "index_cr_leganto_usage_on_cr_leganto_citation_id"
     t.index ["cr_leganto_course_id"], name: "index_cr_leganto_usage_on_cr_leganto_course_id"
-    t.index ["cr_leganto_item_id"], name: "index_cr_leganto_usage_on_cr_leganto_item_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -2140,8 +2141,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145838) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
+  add_foreign_key "cr_leganto_usage", "cr_leganto_citations"
   add_foreign_key "cr_leganto_usage", "cr_leganto_courses"
-  add_foreign_key "cr_leganto_usage", "cr_leganto_items"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
