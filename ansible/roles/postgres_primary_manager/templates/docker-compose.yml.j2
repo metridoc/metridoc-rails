@@ -34,6 +34,10 @@ services:
         max-size: '10m'
     networks:
       - database
+    {% if is_development %}
+    ports:
+      - "5432:5432"
+    {% endif %}
     secrets:
       - postgres_database_password
       - source: postgres_init_primary
