@@ -62,12 +62,13 @@ module Export
 
       # Access the environment configuration
       environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
+
       dbconfig = Psych.safe_load(
-        File.read(
-          File.join(
-            @main_driver.root_path, 'config', 'database.yml'
+        ERB.new(
+          File.read(
+            File.join(@main_driver.root_path, 'config', 'database.yml')
           )
-        ),
+        ).result,
         aliases: true
       )
 
