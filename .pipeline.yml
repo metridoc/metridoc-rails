@@ -160,4 +160,3 @@ deploy_production:
     - if: $CI_COMMIT_REF_NAME == "main"
   tags:
     - deploy
-

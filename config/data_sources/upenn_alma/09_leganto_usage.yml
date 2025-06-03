@@ -21,7 +21,7 @@ column_mappings:
   "Course ID": course_id
   "Citation ID": citation_id
   "Date and Time": event_date
-  "CASE  WHEN Number of Citation Views = 1 THEN 'citation_view' WHEN Number of File Views = 1 THEN 'file_view' WHEN Number of Files Downloaded = 1 THEN 'file_download' WHEN Number of Full Text Views = 1 THEN 'full_text_view' ELSE 'unknown' END": usage_type
+  "Usage": usage_type
 
 # Specify unique keys for the upload
 upsert: true

@@ -66,6 +66,3 @@ module Report
     end
   end
 end
-
-
-
