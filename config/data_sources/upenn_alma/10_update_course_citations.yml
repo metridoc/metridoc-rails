@@ -1,10 +1,10 @@
 ---
-load_sequence: 9
+load_sequence: 10
 
-target_model: "CourseReserves::Leganto::Usage"
+target_model: "CourseReserves::Leganto::CourseCitation"
 target_adapter: "csv"
 
-export_file_name: "leganto_student_usage.csv"
+export_file_name: "course_reserves_course_citations.csv"
 
 # Flag for the Alma API
 source_adapter: "alma"
@@ -20,10 +20,6 @@ limit: "&limit=1000"
 column_mappings:
   "Course ID": course_id
   "Citation ID": citation_id
-  "Date": event_date
-  "Citation Origin": citation_origin
-  "Link Type": link_type
-  " CASE  WHEN Number of Citation Views = 1 THEN 'citation_view' WHEN Number of File Views = 1 THEN 'file_view' WHEN Number of Files Downloaded = 1 THEN 'file_download' WHEN Number of Full Text Views = 1 THEN 'full_text_view' ELSE 'unknown' END": usage_type
 
 # Specify unique keys for the upload
 #upsert: true

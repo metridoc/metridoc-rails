@@ -54,4 +54,8 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "inquirymap"
   inflect.uncountable "libchat_inquirymap"
   inflect.uncountable "ss_libchat_inquirymap"
+
+  inflect.uncountable "Usage"
+  inflect.uncountable "usage"
+  inflect.uncountable "cr_leganto_usage"
 end

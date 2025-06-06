@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_11_145044) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_10_134216) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -623,37 +623,48 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145044) do
   end
 
   create_table "cr_leganto_citations", force: :cascade do |t|
-    t.integer "citation_id"
-    t.string "citation_title"
-    t.string "citation_author"
-    t.string "citation_publisher"
-    t.string "citation_pub_year"
-    t.string "citation_isbn"
-    t.string "citation_issn"
-    t.string "citation_journal_title"
-    t.string "citation_journal_issue"
-    t.string "citation_material_type"
-    t.datetime "citation_creation_date"
-    t.string "citation_origin"
-    t.string "citation_type"
-    t.string "citation_copyright_status"
-    t.boolean "is_repository_citation"
+    t.bigint "citation_id"
+    t.date "citation_creation_date"
     t.string "citation_created_by"
+    t.string "citation_copyright_status"
+    t.string "citation_material_type"
+    t.string "citation_origin"
+    t.string "citation_source"
+    t.string "citation_type"
     t.string "citation_uploaded_file"
     t.string "external_source_id"
-    t.datetime "last_updated_at"
+    t.string "is_alma_digital_citation"
+    t.string "is_repository_citation"
+    t.date "citation_modification_date"
+    t.string "title"
+    t.string "author"
+    t.string "publisher"
+    t.string "pub_year"
+    t.string "journal_title"
+    t.string "isbn"
+    t.string "issn"
+    t.string "book_chapter_title"
+    t.string "issue"
+    t.string "volume"
+    t.string "active_course_code"
+    t.string "category_of_material"
+    t.string "electronic_location_and_access"
+    t.string "form_of_item"
+    t.string "material_type"
+    t.string "resource_type"
     t.index ["citation_id"], name: "cr_leganto_items_citation_id", unique: true
   end
 
   create_table "cr_leganto_course_citations", force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "citation_id"
+    t.bigint "course_id"
+    t.bigint "citation_id"
     t.index ["citation_id"], name: "cr_leganto_course_citations_citation_id"
     t.index ["course_id"], name: "cr_leganto_course_citations_course_id"
   end
 
   create_table "cr_leganto_courses", force: :cascade do |t|
-    t.integer "course_id"
+    t.bigint "course_id"
+    t.date "course_modification_date"
     t.string "course_code"
     t.string "course_name"
     t.string "academic_department"
@@ -669,15 +680,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145044) do
   end
 
   create_table "cr_leganto_usage", force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "citation_id"
-    t.datetime "event_date"
+    t.bigint "course_id"
+    t.bigint "citation_id"
+    t.date "event_date"
+    t.string "citation_origin"
+    t.string "link_type"
     t.string "usage_type"
-    t.datetime "last_updated_at"
-    t.bigint "cr_leganto_course_id", null: false
-    t.bigint "cr_leganto_citation_id", null: false
-    t.index ["cr_leganto_citation_id"], name: "index_cr_leganto_usage_on_cr_leganto_citation_id"
-    t.index ["cr_leganto_course_id"], name: "index_cr_leganto_usage_on_cr_leganto_course_id"
   end
 
   create_table "delayed_jobs", force: :cascade do |t|
@@ -2141,8 +2149,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_11_145044) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "admin_users", "user_roles"
-  add_foreign_key "cr_leganto_usage", "cr_leganto_citations"
-  add_foreign_key "cr_leganto_usage", "cr_leganto_courses"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
 end
