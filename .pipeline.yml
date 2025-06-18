@@ -54,7 +54,7 @@ build_and_push_metridoc_image:
     REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
     USE_CACHE: "false"
   tags:
-    - ${RUNNER}
+    - build
 
 amend_tmp_metridoc_images:
   stage: amend_tmp_images
