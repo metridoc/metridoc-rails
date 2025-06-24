@@ -30,6 +30,12 @@ nginx_config_http_template:
                     value: $host
                   - field: X-Forwarded-Server
                     value: $host
+                  - field: X-Forwarded-Proto
+                    value: $scheme
+                  - field: X-Forwarded-Ssl
+                    value: on
+                  - field: X-Forwarded-Port
+                    value: $server_port
           ssl:
             certificate: "/etc/ssl/proxy.crt"
             certificate_key: "/etc/ssl/proxy.key"
