@@ -14,7 +14,7 @@ secret_detection:
       - .pipeline.yml
     expire_in: 1 day
   tags:
-    - deploy
+    - build
 
 main:
   stage: main_pipeline

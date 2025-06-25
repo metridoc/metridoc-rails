@@ -88,7 +88,7 @@ volumes:
   ezpaarse_input_dist:
     {% if not is_development %}
     driver: local
-    driver_options:
+    driver_opts:
       type: nfs
       o: "{{ 'addr=' ~ ezpaarse_nfs_input_volume_address ~ ',rw' }}"
       device: ":{{ ezpaarse_nfs_input_volume_device }}"
