@@ -85,6 +85,7 @@ Vagrant.configure("2") do |config|
         prl.name = hostname
         prl.memory = info[:mem]
         prl.cpus = info[:cpus]
+        prl.customize ["set", :id, "--time-sync", "on", "--disable-timezone-sync", "off"]
       end
 
       # Update and install packages

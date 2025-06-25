@@ -98,7 +98,11 @@ module Export
 
         environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
         dbconfig = Psych.safe_load_file(
-          File.join(root_path, 'config', 'database.yml'),
+          ERB.new(
+            File.read(
+              File.join(Rails.root, 'config', 'database.yml')
+            )
+          ).result,
           aliases: true
         )
 

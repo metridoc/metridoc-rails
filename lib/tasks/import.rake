@@ -29,4 +29,3 @@ task :import => :environment do |_t, args|
   m = Import::Main.new(options)
   exit m.execute(options[:single_step].present? ? [options[:single_step].to_i] : nil) ? 0 : 1
 end
-

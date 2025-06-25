@@ -3,7 +3,7 @@
 ARG IMAGE_NAME=ruby
 
 # Image tag
-ARG IMAGE_TAG=3.2.8-bookworm
+ARG IMAGE_TAG=3.2.2-bookworm
 
 # Rails env
 ARG RAILS_ENV=development

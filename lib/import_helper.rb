@@ -298,9 +298,12 @@ module ImportHelper
 
       connection.close
 
-      yml_path = File.join(Rails.root, "config", "database.yml")
-      app_db = Psych.safe_load_file(
-        yml_path,
+      app_db = Psych.safe_load(
+        ERB.new(
+          File.read(
+            File.join(Rails.root, 'config', 'database.yml')
+          )
+        ).result,
         aliases: true
       )
 

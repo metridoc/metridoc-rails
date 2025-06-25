@@ -1,27 +1,21 @@
----
-all:
-  children:
-    production:
-      hosts:
-        swarm-01:
-          ansible_host: metridoc-prod01.library.upenn.int
-        swarm-02:
-          ansible_host: metridoc-prod02.library.upenn.int
-    docker_swarm_manager:
-      hosts:
-        swarm-01:
-          swarm_labels:
-            - "postgres-primary"
-            - "shibboleth"
-            - "metridoc"
-            - "jenkins"
-            - "alertmanager-1"
-            - "postgres-exporter"
-            - "prometheus"
-            - "delayed-jobs"
-    docker_swarm_worker:
-      hosts:
-        swarm-02:
-          swarm_labels:
-            - "postgres-replica"
-            - "alertmanager-2"
+docker_swarm_manager:
+  hosts:
+    swarm-01:
+      ansible_host: metridoc-prod01.library.upenn.int
+      swarm_labels:
+        - "postgres-primary"
+        - "shibboleth"
+        - "metridoc"
+        - "jenkins"
+        - "alertmanager-1"
+        - "postgres-exporter"
+        - "prometheus"
+        - "delayed-jobs"
+
+docker_swarm_worker:
+  hosts:
+    swarm-02:
+      ansible_host: metridoc-prod02.library.upenn.int
+      swarm_labels:
+        - "postgres-replica"
+        - "alertmanager-2"
