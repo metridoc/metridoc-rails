@@ -1,0 +1,28 @@
+---
+load_sequence: 12
+target_model: "CourseReserves::Leganto::Citation"
+target_adapter: "native_sql"
+truncate_before_load: "no"
+sqls:
+  - |
+    UPDATE cr_leganto_citations
+    SET has_electronic = TRUE
+    WHERE has_electronic IS NULL
+      AND citation_origin = 'Repository'
+      AND (
+        (
+          citation_source <> '' OR 
+          citation_uploaded_file <> ''
+        )
+        OR resource_type LIKE '%Electronic%'
+      );
+
+  - |
+    UPDATE cr_leganto_citations
+    SET has_physical = TRUE
+    WHERE has_physical IS NULL
+      AND citation_origin = 'Repository'
+      AND (
+        resource_type LIKE '%Physical%'
+        OR resource_type = 'Microforms'
+      );
