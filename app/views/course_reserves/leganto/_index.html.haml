@@ -6,9 +6,9 @@
     On May 22, 2023, the course reserve system was transferred to
     #{link_to "Leganto", "https://exlibrisgroup.com/products/leganto-reading-list-management-system/"},
     an #{link_to "ExLibris", "https://exlibrisgroup.com/"} product, a subsidiary
-    of #{link_to "Clarivate", "https://clarivate.com/"}.  The data model for
-    Metridoc is still in development. This location is a holding area for future
-    data.
+    of #{link_to "Clarivate", "https://clarivate.com/"}.
+
+%hr
 
 %section
   %h2 Resources
@@ -24,3 +24,151 @@
       %li= link_to resource.resource_name.human, "/course_reserves/#{resource.resource_name.param_key.pluralize}"
 
 %hr
+
+%section
+  %h2 Table Structure 
+  There are five tables defined for Leganto Course reserves.  
+  These consist of three metadata tables for the Courses, 
+  Reading Lists, and Citations and two mapping tables.
+  The Course Citations table contains a mapping between courses 
+  reading lists and the citations.
+  The Usage table contains the usage information in a daily rollup 
+  for individual citations belonging to a reading list and class.
+
+  Check out the following ER diagram to better understand the 
+  connections between the tables.
+
+  %figure{:style => "text-align: center; margin: 0; width: 100%; padding: 12px 8px;"}
+  %figcaption Leganto Data Table Schema
+  =image_tag asset_path("LegantoERDiagram.png"), :alt => "Leganto Data Table Schema", :width => "100%", :title => "Leganto Data Table Schema"
+
+
+  %h3 Courses
+  The Banner course catalog is imported into Alma in order to associate reading lists and citations with a course.
+  Follow the link for more information about the data available in the 
+  #{link_to "Alma Knowledge Base.", "https://knowledge.exlibrisgroup.com/Alma/Product_Documentation/010Alma_Online_Help_(English)/080Analytics/Alma_Analytics_Subject_Areas/Course_Reserves#Courses"}
+  The following columns are present in the Courses table: 
+
+  %ul 
+    %li Course Id: Alma identifier for the course (unique).
+    %li Course Code: The Banner course code. 
+    %li Course Name: The proper course name.
+    %li Academic Demartment: The associated academic department of the course.
+    %li Course Term: The Spring, Summer, Fall or Yearly term of the course.
+    %li Course Year: The calendar year of the course.
+    %li Course Start Date: The starting calendar date of the course.
+    %li Course End Date: The ending calendar date of the course.
+    %li Course Enrollment: The number of students enrolled in the course.
+    %li Processing Department: The Library Unit responsible for Course Materials.
+    %li Creation Date: The calendar date the course was created.
+    %li Modification Date: The calendar date the course was modified (used for incremental uploading).
+  
+  %h3 Reading Lists
+  Each course can have any number of reading lists that collect the citations.  
+  These reading lists also provide a way to test citations without a course association.
+  For more information about the reading lists, check out the
+  #{link_to "Alma Knowledge Base.", "https://knowledge.exlibrisgroup.com/Alma/Product_Documentation/010Alma_Online_Help_(English)/080Analytics/Alma_Analytics_Subject_Areas/Course_Reserves#Reading_Lists"}
+
+  %ul
+    %li Reading List Id: Leganto identifier of the reading list, which belongs to a course.
+    %li Creation Date: The calendar date the reading list was created.
+    %li Number of Citations: The number of citations managed by the reading list.  This is pulled from Leganto directly.
+    %li Status: The workflow status of the reading list.
+    %li Has Course Association: Whether or not the reading list is associated with a course.
+    %li Visible Start Date: The calendar date the reading list was made visible to users.
+    %li Visible End Date: The calendar date the reading list was no longer visible to users.
+    %li Owner: The person (likely a librarian) who owns and manages the reading list.
+    %li Owner Pennid: The PennKey of the owner of the reading list.
+    %li Modification Date: The calendar date the reading list was modified.
+
+  %h3 Citations 
+  Citations are descriptions of individual items that are associated with a reading list for a course.  
+  It is a blend of data from MARC records in the repository and information on citations that come 
+  from external sources, such as external URLS, or uploaded files.  For more information, check out the 
+  #{link_to "Alma Knowledge Base.", "https://knowledge.exlibrisgroup.com/Alma/Product_Documentation/010Alma_Online_Help_(English)/080Analytics/Alma_Analytics_Subject_Areas/Course_Reserves#Reading_List_Citations"}
+  
+  %ul
+    %li Citation Id: Leganto identifier of the citation.
+    %li Creation Date: The calendar date the citation was created.
+    %li Created by: The PennKey of the creator of the citation.
+    %li Citation Order: The index the citation has in the reading list.
+    %li 
+      Citation Type: The type of citation.
+      %ul 
+        %li Electronic Article: An electronic item with a Material Type of Journal.
+        %li Physical Article: A physical item iwth a Material Type of Journal.
+        %li Physical Book: All other items.
+    %li Material Type: MARC control LDR Material Type. Only valid for Repository items, all other items are given a default type.
+    %li 
+      Resource Type: For Repository citations, a granular representation 
+      of the resource type.  See 
+      #{link_to "here", "https://knowledge.exlibrisgroup.com/Alma/Product_Documentation/010Alma_Online_Help_(English)/010Getting_Started/050Alma_User_Interface_%E2%80%93_General_Information/Searching_in_Alma#Rules_Used_to_Create_the_Resource_Type_Field_MARC_21_KORMARC_and_UNIMARC"} 
+      for more details.
+    %li 
+      Citation Origin: Where the citation originated.
+      %ul 
+        %li External URL: A URL to a source not in the catalog is provided.
+        %li File: A file has been uploaded.
+        %li Repository: A citation pulled directly from the catalog.
+        %li summon: An citation created through Summon (rare).
+        %li Zotero: A citation created through Zotero (very rare).
+    %li Citation Source: A URL location for the citation item.
+    %li Citation Uploaded File: The filename of the uploaded file.
+    %li External Source ID: The id of the external source.
+    %li Modification Date: The calendar date the citation was modified (used for incremental loading).
+    %li Has Physical: Indicates when the Repository item has a physical copy (calculated).
+    %li Has Electronic: Indicates when the Repository item as an electronic copy (calculated).
+    %li Title: The item title.
+    %li Author: The item author.
+    %li Copyrights Status: The copyright of the item if applicable.
+    %li Publisher: The item publisher
+    %li Publication Year: The publication date of the item.
+    %li Journal Title: The item's journal, if applicable.
+    %li Volume: The item's volume number, if applicable.
+    %li Issue: The item's issue number, if applicable.
+    %li ISBN: The items's ISBN, if applicable.
+    %li ISSN: The item's ISSN, if applicable.
+    %li Book Chapter Title: The title of the book chapter, if applicable.
+
+  %h3 Course Citations 
+  The Course Citations table maps a citation to a reading list and it's course.
+  This table can be used to create joins and filters when querying the database 
+  for improved performance.
+
+  %ul 
+    %li Course Id: Alma identifier of the course.
+    %li Reading List Id: Leganto identifier of the reading list, which belongs to a course.
+    %li Citation Id: Leganto identifier of the citation.
+    %li Modification Date: The most recent modification date of the citation.
+
+  %h3 Usage
+  The Penn Libraries Leganto is not set up to record patron information when a 
+  patron uses a citation.  However, it is automatically set up to record if a 
+  patron is logged in or not.  For more information on what columns are available 
+  to describe patron usage, please refer to the  
+  #{link_to "Alma Knowledge Base", "https://knowledge.exlibrisgroup.com/Alma/Product_Documentation/010Alma_Online_Help_(English)/080Analytics/Alma_Analytics_Subject_Areas/Leganto_Student_Usage"}. 
+  Each use of a citation is connected to a course, a reading list and a citation.  
+  The following columns are present in the Usage table:
+
+  %ul
+    %li Course Id: Alma identifier of the course.
+    %li Reading List Id: Leganto identifier of the reading list, which belongs to a course.
+    %li Citation Id: Leganto identifier of the citation.
+    %li 
+      User Role: Contains two values 
+      %ul
+        %li Guest: A user not logged in to Leganto.
+        %li Student: A user logged in to Leganto.
+    %li 
+      Student Type: Contains three possible values.
+      %ul
+        %li Guest: A user not logged in to Leganto.
+        %li Not Registered: A user not registered for the course.
+        %li Registered: A user registered for the course.
+    %li Citation Views: The total number of times users access the full view of a citation.
+    %li Files Downloaded: The total number of times any file of any citation was downloaded.
+    %li File Views: The total number of times users viewed the vile in the Leganto PDF viewer.
+    %li 
+      Full Text Views: The total number of times any full text link on a citation was clicked 
+      (either from the brief view or the full citation view).
+    %li Event Date: The date of the events rolled up into a single day.
