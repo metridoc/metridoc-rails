@@ -16,6 +16,11 @@ module Export
         end_date = Date.yesterday.to_s
       end
 
+      # Specify a default start date based on Alma migration
+      if start_date.nil? 
+        start_date = Date.new(2017, 01, 01) 
+      end
+
       date_filter = '&filter='
       date_filter += '<sawx:expr xsi:type="sawx:comparison" op="between" '
       date_filter += alma_namespace
@@ -45,18 +50,25 @@ module Export
     # Function to find the starting point for the incremental filter
     def incremental_filter
       return @incremental_filter if @incremental_filter.present?
+      
+      # Set a default start date for the incremental filter
+      @incremental_filter = "2017-07-01"
 
+      # If the task config is missing the column to filter on return the default
       unless task_config["incremental_filter_column"].present?
-        @incremental_filter = "2017-07-01"
         return @incremental_filter
       end
 
+      # If the model has no entries, return the default filter
+      unless target_model.any?
+        return @incremental_filter
+      end
+
+
       # Find the latest date in the specified column for incremental loading
-      latest_date = target_model.maximum(
+      @incremental_filter = target_model.maximum(
         task_config["incremental_filter_column"]
       ).strftime("%Y-%m-%d")
-
-      @incremental_filter = latest_date || "2017-07-01"
     end
 
     # Build the url to connect with the API

@@ -1,0 +1,71 @@
+---
+load_sequence: 9
+
+target_model: "CourseReserves::Leganto::Citation"
+target_adapter: "csv"
+
+export_file_name: "course_reserves_items.csv"
+
+# Flag for the Alma API
+source_adapter: "alma"
+# URL Encoded report path
+report_path: "path=%2Fshared%2FUniversity%20of%20Pennsylvania%2FReports%2FShared%20Reports%2Fmetridoc_reports%2Fleganto%2Fcourse_reserves_citations_keg"
+apikey_string: "&apikey="
+# Limit must be between 25 and 1000 and a multiple of 25
+limit: "&limit=1000"
+
+# API columns to MetriDoc column mapping
+# Alma Uses the original column names, not what is assigned in the GUI
+# As such, the SQL for any calculations need to be used as column names
+column_mappings:
+  "Citation Id": citation_id
+  "Citation Creation Date": creation_date
+  "Citation Order": citation_order
+  "Citation Created By": created_by
+  "Citation Copyrights Status": copyrights_status
+  "Citation Origin": citation_origin
+  "Citation Source": citation_source
+  "Citation Type": citation_type
+  "Citation Uploaded File": citation_uploaded_file
+  "External Source Id": external_source_id
+  "Citation Modification Date": modification_date
+  "Title": title
+  "Author": author
+  "Publisher": publisher
+  "Publication Date": publication_year
+  "Journal Title": journal_title
+  "Normalized ISBN": isbn
+  "Normalized ISSN": issn
+  "Book Chapter Title": book_chapter_title
+  "Issue": issue
+  "Volume": volume
+  "Material Type": material_type
+  "Resource Type": resource_type
+
+# Specify unique keys for the upload
+unique_keys: ["citation_id"]
+upsert: true
+# List of specific columns to update on conflict
+upsert_columns:
+  - "copyrights_status"
+  - "citation_origin"
+  - "citation_source"
+  - "citation_type"
+  - "citation_uploaded_file"
+  - "external_source_id"
+  - "modification_date"
+  - "title"
+  - "author"
+  - "publisher"
+  - "journal_title"
+  - "isbn"
+  - "issn"
+  - "book_chapter_title"
+  - "issue"
+  - "volume"
+  - "material_type"
+  - "resource_type"
+
+# Filter for request
+incremental_filter_sql: '"Reading List Citations"."Citation Modification Date"'
+incremental_filter_column: "modification_date"

@@ -19,7 +19,8 @@ limit: "&limit=1000"
 # As such, the SQL for any calculations need to be used as column names
 column_mappings:
   "Course ID": course_id
-  "Course Modification Date (Calendar)": course_modification_date
+  "Course Modification Date": modification_date
+  "Course Creation Date": creation_date
   "Course Code": course_code
   "Course Term": course_term
   "Course Year": course_year
@@ -32,15 +33,20 @@ column_mappings:
 
 # Specify unique keys for the upload
 unique_keys: ["course_id"]
-upsert: false
+upsert: true
+
 # List of specific columns to update on conflict
 upsert_columns:
-- "course_modification_date"
-- "academic_department"
-- "course_enrollment"
-- "course_name"
-- "processing_department"
+  - "modification_date"
+  - "course_enrollment"
+  - "course_name"
+  - "processing_department"
+  - "course_start_date"
+  - "course_end_date"
+  - "course_code"
+  - "course_term"
+  - "course_year"
 
 # Filter for request
-#export_filter_start_date: "2017-07-01"
-#export_filter_end_date: "2018-01-01"
+incremental_filter_sql: '"Courses"."Course Modification Date"'
+incremental_filter_column: "modification_date"
