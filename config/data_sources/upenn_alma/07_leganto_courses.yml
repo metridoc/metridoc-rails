@@ -37,10 +37,15 @@ upsert: true
 
 # List of specific columns to update on conflict
 upsert_columns:
-  - "course_modification_date"
+  - "modification_date"
   - "course_enrollment"
   - "course_name"
   - "processing_department"
+  - "course_start_date"
+  - "course_end_date"
+  - "course_code"
+  - "course_term"
+  - "course_year"
 
 # Filter for request
 incremental_filter_sql: '"Courses"."Course Modification Date"'
