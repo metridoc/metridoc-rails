@@ -1,4 +1,6 @@
 ---
+ezpaarse_image_tag: "main"
+ezpaarse_mongodb_image_tag: "main"
 ezpaarse_mongodb_password: "x"
 ezpaarse_mongodb_username: "x"
 ezpaarse_mongodb_root_password: "x"

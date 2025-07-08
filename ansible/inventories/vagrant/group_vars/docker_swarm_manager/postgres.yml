@@ -1,0 +1,4 @@
+---
+postgres_database_password: "{{ metridoc_vault_values.secret.postgres_database_password }}"
+postgres_monitoring_password: "{{ metridoc_vault_values.secret.postgres_monitoring_password }}"
+postgres_replication_password: "{{ metridoc_vault_values.secret.postgres_replication_password }}"

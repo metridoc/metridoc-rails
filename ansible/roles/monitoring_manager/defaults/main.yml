@@ -1,0 +1,41 @@
+---
+alertmanager_1_external_url: http://{{ alertmanager_1_swarm_node }}.library.upenn.int:9093
+alertmanager_2_external_url: http://{{ alertmanager_2_swarm_node }}.library.upenn.int:9094
+alertmanager_slack_api_url: "http://localhost"
+grafana_server_root_url: http://metridoc-staging.library.upenn.int:3030
+alertmanager_1_swarm_node: "metridoc-manager"
+alertmanager_2_swarm_node: "metridoc-manager"
+monitoring_subnet: 10.0.10.0/24
+prometheus_replicas: 1
+
+monitoring_configs:
+  - name: alertmanager_templates
+    file: alertmanager/templates.tmpl
+    type: file
+  - name: grafana_dashboards
+    file: grafana/dashboards.yml
+    type: file
+  - name: grafana_dashboard_home
+    file: grafana/dashboard_home.json
+    type: file
+  - name: grafana_dashboard_postgres
+    file: grafana/dashboard_postgres.json
+    type: file
+  - name: grafana_datasources
+    file: grafana/datasources.yml
+    type: file
+  - name: grafana_database_pg_hba_conf
+    file: grafana_db/pg_hba.conf.j2
+    type: template
+  - name: node_exporter_entrypoint
+    file: node_exporter/docker-entrypoint.sh
+    type: file
+  - name: postgres_exporter_queries
+    file: postgres_exporter/queries.yml
+    type: file
+  - name: prometheus_alerts
+    file: prometheus/alerts.yml
+    type: file
+  - name: prometheus_config
+    file: prometheus/prometheus.yml
+    type: file

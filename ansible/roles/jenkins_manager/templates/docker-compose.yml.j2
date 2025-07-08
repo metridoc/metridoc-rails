@@ -1,0 +1,29 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+version: '3.7'
+services:
+  jenkins:
+    image: gitlab.library.upenn.edu/metridoc1/metridoc_jenkins/metridoc_jenkins:{{ jenkins_image_tag }}
+    deploy:
+      placement:
+        constraints:
+          - node.labels.jenkins == true
+    logging:
+      driver: json-file
+      options:
+        max-file: '3'
+        max-size: '10m'
+    networks:
+      - jenkins
+    ports:
+      - '8080:8080'
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+networks:
+  jenkins:
+    driver: overlay
+
+volumes:
+  jenkins_home:

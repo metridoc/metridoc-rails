@@ -1,0 +1,102 @@
+---
+mailer_default_from: "{{ metridoc_vault_values.secret.mailer_default_from }}"
+mailer_domain: "{{ metridoc_vault_values.secret.mailer_domain }}"
+mailer_host: "{{ metridoc_vault_values.secret.mailer_host }}"
+metridoc_image_tag: "{{ image_tag }}"
+nfs_metridoc_tmp_address: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_address }}'
+nfs_metridoc_tmp_device: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_device }}'
+rails_secret_key_base: "{{ metridoc_vault_values.secret.rails_secret_key_base }}"
+rails_env: production
+saml_email_attribute: "{{ metridoc_vault_values.secret.saml_email_attribute }}"
+saml_first_name_attribute: "{{ metridoc_vault_values.secret.saml_first_name_attribute }}"
+saml_last_name_attribute: "{{ metridoc_vault_values.secret.saml_last_name_attribute }}"
+saml_logout_url: "{{ metridoc_vault_values.secret.saml_logout_url }}"
+
+# Remote connection params
+alma_api_key: "{{ metridoc_vault_values.secret.alma_api_key }}"
+
+borrowdirect_reshare_db: "{{ metridoc_vault_values.secret.borrowdirect_reshare_db }}"
+borrowdirect_reshare_host: "{{ metridoc_vault_values.secret.borrowdirect_reshare_host }}"
+borrowdirect_reshare_port: "{{ metridoc_vault_values.secret.borrowdirect_reshare_port }}"
+borrowdirect_reshare_pwd: "{{ metridoc_vault_values.secret.borrowdirect_reshare_pwd }}"
+borrowdirect_reshare_uid: "{{ metridoc_vault_values.secret.borrowdirect_reshare_uid }}"
+
+columbia_illiad_mssql_db: "{{ metridoc_vault_values.secret.columbia_illiad_mssql_db }}"
+columbia_illiad_mssql_host: "{{ metridoc_vault_values.secret.columbia_illiad_mssql_host }}"
+columbia_illiad_mssql_port: "{{ metridoc_vault_values.secret.columbia_illiad_mssql_port }}"
+columbia_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.columbia_illiad_mssql_pwd }}"
+columbia_illiad_mssql_uid: "{{ metridoc_vault_values.secret.columbia_illiad_mssql_uid }}"
+
+cornell_illiad_mssql_db: "{{ metridoc_vault_values.secret.cornell_illiad_mssql_db }}"
+cornell_illiad_mssql_host: "{{ metridoc_vault_values.secret.cornell_illiad_mssql_host }}"
+cornell_illiad_mssql_port: "{{ metridoc_vault_values.secret.cornell_illiad_mssql_port }}"
+cornell_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.cornell_illiad_mssql_pwd }}"
+cornell_illiad_mssql_uid: "{{ metridoc_vault_values.secret.cornell_illiad_mssql_uid }}"
+
+dartmouth_illiad_mssql_db: "{{ metridoc_vault_values.secret.dartmouth_illiad_mssql_db }}"
+dartmouth_illiad_mssql_host: "{{ metridoc_vault_values.secret.dartmouth_illiad_mssql_host }}"
+dartmouth_illiad_mssql_port: "{{ metridoc_vault_values.secret.dartmouth_illiad_mssql_port }}"
+dartmouth_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.dartmouth_illiad_mssql_pwd }}"
+dartmouth_illiad_mssql_uid: "{{ metridoc_vault_values.secret.dartmouth_illiad_mssql_uid }}"
+
+duke_illiad_mssql_db: "{{ metridoc_vault_values.secret.duke_illiad_mssql_db }}"
+duke_illiad_mssql_host: "{{ metridoc_vault_values.secret.duke_illiad_mssql_host }}"
+duke_illiad_mssql_port: "{{ metridoc_vault_values.secret.duke_illiad_mssql_port }}"
+duke_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.duke_illiad_mssql_pwd }}"
+duke_illiad_mssql_uid: "{{ metridoc_vault_values.secret.duke_illiad_mssql_uid }}"
+
+harvard_illiad_mssql_db: "{{ metridoc_vault_values.secret.harvard_illiad_mssql_db }}"
+harvard_illiad_mssql_host: "{{ metridoc_vault_values.secret.harvard_illiad_mssql_host }}"
+harvard_illiad_mssql_port: "{{ metridoc_vault_values.secret.harvard_illiad_mssql_port }}"
+harvard_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.harvard_illiad_mssql_pwd }}"
+harvard_illiad_mssql_uid: "{{ metridoc_vault_values.secret.harvard_illiad_mssql_uid }}"
+
+mit_illiad_mssql_db: "{{ metridoc_vault_values.secret.mit_illiad_mssql_db }}"
+mit_illiad_mssql_host: "{{ metridoc_vault_values.secret.mit_illiad_mssql_host }}"
+mit_illiad_mssql_port: "{{ metridoc_vault_values.secret.mit_illiad_mssql_port }}"
+mit_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.mit_illiad_mssql_pwd }}"
+mit_illiad_mssql_uid: "{{ metridoc_vault_values.secret.mit_illiad_mssql_uid }}"
+
+princeton_illiad_mssql_db: "{{ metridoc_vault_values.secret.princeton_illiad_mssql_db }}"
+princeton_illiad_mssql_host: "{{ metridoc_vault_values.secret.princeton_illiad_mssql_host }}"
+princeton_illiad_mssql_port: "{{ metridoc_vault_values.secret.princeton_illiad_mssql_port }}"
+princeton_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.princeton_illiad_mssql_pwd }}"
+princeton_illiad_mssql_uid: "{{ metridoc_vault_values.secret.princeton_illiad_mssql_uid }}"
+
+reshare_db: "{{ metridoc_vault_values.secret.reshare_db }}"
+reshare_host: "{{ metridoc_vault_values.secret.reshare_host }}"
+reshare_port: "{{ metridoc_vault_values.secret.reshare_port }}"
+reshare_pwd: "{{ metridoc_vault_values.secret.reshare_pwd }}"
+reshare_uid: "{{ metridoc_vault_values.secret.reshare_uid }}"
+
+springshare_libcal_id: "{{ metridoc_vault_values.secret.springshare_libcal_id }}"
+springshare_libcal_secret: "{{ metridoc_vault_values.secret.springshare_libcal_secret }}"
+springshare_libcal_granttype: "{{ metridoc_vault_values.secret.springshare_libcal_granttype }}"
+
+upenn_borrowdirect_mssql_db: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_db }}"
+upenn_borrowdirect_mssql_host: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_host }}"
+upenn_borrowdirect_mssql_port: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_port }}"
+upenn_borrowdirect_mssql_pwd: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_pwd }}"
+upenn_borrowdirect_mssql_uid: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_uid }}"
+
+upenn_ezborrow_mssql_db: "{{ metridoc_vault_values.secret.upenn_ezborrow_mssql_db }}"
+upenn_ezborrow_mssql_host: "{{ metridoc_vault_values.secret.upenn_ezborrow_mssql_host }}"
+upenn_ezborrow_mssql_port: "{{ metridoc_vault_values.secret.upenn_ezborrow_mssql_port }}"
+upenn_ezborrow_mssql_pwd: "{{ metridoc_vault_values.secret.upenn_ezborrow_mssql_pwd }}"
+upenn_ezborrow_mssql_uid: "{{ metridoc_vault_values.secret.upenn_ezborrow_mssql_uid }}"
+
+upenn_gatecount_sftp_host: "{{ metridoc_vault_values.secret.upenn_gatecount_sftp_host }}"
+upenn_gatecount_sftp_pwd: "{{ metridoc_vault_values.secret.upenn_gatecount_sftp_pwd }}"
+upenn_gatecount_sftp_user: "{{ metridoc_vault_values.secret.upenn_gatecount_sftp_user }}"
+
+upenn_illiad_mssql_db: "{{ metridoc_vault_values.secret.upenn_illiad_mssql_db }}"
+upenn_illiad_mssql_host: "{{ metridoc_vault_values.secret.upenn_illiad_mssql_host }}"
+upenn_illiad_mssql_port: "{{ metridoc_vault_values.secret.upenn_illiad_mssql_port }}"
+upenn_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.upenn_illiad_mssql_pwd }}"
+upenn_illiad_mssql_uid: "{{ metridoc_vault_values.secret.upenn_illiad_mssql_uid }}"
+
+yale_illiad_mssql_db: "{{ metridoc_vault_values.secret.yale_illiad_mssql_db }}"
+yale_illiad_mssql_host: "{{ metridoc_vault_values.secret.yale_illiad_mssql_host }}"
+yale_illiad_mssql_port: "{{ metridoc_vault_values.secret.yale_illiad_mssql_port }}"
+yale_illiad_mssql_pwd: "{{ metridoc_vault_values.secret.yale_illiad_mssql_pwd }}"
+yale_illiad_mssql_uid: "{{ metridoc_vault_values.secret.yale_illiad_mssql_uid }}"

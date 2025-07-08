@@ -1,0 +1,5 @@
+is_development: false
+config_dir: /root/deployments/metridoc
+
+metridoc_vault_values: "{{ lookup('community.hashi_vault.vault_kv2_get', 'metridoc/staging', engine_mount_point='kv-applications') }}"
+metridoc_secrets_version: "{{ metridoc_vault_values.metadata.version }}"

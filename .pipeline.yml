@@ -13,63 +13,105 @@ include:
       - .trivy_container_scanning.yml
   - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
     inputs:
-      deploy_environment_url: "https://metridoc-staging.library.upenn.int"
-      deploy_host: "${DEPLOY_HOST}"
+      deploy_environment_url: "https://metridoc-staging.library.upenn.edu"
       valid_principals: "${VALID_PRINCIPALS}"
       vault_auth_role: "${VAULT_AUTH_ROLE}"
       vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
     inputs:
       deploy_environment: "production"
-      deploy_environment_url: "https://metridoc.library.upenn.int"
-      deploy_host: "${DEPLOY_HOST}"
+      deploy_environment_url: "https://metridoc.library.upenn.edu"
       job_suffix: "production"
       valid_principals: "${VALID_PRINCIPALS}"
       vault_auth_role: "${VAULT_AUTH_ROLE}"
       vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
 
 stages:
-  - build_and_push:metridoc_image
-  - amend_tmp_images
+  - build_and_push:base_image
+  - build_and_push:dev_image
+  - amend_tmp_base_dev_images
+  - build_and_push:tmp_prod_image
+  - amend_tmp_prod_images
   - sast
   - copy_docker_images
   - remove_tmp_registry
   - deploy
 
-build_and_push_metridoc_image:
-  stage: build_and_push:metridoc_image
+build_and_push_base_image:
+  stage: build_and_push:base_image
   extends:
     - .build_and_push_docker_images
-  environment:
-    name: ${ENVIRONMENT_NAME}
   parallel:
     matrix:
-      #- RUNNER: build-arm
-        #DOCKER_BUILD_PLATFORM: linux/arm64
+      # - RUNNER: build-arm
+      #   DOCKER_BUILD_PLATFORM: linux/arm64
       - RUNNER: build
         DOCKER_BUILD_PLATFORM: linux/amd64
   variables:
-    DOCKER_BUILD_CONTEXT: ./
-    DOCKERFILE_PATH: ./
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
-    USE_CACHE: "false"
+    DOCKER_ADDITIONAL_CACHE_TARGETS: "base"
+    DOCKER_TARGET: "base"
+  tags:
+    - build
+
+build_and_push_dev_image:
+  stage: build_and_push:dev_image
+  extends:
+    - .build_and_push_docker_images
+  parallel:
+    matrix:
+      # - RUNNER: build-arm
+      #   DOCKER_BUILD_PLATFORM: linux/arm64
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: linux/amd64
+  variables:
+    DOCKER_ADDITIONAL_CACHE_TARGETS: "base development"
+    DOCKER_TARGET: "development"
   tags:
     - ${RUNNER}
 
-amend_tmp_metridoc_images:
-  stage: amend_tmp_images
+amend_tmp_base_dev_images:
+  stage: amend_tmp_base_dev_images
   extends:
     - .amend_manifests
   needs:
-    - build_and_push_metridoc_image
+    - build_and_push_base_image
+    - build_and_push_dev_image
   variables:
-    REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
+    REGISTRY_REPOSITORY: "${CI_PIPELINE_ID}"
   tags:
     - build
-# -- End - build, push temp dev image
 
-# -- Start - SAST images
-trivy_container_metridoc_scanning:
+build_and_push_prod_image:
+  stage: build_and_push:tmp_prod_image
+  extends:
+    - .build_and_push_docker_images
+  needs:
+    - amend_tmp_base_dev_images
+  parallel:
+    matrix:
+      # - RUNNER: build-arm
+      #   DOCKER_BUILD_PLATFORM: "linux/arm64"
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: "linux/amd64"
+  variables:
+    DOCKER_ADDITIONAL_CACHE_TARGETS: "base development production"
+    DOCKER_TARGET: "production"
+  tags:
+    - ${RUNNER}
+
+amend_tmp_prod_images:
+  stage: amend_tmp_prod_images
+  extends:
+    - .amend_manifests
+  needs:
+    - build_and_push_prod_image
+  variables:
+    DOCKER_TARGET: "production"
+    TAG_WITH_DOCKER_TARGET: "false"
+  tags:
+    - build
+
+trivy_container_scanning:
   stage: sast
   extends:
     - .trivy_container_scanning
@@ -79,29 +121,24 @@ trivy_container_metridoc_scanning:
   after_script:
     - docker logout ${CI_REGISTRY}
   needs:
-    - amend_tmp_metridoc_images
+    - build_and_push_prod_image
   variables:
-    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}/metridoc:${CI_COMMIT_SHORT_SHA}
+    CI_IMAGE_NAME: ${CI_REGISTRY_IMAGE}/${CI_PIPELINE_ID}:${CI_COMMIT_SHORT_SHA}
   allow_failure: true
   tags:
     - build
-# -- End - SAST images
 
-# -- Start - Copy app docker images
-copy_docker_metridoc_images:
+copy_docker_images:
   stage: copy_docker_images
   variables:
-    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}/metridoc
-    FINAL_REGISTRY_REPOSITORY: metridoc
+    ORIGINAL_REGISTRY_REPOSITORY: ${CI_PIPELINE_ID}
   needs:
-    - trivy_container_metridoc_scanning
+    - trivy_container_scanning
   extends:
     - .copy_docker_images
   tags:
     - build
-# -- End - Copy app docker images
 
-# -- Start - remove tmp registry repository
 remove_tmp_registry:
   stage: remove_tmp_registry
   extends:
@@ -109,61 +146,23 @@ remove_tmp_registry:
   rules:
     - when: always
   needs:
-    - copy_docker_metridoc_images
+    - copy_docker_images
   allow_failure: true
   tags:
     - build
-# -- End - remove tmp registry repository
 
 # Deploy staging
 deploy_staging:
-  stage: deploy
   needs:
-    - copy_docker_metridoc_images
-  script:
-    # Create onetime key pair
-    - ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -P ""
-
-    # Generate signed key and write to a new pub key
-    - vault write -field=signed_key ${VAULT_SSH_CLIENT_ENDPOINT}/sign/${VAULT_SSH_CLIENT_ROLE} public_key=@${HOME}/.ssh/id_ed25519.pub valid_principals=${VALID_PRINCIPALS} > ~/.ssh/id_ed25519-cert.pub
-    - chmod 0400 ~/.ssh/id_ed25519-cert.pub
-
-    - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
-    - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
-      
-    # Install ansible requirements
-    - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
-
-    # Run ansible playbook
-    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
+    - copy_docker_images
   rules:
     - if: $CI_COMMIT_REF_NAME == "staging"
-  tags:
-    - deploy
   
 # Deploy production
 deploy_production:
-  stage: deploy
   needs:
-    - copy_docker_metridoc_images
-  script:
-    # Create onetime key pair
-    - ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519 -P ""
-
-    # Generate signed key and write to a new pub key
-    - vault write -field=signed_key ${VAULT_SSH_CLIENT_ENDPOINT}/sign/${VAULT_SSH_CLIENT_ROLE} public_key=@${HOME}/.ssh/id_ed25519.pub valid_principals=${VALID_PRINCIPALS} > ~/.ssh/id_ed25519-cert.pub
-    - chmod 0400 ~/.ssh/id_ed25519-cert.pub
-
-    - vault kv get -field=ansible-vault-secret ${VAULT_KV_ENDPOINT}${DEPLOY_ENVIRONMENT} > /tmp/.vault_pass
-    - export ANSIBLE_VAULT_PASSWORD_FILE=/tmp/.vault_pass
-      
-    # Install ansible requirements
-    - ansible-galaxy install -g -f -r ansible/roles/requirements.yml
-
-    # Run ansible playbook
-    - ansible-playbook --vault-id=${DEPLOY_ENVIRONMENT}@/tmp/.vault_pass -e "image_tag=${CI_COMMIT_SHORT_SHA}" -i ansible/inventories/${DEPLOY_ENVIRONMENT} ansible/site.yml
+    - copy_docker_images
   rules:
     - if: $CI_COMMIT_REF_NAME == "main"
   tags:
     - deploy
-

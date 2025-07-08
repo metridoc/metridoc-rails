@@ -1,56 +1,33 @@
 ---
-- name: create nfs volume for /home/app/webapp/tmp
-  docker_volume:
-    name: metridoc_tmp_data_dist
-    driver: local
-    driver_options:
-      type: nfs
-      o: "{{ 'addr=' ~ nfs_metridoc_tmp_address ~ ',rw' }}"
-      device: ":{{ nfs_metridoc_tmp_device }}"
+- name: Create docker secrets for rails configs
+  community.docker.docker_secret:
+    name: "{{ item.name }}"
+    data: '{{ lookup("ansible.builtin.template", item.file) }}'
+    rolling_versions: true
     state: present
-  tags: nfs_mount
-
-- name: create volume for gate_count
-  docker_volume:
-    name: gate_count
-    state: present
-  tags: gate_count_volume
-
-- name: create metridoc config directory
-  file:
-    path: "{{ config_dir }}/metridoc"
-    mode: 0440
-    state: directory
-
-- name: copy docker compose file
-  copy:
-    src: docker-compose.yml
-    dest: "{{ config_dir }}/metridoc/docker-compose.yml"
-    mode: 0440
-
-- name: label metridoc swarm node
-  docker_node:
-    hostname: "{{ metridoc_swarm_node }}"
-    labels:
-      metridoc: "true"
-  tags:
-    - docker
-
-- name: create docker secrets for rails configs
-  docker_secret:
-    name: metridoc_rails_{{ item }}_config_{{ lookup('vars', 'rails_' + item + '_config_version') }}
-    data: '{{ lookup("template", item + ".yml.j2") }}'
-    state: present
-  loop:
-    - database
-    - secrets
+  register: metridoc_config_secrets
+  loop: "{{ metridoc_configs }}"
   no_log: true
-  tags:
-    - docker
 
-- name: start docker services
-  environment: "{{ docker_stack_env }}"
-  command: docker stack deploy -c {{ config_dir }}/metridoc/docker-compose.yml metridoc
+- name: Create custom docker image
+  community.docker.docker_image:
+    build:
+      dockerfile: Dockerfile
+      path: /metridoc
+      pull: true
+      target: development
+    force_tag: true
+    force_source: true
+    name: "{{ metridoc_image_name }}:{{ metridoc_image_tag }}"
+    source: build
+    state: present
+  when: is_development | default(false, true)
+
+- name: Deploy metridoc app
+  community.docker.docker_stack:
+    name: "metridoc"
+    compose:
+      - "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"
+    state: present
   changed_when: false
-  tags:
-    - docker
+  no_log: true

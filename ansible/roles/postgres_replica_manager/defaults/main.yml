@@ -1,0 +1,8 @@
+---
+replica_configs:
+  - name: postgres_start_replica
+    file: start_replica.sh
+    type: file
+  - name: postgres_replica_pg_hba_conf
+    file: pg_hba.conf.j2
+    type: template

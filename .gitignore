@@ -4,6 +4,23 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
+
+# Ignore pidfiles, but keep the directory.
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+
+coverage
+
+# Ignore development bundle files
+vendor/bundle
+
+# Ignore env credential keys
+config/credentials/*.key
+
+# Ignore yard server files
+/.yardoc
+
 # Ignore bundler config.
 /.bundle
 
@@ -47,13 +64,12 @@
 
 # Ignore ansible galaxy roles
 /ansible/roles/atosatto.docker-swarm
+/ansible/roles/nginxinc.nginx
+/ansible/roles/nginxinc.nginx_config
 /ansible/roles/shibboleth_sp
 
 # Ignore local secrets.yml file
 /config/secrets.yml
-
-# Ignore local database.yml file
-/config/database.yml
 
 # Ignore everything in the vagrant dir except the Vagrantfile
 /vagrant/*

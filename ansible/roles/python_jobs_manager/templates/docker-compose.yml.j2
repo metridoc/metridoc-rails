@@ -1,0 +1,60 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+
+version: "3.7"
+services:
+  python_jobs:
+    image: "{{ python_jobs_image_name }}:{{ python_jobs_image_tag }}"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.metridoc == true
+      replicas: {{ python_jobs_replicas }}
+      update_config:
+        parallelism: 1
+    environment:
+      RAILS_ENV:
+    healthcheck:
+      test: ["CMD-SHELL", "ps aux | grep '[t]ail' || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-file: "3"
+        max-size: "10m"
+    networks:
+      - database
+    secrets:
+      - source: metridoc_python_jobs_database_secret
+        target: /home/app/config/metridoc.ini
+        uid: "{{ rails_app_user_uid}}"
+        gid: "{{ rails_app_user_gid }}"
+        mode: 0440
+      - source: metridoc_python_jobs_libwizard_secret
+        target: /home/app/config/libwizard.ini
+        uid: "{{ rails_app_user_uid}}"
+        gid: "{{ rails_app_user_gid }}"
+        mode: 0440
+    volumes:
+      - gate_count:/gate_count
+      {% if is_development %}
+      - /metridoc/ansible/roles/python_jobs_manager/files/src:/home/app
+      {% endif %}
+    working_dir: /home/app
+
+networks:
+  database:
+    external: true
+
+secrets:
+  metridoc_python_jobs_database_secret:
+    name: metridoc_python_jobs_database_secret_v{{ metridoc_secrets_version }}
+    external: true
+  metridoc_python_jobs_libwizard_secret:
+    name: metridoc_python_jobs_libwizard_secret_v{{ metridoc_secrets_version }}
+    external: true
+
+volumes:
+  gate_count:
+    external: true

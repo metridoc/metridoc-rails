@@ -1,8 +1,8 @@
 ---
 shibboleth:
   image:
-    name: "quay.io/upennlibraries/ansible_shibboleth_sp"
-    tag: "f1c2b88"
+    name: "gitlab.library.upenn.edu/devops/ansible/shibboleth_sp"
+    tag: "cf8c9ae8"
   is_development: false
   swarm_node_constraint: "metridoc"
   templates:
@@ -10,40 +10,40 @@ shibboleth:
       shib2:
         path: "shibboleth/apache/shib2.conf.j2"
         values:
-          admin_email: "{{ vault_shib2_admin_email }}"
-          fqdn: "{{ vault_shib2_fqdn }}"
-        version: 4
+          admin_email: "{{ metridoc_vault_values.secret.shib2_admin_email }}"
+          fqdn: "{{ metridoc_vault_values.secret.shib2_fqdn }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
     secrets:
       attribute_map:
         path: "shibboleth/shibboleth/attribute_map.xml.j2"
-        version: 4
+        version: "{{ metridoc_vault_values.metadata.version }}"
       metadata:
         path: "shibboleth/metadata.xml.j2"
-        value: "{{ vault_metadata_value }}"
-        version: 4
+        value: "{{ metridoc_vault_values.secret.metadata_value }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
       shibboleth2:
         path: "shibboleth/shibboleth2.xml.j2"
         values:
-          sp_entityID: "{{ vault_shibboleth2_sp_entityID }}"
-          idp_entityID: "{{ vault_shibboleth2_idp_entityID }}"
-        version: 4
+          sp_entityID: "{{ metridoc_vault_values.secret.shibboleth2_sp_entityID }}"
+          idp_entityID: "{{ metridoc_vault_values.secret.shibboleth2_idp_entityID }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
       sp_encrypt_cert:
         path: "shibboleth/sp_encrypt_cert.pem.j2"
         values:
-          sp_cert_pem: "{{ vault_sp_encrypt_cert_pem }}"
-        version: 4
+          sp_cert_pem: "{{ metridoc_vault_values.secret.sp_encrypt_cert_pem }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
       sp_encrypt_key:
         path: "shibboleth/sp_encrypt_key.pem.j2"
         values:
-          sp_key_pem: "{{ vault_sp_encrypt_key_pem }}"
-        version: 4
+          sp_key_pem: "{{ metridoc_vault_values.secret.sp_encrypt_key_pem }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
       sp_signing_cert:
         path: "shibboleth/sp_signing_cert.pem.j2"
         values:
-          sp_cert_pem: "{{ vault_sp_signing_cert_pem }}"
-        version: 4
+          sp_cert_pem: "{{ metridoc_vault_values.secret.sp_signing_cert_pem }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
       sp_signing_key:
         path: "shibboleth/sp_signing_key.pem.j2"
         values:
-          sp_key_pem: "{{ vault_sp_signing_key_pem }}"
-        version: 4
+          sp_key_pem: "{{ metridoc_vault_values.secret.sp_signing_key_pem }}"
+        version: "{{ metridoc_vault_values.metadata.version }}"
