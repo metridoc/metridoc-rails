@@ -20,8 +20,15 @@ limit: "&limit=1000"
 column_mappings:
   "Course ID": course_id
   "Reading List Id": reading_list_id
-  "Citation ID": citation_id
+  "Citation Id": citation_id
   "Citation Modification Date": modification_date
+
+# Specify unique keys for the upload
+unique_keys: ["course_id", "reading_list_id", "citation_id"]
+upsert: true
+# List of specific columns to update on conflict
+upsert_columns:
+  - "modification_date"
 
 # Filter for request
 incremental_filter_sql: '"Reading List Citations"."Citation Modification Date"'
