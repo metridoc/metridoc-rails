@@ -31,6 +31,10 @@ column_mappings:
   "Number of Full Text Views": full_text_views
 
 # Specify unique keys for the upload
+unique_keys: [
+  "course_id", "reading_list_id", "citation_id", "event_date",
+  "user_role", "student_type", "link_type"
+  ]
 upsert: true
 # List of specific columns to update on conflict
 upsert_columns:

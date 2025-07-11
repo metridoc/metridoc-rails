@@ -1,0 +1,11 @@
+---
+load_sequence: 13
+target_model: "CourseReserves::Leganto::Usage"
+target_adapter: "native_sql"
+truncate_before_load: "no"
+sqls:
+  - |
+    UPDATE cr_leganto_usage
+    SET total_views = files_downloaded + file_views + full_text_views
+    WHERE total_views IS NULL OR
+    total_views != files_downloaded + file_views + full_text_views;
