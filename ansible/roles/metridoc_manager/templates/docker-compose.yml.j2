@@ -207,6 +207,7 @@ secrets:
 volumes:
   ezpaarse_output:
     external: true
+    name: metridoc_ezpaarse_output
   gate_count:
   metridoc_tmp_data:
     {% if "production" in groups %}
