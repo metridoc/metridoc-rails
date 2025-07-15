@@ -5,6 +5,7 @@ services:
   app:
     image: "{{ metridoc_image_name }}:{{ metridoc_image_tag }}"
     deploy:
+      mode: replicated
       placement:
         constraints:
           - node.labels.metridoc == true
@@ -145,10 +146,11 @@ services:
     image: "{{ metridoc_image_name }}:{{ metridoc_image_tag }}"
     command: "bundle exec rails jobs:work"
     deploy:
+      mode: replicated
       replicas: 1
       placement:
         constraints:
-          - node.labels.delayed-jobs == true
+          - node.labels.metridoc == true
     environment:
       MAILER_DEFAULT_FROM: "{{ mailer_default_from }}"
       MAILER_DOMAIN: "{{ mailer_domain }}"

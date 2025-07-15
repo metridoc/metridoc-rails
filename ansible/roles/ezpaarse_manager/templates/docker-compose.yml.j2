@@ -7,6 +7,8 @@ services:
     environment:
       NODE_ENV: "production"
     deploy:
+      mode: replicated
+      replicas: 1
       placement:
         constraints:
           - node.labels.metridoc == true
@@ -38,6 +40,8 @@ services:
     image: gitlab.library.upenn.edu/metridoc1/metridoc-ezpaarse-mongodb/metridoc_ezpaarse_mongodb:{{ ezpaarse_mongodb_image_tag }}
     command: ["--auth"]
     deploy:
+      mode: replicated
+      replicas: 1
       placement:
         constraints:
           - node.labels.metridoc == true
