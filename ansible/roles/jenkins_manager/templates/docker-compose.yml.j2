@@ -5,6 +5,8 @@ services:
   jenkins:
     image: gitlab.library.upenn.edu/metridoc1/metridoc_jenkins/metridoc_jenkins:{{ jenkins_image_tag }}
     deploy:
+      mode: replicated
+      replicas: 1
       placement:
         constraints:
           - node.labels.jenkins == true

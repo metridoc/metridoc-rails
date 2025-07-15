@@ -7,6 +7,8 @@ services:
     environment:
       NODE_ENV: "production"
     deploy:
+      mode: replicated
+      replicas: 1
       placement:
         constraints:
           - node.labels.metridoc == true
@@ -37,6 +39,12 @@ services:
   ezpaarse_db:
     image: gitlab.library.upenn.edu/metridoc1/metridoc-ezpaarse-mongodb/metridoc_ezpaarse_mongodb:{{ ezpaarse_mongodb_image_tag }}
     command: ["--auth"]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.metridoc == true
     environment:
       MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/metridoc_ezpaarse_mongodb_root_password
       MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/metridoc_ezpaarse_mongodb_root_username
@@ -95,6 +103,5 @@ volumes:
     {% endif %}
   ezpaarse_middlewares:
   ezpaarse_output:
-    name: ezpaarse_output
   ezpaarse_platforms:
   ezpaarse_resources:
