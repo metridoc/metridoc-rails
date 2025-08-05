@@ -131,6 +131,21 @@ module Export
       end
     end
 
+    # Reprocess the response document for the LibWizard API output
+    def preprocess_libwizard_response
+      # For each entry of the document, extract the instance identifier (uid)
+      # and the time the entry was created.  Merge that to the data of the form
+      # flatting the form data to the field id at the data associated with it.
+      @document = @document.map{
+        |e| ([
+          ["instanceId", e.fetch("instanceId", 0)],
+          ["created", e.fetch("created", "2000-01-01 00:00:00")]
+          ] + e.fetch("data", {}).map{
+            |v| [v.fetch("fieldId", 0), v.fetch("data", "")]
+          }).to_h
+      }
+    end
+
     # Write the header of the CSV file
     def write_column_headers
       # Extract the list of headers the document
@@ -212,6 +227,11 @@ module Export
 
       # Connect and fetch a document
       connect
+
+      # Special Rule for LibWizard format
+      if target_model.to_s.include?("Libwizard")
+        preprocess_libwizard_response
+      end
 
       # Write the document to file
       write_column_headers
