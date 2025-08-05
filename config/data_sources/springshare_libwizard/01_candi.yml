@@ -44,7 +44,7 @@ column_mappings:
   5477808: mba_type
   5477809: campus
   5484776: patron_name
-  5477745: school_afilliation
+  5477745: school_affiliation
   5484768: graduation_year
   5477768: academic_department
   5477753: faculty_sponsor

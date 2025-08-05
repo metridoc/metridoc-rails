@@ -1,8 +1,9 @@
 class Springshare::Libwizard::CandiManual < Springshare::Libwizard::Base
-  def self.store_filename
+  def self.filename
     "filename"
   end
 
-  def self.store_upload_time
-    "upload_at"
+  def self.uploaded_at
+    "uploaded_at"
+  end
 end
