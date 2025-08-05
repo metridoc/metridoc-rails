@@ -316,12 +316,6 @@ ActiveAdmin.setup do |config|
         if: proc{ authorized?(:read, "CourseReserves") },
         parent: I18n.t("active_admin.resource_sharing")
 
-      # Consultation and Instruction
-      menu.add label: I18n.t('active_admin.consultation.consultation_menu'),
-        url: :admin_consultation_path,
-        if: proc { authorized?(:read, 'Consultation') },
-        parent: I18n.t('active_admin.resource_sharing')
-
       # Springshare LibApps
       menu.add label: I18n.t('active_admin.springshare.springshare_menu'),
         url: :springshare_root_path,
