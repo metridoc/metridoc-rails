@@ -30,6 +30,10 @@ gem 'pg'
 # A simple, fast Mysql library for Ruby, binding to libmysql
 gem 'mysql2'
 
+# The Scenic Gem provides easy ways to create PostgreSQL views to interact
+# with rails infrastructure.
+gem 'scenic'
+
 
 #############
 # Puma Server
