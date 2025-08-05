@@ -1,0 +1,9 @@
+---
+target_adapter: "csv"
+export_folder: "/tmp/springshare/libwizard"
+
+auth:
+  domain: "https://upenn.libwizard.com/api/v1/oauth/token"
+  client_id: '<%= ENV["SPRINGSHARE_LIBWIZARD_ID"] %>'
+  client_secret: '<%= ENV["SPRINGSHARE_LIBWIZARD_SECRET"] %>'
+  grant_type: '<%= ENV["SPRINGSHARE_LIBWIZARD_GRANTTYPE"] %>'
