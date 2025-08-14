@@ -73,6 +73,10 @@ springshare_libcal_id: "{{ metridoc_vault_values.secret.springshare_libcal_id }}
 springshare_libcal_secret: "{{ metridoc_vault_values.secret.springshare_libcal_secret }}"
 springshare_libcal_granttype: "{{ metridoc_vault_values.secret.springshare_libcal_granttype }}"
 
+springshare_libwizard_id: "{{ metridoc_vault_values.secret.springshare_libwizard_id }}"
+springshare_libwizard_secret: "{{ metridoc_vault_values.secret.springshare_libwizard_secret }}"
+springshare_libwizard_granttype: "{{ metridoc_vault_values.secret.springshare_libwizard_granttype }}"
+
 upenn_borrowdirect_mssql_db: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_db }}"
 upenn_borrowdirect_mssql_host: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_host }}"
 upenn_borrowdirect_mssql_port: "{{ metridoc_vault_values.secret.upenn_borrowdirect_mssql_port }}"

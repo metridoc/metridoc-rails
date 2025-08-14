@@ -28,7 +28,7 @@ logging.basicConfig(filename='output.log',
                     format=fmtStr,
                     datefmt=dateStr)
 
-TABLE_NAME = 'consultation_interactions'
+TABLE_NAME = 'ss_libwizard_candi_legacies'
 
 # simple class to make dealing w/ db a little simpler
 class DbConfigurator:
@@ -275,7 +275,7 @@ class CIHelper:
         # columns = ",".join(data_frame.columns.tolist())
         logging.warning('Loading records into Metridoc.')
         cursor.execute("ROLLBACK;")
-        cursor.copy_from(output, 'consultation_interactions', columns=data_frame.columns.tolist(), null='')
+        cursor.copy_from(output, TABLE_NAME, columns=data_frame.columns.tolist(), null='')
         connection.commit()
         cursor.close()
 

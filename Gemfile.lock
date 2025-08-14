@@ -396,6 +396,9 @@ GEM
       google-protobuf (~> 4.29)
     sassc (2.4.0)
       ffi (~> 1.9)
+    scenic (1.9.0)
+      activerecord (>= 4.0.0)
+      railties (>= 4.0.0)
     securerandom (0.4.1)
     selenium-webdriver (4.16.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -520,6 +523,7 @@ DEPENDENCIES
   rexml (>= 3.2.7)
   roo
   sassc
+  scenic
   selenium-webdriver
   spring
   spring-watcher-listen (~> 2.1.0)
