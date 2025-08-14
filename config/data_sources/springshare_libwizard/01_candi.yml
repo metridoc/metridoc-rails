@@ -1,0 +1,65 @@
+---
+load_sequence: 1
+
+target_model: "Springshare::Libwizard::CandiAuto"
+target_adapter: "csv"
+
+export_file_name: "springshare_libwizard_candi.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "https://upenn.libwizard.com/api/v1/public/submissions/188285"
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  instanceId: response_id
+  created: submitted
+  5477743: consultation_or_instruction
+  5477744: staff_pennkey
+  5477776: additional_staff_pennkey
+  5477777: division
+  5477778: department_csc
+  5477779: department_ope
+  5477780: department_tdi
+  5477810: departmental_library
+  5477760: staff_expertise
+  5477746: event_date
+  5477754: mode_of_consultation
+  5477807: rtg
+  5477749: session type
+  5477757: service_provided
+  5477781: service_space_or_information
+  5477782: physical_or_electronic
+  5477758: outcome
+  5477765: research_community
+  5477775: number_of_registrations
+  5477750: total_attendance
+  5477748: location
+  5477769: event_length
+  5477747: prep_time
+  5477756: number_of_interactions
+  5477755: patron_type
+  5477766: undergraduate_student_type
+  5477767: graduate_student_type
+  5477808: mba_type
+  5477809: campus
+  5484776: patron_name
+  5477745: school_affiliation
+  5484768: graduation_year
+  5477768: academic_department
+  5477753: faculty_sponsor
+  5477759: course_sponsor
+  5477751: course_name
+  5477752: course_number
+  5477761: patron_question
+  5477762: session_description
+  5477763: notes
+
+# Unique on the response id
+unique_keys: ["response_id"]
+upsert: true
+
+# Incremental filter column name
+incremental_filter_column: "submitted"
+# Timestamp of download for record
+download_timestamp: "downloaded_at"

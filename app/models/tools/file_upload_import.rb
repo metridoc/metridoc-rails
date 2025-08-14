@@ -12,7 +12,8 @@ class Tools::FileUploadImport < ApplicationRecord
   after_commit :queue_process
 
   UPLOADABLE_MODELS = [
-    Consultation::Interaction,
+    Springshare::Libwizard::CandiLegacy,
+    Springshare::Libwizard::CandiManual,
     GeoData::CountryCode,
     Keyserver::StatusTerm,
     Keyserver::PlatformTerm,
@@ -54,6 +55,11 @@ class Tools::FileUploadImport < ApplicationRecord
     import
 
     FileUploadImportMailer.with(file_upload_import: Tools::FileUploadImport.find(id)).finished_notice.deliver_now
+  end
+
+  # Get the filename of the uploaded file
+  def filename
+    @filename ||= self.uploaded_file.filename
   end
 
   # Get the extension of the uploaded file
@@ -140,6 +146,17 @@ class Tools::FileUploadImport < ApplicationRecord
 
         row_error = false
         attributes = {}
+
+        # Allow for an uploaded_at column
+        if target_class.respond_to?(:uploaded_at)
+          attributes[target_class.uploaded_at] = self.uploaded_at
+        end
+
+        # Allow for a filename column
+        if target_class.respond_to?(:filename)
+          attributes[target_class.filename] = filename
+        end
+
         # Loop through each column of the spreadsheet
         headers.each_with_index do |column_name, i|
           # Ensure all values are strings

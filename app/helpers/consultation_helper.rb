@@ -3,7 +3,7 @@
 module ConsultationHelper
   # Method to access the list of staff pennkeys for use in drop down menu
   def pennkey_list
-    Consultation::Interaction.distinct
+    Springshare::Libwizard::CandiView.distinct
                              .where
                              .not(staff_pennkey: nil)
                              .pluck(:staff_pennkey)
@@ -12,7 +12,7 @@ module ConsultationHelper
 
   # Method to query the default range of dates of the table
   def date_range(pennkey = nil)
-    output = Consultation::Interaction
+    output = Springshare::Libwizard::CandiView
     output = output.where(staff_pennkey: pennkey) unless pennkey.nil?
 
     [
@@ -74,7 +74,7 @@ module ConsultationHelper
     outcome: 'group',
     school_affiliation: 'group',
     research_community: 'group',
-    department: 'group',
+    academic_department: 'group',
     mode_of_consultation: 'group',
     service_provided: 'group'
   }.freeze
@@ -86,7 +86,7 @@ module ConsultationHelper
     total_attendance: 'median',
     school_affiliation: 'group',
     research_community: 'group',
-    department: 'group',
+    academic_department: 'group',
     session_type: 'group',
     location: 'group'
   }.freeze
@@ -133,7 +133,7 @@ module ConsultationHelper
 
     KEY_HASH.each do |category, category_hash|
       category_output = {}
-      events = Consultation::Interaction.where(consultation_or_instruction: category)
+      events = Springshare::Libwizard::CandiView.where(consultation_or_instruction: category)
       # Safe handling for null pennkey
       events = events.where(staff_pennkey: pennkey) unless pennkey.nil?
       # Filter on date range
@@ -189,7 +189,7 @@ module ConsultationHelper
   # and the research_community or a particular pennkey and
   # consultation/instruction type
   def chord_data_mapper(kind, pennkey, left, right)
-    query = Consultation::Interaction.where(:consultation_or_instruction => kind)
+    query = Springshare::Libwizard::CandiView.where(:consultation_or_instruction => kind)
 
     unless pennkey.nil?
       query = query.where(:staff_pennkey => pennkey)

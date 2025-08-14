@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_11_141038) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_17_192258) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -414,49 +414,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_141038) do
     t.index ["exception_code"], name: "index_borrowdirect_ship_dates_on_exception_code"
     t.index ["request_number", "exception_code"], name: "borrowdirect_ship_dates_composite_idx"
     t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
-  end
-
-  create_table "consultation_interactions", force: :cascade do |t|
-    t.datetime "submitted", precision: nil
-    t.string "consultation_or_instruction"
-    t.string "staff_pennkey"
-    t.string "staff_expertise"
-    t.date "event_date"
-    t.string "mode_of_consultation"
-    t.string "session_type"
-    t.string "service_provided"
-    t.string "rtg"
-    t.string "outcome"
-    t.string "research_community"
-    t.integer "total_attendance"
-    t.integer "number_of_registrations"
-    t.string "location"
-    t.integer "event_length"
-    t.integer "prep_time"
-    t.integer "number_of_interactions"
-    t.string "patron_type"
-    t.string "patron_name"
-    t.integer "graduation_year"
-    t.string "undergraduate_student_type"
-    t.string "graduate_student_type"
-    t.string "mba_type"
-    t.string "campus"
-    t.string "school_affiliation"
-    t.string "department"
-    t.string "faculty_sponsor"
-    t.string "course_sponsor"
-    t.string "course_name"
-    t.string "course_number"
-    t.string "referral_method"
-    t.string "patron_question"
-    t.text "session_description"
-    t.text "notes"
-    t.boolean "upload_record", default: true
-    t.boolean "returning_user"
-    t.string "additional_staff_pennkey"
-    t.index ["outcome"], name: "index_consultation_interactions_on_outcome"
-    t.index ["patron_question"], name: "index_consultation_interactions_on_patron_question"
-    t.index ["staff_pennkey"], name: "index_consultation_interactions_on_staff_pennkey"
   end
 
   create_table "cr_ares_course_users", force: :cascade do |t|
@@ -2113,6 +2070,144 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_141038) do
     t.index ["chat_id"], name: "index_ss_libchat_inquirymap_on_chat_id"
   end
 
+  create_table "ss_libwizard_candi_autos", force: :cascade do |t|
+    t.string "response_id"
+    t.datetime "submitted", precision: nil
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "additional_staff_pennkey"
+    t.string "division"
+    t.string "department_csc"
+    t.string "department_ope"
+    t.string "department_tdi"
+    t.string "departmental_library"
+    t.string "staff_expertise"
+    t.date "event_date"
+    t.string "mode_of_consultation"
+    t.string "rtg"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "service_space_or_information"
+    t.string "physical_or_electronic"
+    t.string "outcome"
+    t.string "research_community"
+    t.integer "number_of_registrations"
+    t.integer "total_attendance"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
+    t.string "patron_type"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "mba_type"
+    t.string "campus"
+    t.string "patron_name"
+    t.string "school_affiliation"
+    t.integer "graduation_year"
+    t.string "academic_department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "patron_question"
+    t.text "session_description"
+    t.text "notes"
+    t.datetime "downloaded_at"
+    t.boolean "upload_record", default: false
+    t.index ["response_id"], name: "index_ss_libwizard_candi_autos_on_response_id", unique: true
+  end
+
+  create_table "ss_libwizard_candi_legacies", force: :cascade do |t|
+    t.datetime "submitted", precision: nil
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "staff_expertise"
+    t.date "event_date"
+    t.string "mode_of_consultation"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "rtg"
+    t.string "outcome"
+    t.string "research_community"
+    t.integer "total_attendance"
+    t.integer "number_of_registrations"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
+    t.string "patron_type"
+    t.string "patron_name"
+    t.integer "graduation_year"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "mba_type"
+    t.string "campus"
+    t.string "school_affiliation"
+    t.string "department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "referral_method"
+    t.string "patron_question"
+    t.text "session_description"
+    t.text "notes"
+    t.boolean "upload_record", default: true
+    t.boolean "returning_user"
+    t.string "additional_staff_pennkey"
+    t.index ["outcome"], name: "index_ss_libwizard_candi_legacies_on_outcome"
+    t.index ["patron_question"], name: "index_ss_libwizard_candi_legacies_on_patron_question"
+    t.index ["staff_pennkey"], name: "index_ss_libwizard_candi_legacies_on_staff_pennkey"
+  end
+
+  create_table "ss_libwizard_candi_manuals", force: :cascade do |t|
+    t.string "response_id"
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "additional_staff_pennkey"
+    t.string "division"
+    t.string "department_csc"
+    t.string "department_operations"
+    t.string "department_tdi"
+    t.string "departmental_library"
+    t.string "staff_expertise"
+    t.date "event_date"
+    t.string "mode_of_consultation"
+    t.string "rtg"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "type_of_access_question"
+    t.string "physical_or_electronic_access"
+    t.string "outcome"
+    t.string "research_community"
+    t.integer "number_of_registrations"
+    t.integer "total_attendance"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
+    t.string "patron_type"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "mba_type"
+    t.string "campus"
+    t.string "patron_name"
+    t.string "school_affiliation"
+    t.integer "graduation_year"
+    t.string "academic_department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "patron_question"
+    t.text "session_description"
+    t.text "notes"
+    t.boolean "upload_record", default: true
+    t.datetime "uploaded_at"
+    t.string "filename"
+  end
+
   create_table "upenn_alma_demographics", force: :cascade do |t|
     t.string "pennkey", limit: 8, null: false
     t.string "status"
@@ -2176,4 +2271,153 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_11_141038) do
   add_foreign_key "admin_users", "user_roles"
   add_foreign_key "file_upload_import_logs", "file_upload_imports"
   add_foreign_key "user_role_sections", "user_roles"
+
+  create_view "candi_views", sql_definition: <<-SQL
+      SELECT ('A'::text || ss_libwizard_candi_autos.id) AS id,
+      ss_libwizard_candi_autos.response_id,
+      ss_libwizard_candi_autos.submitted,
+      ss_libwizard_candi_autos.consultation_or_instruction,
+      ss_libwizard_candi_autos.staff_pennkey,
+      ss_libwizard_candi_autos.additional_staff_pennkey,
+      ss_libwizard_candi_autos.division,
+      ss_libwizard_candi_autos.department_csc,
+      ss_libwizard_candi_autos.department_ope,
+      ss_libwizard_candi_autos.department_tdi,
+      ss_libwizard_candi_autos.departmental_library,
+      ss_libwizard_candi_autos.staff_expertise,
+      ss_libwizard_candi_autos.event_date,
+      ss_libwizard_candi_autos.mode_of_consultation,
+      ss_libwizard_candi_autos.rtg,
+      ss_libwizard_candi_autos.session_type,
+      ss_libwizard_candi_autos.service_provided,
+      ss_libwizard_candi_autos.service_space_or_information,
+      ss_libwizard_candi_autos.physical_or_electronic,
+      ss_libwizard_candi_autos.outcome,
+      ss_libwizard_candi_autos.research_community,
+      ss_libwizard_candi_autos.number_of_registrations,
+      ss_libwizard_candi_autos.total_attendance,
+      ss_libwizard_candi_autos.location,
+      ss_libwizard_candi_autos.event_length,
+      ss_libwizard_candi_autos.prep_time,
+      ss_libwizard_candi_autos.number_of_interactions,
+      ss_libwizard_candi_autos.patron_type,
+      ss_libwizard_candi_autos.undergraduate_student_type,
+      ss_libwizard_candi_autos.graduate_student_type,
+      ss_libwizard_candi_autos.mba_type,
+      ss_libwizard_candi_autos.campus,
+      ss_libwizard_candi_autos.patron_name,
+      ss_libwizard_candi_autos.school_affiliation,
+      ss_libwizard_candi_autos.graduation_year,
+      ss_libwizard_candi_autos.academic_department,
+      ss_libwizard_candi_autos.faculty_sponsor,
+      ss_libwizard_candi_autos.course_sponsor,
+      ss_libwizard_candi_autos.course_name,
+      ss_libwizard_candi_autos.course_number,
+      ss_libwizard_candi_autos.patron_question,
+      ss_libwizard_candi_autos.session_description,
+      ss_libwizard_candi_autos.notes,
+      ss_libwizard_candi_autos.downloaded_at,
+      ss_libwizard_candi_autos.upload_record,
+      NULL::text AS referral_method,
+      false AS returning_user
+     FROM ss_libwizard_candi_autos
+  UNION
+   SELECT ('M'::text || ss_libwizard_candi_manuals.id) AS id,
+      NULL::character varying AS response_id,
+      NULL::timestamp without time zone AS submitted,
+      ss_libwizard_candi_manuals.consultation_or_instruction,
+      ss_libwizard_candi_manuals.staff_pennkey,
+      ss_libwizard_candi_manuals.additional_staff_pennkey,
+      ss_libwizard_candi_manuals.division,
+      ss_libwizard_candi_manuals.department_csc,
+      ss_libwizard_candi_manuals.department_operations AS department_ope,
+      ss_libwizard_candi_manuals.department_tdi,
+      ss_libwizard_candi_manuals.departmental_library,
+      ss_libwizard_candi_manuals.staff_expertise,
+      ss_libwizard_candi_manuals.event_date,
+      ss_libwizard_candi_manuals.mode_of_consultation,
+      ss_libwizard_candi_manuals.rtg,
+      ss_libwizard_candi_manuals.session_type,
+      ss_libwizard_candi_manuals.service_provided,
+      ss_libwizard_candi_manuals.type_of_access_question AS service_space_or_information,
+      ss_libwizard_candi_manuals.physical_or_electronic_access AS physical_or_electronic,
+      ss_libwizard_candi_manuals.outcome,
+      ss_libwizard_candi_manuals.research_community,
+      ss_libwizard_candi_manuals.number_of_registrations,
+      ss_libwizard_candi_manuals.total_attendance,
+      ss_libwizard_candi_manuals.location,
+      ss_libwizard_candi_manuals.event_length,
+      ss_libwizard_candi_manuals.prep_time,
+      ss_libwizard_candi_manuals.number_of_interactions,
+      ss_libwizard_candi_manuals.patron_type,
+      ss_libwizard_candi_manuals.undergraduate_student_type,
+      ss_libwizard_candi_manuals.graduate_student_type,
+      ss_libwizard_candi_manuals.mba_type,
+      ss_libwizard_candi_manuals.campus,
+      ss_libwizard_candi_manuals.patron_name,
+      ss_libwizard_candi_manuals.school_affiliation,
+      ss_libwizard_candi_manuals.graduation_year,
+      ss_libwizard_candi_manuals.academic_department,
+      ss_libwizard_candi_manuals.faculty_sponsor,
+      ss_libwizard_candi_manuals.course_sponsor,
+      ss_libwizard_candi_manuals.course_name,
+      ss_libwizard_candi_manuals.course_number,
+      ss_libwizard_candi_manuals.patron_question,
+      ss_libwizard_candi_manuals.session_description,
+      ss_libwizard_candi_manuals.notes,
+      ss_libwizard_candi_manuals.uploaded_at AS downloaded_at,
+      ss_libwizard_candi_manuals.upload_record,
+      NULL::text AS referral_method,
+      false AS returning_user
+     FROM ss_libwizard_candi_manuals
+  UNION
+   SELECT ('L'::text || ss_libwizard_candi_legacies.id) AS id,
+      NULL::character varying AS response_id,
+      ss_libwizard_candi_legacies.submitted,
+      ss_libwizard_candi_legacies.consultation_or_instruction,
+      ss_libwizard_candi_legacies.staff_pennkey,
+      ss_libwizard_candi_legacies.additional_staff_pennkey,
+      NULL::character varying AS division,
+      NULL::character varying AS department_csc,
+      NULL::character varying AS department_ope,
+      NULL::character varying AS department_tdi,
+      NULL::character varying AS departmental_library,
+      ss_libwizard_candi_legacies.staff_expertise,
+      ss_libwizard_candi_legacies.event_date,
+      ss_libwizard_candi_legacies.mode_of_consultation,
+      ss_libwizard_candi_legacies.rtg,
+      ss_libwizard_candi_legacies.session_type,
+      ss_libwizard_candi_legacies.service_provided,
+      NULL::character varying AS service_space_or_information,
+      NULL::character varying AS physical_or_electronic,
+      ss_libwizard_candi_legacies.outcome,
+      ss_libwizard_candi_legacies.research_community,
+      ss_libwizard_candi_legacies.number_of_registrations,
+      ss_libwizard_candi_legacies.total_attendance,
+      ss_libwizard_candi_legacies.location,
+      ss_libwizard_candi_legacies.event_length,
+      ss_libwizard_candi_legacies.prep_time,
+      ss_libwizard_candi_legacies.number_of_interactions,
+      ss_libwizard_candi_legacies.patron_type,
+      ss_libwizard_candi_legacies.undergraduate_student_type,
+      ss_libwizard_candi_legacies.graduate_student_type,
+      ss_libwizard_candi_legacies.mba_type,
+      ss_libwizard_candi_legacies.campus,
+      ss_libwizard_candi_legacies.patron_name,
+      ss_libwizard_candi_legacies.school_affiliation,
+      ss_libwizard_candi_legacies.graduation_year,
+      ss_libwizard_candi_legacies.department AS academic_department,
+      ss_libwizard_candi_legacies.faculty_sponsor,
+      ss_libwizard_candi_legacies.course_sponsor,
+      ss_libwizard_candi_legacies.course_name,
+      ss_libwizard_candi_legacies.course_number,
+      ss_libwizard_candi_legacies.patron_question,
+      ss_libwizard_candi_legacies.session_description,
+      ss_libwizard_candi_legacies.notes,
+      NULL::timestamp without time zone AS downloaded_at,
+      ss_libwizard_candi_legacies.upload_record,
+      ss_libwizard_candi_legacies.referral_method,
+      ss_libwizard_candi_legacies.returning_user
+     FROM ss_libwizard_candi_legacies;
+  SQL
 end

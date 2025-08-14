@@ -1,0 +1,96 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+  Springshare's #{link_to "LibWizard", "https://www.springshare.com/libwizard/"}
+  application is a form creation program.  Impact Assessment & Organizational Analysis 
+  developed a form for tracking Consultations and Instruction Events.
+
+%hr
+%section
+  %h2 Links to Consultation & Instruction Forms
+  %ul
+    %li
+      %a(title="Consultation and Instruction Form" href="https://upenn.libwizard.com/f/combined_consultation-instruction_form_v2" target="_default" rel="noreferrer noopener")General Libraries Form
+      %em{:style =>"color:gray"} (opens a new window)
+    %li
+      %a(title="Legacy Consultation and Instruction Form" href="https://upenn.libwizard.com/f/Penn_Libraries_Consultation-Instruction_Form" target="_default" rel="noreferrer noopener")Legacy General Libraries Form
+      %em{:style =>"color:gray"} (opens a new window)
+    %li
+      %a(title="Iterative Projects Tracking Form" href="https://upenn.libwizard.com/f/Iterative_Research_-_Instruction_Partnerships" target="_default" rel="noreferrer noopener")Iterative Projects Tracking Form
+      %em{:style =>"color:gray"} (opens a new window)
+
+  %h3 Consultation and Instruction Form Template
+  %ul
+    %li
+      =link_to 'Download Template', '/CandICombined_v7.xlsx', {download: 'CandICombined_v7.xlsx'}
+
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Springshare LibWizard data
+    begin with the prefix "ss_libwizard_".
+
+  %h3 Data Tables
+  The following table combines all consultation and instruction event forms into a single view.
+  The Source Table can be extracted from the ID column.
+  Any IDs starting with M refer to a Manual Upload, A refers to Automated, and L refers to the Legacy data.
+  A single view is provided to allow librarians to filter by their PennKey to access all of their data.
+  %ul{:style => "padding-left: 20px;"}
+    %li= link_to "Consultation / Instruction Combined View", "/springshare/libwizard_consultations"
+
+  The following tables are separated to maintain a clean database.  The Legacy Consultation / Instruction 
+  form contains data from the General Libararies and Lippincott forms, both automated and manual uploads.
+  The switch between the Legacy forms and the current forms occurred just after the start of FY2026.
+  The Automated Import Consultation/Instruction table contains data from the current Consultation and 
+  Instruction form fetched from Springshare via their API.
+  The Manual Import Consultation/Instruction table contains the data uploaded via the Upload Tool on MetriDoc.
+  %ul{:style => "padding-left: 20px;"}
+    %li= link_to "Automated Import Consultation / Instruction", "/springshare/libwizard_consultations_auto_uploads"
+    %li= link_to "Manual Import Consultation / Instruction", "/springshare/libwizard_consultations_manual_uploads"
+    %li= link_to "Legacy Consultation / Instruction Form (before FY2026)", "/springshare/libwizard_consultations_legacies"
+
+%hr 
+%section
+  %h2 Individual Libarian Reporting
+  Get summary statistics on a specific librarian.
+
+  -# Get List of Unique PennKeys
+  - pennkeys = pennkey_list
+
+  -# Get date range of data
+  - start_date, end_date = date_range()
+
+  -# Make a form to select a PennKey for a report page
+  %center
+    = form_tag({:controller => springshare_libwizard_path,
+        :action => "statistics"},
+        {:method => :post}) do
+      %table{:style => "background-color:#DADADA"}
+        %tr
+          %td Select Staff PennKey
+          %td
+          %td= select_tag "pennkey", options_for_select(pennkeys, pennkeys[0])
+          %td{rowspan:"3"}= submit_tag "Submit"
+        %tr
+          %td{rowspan:"2"} Filter by Date (Optional):
+          %td From:
+          %td= date_field_tag 'start_date', nil
+        %tr
+          %td To:
+          %td= date_field_tag 'end_date', nil
+  %br
+
+%hr
+%section 
+  %h2 Summary Statistics and Network Diagrams
+
+  %ul
+    %li= link_to "All Library Summary", "libwizard_consultation_summary"
+    %li
+      %div{style: "font-style: italic; color: gray"}Summaries by unit in development
