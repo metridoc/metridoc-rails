@@ -80,7 +80,7 @@
   #data-viz
     #single-col
       %h3 Associated Department
-      = column_chart consultations_hash["department"], library: logy, download: true
+      = column_chart consultations_hash["academic_department"], library: logy, download: true
       %p{style: "text-align:right;"}
         (The y scale is log
         %sub> 10
@@ -141,7 +141,7 @@
   #data-viz
     #single-col
       %h3 Associated Department
-      = column_chart instructions_hash["department"], library: logy, download: true
+      = column_chart instructions_hash["academic_department"], library: logy, download: true
       %p{style: "text-align:right;"}
         (The y scale is log
         %sub> 10
