@@ -9,14 +9,21 @@
 %hr
 %section
   %h2 Links to Consultation & Instruction Forms
-
   %ul
     %li
-      %a(title="Consultation and Instruction Form" href="https://upenn.libwizard.com/f/Penn_Libraries_Consultation-Instruction_Form" target="_default" rel="noreferrer noopener")General Libraries Form
+      %a(title="Consultation and Instruction Form" href="https://upenn.libwizard.com/f/combined_consultation-instruction_form_v2" target="_default" rel="noreferrer noopener")General Libraries Form
+      %em{:style =>"color:gray"} (opens a new window)
+    %li
+      %a(title="Legacy Consultation and Instruction Form" href="https://upenn.libwizard.com/f/Penn_Libraries_Consultation-Instruction_Form" target="_default" rel="noreferrer noopener")Legacy General Libraries Form
       %em{:style =>"color:gray"} (opens a new window)
     %li
       %a(title="Iterative Projects Tracking Form" href="https://upenn.libwizard.com/f/Iterative_Research_-_Instruction_Partnerships" target="_default" rel="noreferrer noopener")Iterative Projects Tracking Form
       %em{:style =>"color:gray"} (opens a new window)
+
+  %h3 Consultation and Instruction Form Template
+  %ul
+    %li
+      =link_to 'Download Template', '/CandICombined_v7.xlsx', {download: 'CandICombined_v7.xlsx'}
 
 
 %hr
@@ -31,13 +38,16 @@
 
   %h3 Data Tables
   The following table combines all consultation and instruction event forms into a single view.
+  The Source Table can be extracted from the ID column.
+  Any IDs starting with M refer to a Manual Upload, A refers to Automated, and L refers to the Legacy data.
+  A single view is provided to allow librarians to filter by their PennKey to access all of their data.
   %ul{:style => "padding-left: 20px;"}
     %li= link_to "Consultation / Instruction Combined View", "/springshare/libwizard_consultations"
 
   The following tables are separated to maintain a clean database.  The Legacy Consultation / Instruction 
-  form contains data from the General Libararies and Lippincott forms, both autouploaded and manual uploads.
+  form contains data from the General Libararies and Lippincott forms, both automated and manual uploads.
   The switch between the Legacy forms and the current forms occurred just after the start of FY2026.
-  The Automoated Import Consultation/Instruction table contains data from the current Consultation and 
+  The Automated Import Consultation/Instruction table contains data from the current Consultation and 
   Instruction form fetched from Springshare via their API.
   The Manual Import Consultation/Instruction table contains the data uploaded via the Upload Tool on MetriDoc.
   %ul{:style => "padding-left: 20px;"}
