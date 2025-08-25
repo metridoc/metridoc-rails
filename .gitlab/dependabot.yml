@@ -1,0 +1,12 @@
+version: 2
+updates:
+  - name: "bundler-dependabot-check" 
+    package-ecosystem: "bundler"
+    open-pull-requests-limit: 5
+    directories:
+      - "/"
+  - name: "npm-dependabot-check"
+    package-ecosystem: "npm"
+    open-pull-requests-limit: 5
+    directories:
+       - "/"
