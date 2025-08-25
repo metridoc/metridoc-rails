@@ -2,7 +2,7 @@
   "name": "metridoc-rails",
   "private": true,
   "dependencies": {
-    "@hotwired/turbo-rails": "^8.0.0-beta.2",
+    "@hotwired/turbo-rails": "^8.0.16",
     "active_material": "2.0.2",
     "d3-loom": "^1.0.2"
   }
