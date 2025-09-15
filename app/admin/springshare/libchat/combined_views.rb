@@ -15,7 +15,11 @@ namespace: :springshare do
 
   # Set the title on the index page
   index title: "Combined View" do
-        id_column
+    # Maintain link to LibChat even though we are hiding some columns.
+    column :chat_id do |v|
+      link_to v.chat.display_name, springshare_libchat_chat_path(v.chat_id)
+    end
+
     # Loop through the columns and truncate the bib record for the index only
     self.resource_class.column_names.each do |c|
       next if c == "chat_id"

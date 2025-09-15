@@ -1,0 +1,82 @@
+= javascript_include_tag 'application'
+
+-#Make this a fed in variable
+-fiscal_year = (params[:fiscal_year] || gc_years.max).to_i
+
+-# Fetch the data from the database and process the data for chart displays
+-penetration = gc_library_penetration_data("undergrad", fiscal_year)
+
+%hr
+%h3 How is the active population defined?
+The active undergraduate population is defined by users belonging to a school with an Alma user_group of "Undergraduate Student".  
+See parent page for a description of how the school affiliation is evaluated.
+
+%h3 How is the total population defined?
+The total undergraduate population is extracted from the IR&A Quick Facts.
+Specifically the "Undergraduate Total" enrollment numbers associated with a school.
+
+%h3 What other context is needed?
+%ul
+  %li If no data exists for a given school and a library, there will not be a plot below.
+  %li The Vet Library at the New Bolton Center (NBC) only uses swipe access during off-hours.
+
+%hr
+%h2{style: "text-align:center;"} Fiscal Year #{fiscal_year} Undergraduate Student Population Statistics
+
+=column_chart penetration.map{|k,v| {name: k, data: v[:swipes]}},
+dataset: {borderWidth: 0},
+stacked: true,
+title: "Total Usage of All Libraries",
+download: true
+
+
+-penetration.each do |library, data|
+  %br
+  %hr
+  %h2{style: "text-align:center;"} Fiscal Year #{fiscal_year} Undergraduate Student Statistics for #{library}
+
+  %div{style: "width: 100%; display: flex; align-items: stretch;"}
+    %div{style: "width: 47%;"}
+      = bar_chart data[:persons], 
+      title: "Unique Undergraduate Students Visiting by School", 
+      thousands: ",", 
+      download: true
+    %div{style: "margin-left: 6%; width: 47%;"}
+      = bar_chart data[:swipes], 
+      title: "Total Number of Undergraduate Student Swipes", 
+      thousands: ",", 
+      download: true
+
+  %div{style: "width: 100%; display: flex; align-items: stretch;"}
+    %div{style: "width: 47%;"}
+      =pie_chart data[:percent_persons], 
+      title: "Breakdown of Unique Undergraduate Students by School",
+      round: 2, 
+      suffix: "%", 
+      download: true
+    %div{style: "margin-left: 6%; width: 47%;"}
+      =pie_chart data[:percent_swipes], 
+      title: "Breakdown of Undergraduate Student Swipes by School",
+      round: 2, 
+      suffix: "%", 
+      download: true
+
+  %div{style: "width: 100%; display: flex; align-items: stretch;"}
+    %div{style: "width: 47%;"}
+      = bar_chart data[:average_active_usage], 
+      title: "Average Swipes for Active Undergraduate Students by School", 
+      thousands: ",", 
+      round: 2,
+      download: true
+    %div{style: "margin-left: 6%; width: 47%;"}
+      = bar_chart data[:average_usage], 
+      title: "Average Swipes for Possible Undergraduate Students by School ", 
+      thousands: ",",
+      round: 2,
+      download: true
+
+  = column_chart data[:percent_penetration],
+  title: "Percentage of Undergraduate Students using the Library by School", 
+  round: 2, 
+  suffix: "%", 
+  download: true

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_02_141956) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_02_193919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1045,6 +1045,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_02_141956) do
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
     t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
     t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
+  end
+
+  create_table "gate_count_legacy_biotech_counts", force: :cascade do |t|
+    t.integer "fiscal_year"
+    t.integer "year"
+    t.integer "month"
+    t.string "month_name"
+    t.integer "value"
+    t.index ["year", "month"], name: "index_gate_count_legacy_biotech_counts_on_year_and_month", unique: true
   end
 
   create_table "geo_data_country_codes", force: :cascade do |t|
@@ -2249,6 +2258,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_02_141956) do
     t.integer "fiscal_year"
     t.string "user_parent"
     t.string "school_parent"
+  end
+
+  create_table "upenn_library_doors", force: :cascade do |t|
+    t.string "library_code"
+    t.string "library_name"
+    t.string "door_name"
+    t.index ["door_name"], name: "index_upenn_library_doors_on_door_name", unique: true
+  end
+
+  create_table "upenn_school_names", force: :cascade do |t|
+    t.string "code"
+    t.string "alma_affiliations"
+    t.string "ira_affiliations"
+    t.boolean "is_school"
+    t.index ["alma_affiliations"], name: "index_upenn_school_names_on_alma_affiliations", unique: true
   end
 
   create_table "user_role_sections", force: :cascade do |t|
