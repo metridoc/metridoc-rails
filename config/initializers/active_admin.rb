@@ -330,7 +330,7 @@ ActiveAdmin.setup do |config|
 
       # Gate Counts
       menu.add label: I18n.t("active_admin.gate_counts"),
-        url: :admin_gatecount_path,
+        url: :gate_count_root_path,
         if: proc{ authorized?(:read, "GateCount") },
         parent: I18n.t("active_admin.resource_sharing")
 
@@ -495,7 +495,8 @@ ActiveAdmin.setup do |config|
   namespaces = [
     :admin, :ipeds, :ezborrow, :borrowdirect,
     :illiad, :ezproxy, :upenn, :course_reserves,
-    :library_staff, :springshare, :google_analytics
+    :library_staff, :springshare, :google_analytics,
+    :gate_count
   ]
 
   # Configure the menu for all namespaces

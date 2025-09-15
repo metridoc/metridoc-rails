@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_17_192258) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_02_193919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1045,6 +1045,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_192258) do
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
     t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
     t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
+  end
+
+  create_table "gate_count_legacy_biotech_counts", force: :cascade do |t|
+    t.integer "fiscal_year"
+    t.integer "year"
+    t.integer "month"
+    t.string "month_name"
+    t.integer "value"
+    t.index ["year", "month"], name: "index_gate_count_legacy_biotech_counts_on_year_and_month", unique: true
   end
 
   create_table "geo_data_country_codes", force: :cascade do |t|
@@ -2251,6 +2260,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_192258) do
     t.string "school_parent"
   end
 
+  create_table "upenn_library_doors", force: :cascade do |t|
+    t.string "library_code"
+    t.string "library_name"
+    t.string "door_name"
+    t.index ["door_name"], name: "index_upenn_library_doors_on_door_name", unique: true
+  end
+
+  create_table "upenn_school_names", force: :cascade do |t|
+    t.string "code"
+    t.string "alma_affiliations"
+    t.string "ira_affiliations"
+    t.boolean "is_school"
+    t.index ["alma_affiliations"], name: "index_upenn_school_names_on_alma_affiliations", unique: true
+  end
+
   create_table "user_role_sections", force: :cascade do |t|
     t.bigint "user_role_id", null: false
     t.string "section", null: false
@@ -2419,5 +2443,36 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_192258) do
       ss_libwizard_candi_legacies.referral_method,
       ss_libwizard_candi_legacies.returning_user
      FROM ss_libwizard_candi_legacies;
+  SQL
+  create_view "ss_libchat_combined_views", sql_definition: <<-SQL
+      SELECT c.id AS chat_id,
+      c.fiscal_year,
+      c."timestamp",
+      c.department,
+      c.widget,
+      c.answerer,
+      c.referrer,
+      c.wait_time,
+      c.duration,
+      c.message_count,
+      c.initial_question,
+      c.transfer_history,
+      c.ticket_id,
+      c.user_group,
+      c.school,
+      c.statistical_category_1,
+      c.statistical_category_2,
+      c.statistical_category_3,
+      c.statistical_category_4,
+      c.statistical_category_5,
+      im.newspaper,
+      im.medium,
+      im.top_searches,
+      im.services,
+      im.account_q,
+      im.subscription_issues,
+      im.type_of_search
+     FROM (ss_libchat_chats c
+       LEFT JOIN ss_libchat_inquirymap im ON ((im.chat_id = c.id)));
   SQL
 end

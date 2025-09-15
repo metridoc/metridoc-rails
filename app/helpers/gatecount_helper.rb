@@ -1,436 +1,493 @@
 module GatecountHelper
+   
+  def gc_years
+    max_fiscal_year = (GateCount::CardSwipe.maximum("swipe_date") + 6.months).year
+    min_fiscal_year = (GateCount::CardSwipe.minimum("swipe_date") + 6.months).year
 
-  #Define arrays and hashes that are consistently used:
-  #Note: need to add "Social Policy & Practice" for the first SQL query below because for some reason that
-  #is the correct name for the school when querying for Faculty and Staff.
+    max_fiscal_year.downto(min_fiscal_year).to_a
+  end
+  
+  # Returns a list of schools
   def gc_schools
-    ["College of Arts & Sciences","The Wharton School","Annenberg School for Communication",
-"School of Dental Medicine","School of Design","Graduate School of Education",
-"School of Engineering and Applied Science","Law School","Perelman School of Medicine",
-"Veterinary Medicine","School of Nursing","School of Social Policy & Practice"]
+    gc_schools ||= Upenn::SchoolName.where(:is_school => true).pluck(:code).sort.uniq
   end
 
-  #The names of the schools are different in the enrollments table.
-  def gc_enroll_names
-      ['SAS','Wharton','Annenberg','Dental','Weitzman','Education','Engineering','Law','Perelman','Veterinary','Nursing','SP2']
-  end  
-
-  def gc_doors
-    ['VAN PELT LIBRARY ADA DOOR_ *VPL', 'VAN PELT LIBRARY TURN1_ *VPL','VAN PELT LIBRARY TURN2_ *VPL','VAN PELT LIBRARY USC HANDICAP ENT VERIFY_ *VPL','FURNESS TURNSTILE_ *FUR', 'BIO LIBRARY TURNSTILE GATE_ *JSN']
+  # Returns a list of libraries that use swipes
+  def gc_libraries
+    gc_libraries ||= Upenn::LibraryDoor.pluck(:library_code).sort.uniq
   end
 
-  def gc_users
-    {"Total" => "Enrollment Total","Undergrad" => "Undergraduate Total","Graduate" => "Graduate Total","F/S" => "Regular Faculty & Staff Total"}
+  def gc_usertype_mapping
+    {
+      "graduate": {
+        "ira": "Graduate Total",
+        "alma": "('Grad Student')"
+      },
+      "undergrad": {
+        "ira": "Undergraduate Total",
+        "alma": "('Undergraduate Student')"
+      },
+      "faculty_and_staff": {
+        "ira": "Regular Faculty & Staff Total",
+        "alma": "('Faculty', 'Faculty Express', 'Staff', 'Library Staff')"
+      }
+    }
   end
 
-  def gc_months
-    Date::MONTHNAMES.compact
+  # Get the breakdown of populations by year
+  def gc_library_penetration_query(user_type, fiscal_year)
+    user_map = gc_usertype_mapping.fetch(user_type.to_sym, nil)
+    return [] if user_map.nil?
+
+    GateCount::CardSwipe.connection.select_all(
+    """
+      WITH population AS 
+        (
+          SELECT DISTINCT 
+            sn.code AS code, 
+            value AS population, 
+            fiscal_year 
+          FROM upenn_enrollments e 
+          INNER JOIN upenn_school_names sn 
+            ON sn.ira_affiliations = e.school 
+          WHERE 
+            fiscal_year = #{fiscal_year} 
+            AND 
+            sn.is_school = TRUE 
+            AND 
+            e.user = '#{user_map[:ira]}'
+        ),
+      swipes AS
+        (
+          SELECT 
+            DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+            ld.library_code AS library, 
+            sn.code AS school,
+            COUNT(card_num) AS swipes, 
+            COUNT(DISTINCT card_num) AS persons 
+          FROM gate_count_card_swipes cs 
+          INNER JOIN upenn_library_doors ld 
+            ON ld.door_name = cs.door_name 
+          INNER JOIN upenn_school_names sn 
+            ON cs.school = sn.alma_affiliations
+          WHERE 
+            sn.is_school = TRUE 
+            AND 
+            cs.user_group IN #{user_map[:alma]}
+            AND
+            cs.swipe_date BETWEEN '#{fiscal_year-1}-07-01' AND '#{fiscal_year}-07-01'
+          GROUP BY 1,2,3
+        )
+      SELECT 
+        s.fiscal_year,
+        s.library, 
+        s.school,
+        p.population, 
+        s.swipes,
+        s.persons
+      FROM swipes s
+      INNER JOIN population p
+        ON p.code = s.school
+        AND p.fiscal_year = s.fiscal_year;
+      """
+    )
   end
 
-  #Inputting these values manually since they're not in Metridoc.
-  def gc_all_bio
-      bio_2016=["Count",10490,8165,11270,11178,10144,6803,4951,10103,7852,9605,8142,7416,106119]
-      bio_2017=["Count",7374,7350,9660,10571,9037,8079,7033,9109,8644,9599,8363,8021,102840]
-      bio_2018=["Count",6461,7310,9902,10568,8869,7296,6995,7658,8178,9813,7434,7012,97496]
-      bio_2019=["Count",7374,6845,9503,11208,9407,8719,6486,9469,9581,11740,8010,8689,107031]
-      bio_2020=["Count",9271,8631,12122,13036,9764,9624,7683,11430,4295,nil,nil,nil,85856]
-      bio_2021=["Count"].concat(Array.new(13))
-      full_bio=[bio_2016,bio_2017,bio_2018,bio_2019,bio_2020,bio_2021]
-      return full_bio
-  end
-  
-#Define tables that are frequently used:
-  
-#Library options are "Van Pelt", "Biotech", "Furness", "All"
+  def gc_library_penetration_data(user_type, fiscal_year)
+    # Use the query to fetch the penetration data
+    data = gc_library_penetration_query(user_type, fiscal_year).to_a
 
-  #The library_table is used for all "population" plots (grouped by school).
-  def gc_library_table
-      doors=gc_doors.map{|e| "'#{e}'"}.join(",")
-      schools=gc_schools.map{|e| "'#{e}'"}.join(",")
-      
-      output_table=GateCount::CardSwipe.connection.select_all(
-        "SELECT
-           school,
-           user_group,
-           CASE
-             WHEN door_name LIKE 'VAN PELT%'
-               THEN 'Van Pelt'
-             WHEN door_name LIKE 'FURNESS%'
-               THEN 'Furness'
-             WHEN door_name LIKE 'BIO%'
-               THEN 'Biotech'
-           END AS library,
-           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
-           COUNT(card_num) AS num_swipes, 
-           COUNT(DISTINCT card_num) AS num_people  
-         FROM gate_count_card_swipes 
-           WHERE door_name IN (#{doors})
-              AND school IN (#{schools}, 'Social Policy & Practice')
-              GROUP BY 1, 2, 3, 4
-              ORDER BY COUNT(swipe_date);")
+    # Filter to the current fiscal year
+    data.filter!{|x| x["fiscal_year"] = fiscal_year}
 
-      return output_table.to_a
-  end
+    # Get a list of the applicable libraries
+    libraries = data.pluck("library").uniq
 
-  #The time_table is used for all time plots *except* for the frequency plots by school.
-  #Excluding "Penn libraries" here so that workers who swipe in all the time are not counted.
-  def gc_time_table
-      doors=gc_doors.map{|e| "'#{e}'"}.join(",")
-      
-      output_table=GateCount::CardSwipe.connection.select_all(
-        "SELECT
-           CASE
-             WHEN door_name LIKE 'VAN PELT%'
-               THEN 'Van Pelt'
-             WHEN door_name LIKE 'FURNESS%'
-               THEN 'Furness'
-             WHEN door_name LIKE 'BIO%'
-               THEN 'Biotech'
-           END AS library,
-           DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
-           EXTRACT(month from swipe_date) AS month,
-           COUNT(card_num) AS num_swipes, 
-           COUNT(DISTINCT card_num) AS num_people
-         FROM gate_count_card_swipes 
-           WHERE door_name IN (#{doors})
-           AND school != 'Penn Libraries' 
-         GROUP BY 1,2,3;")
-
-      return output_table.to_a
-  end
-
-  #Used for the plot on the _index page and the _population page
-  def gc_freq_table(semester,input_year,input_school)
-
-      doors=gc_doors.map{|e| "'#{e}'"}.join(",")
-    
-      if semester=="Spring"
-         start_week=1
-         end_week=20
-      elsif semester=="Summer"
-         start_week=22
-         end_week=33
-      elsif semester=="Fall"
-         start_week=34
-         end_week=53
-      end
-      
-      output_table=GateCount::CardSwipe.connection.select_all(
-        "WITH weekly_data AS (
-         SELECT
-           EXTRACT(week from swipe_date) AS week,
-           card_num,
-           COUNT(*) AS frequency,
-           CASE
-                WHEN door_name LIKE 'VAN PELT%'
-                  THEN 'Van Pelt'
-                WHEN door_name LIKE 'FURNESS%'
-                  THEN 'Furness'
-                WHEN door_name LIKE 'BIO%'
-                  THEN 'Biotech'
-           END AS library
-         FROM gate_count_card_swipes 
-              WHERE (EXTRACT(week from swipe_date) >= #{start_week} AND EXTRACT(week from swipe_date) <= #{end_week})
-              AND school='#{input_school}'
-              AND DATE_PART('year', swipe_date + INTERVAL '6 month')=#{input_year}
-              AND (user_group='Undergraduate Student' OR user_group='Grad Student')
-              AND door_name IN (#{doors})
-           GROUP BY 1, 2, 4)
-          SELECT
-              week,
-              card_num,
-              library,
-              CASE WHEN frequency = 1 THEN 1 ELSE 0 END AS single_user,
-              CASE WHEN frequency BETWEEN 2 AND 3 THEN 1 ELSE 0 END AS medium_user,
-              CASE WHEN frequency > 3 THEN 1 ELSE 0 END AS freq_user
-              FROM weekly_data;")
-
-      return output_table.to_a
-  end
-
-  def gc_enrollment_table(user,input_year=2023)
-    pop_table=Upenn::Enrollment.select(:fiscal_year, :user, :value, :school).where(:user => gc_users[user]).where(:school_parent => "Total").where(:fiscal_year => input_year).where.not(:school => "Non-Academic").all
-
-    yearly_enroll=Hash.new
-    
-    for name in gc_enroll_names
-        values=pop_table.to_a.select{|h| h["school"]==name}.pluck("value")[0]
-        yearly_enroll[name] = values
-    end
-    
-    return yearly_enroll
-    
-  end
-
-#Define helper functions:
-  
-  #Delete data from the wrong year/library/school:
-  def gc_gen_stats(input_table,fiscal_year,library,school_type)
-    gen_values=input_table
-    if fiscal_year.is_a? Integer
-       gen_values=input_table.select{|h| h["fiscal_year"]==fiscal_year}
-    end
-    
-    if library=="Biotech"
-       gen_values=gen_values.select{|h| h["library"] == "Biotech"}
-    elsif library=="Furness"
-       gen_values=gen_values.select{|h| h["library"] == "Furness"}
-    elsif library=="Van Pelt"
-       gen_values=gen_values.select{|h| h["library"] == "Van Pelt"}        
+    # Fill the Library Map with data
+    libraries_data = {}
+    libraries.each do |x|
+      library_data =  data.filter{|y| y["library"] == x}
+      total_persons = library_data.pluck("persons").sum
+      total_swipes = library_data.pluck("swipes").sum
+      libraries_data[x] =
+        {  
+          "persons": library_data.map{|k| [k["school"], k["persons"]]}.to_h,
+          "swipes": library_data.map{|k| [k["school"], k["swipes"]]}.to_h,
+          "average_active_usage": library_data.map{|k| [k["school"], k["swipes"].fdiv(k["persons"])]}.to_h,
+          "average_usage": library_data.map{|k| [k["school"], k["swipes"].fdiv(k["population"])]}.to_h,
+          "percent_persons": library_data.map{|k| [k["school"], k["persons"].fdiv(total_persons) * 100]}.to_h,
+          "percent_swipes": library_data.map{|k| [k["school"], k["swipes"].fdiv(total_swipes) * 100]}.to_h,
+          "percent_penetration": library_data.map{|k| [k["school"], k["persons"].fdiv(k["population"]) * 100]}.to_h
+        }
     end
 
-    if school_type != "All"
-       gen_values=gen_values.select{|h| h["school"] == school_type}
-    end
-    
-    return gen_values
-    
+    libraries_data
   end
 
-  def gc_calc_percents(input_table,type,user_group)
-    
-    #type is one of four options:
-    #1) "Counts" is the percentage of counts relative to the total (user) population.
-    #2) "People" is the percentage of people relative to the total (user) population.
-    #3) "Raw Counts" is just the number of counts, no percentages.
-    #4) "Individuals" is the number of people, no percentages.
-    
-    if user_group == "Grad Student" || user_group == "Undergraduate Student"
-      copy_table=input_table.select{|h| h["user_group"] == user_group}
-      copy_table=copy_table.delete_if{|h| h["school"] == "Social Policy & Practice"}
-    elsif user_group == "F/S"
-      copy_table=input_table.select{|h| (h["user_group"].include? "Staff") || (h["user_group"].include? "Faculty")}
-    #Otherwise leave the table unchanged.
-    else
-      copy_table=input_table
+  def gc_library_entrance_query(timing = "year")
+    GateCount::CardSwipe.connection.select_all(
+      """
+      SELECT 
+        'FY' || DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+        CAST(DATE_TRUNC('#{timing}', swipe_date) AS date) AS date,
+        ld.library_code AS library, 
+        COUNT(card_num) AS swipes, 
+        COUNT(DISTINCT card_num) AS persons
+      FROM gate_count_card_swipes cs
+      INNER JOIN upenn_library_doors ld
+        ON ld.door_name = cs.door_name 
+      WHERE 
+        cs.school != 'Penn Libraries' 
+        AND
+        swipe_date >= '2015-07-01'
+      GROUP BY 1,2,3
+      UNION
+      SELECT 
+        'FY' || fiscal_year AS fiscal_year, 
+        CAST(DATE_TRUNC('#{timing}', MAKE_DATE(year, month, 1)) AS date) AS date, 
+        'Biotech' AS library, 
+        SUM(value) AS swipes, 
+        NULL AS persons 
+      FROM gate_count_legacy_biotech_counts 
+      WHERE MAKE_DATE(year, month, 1) >= '2015-07-01'
+      GROUP BY 1, 2, 3 
+      ORDER BY 2;
+      """
+    ).to_a
+  end
+
+  def gc_library_entrance_data(timing = "year")
+    data = gc_library_entrance_query(timing)
+
+    # Get a list of the applicable libraries
+    libraries = data.pluck("library").uniq.sort
+
+    # If daily, only use the most recent fiscal year
+    if timing == "day"
+      max_fiscal_year = data.pluck("fiscal_year").max
+      data.filter!{|y| y["fiscal_year"] == max_fiscal_year}
     end
-    
-    if type=="Counts"
-     num_swipes=copy_table.pluck("num_swipes")
-     percents=num_swipes.map {|x| ((x).fdiv(num_swipes.sum))*100}
-    elsif type=="People"  
-      num_people=copy_table.pluck("num_people")
-      percents=num_people.map {|x| ((x).fdiv(num_people.sum))*100}
-    elsif type=="Raw Counts"
-      percents=copy_table.pluck("num_swipes")
-    elsif type=="Individuals"
-      percents=copy_table.pluck("num_people")
+
+    # Fill the Library Map with data
+    libraries_data = {}
+
+    # Loop through all libraries
+    libraries.each do |x|
+      # Get the data for a single library
+      library_data =  data.filter{|y| y["library"] == x}
+
+      # Select the mapping key based on the timing needed
+      time_key = timing == "year" ? "fiscal_year" : "date"
+
+      libraries_data[x] =
+        {
+          "swipes": library_data.map{|k| [k[time_key], k["swipes"]]}.to_h,
+          "persons": library_data.map{
+            |k| [k[time_key], k["persons"]]
+          }.to_h.reject{
+            |k,v| v.nil?
+          },
+        }
     end
 
-    #"School of Social Policy & Practice" is called something different for F/S:
-    schools=gc_schools[0..10].concat(['Social Policy & Practice'])
+    libraries_data
+  end
 
-    if user_group != "F/S"
-        schools=copy_table.pluck("school")
-        percents_array=Hash.new
-        percents.each_with_index {|p,i| percents_array[schools[i]] = p}
-    #Needed since the "Faculty and Staff" category includes multiple user groups and therefore
-    #multiple entries per school.
-    elsif user_group=="F/S"
+  # Build the year-to-year comparison table
+  def gc_library_entrance_table
+    # Pull in the monthly data
+    data = gc_library_entrance_data("month")
 
-        percents_array=Hash.new
+    libraries_data = {}
 
-        all_counts=copy_table.pluck("num_swipes").sum
-        
-        for s in schools
-            school_table=copy_table.select{|h| h["school"] == s}
-            if type=="Counts"
-               percents=((school_table.pluck("num_swipes").sum).fdiv(all_counts))*100
-            else
-               percents=(school_table.pluck("num_people").sum)
-            end  
-            percents_array[s] = percents
+    # Loop through each library
+    data.each do |k, v|
+      # Find the maximum and minimum fiscal years of the data
+      min_fiscal_year = (Date::parse(v[:swipes].keys.min) + 6.months).year
+      max_fiscal_year = (Date::parse(v[:swipes].keys.max) + 6.months).year
+
+      # Define the fiscal year range
+      fiscal_year_range = (min_fiscal_year..max_fiscal_year).to_a
+
+      # Define the months in fiscal year order
+      months = Date::ABBR_MONTHNAMES[7..12] + Date::ABBR_MONTHNAMES[1..6]
+
+      # Prepare the swipes data for processing
+      counts = v[:swipes].map do |dt, cnt|
+        [
+          [
+            (Date.parse(dt) + 6.months).year, 
+            Date.parse(dt).strftime("%b")
+          ],
+          cnt
+        ]
+      end.to_h
+
+      # Fill in the count data for the entire range
+      count_data = {}
+      months.each do |m|
+        fiscal_year_range.each do |fy|
+          count_data[[fy, m]] = counts.fetch([fy, m], nil)
         end
-        
+      end
+
+      # Get the most recent fiscal year counts
+      last_fy_counts = counts.filter {
+        |dt, cnt| dt.first == max_fiscal_year
+      }.map {
+        |dt, cnt| [dt.last, cnt]
+      }.to_h
+
+      # Find the last fiscal year total
+      last_fy_total = last_fy_counts.values.sum
+
+      # Find the percent difference to last fiscal year
+      percent_difference = count_data.map do |dt, cnt|
+        # Define all nil cases
+        # nil for last year
+        # nil for no count in fiscal year and month
+        # nil for when the last year has no data
+        if dt.first == max_fiscal_year
+          pct = nil
+        elsif cnt.nil?
+          pct = nil
+        elsif last_fy_counts[dt.last].nil?
+          pct = nil
+        else
+          pct = format_percent(
+            (cnt - last_fy_counts[dt.last]).fdiv(last_fy_counts[dt.last])
+          )
+        end
+
+        [dt, pct]
+      end.to_h
+
+      # Assign the appropriate background color for the percent difference.
+      count_data_color = count_data.map do |dt, cnt|
+        if cnt.nil? || last_fy_counts.fetch(dt.last, 0) == 0
+          color = "#FFFFFF"
+        elsif cnt > last_fy_counts.fetch(dt.last, 0)
+          color = "#ADD8E6"
+        else
+          color = "#FFA07A"
+        end
+        [dt, color]
+      end.to_h
+
+      # Calculate the Fiscal Year totals
+      totals = fiscal_year_range.map do |fy|
+        [
+          fy,
+          count_data
+          .filter{|dt,_| dt.first == fy}
+          .filter{|_,cnt| cnt.present?}
+          .values
+          .sum
+        ]
+      end.to_h
+
+      # Calculate the Percent difference compared to the current FY
+      total_percents = totals.map do |fy,cnt|
+        [
+          fy,
+          format_percent(
+            (cnt - last_fy_total).fdiv(last_fy_total)
+          )
+        ]
+      end.to_h
+      
+      # Calculate the colors to highlight the cells by
+      total_colors = totals.map do |fy, cnt|
+        if cnt.nil?
+          color = "#FFFFFF"
+        elsif cnt < last_fy_counts.values.sum
+          color = "#FFA07A"
+        else
+          color = "#ADD8E6"
+        end
+        [fy, color]
+      end.to_h
+
+      # Format the totals nicely as strings
+      totals = totals.map{ |fy, cnt| [fy, format_big_number(cnt)]}.to_h
+      
+      # Format the totals nicely as strings
+      count_data = count_data.map{ |dt, cnt| [dt, format_big_number(cnt)]}.to_h
+
+      # Build the output hash
+      libraries_data[k] = {
+        "fiscal_years": fiscal_year_range,
+        "months": months,
+        "counts": count_data,
+        "percent": percent_difference,
+        "percent_color": count_data_color,
+        "totals": totals,
+        "totals_percent": total_percents,
+        "total_color": total_colors
+      }
     end
-    return percents_array
-    
+  libraries_data
   end
 
-  #Put the data in the desired time and count bins. Current options for time_frame are:
-  #"Monthly", "Fiscal_Year", "Yearly" (calendar year), and "All" (all data available in Metridoc).
-  #This function is used for the plots generated in "_overview.html.haml"
-  def gc_time_counts(input_table,time_frame,count_type)
-    
-      copy_table=input_table
-
-      month_text=["01","02","03","04","05","06","07","08","09","10","11","12"]
-      
-      if time_frame=="Monthly"
-         time=copy_table.pluck("month")
-
-         if count_type=="Counts"
-            count=copy_table.pluck("num_swipes")
-         elsif count_type=="People"
-            count=copy_table.pluck("num_people")
-         end
-
-         #First save the data in month order, then rearrange to the fiscal year.
-         temp_array=Hash.new
-         count_array=Hash.new
-
-         temp_index=(0..count.length-1).to_a
-         count_index=[6,7,8,9,10,11,0,1,2,3,4,5]
-
-         temp_index.each {|i| temp_array[gc_months[time[i].to_i-1]] = count[i]}
-         count_index.each {|i| count_array[gc_months[i]]=temp_array[gc_months[i]]}
-         
-      else 
-         time=copy_table.pluck("fiscal_year")
-         all_data=[]
-        
-         years=time
-         year_range=[2016,2017,2018,2019,2020,2021,2022,2023]
-         year_index=[0,1,2,3,4,5,6,7]
-
-         yearly_data=Hash.new
-
-         for y in year_index
-             fiscal_year_data=copy_table.select{|h| h["fiscal_year"] == year_range[y]}
-             month=fiscal_year_data.pluck('month')
-             month.each{|m| m.to_i}
-             
-             year_counts=fiscal_year_data.pluck('num_swipes')
-             year_people=fiscal_year_data.pluck('num_people')
-
-             if count_type=="Counts" && time_frame=='Fiscal_Year'
-                yearly_data["#{year_range[y]}"] = year_counts.sum
-             elsif count_type=="People" && time_frame=='Fiscal_Year'
-                yearly_data["#{year_range[y]}"] = year_people.sum
-             end
-             
-             fiscal_array=Hash.new
-             fiscal_index=(0..year_counts.length-1).to_a
-             if time_frame=="Yearly"
-               #Here the desired output is in calendar years.
-               for i in fiscal_index
-                   if month[i] >= 7
-                     if count_type=="Counts"
-                        yearly_data["#{year_range[y]-1}-"+month_text[month[i]-1]+"-01"] = year_counts[i]
-                     elsif count_type=="People"
-                        yearly_data["#{year_range[y]-1}-"+month_text[month[i]-1]+"-01"] = year_people[i]
-                     end  
-                   else
-                     if count_type=="Counts"  
-                        yearly_data["#{year_range[y]}-"+month_text[month[i]-1]+"-01"] = year_counts[i]
-                     elsif count_type=="People"
-                        yearly_data["#{year_range[y]}-"+month_text[month[i]-1]+"-01"] = year_people[i]
-                     end
-                   end  
-               end
-
-             #This is intended for table output. 
-             elsif time_frame=="All"
-                fiscal_index.each {|i| fiscal_array[gc_months[month[i]-1]] = year_counts[i]}
-                fiscal_array["Total"]=year_counts.sum
-                fiscal_array["Statistics"]="Count"
-                all_data << fiscal_array
-             end
-         end
-      end
-
-      #Make sure the correct output is generated.
-      if time_frame=="All"
-         return all_data
-      elsif time_frame=="Yearly" || time_frame=="Fiscal_Year"
-         return yearly_data
-      elsif time_frame=="Monthly"
-         return count_array
-      end
-      
+  def gc_frequent_visitor_query(fiscal_year)
+    GateCount::CardSwipe.connection.select_all(
+      """
+      WITH frequency AS (
+      SELECT 
+        DATE_TRUNC('week', swipe_date) AS week, 
+        card_num, 
+        library_code AS library, 
+        code AS school, 
+        COUNT(card_num) AS frequency 
+      FROM gate_count_card_swipes cs 
+      INNER JOIN upenn_library_doors ld 
+        ON ld.door_name = cs.door_name 
+      INNER JOIN upenn_school_names sn 
+        ON sn.alma_affiliations = cs.school 
+      WHERE 
+        sn.is_school = TRUE 
+        AND 
+        DATE_PART('year', swipe_date + INTERVAL '6 month') = #{fiscal_year}
+      GROUP BY 1, 2, 3, 4 
+      ORDER BY 5 DESC
+      ),
+      population AS 
+        (
+          SELECT 
+            fiscal_year,
+            sn.code AS code,
+            SUM(value) AS population
+          FROM upenn_enrollments e 
+          INNER JOIN upenn_school_names sn 
+            ON sn.ira_affiliations = e.school 
+          WHERE 
+            fiscal_year = #{fiscal_year} 
+            AND 
+            sn.is_school = TRUE
+            AND
+            school_parent = 'Total'
+            AND
+            user_parent = ''
+          GROUP BY 1, 2
+        )
+      SELECT 
+        frequency.week,
+        frequency.library,
+        frequency.school,
+        population.population,
+        CASE 
+          WHEN frequency.frequency < 2 THEN 'Low'
+          WHEN frequency.frequency < 5 THEN 'Medium'
+          ELSE 'High'
+        END AS frequency,
+        COUNT(DISTINCT card_num) AS value
+      FROM frequency
+      INNER JOIN population
+      ON population.code = frequency.school
+      GROUP BY 1,2,3,4,5;
+      """
+    ).to_a
   end
 
-  #Makes the plot shown on the _index page and the _population page.
-  def gc_freq_counts(input_table,fiscal_year,school_index,library)
-      copy_table=input_table
+  # Calculate the frequency of all visitors
+  def gc_frequent_visitors(fiscal_year)
+    data = gc_frequent_visitor_query(fiscal_year)
 
-      #Select the library of interest:
-      if library=="Biotech"
-       copy_table=copy_table.select{|h| h["library"] == "Biotech"}
-      elsif library=="Furness"
-       copy_table=copy_table.select{|h| h["library"] == "Furness"}
-      elsif library=="Van Pelt"
-       copy_table=copy_table.select{|h| h["library"] == "Van Pelt"}        
-      end
+    # Define all available weeks for the plot
+    # Start arrays with 0 values
+    weeks = data.pluck("week").sort.uniq.map{
+      |v| [v.strftime("%b %d"), 0]
+    }   
 
-      time=copy_table.pluck("week")
-      card_num=copy_table.pluck('card_num')
-      
-      num_users=card_num.uniq.length
-      
-      total_pop=gc_enrollment_table("Total",fiscal_year)[gc_enroll_names[school_index.to_i]]
+    # Build a structure for the output
+    libraries_data = gc_libraries.map do |library|
+      [
+        library,
+        gc_schools.map do |school|
+          [
+            school,
+            {
+              'Low': weeks.to_h,
+              'Medium':  weeks.to_h,
+              'High': weeks.to_h
+            }
+          ]
+        end.to_h
+      ]
+    end.to_h
 
-      week_range=(time.min.to_i..time.max.to_i).to_a
-      week_index=(0..week_range.length-1).to_a
+    # Loop through the data and update the libraries data output
+    data.each do |v|
+      library = v.fetch("library")
+      school = v.fetch("school")
+      freq = v.fetch("frequency").to_sym
+      week = v.fetch("week").strftime("%b %d")
+      value = v.fetch("value")
+      pop = v.fetch("population")
 
-      #One for each bin of user frequency:
-      percents_zero=Hash.new
-      percents_single=Hash.new
-      percents_medium=Hash.new
-      percents_freq=Hash.new
-      
-      for i in week_index
+      libraries_data[library][school][freq][week] =
+        value.fdiv(pop) * 100.0
+    end
 
-          week_table=copy_table.select{|h| h["week"] == week_range[i]}
-          
-          single_user=week_table.pluck('single_user').sum
-          medium_user=week_table.pluck('medium_user').sum
-          freq_user=week_table.pluck('freq_user').sum
-
-          #Return as a percentage of the college population
-          ymax=(num_users).fdiv(total_pop)
-          ymax=(ymax.round(2))*100
-
-          if week_range.min < 21
-             percents_zero["#{week_range[i]}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-             percents_single["#{week_range[i]}"]=((single_user).fdiv(total_pop))*100
-             percents_medium["#{week_range[i]}"]=((medium_user).fdiv(total_pop))*100
-             percents_freq["#{week_range[i]}"]=((freq_user).fdiv(total_pop))*100
-          #Get the correct labels for the summer semester:
-          elsif week_range.min >= 22 and week_range.min <= 33
-             percents_zero["#{week_range[i]-21}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-             percents_single["#{week_range[i]-21}"]=((single_user).fdiv(total_pop))*100
-             percents_medium["#{week_range[i]-21}"]=((medium_user).fdiv(total_pop))*100
-             percents_freq["#{week_range[i]-21}"]=((freq_user).fdiv(total_pop))*100
-          #Get the correct labels for the fall semester:
-          elsif week_range.min >=34 
-             percents_zero["#{week_range[i]-33}"]=(num_users-single_user-medium_user-freq_user).fdiv(total_pop)
-             percents_single["#{week_range[i]-33}"]=((single_user).fdiv(total_pop))*100
-             percents_medium["#{week_range[i]-33}"]=((medium_user).fdiv(total_pop))*100
-             percents_freq["#{week_range[i]-33}"]=((freq_user).fdiv(total_pop))*100
-          end
-      end
-      return ymax,percents_single,percents_medium,percents_freq
+    libraries_data
   end
-      
-  #Reads in an array of hashes, comparing each year's month data to the comparison_year
-  #(by default the most recent), then outputs an array of hashes of the differences.
-  def gc_percent_change(input_data)
 
-     data_length=input_data.length
+  def gc_hourly_visitor_query(fiscal_year)
+    GateCount::CardSwipe.connection.select_all(
+      """
+      WITH hourly AS (
+        SELECT 
+          DATE_PART('dow', swipe_date) AS day_of_week,
+          DATE_PART('hour', swipe_date) AS hour_of_day,
+          ld.library_code AS library, 
+          COUNT(card_num) AS swipes, 
+          COUNT(DISTINCT card_num) AS persons
+        FROM gate_count_card_swipes cs
+        INNER JOIN upenn_library_doors ld
+          ON ld.door_name = cs.door_name 
+        WHERE 
+          cs.school != 'Penn Libraries' 
+          AND
+          DATE_PART('year', swipe_date + INTERVAL '6 month') = #{fiscal_year}
+        GROUP BY 1,2,3
+      )
+      SELECT
+        day_of_week,
+        hour_of_day,
+        library,
+        AVG(swipes) AS swipes,
+        AVG(persons) AS persons
+      FROM hourly
+      GROUP BY 1,2,3;
+      """
+    ).to_a
+  end
 
-     months=gc_months.concat(["Total"])
-     all_data=[]
-  
-     for l in (0..input_data.length-1).to_a
-         month_data=Hash.new         
-         for m in (0..months.length-1).to_a
-             old_data=input_data[l][months[m]]
-             new_data=input_data[data_length-1][months[m]]
-             if old_data.nil? == true || l==input_data.length-1
-                percent_change=nil
-             elsif new_data.nil? == true || l==input_data.length-1
-                percent_change=nil
-             else  
-                percent_change=(old_data-new_data).fdiv(new_data)
-                percent_change=(percent_change*100).round(2)
-             end
-             month_data[months[m]]=percent_change
-         end
-         month_data["Statistics"]="% Change"
-         all_data << month_data
-         
-      end
-      return all_data
+  def gc_hourly_visitors(fiscal_year)
+    data = gc_hourly_visitor_query(fiscal_year)
+
+    hours = 0.upto(23).to_a.map{|k| [k, 0]}
+
+    # Build a structure for the output
+    # Maps libraries to days to hours to average counts
+    libraries_data = gc_libraries.map do |library|
+      [
+        library,
+        0.upto(6).to_a.map do |day|
+          [
+            Date::DAYNAMES[day],
+            hours.to_h
+          ]
+        end.to_h
+      ]
+    end.to_h
+
+    data.each do |v|
+      day = Date::DAYNAMES[v["day_of_week"].to_i]
+      hour_of_day = v["hour_of_day"].to_i
+      libraries_data[v["library"]][day][hour_of_day] = v["swipes"]
+    end
+
+    libraries_data
   end
 end

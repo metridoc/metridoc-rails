@@ -1,0 +1,51 @@
+code,alma_affiliations,ira_affiliations,is_school
+UNIV,Annenberg Center,University,0
+ASC,Annenberg School for Communication,Annenberg,1
+UNIV,"Audit, Compliance and Privacy",University,0
+UNIV,Business Resources,University,0
+UNIV,Campus Services,University,0
+SAS,College of Arts & Sciences,SAS,1
+UNIV,Comptroller/Division of Finance,University,0
+UNIV,DRIA,University,0
+UNIV,Development,University,0
+UNIV,EVP,University,0
+UNIV,FRES,University,0
+UNIV,General University,University,0
+UNIV,General University Special,University,0
+GSE,Graduate School of Education,Education,2
+GSE,"Graduate School of Education,School code and Major code",Education,1
+UNIV,Human Resources,University,0
+UNIV,ICA,University,0
+UNIV,ISC,University,0
+LAW,Law School,Law,1
+UNIV,Morris Arboretum,University,0
+MUSEUM,Museum,Museum,0
+UNIV,PROV Health & Wellness Administration,University,0
+UNIV,Penn Global,University,0
+LIBRARIES,Penn Libraries,Penn Libraries,0
+UNIV,Penn Praxis,University,0
+PSOM,Perelman School of Medicine,Perelman,1
+UNIV,President,University,0
+UNIV,Provost,University,0
+UNIV,"Provost,School code and Major code",University,0
+UNIV,Public Safety,University,0
+DENTAL,School of Dental Medicine,Dental,1
+DESIGN,School of Design,Weitzman,1
+DESIGN,School of Design,Design,1
+SEAS,School of Engineering and Applied Science,Engineering,1
+NURS,School of Nursing,Nursing,1
+SP2,School of Social Policy & Practice,SP2,1
+SP2,Social Policy & Practice,SP2,1
+WHARTON,The Wharton School,Wharton,1
+UNIV,VPUL,University,0
+VET,Veterinary Medicine,Veterinary,1
+UPHS,CCA NJ,External,0
+UPHS,CPUP,External,0
+UPHS,Clin Care Associates,External,0
+UPHS,Corporate on HUP Payroll,External,0
+UPHS,Good Shepherd Penn Partners,External,0
+UPHS,HUP,External,0
+UPHS,Hall Mercer Comm Mental Health,External,0
+UPHS,Pennsylvania Hospital,External,0
+UPHS,Presbyterian Med Ctr,External,0
+UPHS,Wissahickon Hospice,External,0

@@ -1,5 +1,14 @@
-ActiveAdmin.register GateCount::CardSwipe do
+ActiveAdmin.register GateCount::CardSwipe,
+  as: "Card Swipes",
+  namespace: :gate_count do
   menu false
+
+  breadcrumb do
+    [
+      link_to('GateCount', :gate_count_root)
+    ]
+  end
+
   permit_params :entry_date,
     :entry_time,
     :door_name,
