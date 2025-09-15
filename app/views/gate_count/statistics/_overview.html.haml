@@ -3,7 +3,7 @@
 - yearly = gc_library_entrance_data
 - monthly = gc_library_entrance_data("month")
 - daily = gc_library_entrance_data("day")
-- hourly = gc_hourly_visitors(2023)
+- hourly = gc_hourly_visitors(gc_years.max)
 
 
 * The Biotech library reported monthly totals manually 2016-2020. 
@@ -20,6 +20,7 @@ No information on the number of unique vistors is available for this time period
   ytitle: "Average Entrances",
   title: "Average Hourly Rate of Entrances for #{library}",
   curve: false,
+  thousands: ",", 
   xmax: 23,
   download: true
 

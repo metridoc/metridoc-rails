@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_02_193919) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_15_203740) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1044,6 +1044,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_02_193919) do
     t.index ["center_desc"], name: "index_gate_count_card_swipes_on_center_desc"
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
     t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
+    t.index ["swipe_date"], name: "index_gate_count_card_swipes_on_swipe_date"
     t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
   end
 
@@ -2258,6 +2259,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_02_193919) do
     t.integer "fiscal_year"
     t.string "user_parent"
     t.string "school_parent"
+    t.index ["user", "school", "fiscal_year"], name: "upenn_enrollments_uid", unique: true
   end
 
   create_table "upenn_library_doors", force: :cascade do |t|
