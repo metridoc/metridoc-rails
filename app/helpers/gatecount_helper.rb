@@ -1,20 +1,21 @@
 module GatecountHelper
-   
+  
+  # Range of years based on enrollment information available.
   def gc_years
-    max_fiscal_year = (GateCount::CardSwipe.maximum("swipe_date") + 6.months).year
-    min_fiscal_year = (GateCount::CardSwipe.minimum("swipe_date") + 6.months).year
+    max_fiscal_year =  Upenn::Enrollment.maximum(:fiscal_year)
+    min_fiscal_year =  Upenn::Enrollment.minimum(:fiscal_year)
 
     max_fiscal_year.downto(min_fiscal_year).to_a
   end
   
   # Returns a list of schools
   def gc_schools
-    gc_schools ||= Upenn::SchoolName.where(:is_school => true).pluck(:code).sort.uniq
+    Upenn::SchoolName.where(:is_school => true).pluck(:code).sort.uniq
   end
 
   # Returns a list of libraries that use swipes
   def gc_libraries
-    gc_libraries ||= Upenn::LibraryDoor.pluck(:library_code).sort.uniq
+    Upenn::LibraryDoor.pluck(:library_code).sort.uniq
   end
 
   def gc_usertype_mapping
@@ -128,7 +129,7 @@ module GatecountHelper
     GateCount::CardSwipe.connection.select_all(
       """
       SELECT 
-        'FY' || DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
+        DATE_PART('year', swipe_date + INTERVAL '6 month') AS fiscal_year,
         CAST(DATE_TRUNC('#{timing}', swipe_date) AS date) AS date,
         ld.library_code AS library, 
         COUNT(card_num) AS swipes, 
@@ -143,7 +144,7 @@ module GatecountHelper
       GROUP BY 1,2,3
       UNION
       SELECT 
-        'FY' || fiscal_year AS fiscal_year, 
+        fiscal_year AS fiscal_year, 
         CAST(DATE_TRUNC('#{timing}', MAKE_DATE(year, month, 1)) AS date) AS date, 
         'Biotech' AS library, 
         SUM(value) AS swipes, 
@@ -390,7 +391,10 @@ module GatecountHelper
   end
 
   # Calculate the frequency of all visitors
-  def gc_frequent_visitors(fiscal_year)
+  def gc_frequent_visitors(fiscal_year = nil)
+    # Default to most recent fiscal year
+    fiscal_year = fiscal_year || gc_years.max 
+
     data = gc_frequent_visitor_query(fiscal_year)
 
     # Define all available weeks for the plot
@@ -463,7 +467,10 @@ module GatecountHelper
     ).to_a
   end
 
-  def gc_hourly_visitors(fiscal_year)
+  def gc_hourly_visitors(fiscal_year = nil)
+    # Default to most recent fiscal year
+    fiscal_year = fiscal_year || gc_years.max 
+
     data = gc_hourly_visitor_query(fiscal_year)
 
     hours = 0.upto(23).to_a.map{|k| [k, 0]}
