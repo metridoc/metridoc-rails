@@ -2253,13 +2253,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_15_203740) do
   end
 
   create_table "upenn_enrollments", force: :cascade do |t|
-    t.string "user"
+    t.string "user_type"
     t.string "school"
     t.integer "value"
     t.integer "fiscal_year"
     t.string "user_parent"
     t.string "school_parent"
-    t.index ["user", "school", "fiscal_year"], name: "upenn_enrollments_uid", unique: true
+    t.index ["user_type", "school", "fiscal_year"], name: "upenn_enrollments_uid", unique: true
   end
 
   create_table "upenn_library_doors", force: :cascade do |t|

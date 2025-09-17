@@ -56,7 +56,7 @@ module GatecountHelper
             AND 
             sn.is_school = TRUE 
             AND 
-            e.user = '#{user_map[:ira]}'
+            e.user_type = '#{user_map[:ira]}'
         ),
       swipes AS
         (
