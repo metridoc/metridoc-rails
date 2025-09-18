@@ -4,6 +4,10 @@ class Springshare::Libchat::Chat < Springshare::Libchat::Base
   has_one :inquiry_map, 
     class_name: "Springshare::Inquirymap::Inquirymap"
 
+  # Define relation to combined view
+  has_one :combined_view, 
+    class_name: "Springshare::Libchat::CombinedView"
+
   # For URL Parsing
   require 'uri'
 

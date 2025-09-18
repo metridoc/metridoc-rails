@@ -20,3 +20,22 @@ Institution.create!(name: 'BROWN', code: 'BROWN', zip_code: '02912') if Institut
 Institution.create!(name: 'JHU', code: 'JHU', zip_code: '21218') if Institution.of_code('JHU').blank?
 Institution.create!(name: 'CORNELL', code: 'CORNELL', zip_code: '14853') if Institution.of_code('CORNELL').blank?
 Institution.create!(name: 'COLUMBIA', code: 'COLUMBIA', zip_code: '10027') if Institution.of_code('COLUMBIA').blank?
+
+require 'csv'
+
+def process_seed_csv(filename, target_class)
+
+  # Open the csv file
+  csv_contents = File.read(Rails.root.join('lib','seeds',filename))
+  csv = CSV.parse(csv_contents, :headers => true)
+
+  # Extract all the records in the csv vile
+  records = csv.map {|row| row.to_h}
+
+  # Import all records to the target_class
+  target_class.import records, on_duplicate_key_ignore: true
+end
+
+process_seed_csv("library_door_names.csv", Upenn::LibraryDoor)
+process_seed_csv("upenn_school_names.csv", Upenn::SchoolName)
+process_seed_csv("gc_legacy_biotech.csv", GateCount::LegacyBiotechCount)

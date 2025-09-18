@@ -1,0 +1,96 @@
+= javascript_include_tag 'application'
+
+-years = gc_years
+-fiscal_year = params[:year] || years.max
+
+-# Form to update filters on page
+%center
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %thead
+        %tr
+          %th{colspan: 3}Select a different Fiscal Year
+      %tbody
+        %tr
+          %td Filter on Fiscal Year:
+          %td
+            = select_tag :year, 
+              options_for_select(years,
+                fiscal_year)
+          %td= submit_tag "Filter"
+%hr
+
+The following links will show data associated with the currently selected fiscal year: FY#{fiscal_year}
+%ul
+  %li= link_to "Undergraduate Statistics", "undergraduate_statistics?fiscal_year=#{fiscal_year}"
+  %li= link_to "Graduate Statistics", "graduate_statistics?fiscal_year=#{fiscal_year}"
+  %li= link_to "Faculty & Staff Statistics", "faculty_staff_statistics?fiscal_year=#{fiscal_year}"
+
+%hr
+%h2{style: "text-align:center;"}="Fiscal Year #{fiscal_year} School Population Statistics"
+%h3 How are population statistics generated?
+From Public Safety, the card numbers are provided with incomplete affiliation information.
+We enrich this information with demographic data from Alma in order to extract the affiliation and user type.
+The Alma groupings are not the same, or as accurate, as those used by the #{link_to "Office of Insititutional Research & Analytics", "https://ira.upenn.edu/"} (IRA).
+However, we use the #{link_to "IR&A Quick Facts", "https://ira.upenn.edu/penn-numbers/quick-facts"} to get the total populations.
+Unfortunately, IR&A and Alma use different methods for categorizing Patrons.
+Additionally, Alma uses snapshots when the demographics were enriched and may not contain accurate patron information for the time of the swipe.
+The following penetration statistics are estimates based on the information we have available to us.
+
+%h3 How is the active population defined?
+Using Alma Demographics, we match a card number to a persons affiliation.
+Depending on the user type, the school affiliation will come from (in this order):
+%ul
+  %li statistical_category_2
+  %li extracted from statistical_category_3
+  %li extracted from the 4-digit organization code in statistical_category_5
+
+%h3 How is the total population defined?
+Using the Instituional Research And Analysis Quick Facts, we calculate the total for each school of the following categories: 
+%ul
+  %li Enrollment Total - Includes all students enrolled in University of Pennsylvania credit-bearing courses.
+  %li 
+    Regular Faculty & Staff Total - Includes all Standing Faculty, Associated Faculty, Regular Staff, Academic Support Staff and Other Instructional Staff.
+    Excludes temporary employees, graduate student trainees and postdoctoral affiliates.
+  %li University Other - Includes all Emeriti and Retired Faculty, Temporary Staff, Postdoctoral Affiliates and Student Trainees
+This total will give a picture of the maximum number of potential PennCard holders affiliated with a school.
+
+%h3 What are the levels of frequency?
+%ul
+  %li Low - The unique visitor only came once in the week.
+  %li Medium - The unique visitor came more than once, but less than five times in the week.
+  %li High - The unique visitor came at least five times in the week.
+
+%h3 What doors are used?
+%ul
+  %li Van Pelt swipe counts uses the front gates and the ADA door.
+  %li 
+    Holman Biotech swipe counts use only the front entrance.
+    The entrance from Stemmler Hall is operated by PSOM and not Public Safety.
+  %li Furness swipe counts only the front entrance.
+
+%h3 What other context is needed?
+%ul
+  %li If no data exists for a given school and a library, there will not be a plot below.
+  %li The Vet Library at the New Bolton Center (NBC) only uses swipe access during off-hours.
+
+-data =gc_frequent_visitors(fiscal_year)
+
+- gc_libraries.each do |library|
+  %hr
+  %h2 Statistics for #{library}
+  - gc_schools.each do |school|
+    - total_penetration = data[library][school].map{|k,v| v.map{|k1,v1| v1}.sum}.sum
+    - next if total_penetration == 0
+    - library_school_data = data[library][school].map{|k,v| {name: k, data: v}}
+    = column_chart library_school_data,
+      xtitle:"Week of Fiscal Year",
+      ytitle: "Penetration",
+      title: "Visit Frequency to #{library} by #{school}",
+      empty: "No Visits Recorded for #{school} to #{library}",
+      legend: true,
+      stacked: true,
+      dataset:{borderWidth:0},
+      suffix: "%",
+      round: 2,
+      download: true

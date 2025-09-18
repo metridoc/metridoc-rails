@@ -1,0 +1,73 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction
+
+  Some branches of the Penn Libraries use card readers to manage access.
+  The card reader records the time of the entrance and the identity of the patron.
+  This data is owned by Campus Security and is shared monthly with the Penn Libraries at our request to understand who is visiting and using the spaces within the Penn Libraries.
+  For branches that do not have card swipe access, they provide yearly reports of estimates or laser counting to Andrew Sarno.
+  Those reports are inconsistent and not represented here.
+  Before the renovation of Holman Biotech Commons, they provided monthly counts from 2013 to 2020, these counts are represented in a legacy table for further analysis. 
+
+  %ul
+    %li 
+      The Overview page describes Library visitation of the general population for all of the fiscal years available.
+    %li
+      The Populations and Penetration page describes the number and frequency of visitors by school divided into the undergraduate, graduate, and faculty/staff populations. 
+    %li
+      All plots can be filtered by interacting with the legend.
+      Data in the plots are displayed on hover.
+
+%hr
+%section
+  %h2 Resources
+
+  %h3 Dashboards 
+  %ul
+    %li= link_to "Overview Page", "gate_count/overview"
+    %li #{link_to "Populations & Penetration", "gate_count/population_penetration"} - Most recent fiscal year
+
+  -years=gc_years
+  %center
+    = form_tag({:controller => gate_count_about_path, :action => "population"}, method: :post) do
+      %table{:style => "background-color:#DADADA"}
+        %thead 
+          %tr
+            %th{colspan: "3"}Penetration by Fiscal Year
+        %tbody
+          %tr
+            %td Select Fiscal Year
+            %td= select_tag "year", options_for_select(years)
+            %td= submit_tag "Submit"
+
+  %h3 Data Tables
+  %ul
+    %li= link_to "Penn Libraries Card Swipes", "gate_count/card_swipes"
+    %li= link_to "Legacy Biotech Library Counts", "gate_count/legacy_biotech_counts"
+
+
+
+%hr
+%section
+  %h2 Additional Details
+  %ul
+    %li
+      %strong Covid-19:
+      The data points for April 2020 through July 2022 reflect closures at the libraries due to COVID-19. 
+    %li
+      %strong Table Construction:
+      The Card Swipe table has two columns of user type information. 
+      The “user_group” column is extracted from Alma demographics.
+      It distinguishes between staff that are taking classes (who may be listed as “student” in usc_desc) and full time students.
+      The Alma demographic tables are snapshots of a person's affiliation at a point in time. 
+      These tables were not added until 2022, hence, user types and affiliations before that are unreliable.
+      There will be descrepancies between the demographics tables and the Institutional Research counts.
+    %li
+      %strong Deduplication:
+      Additional processes occur to reduce the number of duplicate swipes at an entrance. 
+    %li
+      %strong Demographic Enrichment:
+      The Biotech Library data was manually recorded from 2016-2020.
+      When it was renovated into the Holman Biotech Commons, Public Safety installed card swipe machines.
+      The legacy data is available in the Legacy Biotech Counts table. 

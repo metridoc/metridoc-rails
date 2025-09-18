@@ -1,0 +1,125 @@
+= javascript_include_tag 'application'
+
+- yearly = gc_library_entrance_data
+- monthly = gc_library_entrance_data("month")
+- daily = gc_library_entrance_data("day")
+- hourly = gc_hourly_visitors(gc_years.max)
+
+
+* The Biotech library reported monthly totals manually 2016-2020. 
+No information on the number of unique vistors is available for this time period.
+%br
+* The Vet Library at the New Bolton Center (NBC) only uses swipe access during off-hours.
+%br
+* Penn Libraries staff has been excluded from the totals.
+
+%h2 Hourly Usage of the Penn Libraries in the Most Recent Fiscal Year
+- hourly.each do |library, data|
+  = line_chart data.map{|k,v| {name: k, data: v}},
+  xtitle: "Hour of Day",
+  ytitle: "Average Entrances",
+  title: "Average Hourly Rate of Entrances for #{library}",
+  curve: false,
+  thousands: ",", 
+  xmax: 23,
+  download: true
+
+%h2 Daily Usage of the Penn Libraries in the Most Recent Fiscal Year
+= line_chart daily.map{|k,v| {name: k, data: v[:swipes]}},
+xtitle:"Fiscal Year",
+ytitle: "Gate Counts",
+title: "Number of Entrances per Day per Library",
+legend: true,
+thousands: ",",
+curve: false,
+download: true
+
+= line_chart daily.map{|k,v| {name: k, data: v[:persons]}},
+xtitle:"Fiscal Year",
+ytitle: "Unique PennCards",
+title: "Number of Unique Visitors per Day per Library",
+legend: true,
+thousands: ",",
+curve: false,
+download: true
+
+%hr
+%h2 Yearly Usage of Penn Libraries
+= line_chart yearly.map{|k,v| {name: k, data: v[:swipes]}},
+xtitle:"Fiscal Year",
+ytitle: "Gate Counts",
+title: "Number of Entrances per Year per Library",
+legend: true,
+thousands: ",",
+curve: false,
+download: true
+
+= line_chart yearly.map{|k,v| {name: k, data: v[:persons]}},
+xtitle:"Fiscal Year",
+ytitle: "Unique PennCards",
+title: "Number of Unique Visitors per Year per Library",
+legend: true,
+thousands: ",",
+curve: false,
+download: true
+
+%hr
+%h2 Monthly Usage of Penn Libraries
+= line_chart monthly.map{|k,v| {name: k, data: v[:swipes]}},
+xtitle:"Date",
+ytitle: "Gate Counts",
+title: "Number of Entrances per Month per Library",
+legend: true,
+thousands: ",",
+curve: false,
+download: true
+
+= line_chart monthly.map{|k,v| {name: k, data: v[:persons]}},
+xtitle:"Date",
+ytitle: "Unique PennCards",
+title: "Number of Unique Visitors per Month per Library",
+legend: true,
+thousands: ",",
+curve: false,
+download: true
+
+%hr
+%h2 Monthly Gate Counts by Library 
+* The following tables have a percent difference (% &#916;) column relative to most recent fiscal year.
+%br
+* Blue indicates higher traffic in previous years, red indicates lower historical traffic.
+
+
+-table = gc_library_entrance_table
+-table.each do |library, library_table|
+  %h2 #{library} Library Gate Counts
+
+  %table{align: "center", border: "1", cellpadding: "5"}
+    %thead
+      %tr
+        %td Fiscal Year
+        -library_table[:fiscal_years][0...-1].each do |fy|
+          %td{:colspan => 2, :align => "center"}="#{fy}"
+        %td=library_table[:fiscal_years].last
+      %tr
+        %td Month
+        -library_table[:fiscal_years][0...-1].each do |_|
+          %td Count
+          %td % &#916;
+        %td Count
+    %tbody
+      -library_table[:months].each do |m|
+        %tr
+          %td= m
+          -library_table[:fiscal_years][0...-1].each do |fy|
+            %td= library_table[:counts].fetch([fy, m])
+            %td{style: "background-color: #{library_table[:percent_color].fetch([fy, m])};"}
+              = library_table[:percent].fetch([fy, m])
+          %td= library_table[:counts].fetch([library_table[:fiscal_years].last,m])
+      %tr
+        %td Total
+        -library_table[:fiscal_years][0...-1].each do |fy|
+          %td= library_table[:totals].fetch(fy)
+          %td{style: "background-color: #{library_table[:total_color].fetch(fy)};"}
+            = library_table[:totals_percent].fetch(fy)
+        %td=library_table[:totals].fetch(library_table[:fiscal_years].last)
