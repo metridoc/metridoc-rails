@@ -3,6 +3,7 @@ module Export
 
     # Load all the task classes
     require 'export/alma/task.rb'
+    require 'export/dynamodb/task.rb'
     require 'export/springshare/task.rb'
     require 'export/database/task.rb'
     require 'export/sftp/task.rb'
@@ -49,6 +50,8 @@ module Export
         Database::Task.new(self, task_file)
       when "alma"
         Alma::Task.new(self, task_file)
+      when "aws"
+        Dynamodb::Task.new(self, task_file)
       when "springshare"
         Springshare::Task.new(self, task_file)
       else
