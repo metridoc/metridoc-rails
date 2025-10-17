@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_15_203740) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_14_145618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1875,6 +1875,23 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_15_203740) do
     t.index ["borrower_id", "lender_id"], name: "transaction_index", unique: true
   end
 
+  create_table "sd_sp_entries", force: :cascade do |t|
+    t.string "computer_id"
+    t.string "button"
+    t.string "username"
+    t.datetime "timestamp"
+    t.datetime "downloaded_at"
+    t.index ["computer_id", "timestamp"], name: "sd_sp_entry_id", unique: true
+  end
+
+  create_table "sd_sp_queries", force: :cascade do |t|
+    t.integer "count"
+    t.integer "scanned_count"
+    t.float "capacity_units"
+    t.datetime "downloaded_at"
+    t.index ["downloaded_at"], name: "index_sd_sp_queries_on_downloaded_at", unique: true
+  end
+
   create_table "ss_libanswers_queues", force: :cascade do |t|
     t.integer "queue_id"
     t.string "name"
@@ -2216,6 +2233,15 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_15_203740) do
     t.boolean "upload_record", default: true
     t.datetime "uploaded_at"
     t.string "filename"
+  end
+
+  create_table "upenn_academic_calendars", force: :cascade do |t|
+    t.integer "calendar_year"
+    t.integer "fiscal_year"
+    t.string "term"
+    t.date "start_date"
+    t.date "end_date"
+    t.index ["fiscal_year", "term"], name: "upenn_academic_calendar_term_id", unique: true
   end
 
   create_table "upenn_alma_demographics", force: :cascade do |t|
