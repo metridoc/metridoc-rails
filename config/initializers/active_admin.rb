@@ -322,6 +322,12 @@ ActiveAdmin.setup do |config|
         if: proc { authorized?(:read, 'Springshare') },
         parent: I18n.t('active_admin.resource_sharing')
 
+      # Stream Deck
+      menu.add label: I18n.t('active_admin.stream_deck.stream_deck_menu'),
+        url: :stream_deck_root_path,
+        if: proc { authorized?(:read, 'StreamDeck') },
+        parent: I18n.t('active_admin.resource_sharing')
+
       # # EZ Proxy
       # menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
       #   url: :ezproxy_root_path,
@@ -496,7 +502,7 @@ ActiveAdmin.setup do |config|
     :admin, :ipeds, :ezborrow, :borrowdirect,
     :illiad, :ezproxy, :upenn, :course_reserves,
     :library_staff, :springshare, :google_analytics,
-    :gate_count
+    :gate_count, :stream_deck
   ]
 
   # Configure the menu for all namespaces

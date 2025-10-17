@@ -13,6 +13,10 @@ saml_logout_url: "{{ metridoc_vault_values.secret.saml_logout_url }}"
 
 alma_api_key: "{{ metridoc_vault_values.secret.alma_api_key }}"
 
+aws_access_key_id: "{{ metridoc_vault_values.secret.aws_access_key_id }}"
+aws_secret_access_key: "{{ metridoc_vault_values.secret.aws_secret_access_key }}"
+aws_profile: "{{ metridoc_vault_values.secret.aws_profile }}"
+
 borrowdirect_reshare_db: "{{ metridoc_vault_values.secret.borrowdirect_reshare_db }}"
 borrowdirect_reshare_host: "{{ metridoc_vault_values.secret.borrowdirect_reshare_host }}"
 borrowdirect_reshare_port: "{{ metridoc_vault_values.secret.borrowdirect_reshare_port }}"

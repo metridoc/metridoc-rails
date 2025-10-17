@@ -1,0 +1,27 @@
+load_sequence: 1
+
+# Source Config
+source_adapter: aws
+source_table: StreamDeck-SPI
+aws_region: us-east-1
+aws_profile: metridoc_read
+
+export_file_name: "stream_deck_entries.csv"
+
+# Target Config
+target_adapter: csv
+target_model: StreamDeck::ServicePoint::Entry
+
+# Incremental Filter
+input_filter_name: "InputTime"
+incremental_filter_column: "timestamp"
+
+# Column Mapping
+column_mappings:
+  ComputerID: computer_id
+  Button: button
+  Username: username
+  InputTime: timestamp
+
+# Define rules for updating
+unique_keys: ["computer_id", "timestamp"]

@@ -105,9 +105,11 @@ en:
     ezproxy:
       ezproxy_menu: "EZProxy"
     upenn:
-        upenn_menu: "Institutional Data"
+      upenn_menu: "Institutional Data"
     springshare:
-        springshare_menu: "SpringShare LibApps Data"
+      springshare_menu: "SpringShare LibApps Data"
+    stream_deck:
+      stream_deck_menu: "Stream Deck Data"
     consultation:
       consultation_menu: "Consultation and Instruction"
     library_profiles_heading: "Participating Libraries"

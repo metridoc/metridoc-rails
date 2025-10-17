@@ -177,6 +177,9 @@ gem 'dotenv-rails'
 # Last updated 2022
 gem 'net-sftp'
 
+# Gem used to connect to AWS
+gem 'aws-sdk-dynamodb'
+
 # Terser minifies JavaScript files by wrapping TerserJS to be accessible in Ruby
 gem 'terser'
 
