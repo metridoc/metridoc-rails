@@ -27,7 +27,8 @@ class Security::UserRole < ApplicationRecord
     "CourseReserves",
     "LibraryStaff",
     "Springshare",
-    "GoogleAnalytics"
+    "GoogleAnalytics",
+    "StreamDeck"
   ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]
