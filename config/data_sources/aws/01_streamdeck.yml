@@ -22,3 +22,6 @@ column_mappings:
   Button: button
   Username: username
   InputTime: timestamp
+
+# Define rules for updating
+unique_keys: ["computer_id", "timestamp"]
