@@ -39,3 +39,4 @@ end
 process_seed_csv("library_door_names.csv", Upenn::LibraryDoor)
 process_seed_csv("upenn_school_names.csv", Upenn::SchoolName)
 process_seed_csv("gc_legacy_biotech.csv", GateCount::LegacyBiotechCount)
+process_seed_csv("upenn_academic_calendar.csv", Upenn::AcademicCalendar)

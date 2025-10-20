@@ -86,9 +86,9 @@ module Export
     end
 
     # Add a new log information to the Log::JobExecutionStep Entry
-    def log(m)
+    def log(message)
       # Create a log line with a message
-      log = "#{Time.now} - #{m}"
+      log = "#{Time.now} - #{message}"
       # Add the log line to the database
       log_job_execution_step.log_line(log)
       # Print the log line to std out

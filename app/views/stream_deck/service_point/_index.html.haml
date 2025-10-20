@@ -1,0 +1,47 @@
+= javascript_include_tag 'application'
+
+%section
+  %h2 Introduction 
+  To accurately account for interactions, a Stream Deck button 
+  interface is deployed at select Service Points.
+  This initiative improves efficiency, consistency, and user experience.
+
+  %ul
+    %li For Staff: Quick access to core and technical services.
+    %li For Student Workers: Simplified responses to high-traffic, public-facing inquiries.
+    %li For the Libraries: Standardized service interactions, reduced training time, and reliable demand tracking.
+
+  For more details on the implementation, see below. 
+%hr
+%section
+  %h2 Resources
+  %h3 Dashboards
+  %ul 
+    %li #{link_to "Interaction Summary", "/stream_deck/service_point_statistics"} available by FY and by Quarter.
+
+
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Stream Deck's Service Point data
+    begin with the prefix "sd_sp_".
+
+  %h3 Data Tables
+  %ul
+    %li #{link_to "Entries", "/stream_deck/service_point_entries"} of the Service Point Interactions.
+    %li History of AWS #{link_to "Queries", "/stream_deck/service_point_queries"}.
+
+%hr
+%section
+  %h2 Input Data 
+  Each service point is designed with a unique computer id.
+  This allows us to use the computer identifier to connect the behavior to a location.
+  The buttons and their behavior are developed in conjunction with the service point owners.
+  When a button is pressed, a packet of information containing 
+  %ul 
+    %li the button text, 
+    %li the computer identifier, and 
+    %li the timestamp of the button press 
+  is sent to a Amazon Web Services DynamoDB instance.
+  Then the data is fetched from the DynamoDB and pulled into MetriDoc on a schedule.
+  The Entries table contains the metadata listed above as well as a downloaded time for the data refresh.

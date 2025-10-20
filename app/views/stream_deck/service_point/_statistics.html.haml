@@ -1,0 +1,118 @@
+= javascript_include_tag 'application'
+
+-# Set default options for forms
+- maximum_fiscal_year = (StreamDeck::ServicePoint::Entry.maximum(:timestamp) + 6.months).year
+- minimum_fiscal_year = (StreamDeck::ServicePoint::Entry.minimum(:timestamp) + 6.months).year
+- fiscal_years = maximum_fiscal_year.downto(minimum_fiscal_year).to_a
+- service_points = StreamDeck::ServicePoint::Entry.distinct.pluck(:computer_id)
+- terms = Upenn::AcademicCalendar.distinct.pluck(:term).sort
+
+-# Form to update filters on page
+%center
+  The default year is set to the current fiscal year.
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Fiscal Year:
+        %td
+        %td
+          = select_tag :fiscal_year, 
+            options_for_select(fiscal_years,
+              params.fetch("fiscal_year", maximum_fiscal_year))
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Term:
+        %td
+        %td
+          = select_tag :term, 
+            options_for_select(terms,
+              params.fetch("term", terms.first))
+      %tr
+        %td Filter on Service Point:
+        %td
+        %td
+          = select_tag :service_point, 
+            options_for_select(service_points,
+              params.fetch(:service_point, service_points.first))
+
+-# Fetch the filters from the parameters
+- fiscal_year = params.fetch("fiscal_year", maximum_fiscal_year).to_i
+- term = params.fetch("term", "FY")
+- range = Upenn::AcademicCalendar.where(fiscal_year: fiscal_year).where(term: term).first
+- range_start = range.start_date.in_time_zone("Eastern Time (US & Canada)")
+- range_end = range.end_date.in_time_zone("Eastern Time (US & Canada)") + 1.day
+- service_point = params.fetch("service_point", service_points.first)
+
+- term_description = term == "FY" ? term+fiscal_year.to_s : "#{range.calendar_year} #{term} Term"
+
+-# Filter out unneeded data
+- entries = StreamDeck::ServicePoint::Entry.where(timestamp: range_start..range_end).where(computer_id: service_point)
+%hr
+%h2 Rates of Button Usage
+The following chart shows the frequency of interactions recorded by button press.
+%ul
+  %li Use this chart to understand the highest priority for patrons when at a service point.
+= bar_chart entries.group(:button).count.sort_by{|_,v| -v}.to_h,
+  xtitle: "Frequency",
+  ytitle: "Button Text",
+  download: true,
+  height: "#{30 * entries.distinct.pluck(:button).size}px",
+  title: "Most Popular Buttons used at the #{service_point.camelize} Service Point in #{term_description}"
+
+The following chart shows the time of day of types of interactions recorded by button press.
+%ul 
+  %li Use this chart to understand the highest priority for patrons depending on the hour of the day.
+  %li Click on the item in the legend to add or remove interaction types for further investigation.
+= line_chart entries.group(:button).order(:button).group_by_hour_of_day(:timestamp, time_zone: "Eastern Time (US & Canada)", format: "%l %p").count,
+  xtitle: "Hour of Day",
+  ytitle: "Frequency",
+  curve: false,
+  title: "Hourly Interactions at the #{service_point.camelize} Service Point in #{term_description}"
+
+The following chart shows the day of week of types of interactions recorded by button press.
+%ul 
+  %li Use this chart to understand the highest priority for patrons depending on the day of the week.
+  %li Click on the item in the legend to add or remove interaction types for further investigation.
+
+= line_chart entries.group(:button).order(:button).group_by_day_of_week(:timestamp, time_zone: "Eastern Time (US & Canada)", format: "%A").count,
+  xtitle: "Day of Week",
+  ytitle: "Frequency",
+  curve: false,
+  title: "Daily Interactions at the #{service_point.camelize} Service Point in #{term_description}"
+
+%hr
+%h2 Rates of Service Point Interactions
+The following chart shows the date and frequency of interactions recorded by button press.
+%ul
+  %li Use this chart to understand the rhythm of usage through the term.
+= line_chart entries.group_by_day(:timestamp, time_zone: "Eastern Time (US & Canada)").count,
+  xtitle: "Date",
+  ytitle: "Frequency",
+  curve: false,
+  title: "Daily Interaction Rate at the #{service_point.camelize} Service Point in #{term_description}"
+%br
+The following table shows the total number of interactions recorded by button press for the entire term by hour of day and day of week.
+%ul 
+  %li Use this table to understand the prime interaction times to aid weekly scheduling.
+  %li Darker blue indicates higher frequency.
+  %li These rates will be affected by the scheduling already established at the service point which should be considered when evaluating this table.
+- table_data = entries.group_by_hour_of_day(:timestamp, time_zone: "Eastern Time (US & Canada)" ).group_by_day_of_week(:timestamp, time_zone: "Eastern Time (US & Canada)").count
+- max_table_data = table_data.values.max
+
+%div{style: "margin:  0 auto;"}
+  %table{border: 1, style: "border-collapse: collapse; margin-left: auto; margin-right: auto;"}
+    %caption 
+      Scheduling Snapshot of Service Point Interactions in #{term_description}
+    %thead
+      %th{style: "padding: 5px; width: 100px;"} Hour\Day
+      - Date::DAYNAMES.each do |day|
+        %th{style: "padding: 5px; width: 100px;"}= day
+    %tbody
+      - (7..23).each do |hour|
+        %tr{style: "text-align: center;"}
+          %th= hour
+          - Date::DAYNAMES.each_with_index do |day, idx|
+            - cell_data = table_data.fetch([hour, idx], 0)
+            - alpha = max_table_data.nil? ? 0 : cell_data.fdiv(max_table_data)
+            - font_color = alpha < 0.5 ? "#000000" : "#FFFFFF"
+            %td{style: "background-color: hsla(220, 97.8%, 18%, #{alpha}); color: #{font_color}"}= cell_data

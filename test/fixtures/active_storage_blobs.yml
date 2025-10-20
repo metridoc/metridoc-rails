@@ -7,3 +7,4 @@ one:
   byte_size: 2000
   checksum: "123456789012345678901234"
   created_at: <%= Time.now %>
+  service_name: "local"
