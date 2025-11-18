@@ -23,6 +23,11 @@
     - resources.each do |resource|
       %li= link_to resource.resource_name.human, "/course_reserves/#{resource.resource_name.param_key.pluralize}"
 
+  * The Usage View table is a calculated table combining Course Information with total daily usage of citations.
+
+  %h3 Dashboards 
+  %ul 
+    %li= link_to "Departmental Statistics", "/course_reserves/leganto_statistics" 
 %hr
 
 %section

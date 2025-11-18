@@ -1,4 +1,5 @@
 active_admin_form_for [:admin, resource] do |f|
+  table_names = TableRetrieval.allowed_tables(current_admin_user)
   f.semantic_errors
   f.inputs id: 'report-query' do
     f.input :name
@@ -7,12 +8,12 @@ active_admin_form_for [:admin, resource] do |f|
     f.input :full_sql, as: :text, rows: 4
     f.hidden_field :select_section_with_aggregates, as: :text, disabled: true
     f.input :select_section, label: "Select Section", as: :check_boxes, :collection => f.object.checkbox_options_for_select_section
-    f.input :from_section, label: "From Section", as: :select, :collection => TableRetrieval.all_tables, include_blank: I18n.t('phrases.please_select')
+    f.input :from_section, label: "From Section", as: :select, :collection => table_names, include_blank: I18n.t('phrases.please_select')
     f.hidden_field :raw_join_clauses, as: :text, disabled: true
     f.inputs "Join Section", id: 'join-section' do
       f.has_many :report_query_join_clauses, heading: nil, allow_destroy: true, new_record: "Add" do |ff|
         ff.input :keyword, label: "Type", as: :select, :collection => ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN"], include_blank: I18n.t('phrases.please_select')
-        ff.input :table, as: :select, :collection => TableRetrieval.all_tables, include_blank: I18n.t('phrases.please_select'), input_html: {class: "table-select"}
+        ff.input :table, as: :select, :collection => table_names, include_blank: I18n.t('phrases.please_select'), input_html: {class: "table-select"}
         ff.input :on_keys, label: "On", input_html: {placeholder: "users.user_type_id = user_types.id"}
       end
     end

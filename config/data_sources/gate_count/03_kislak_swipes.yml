@@ -1,0 +1,26 @@
+---
+load_sequence: 3
+target_model: "GateCount::KislakSwipe"
+target_adapter: "native_sql"
+truncate_before_load: "yes"
+sqls:
+  - |
+      INSERT INTO gate_count_kislak_swipes (
+        fiscal_year,
+        year,
+        month,
+        door_name,
+        name,
+        total_swipes
+      )
+      SELECT 
+        EXTRACT(year FROM swipe_date + INTERVAL '6 months'), 
+        EXTRACT(year FROM swipe_date), 
+        EXTRACT(month FROM swipe_date), 
+        door_name, 
+        CONCAT(first_name, ' ', last_name), 
+        COUNT(*)
+      FROM gate_count_card_swipes 
+      WHERE door_name ILIKE '%kislak%' 
+      GROUP BY 1, 2, 3, 4, 5
+      ORDER BY 1, 2, 3, 4, 5 DESC; 
