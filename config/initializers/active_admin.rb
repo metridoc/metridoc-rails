@@ -301,80 +301,82 @@ ActiveAdmin.setup do |config|
   def build_data_menu(namespace)
     namespace.build_menu do |menu|
       # Main drop down for all Data
-      menu.add label: I18n.t("active_admin.resource_sharing"),
-        priority: 1
+      menu.add label: I18n.t("active_admin.library_data"),
+        priority: 2
 
       # Alma Circulation
-      menu.add  label: I18n.t("active_admin.alma.alma_menu"),
+      menu.add label: I18n.t("active_admin.alma.alma_menu"),
         url: :admin_alma_circulations_path,
         if: proc{ authorized?(:read, "Alma") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
 
       # Course Reserves
-      menu.add  label: I18n.t("active_admin.course_reserves.course_reserves_menu"),
+      menu.add label: I18n.t("active_admin.course_reserves.course_reserves_menu"),
         url: :course_reserves_root_path,
         if: proc{ authorized?(:read, "CourseReserves") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
 
       # Springshare LibApps
       menu.add label: I18n.t('active_admin.springshare.springshare_menu'),
         url: :springshare_root_path,
         if: proc { authorized?(:read, 'Springshare') },
-        parent: I18n.t('active_admin.resource_sharing')
+        parent: I18n.t('active_admin.library_data')
+
+      # Springshare LibApps - Consultation Specifically
+      menu.add label: I18n.t('active_admin.springshare.consultation_menu'),
+        url: :springshare_libwizard_path,
+        if: proc { authorized?(:read, 'Springshare') },
+        parent: I18n.t('active_admin.library_data')
 
       # Stream Deck
       menu.add label: I18n.t('active_admin.stream_deck.stream_deck_menu'),
         url: :stream_deck_root_path,
         if: proc { authorized?(:read, 'StreamDeck') },
-        parent: I18n.t('active_admin.resource_sharing')
+        parent: I18n.t('active_admin.library_data')
 
-      # # EZ Proxy
-      # menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
-      #   url: :ezproxy_root_path,
-      #   if: proc{ authorized?(:read, "Ezproxy") },
-      #   parent: I18n.t("active_admin.resource_sharing")
+      # EZ Proxy
+      menu.add  label: I18n.t("active_admin.ezproxy.ezproxy_menu"),
+        url: :ezproxy_root_path,
+        if: proc{ authorized?(:read, "Ezproxy") },
+        parent: I18n.t("active_admin.library_data")
 
       # Gate Counts
       menu.add label: I18n.t("active_admin.gate_counts"),
         url: :gate_count_root_path,
         if: proc{ authorized?(:read, "GateCount") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
 
-      # Gate Counts
+      # UPenn Institutional Data
       menu.add label: I18n.t("active_admin.upenn.upenn_menu"),
         url: :upenn_root_path,
         if: proc{ authorized?(:read, "Upenn") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
 
       # IPEDS
       menu.add label: I18n.t("active_admin.ipeds.ipeds_menu"),
         url: :ipeds_root_path,
         if: proc{ authorized?(:read, "Ipeds") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
 
       # Keyserver
       menu.add label: I18n.t("active_admin.keyserver.keyserver_menu"),
         url: :admin_keyserver_path,
         if: proc{ authorized?(:read, "Keyserver") },
-        parent: I18n.t("active_admin.resource_sharing")
-
-      # Library Profiles
-      menu.add label: I18n.t("active_admin.library_profiles_heading"),
-        url: :admin_libraryprofile_path,
-        if: proc{ authorized?(:read, "LibraryProfile") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
 
       # Google Analytics
       menu.add label: I18n.t("active_admin.google_analytics.google_analytics_menu"),
         url: :google_analytics_root_path,
         if: proc{ authorized?(:read, "GoogleAnalytics") },
-        parent: I18n.t("active_admin.resource_sharing")
+        parent: I18n.t("active_admin.library_data")
+    end
+  end
 
-      # RSAT Supplemental Data
-      menu.add label: I18n.t("active_admin.supplemental_data"),
-        url: :admin_supplementaldata_path,
-        if: proc{ authorized?(:read, "SupplementalData") },
-        parent: I18n.t("active_admin.resource_sharing")
+  def build_rsat_menu(namespace)
+    namespace.build_menu do |menu|
+      # Main drop down for all Data
+      menu.add label: I18n.t("active_admin.resource_sharing"),
+        priority: 1
 
       # RSAT: Borrowdirect
       menu.add label: I18n.t("active_admin.borrowdirect.borrowdirect_menu"),
@@ -394,6 +396,18 @@ ActiveAdmin.setup do |config|
         if: proc{ authorized?(:read, "EzBorrow") },
         parent: I18n.t("active_admin.resource_sharing")
 
+      # RSAT Supplemental Data
+      menu.add label: I18n.t("active_admin.supplemental_data"),
+        url: :admin_supplementaldata_path,
+        if: proc{ authorized?(:read, "SupplementalData") },
+        parent: I18n.t("active_admin.resource_sharing")
+
+      # Library Profiles
+      menu.add label: I18n.t("active_admin.library_profiles_heading"),
+        url: :admin_libraryprofile_path,
+        if: proc{ authorized?(:read, "LibraryProfile") },
+        parent: I18n.t("active_admin.resource_sharing")
+
     end
   end
 
@@ -411,7 +425,6 @@ ActiveAdmin.setup do |config|
       if: proc{ authorized?(:read, "Log") },
       parent: I18n.t("phrases.admin")
 
-
       menu.add label: "User Roles",
       url: :admin_user_roles_path,
       if: proc{ authorized?(:read, Security::UserRole) },
@@ -422,7 +435,7 @@ ActiveAdmin.setup do |config|
   # Helper method to build the documentation drop down menu.
   def build_documentation_menu(namespace)
     namespace.build_menu do |menu|
-      menu.add label: I18n.t("active_admin.documentation"), priority: 2 do |sites|
+      menu.add label: I18n.t("active_admin.documentation"), priority: 3 do |sites|
         sites.add label: I18n.t("active_admin.about"),
                   url: :admin_about_path
 
@@ -476,6 +489,7 @@ ActiveAdmin.setup do |config|
   def build_default_menu(namespace)
     build_utility_navigation(namespace)
     build_data_menu(namespace)
+    build_rsat_menu(namespace)
     build_admin_menu(namespace)
     build_report_query_menu(namespace)
     build_tools_menu(namespace)

@@ -3,5 +3,133 @@
 -# Establish the model
 - courses = CourseReserves::Leganto::Course
 - citations = CourseReserves::Leganto::Citation 
-- reading_lists = CourseReserves::Leganto::ReadingList
+- course_citations = CourseReserves::Leganto::CourseCitation
+- usage_views = CourseReserves::Leganto::UsageView
 
+- departments = courses.distinct.pluck(:academic_department).sort.reject{|v| v == ""}
+- years = (2023..courses.maximum(:course_year).to_i).to_a.reverse
+- terms = ["Spring", "Summer", "Fall"]
+
+- params[:year] ||= years.max - 1
+- params[:term] ||= "Spring"
+- params[:department] ||= departments.first
+
+-# Form to update filters on page
+%center
+  = form_tag(nil, {method: :get}) do
+    %table{:style => "background-color:#DADADA; margin: 10px;"}
+      %tr
+        %td Filter on Academic Year:
+        %td
+        %td
+          = select_tag :year, 
+            options_for_select(years, params[:year])
+        %td{rowspan:0}= submit_tag "Filter"
+      %tr
+        %td Filter on Academic Term:
+        %td
+        %td
+          = select_tag :term, 
+            options_for_select(terms, params[:term])
+      %tr
+        %td Filter on Academic Deparment:
+        %td
+        %td
+          = select_tag :department, 
+            options_for_select(departments, params[:department])
+
+- department = params[:department]
+- year = params[:year]
+- term = params[:term]
+
+%hr
+
+- # Get list of courses for the Academic Department and Term
+- selected_courses = courses.where(academic_department: department).where(course_year: year).where(course_term: term)
+- course_list = selected_courses.pluck(:course_id, :course_code).to_h
+
+- # Get the processing department information
+- processing_department = selected_courses.pluck(:processing_department).uniq
+
+%h2 The #{department} department courses for the #{year} #{term} term were processed by:
+%center
+  %table
+    %thead
+      %tr
+        %th Processing Department
+    %tbody
+      - processing_department.each do |dept|
+        %tr
+          %td= dept
+There are #{course_list.size} courses in the #{department} department for #{term} #{year} with #{course_citations.where(course_id: course_list.keys).distinct.pluck(:citation_id).count} distinct citations.
+The same citation may be refered to in multiple sections of the same class.
+%hr
+
+%h2 Citations by #{department} course in #{year} #{term}:
+- # Get the number of citations associated with each course.
+- citation_counts = course_citations.where(course_id: course_list.keys).group(:course_id).count.transform_keys(course_list).sort_by{|k,_| k}.to_h
+This table contains the total number of citations that were created associated with a course.
+It does not account for any citations that have been removed or were not approved.
+%center
+  %table
+    %thead
+      %tr
+        %th Course Code
+        %th Number of Citations
+    %tbody{style: "text-align: right;"}
+      - citation_counts.each do |row|
+        %tr
+          - row.each do |cell|
+            %td= cell
+      %tr{style: "font-weight: bold;"}
+        %td Total
+        %td= citation_counts.values.sum
+
+%hr
+%h2 Top 10 Citations for #{term} #{year} #{department} courses
+- # Get the citations in descending order of usage
+- citation_usage = usage_views.where(course_id: course_list.keys).group(:citation_id).sum(:total_views).sort_by{|_,v| -v}.to_h
+- citation_course_mapping = course_citations.where(course_id: course_list.keys).pluck(:citation_id, :course_id).to_h.transform_values{|v| course_list[v]}
+%center
+  There are #{citation_usage.values.sum} total full text views of #{citation_usage.size} citations.
+- # The the top ten most used citations
+- top_ten = citations.where(citation_id: citation_usage.keys.first(10)).pluck(:citation_id, :citation_origin, :title, :journal_title, :book_chapter_title, :id)
+- top_ten.map!{|row| [[row.last, row.first], [citation_course_mapping[row[0]], row[1], row[2..4].reject{|v| v == ""}.join(": "), citation_usage[row[0]]]]}.sort_by!{|k,v| -v.last}
+%center
+  %table
+    %thead
+      %tr
+        %th Citation Id
+        %th Course Code
+        %th Citation Origin
+        %th Resource Title 
+        %th Full Text Views
+    %tbody{style: "text-align: right;"}
+      - top_ten.each do |k,v|
+        %tr
+          %td #{link_to k.last, "/course_reserves/leganto_citations/#{k.first}"}
+          - v.each do |cell|
+            %td= cell
+
+%hr
+%h2 Citations with no use for #{term} #{year} #{department} courses
+- # Get a list of citations that have no usage.
+- no_usage_citations = course_citations.where(course_id: course_list.keys).where.not(citation_id: citation_usage.keys).pluck(:citation_id, :course_id).to_h
+%center
+  There are #{no_usage_citations.size} citations that saw no usage.
+- no_usage = citations.where(citation_id: no_usage_citations.keys).pluck(:citation_id, :citation_origin, :title, :journal_title, :book_chapter_title, :id)
+- no_usage.map!{|row| [[row.last, row.first], [citation_course_mapping[row[0]], row[1], row[2..4].reject{|v| v == ""}.join(": ")]]}.sort_by!{|k,v| v.first}
+%center
+  %table
+    %thead
+      %tr
+        %th Citation Id
+        %th Course Code
+        %th Citation Origin
+        %th Resource Title 
+    %tbody{style: "text-align: right;"}
+      - no_usage.each do |k,v|
+        %tr
+          %td #{link_to k.last, "/course_reserves/leganto_citations/#{k.first}"}
+          - v.each do |cell|
+            %td= cell

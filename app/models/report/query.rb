@@ -45,7 +45,10 @@ class Report::Query < ApplicationRecord
     sql = sql + " GROUP BY #{self.group_by_section.join(",")} " if self.group_by_section.present?
     if self.order_section.present?
       sql = sql + " ORDER BY #{self.order_section} "
+      sql = sql + " , id " if self.order_section != "id"
       sql = sql + " #{self.order_direction_section} " if self.order_direction_section.present?
+    else
+      sql = sql + " ORDER BY id DESC "
     end
     sql
   end
@@ -91,13 +94,13 @@ class Report::Query < ApplicationRecord
     save!
     return true
 
-    rescue => ex
-      puts "Error while exporting records => #{ex.message}"
-      self.output_file_name = nil
-      self.last_error_message = ex.message
-      self.status = "failed"
-      save!
-      return false
+  rescue => ex
+    puts "Error while exporting records => #{ex.message}"
+    self.output_file_name = nil
+    self.last_error_message = ex.message
+    self.status = "failed"
+    save!
+    return false
   end
 
   def cancel
@@ -193,21 +196,21 @@ class Report::Query < ApplicationRecord
     return unless self.status.blank? || self.status == 'pending'
     n = calculate_rows_to_process
     self.delay(queue: "#{n > 5000 ? "large" : "default"}").process
-    rescue => ex
-      puts "Error while queuein process => #{ex.message}"
-      self.output_file_name = nil
-      self.last_error_message = ex.message
-      self.status = "failed"
-      save!
+  rescue => ex
+    puts "Error while queuein process => #{ex.message}"
+    self.output_file_name = nil
+    self.last_error_message = ex.message
+    self.status = "failed"
+    save!
   end
 
   def queue_process
     return unless self.status.blank? || self.status == 'pending'
     self.delay.process_in_right_queue
-    rescue => ex
-      puts "Error while queuein process => #{ex.message}"
-      errors.add(:base, "Unable to queue the export. => [#{ex.message}]")
-      raise ActiveRecord::Rollback
+  rescue => ex
+    puts "Error while queuein process => #{ex.message}"
+    errors.add(:base, "Unable to queue the export. => [#{ex.message}]")
+    raise ActiveRecord::Rollback
   end
 
   def remove_select_section_bad_data
