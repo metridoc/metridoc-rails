@@ -9,6 +9,28 @@ module TableRetrieval
     all_table_attributes_map.keys.map(&:to_s)
   end
 
+  # Allow all tables for super admins
+  # Allow no tables for people without a role
+  # Allow certain tables for other users
+  def self.allowed_tables(user)
+    if user.super_admin?
+      return self.all_tables
+    elsif user.user_role.blank?
+      return []
+    end
+    
+    allowed_sections = user.user_role.user_role_sections.map(&:section)
+    all_models = ActiveRecord::Base.descendants.map{
+        |model| [
+          model.table_name, 
+          Security::UserRole.translate_subject_to_section(model)
+        ]
+      }.to_h
+    all_models.select{
+        |k,v| allowed_sections.include?(v)
+      }.keys()
+  end
+
   private
   def self.all_table_attributes_map
     Rails.cache.fetch("all_table_attributes_map", expires_in: 24.hours) do
