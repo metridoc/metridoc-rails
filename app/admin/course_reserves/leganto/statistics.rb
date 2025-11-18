@@ -8,7 +8,8 @@ namespace: :course_reserves do
   breadcrumb do
     # Custom breadcrumb links
     [
-      link_to('CourseReserves', :course_reserves_root)
+      link_to('CourseReserves', :course_reserves_root),
+      link_to('Leganto', :course_reserves_leganto)
     ]
   end
 

@@ -44,5 +44,5 @@ upsert_columns:
   - "full_text_views"
 
 # Filter for request
-incremental_filter_sql: '"Event Date"."Date"'
+incremental_filter_sql: '"Event Date"."Date and Time"'
 incremental_filter_column: "event_date"
