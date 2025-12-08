@@ -10,9 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_31_155838) do
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pgstattuple"
   enable_extension "plpgsql"
 
   create_table "active_admin_comments", force: :cascade do |t|
@@ -22,11 +21,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.bigint "resource_id"
     t.string "author_type"
     t.bigint "author_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -414,6 +413,84 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.index ["exception_code"], name: "index_borrowdirect_ship_dates_on_exception_code"
     t.index ["request_number", "exception_code"], name: "borrowdirect_ship_dates_composite_idx"
     t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
+  end
+
+  create_table "caiasoft_accessioninfo", force: :cascade do |t|
+    t.string "barcode"
+    t.string "collection"
+    t.string "material"
+    t.string "title"
+    t.string "volume"
+    t.string "call_number"
+    t.string "item_id"
+    t.string "bib_id"
+    t.string "pid"
+    t.datetime "accession_date"
+    t.string "accession_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "caiasoft_circstoplist", force: :cascade do |t|
+    t.string "stop_code"
+    t.string "stop_name"
+    t.string "stop_location"
+    t.string "stop_status"
+    t.string "delivery_pyr"
+    t.string "delivery_ert"
+    t.string "delivery_rrr"
+    t.string "delivery_shp"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "caiasoft_circstopout", force: :cascade do |t|
+    t.string "barcode"
+    t.string "circulation_stop"
+    t.datetime "retrieval_date"
+    t.integer "days_outstanding"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "caiasoft_circulation_metrics", force: :cascade do |t|
+    t.string "item_retrieved"
+    t.string "item_collection"
+    t.string "job_type"
+    t.string "circulation_stop"
+    t.string "circulation_location"
+    t.string "job"
+    t.datetime "retrieval_date"
+    t.integer "page_count"
+    t.string "requestor"
+    t.string "details"
+    t.string "api_feed"
+    t.string "request_id"
+    t.string "item_title"
+    t.string "item_call_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "caiasoft_deaccessioninfo", force: :cascade do |t|
+    t.string "barcode"
+    t.string "collection"
+    t.string "item_id"
+    t.string "bib_id"
+    t.string "pid"
+    t.datetime "deaccession_date"
+    t.string "deaccession_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "caiasoft_retrievalinfo", force: :cascade do |t|
+    t.string "barcode"
+    t.string "collection"
+    t.datetime "retrieval_date"
+    t.string "retrieval_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "cr_ares_course_users", force: :cascade do |t|
@@ -1046,16 +1123,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
     t.index ["swipe_date"], name: "index_gate_count_card_swipes_on_swipe_date"
     t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
-  end
-
-  create_table "gate_count_kislak_swipes", force: :cascade do |t|
-    t.integer "fiscal_year"
-    t.integer "year"
-    t.integer "month"
-    t.string "door_name"
-    t.string "name"
-    t.integer "total_swipes"
-    t.index ["year", "month", "door_name", "name"], name: "gate_count_kislak_swipe_uid", unique: true
   end
 
   create_table "gate_count_legacy_biotech_counts", force: :cascade do |t|
@@ -2481,27 +2548,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
       ss_libwizard_candi_legacies.referral_method,
       ss_libwizard_candi_legacies.returning_user
      FROM ss_libwizard_candi_legacies;
-  SQL
-  create_view "cr_leganto_usage_views", sql_definition: <<-SQL
-      SELECT lu.id,
-      lu.event_date,
-      lc.course_year,
-      lc.course_term,
-      lc.academic_department,
-      lc.course_code,
-      lc.course_name,
-      lc.course_enrollment,
-      lu.course_id,
-      lu.reading_list_id,
-      lu.citation_id,
-      lu.user_role,
-      lu.files_downloaded,
-      lu.file_views,
-      lu.full_text_views,
-      lu.total_views
-     FROM (cr_leganto_usage lu
-       LEFT JOIN cr_leganto_courses lc ON ((lu.course_id = lc.course_id)))
-    WHERE ((lu.total_views <> 0) AND (lc.course_id <> '7988545480003681'::bigint));
   SQL
   create_view "ss_libchat_combined_views", sql_definition: <<-SQL
       SELECT c.id AS chat_id,

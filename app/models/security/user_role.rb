@@ -5,27 +5,31 @@ class Security::UserRole < ApplicationRecord
   accepts_nested_attributes_for :user_role_sections, allow_destroy: true, reject_if: proc {|attributes| attributes['section'].blank? }
 
   MANAGED_SECTIONS = [  
+    "Security",
     "Alma",
     "Borrowdirect",
-    "CourseReserves",
+    "Caiasoft",
+    "Consultation",
     "EzBorrow",
-    "Ezproxy",
     "GateCount",
-    "GoogleAnalytics",
     "Illiad",
-    "Ipeds",
     "Keyserver",
+    "Marc",
     "LibraryProfile",
-    "LibraryStaff",
-    "Log",
-    "Report",
-    "Security",
-    "Springshare",
-    "StreamDeck",
     "SupplementalData",
+    "Log",
     "Tools",
-    "Upenn",
+    "Misc",
+    "Report",
     "UpennAlma",
+    "Upenn",
+    "Ezproxy",
+    "Ipeds",
+    "CourseReserves",
+    "LibraryStaff",
+    "Springshare",
+    "GoogleAnalytics",
+    "StreamDeck"
   ]
 
   ACCESS_LEVELS = ["read-only", "read-write"]
