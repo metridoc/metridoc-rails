@@ -71,6 +71,8 @@ en:
       alma_menu: "Alma Circulations"
     ares:
       ares_menu: "Ares"
+    caiasoft:
+      caiasoft_menu: "CaiaSoft Data"
     course_reserves:
         course_reserves_menu: "Course Reserves"
     borrowdirect:
@@ -112,8 +114,6 @@ en:
       stream_deck_menu: "Stream Deck Data"
     consultation:
       consultation_menu: "Consultation and Instruction"
-    caiasoft:
-      caiasoft_menu: "CaiaSoft Data"
     library_profiles_heading: "Participating Libraries"
     library_profiles:
       profiles: "Library Profiles"
@@ -219,6 +219,24 @@ en:
       security/user_role_section:
         one: "User Role Section"
         other: "User Role Sections"
+      caiasoft/accession_info:
+        one: "Accession Info"
+        other: "Accession Info"
+      caiasoft/circ_stop_list:
+        one: "Circ Stop List"
+        other: "Circ Stop List"
+      caiasoft/circ_stop_out:
+        one: "Circ Stop Out"
+        other: "Circ Stop Out"
+      caiasoft/circulation_metric:
+        one: "Circulation Metric"
+        other: "Circulation Metrics"
+      caiasoft/deaccession_info:
+        one: "Deaccession Info"
+        other: "Deaccession Info"
+      caiasoft/retrieval_info:
+        one: "Retrieval Info"
+        other: "Retrieval Info"
       consultation/interaction:
         one: "Consultation and Instruction Interaction"
         other: "Consultation and Instruction Interactions"

@@ -395,7 +395,7 @@ ActiveAdmin.setup do |config|
         parent: I18n.t("active_admin.resource_sharing")
 
       # Caiasoft
-      menu.add label: I18n.t("active_admin.caiasoft_menu"),
+      menu.add label: I18n.t("active_admin.caiasoft.caiasoft_menu"),
         url: :caiasoft_root_path,
         if: proc{ authorized?(:read, "Caiasoft") },
         parent: I18n.t("active_admin.resource_sharing")
@@ -508,7 +508,7 @@ ActiveAdmin.setup do |config|
     :admin, :ipeds, :ezborrow, :borrowdirect,
     :illiad, :ezproxy, :upenn, :course_reserves,
     :library_staff, :springshare, :google_analytics,
-    :gate_count, :stream_deck
+    :gate_count, :stream_deck, :caiasoft
   ]
 
   # Configure the menu for all namespaces
