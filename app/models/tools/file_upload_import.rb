@@ -12,9 +12,16 @@ class Tools::FileUploadImport < ApplicationRecord
   after_commit :queue_process
 
   UPLOADABLE_MODELS = [
-    Springshare::Libwizard::CandiLegacy,
-    Springshare::Libwizard::CandiManual,
+    GateCount::CardSwipe,
     GeoData::CountryCode,
+    Ipeds::Completion,
+    Ipeds::Directory,
+    Ipeds::Program,
+    Ipeds::CompletionSchema,
+    Ipeds::DirectorySchema,
+    Ipeds::ProgramSchema,
+    Ipeds::StemCipcode,
+    Ipeds::Cipcode,
     Keyserver::StatusTerm,
     Keyserver::PlatformTerm,
     Keyserver::ReasonTerm,
@@ -24,19 +31,13 @@ class Tools::FileUploadImport < ApplicationRecord
     Keyserver::Computer,
     Keyserver::CpuTypeTerm,
     Keyserver::Usage,
-    Ipeds::Completion,
-    Ipeds::Directory,
-    Ipeds::Program,
-    Ipeds::CompletionSchema,
-    Ipeds::DirectorySchema,
-    Ipeds::ProgramSchema,
-    Ipeds::StemCipcode,
-    Ipeds::Cipcode,
-    Upenn::Enrollment,
     LibraryStaff::Census,
     Springshare::Libanswers::Queue,
     Springshare::Libanswers::Ticket,
-    Springshare::Libchat::Chat
+    Springshare::Libchat::Chat,
+    Springshare::Libwizard::CandiLegacy,
+    Springshare::Libwizard::CandiManual,
+    Upenn::Enrollment,
   ]
 
   validates :target_model, presence: true
