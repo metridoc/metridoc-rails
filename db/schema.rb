@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_09_150745) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1044,6 +1044,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.index ["center_desc"], name: "index_gate_count_card_swipes_on_center_desc"
     t.index ["dept_desc"], name: "index_gate_count_card_swipes_on_dept_desc"
     t.index ["door_name"], name: "index_gate_count_card_swipes_on_door_name"
+    t.index ["swipe_date", "door_name", "card_num"], name: "gate_count_card_swipes_uid", unique: true
     t.index ["swipe_date"], name: "index_gate_count_card_swipes_on_swipe_date"
     t.index ["usc_desc"], name: "index_gate_count_card_swipes_on_usc_desc"
   end
@@ -2498,7 +2499,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
       lu.files_downloaded,
       lu.file_views,
       lu.full_text_views,
-      lu.total_views
+      lu.total_views,
+      lc.processing_department
      FROM (cr_leganto_usage lu
        LEFT JOIN cr_leganto_courses lc ON ((lu.course_id = lc.course_id)))
     WHERE ((lu.total_views <> 0) AND (lc.course_id <> '7988545480003681'::bigint));
