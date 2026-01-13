@@ -1,0 +1,11 @@
+---
+load_sequence: 3
+
+target_model: "Caiasoft::RetrievalInfo"
+target_adapter: "csv"
+
+column_mappings:
+  "barcode": barcode
+  "collection": collection
+  "retrieval date": retrieval_date
+  "retrieval type": retrieval_type

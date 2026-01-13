@@ -1,0 +1,11 @@
+---
+load_sequence: 1
+
+target_model: "Caiasoft::CircStopOut"
+target_adapter: "csv"
+
+column_mappings:
+  "barcode": barcode
+  "circulation stop": circulation_stop
+  "retrieval date": retrieval_date
+  "days outstanding": days_outstanding

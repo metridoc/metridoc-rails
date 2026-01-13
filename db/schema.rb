@@ -415,7 +415,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
   end
 
-  create_table "caiasoft_accessioninfo", force: :cascade do |t|
+  create_table "caiasoft_accession_info", force: :cascade do |t|
     t.string "barcode"
     t.string "collection"
     t.string "material"
@@ -427,11 +427,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.string "pid"
     t.datetime "accession_date"
     t.string "accession_type"
+    t.string "fiscal_year"
+    t.string "accession_date_month"
+    t.string "accession_date_year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "caiasoft_circstoplist", force: :cascade do |t|
+  create_table "caiasoft_circ_stop_list", force: :cascade do |t|
     t.string "stop_code"
     t.string "stop_name"
     t.string "stop_location"
@@ -444,7 +447,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "caiasoft_circstopout", force: :cascade do |t|
+  create_table "caiasoft_circ_stop_out", force: :cascade do |t|
     t.string "barcode"
     t.string "circulation_stop"
     t.datetime "retrieval_date"
@@ -458,7 +461,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.string "item_collection"
     t.string "job_type"
     t.string "circulation_stop"
-    t.string "circulation_location"
+    t.string "stop_location"
     t.string "job"
     t.datetime "retrieval_date"
     t.integer "page_count"
@@ -468,23 +471,32 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_14_162724) do
     t.string "request_id"
     t.string "item_title"
     t.string "item_call_number"
+    t.string "retrieval_date_month"
+    t.string "retrieval_date_year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "caiasoft_deaccessioninfo", force: :cascade do |t|
+  create_table "caiasoft_deaccession_info", force: :cascade do |t|
     t.string "barcode"
     t.string "collection"
+    t.string "requestor"
+    t.string "request_id"
     t.string "item_id"
     t.string "bib_id"
     t.string "pid"
+    t.string "job"
     t.datetime "deaccession_date"
     t.string "deaccession_type"
+    t.string "status_update"
+    t.string "fiscal_year"
+    t.string "deaccession_date_month"
+    t.string "deaccession_date_year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "caiasoft_retrievalinfo", force: :cascade do |t|
+  create_table "caiasoft_retrieval_info", force: :cascade do |t|
     t.string "barcode"
     t.string "collection"
     t.datetime "retrieval_date"

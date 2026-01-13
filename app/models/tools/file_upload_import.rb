@@ -36,7 +36,13 @@ class Tools::FileUploadImport < ApplicationRecord
     LibraryStaff::Census,
     Springshare::Libanswers::Queue,
     Springshare::Libanswers::Ticket,
-    Springshare::Libchat::Chat
+    Springshare::Libchat::Chat,
+    Caiasoft::AccessionInfo,
+    Caiasoft::CircStopList,
+    Caiasoft::CircStopOut,
+    Caiasoft::CirculationMetric,
+    Caiasoft::DeaccessionInfo,
+    Caiasoft::RetrievalInfo
   ]
 
   validates :target_model, presence: true

@@ -1,0 +1,21 @@
+---
+load_sequence: 6
+
+target_model: "Caiasoft::AccessionInfo"
+target_adapter: "csv"
+
+column_mappings:
+  "barcode": barcode
+  "collection": collection
+  "material": material
+  "title": title
+  "volume": volume
+  "call number": call_number
+  "item id": item_id
+  "bib record nbr": bib_id
+  "pid": pid
+  "accession date": accession_date
+  "accession type": accession_type
+  "fiscal_year": fiscal_year
+  "accession date_month": accession_date_month
+  "accession date_year": accession_date_year

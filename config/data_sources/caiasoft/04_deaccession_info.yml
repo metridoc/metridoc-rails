@@ -1,0 +1,21 @@
+---
+load_sequence: 4
+
+target_model: "Caiasoft::DeaccessionInfo"
+target_adapter: "csv"
+
+column_mappings:
+  "barcode": barcode
+  "collection": collection
+  "requestor": requestor
+  "request id": request_id
+  "item id": item_id
+  "bib record nbr": bib_id
+  "pid": pid
+  "deaccession job": job
+  "deaccession date": deaccession_date
+  "deaccession type": deaccession_type
+  "status update": status_update
+  "fiscal_year": fiscal_year
+  "deaccession date_month": deaccession_date_month
+  "deaccession date_year": deaccession_date_year

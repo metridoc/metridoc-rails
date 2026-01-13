@@ -5,7 +5,7 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.string :item_collection
       t.string :job_type
       t.string :circulation_stop
-      t.string :circulation_location
+      t.string :stop_location
       t.string :job
       t.datetime :retrieval_date
       t.integer :page_count
@@ -15,11 +15,13 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.string :request_id
       t.string :item_title
       t.string :item_call_number
+      t.string :retrieval_date_month
+      t.string :retrieval_date_year
 
       t.timestamps
     end
 
-    create_table :caiasoft_retrievalinfo do |t|
+    create_table :caiasoft_retrieval_info do |t|
       t.string :barcode
       t.string :collection
       t.datetime :retrieval_date
@@ -28,19 +30,26 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    create_table :caiasoft_deaccessioninfo do |t|
+    create_table :caiasoft_deaccession_info do |t|
       t.string :barcode
       t.string :collection
+      t.string :requestor
+      t.string :request_id
       t.string :item_id
       t.string :bib_id
       t.string :pid
+      t.string :job
       t.datetime :deaccession_date
       t.string :deaccession_type
+      t.string :status_update
+      t.string :fiscal_year
+      t.string :deaccession_date_month
+      t.string :deaccession_date_year
 
       t.timestamps
     end
 
-    create_table :caiasoft_circstopout do |t|
+    create_table :caiasoft_circ_stop_out do |t|
       t.string :barcode
       t.string :circulation_stop
       t.datetime :retrieval_date
@@ -49,7 +58,7 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    create_table :caiasoft_circstoplist do |t|
+    create_table :caiasoft_circ_stop_list do |t|
       t.string :stop_code
       t.string :stop_name
       t.string :stop_location
@@ -62,7 +71,7 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.timestamps
     end
 
-    create_table :caiasoft_accessioninfo do |t|
+    create_table :caiasoft_accession_info do |t|
       t.string :barcode
       t.string :collection
       t.string :material
@@ -74,6 +83,9 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.string :pid
       t.datetime :accession_date
       t.string :accession_type
+      t.string :fiscal_year
+      t.string :accession_date_month
+      t.string :accession_date_year
 
       t.timestamps
     end

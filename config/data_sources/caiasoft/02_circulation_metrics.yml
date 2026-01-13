@@ -1,0 +1,23 @@
+---
+load_sequence: 2
+
+target_model: "Caiasoft::CirculationMetrics"
+target_adapter: "csv"
+
+column_mappings:
+  "Item Retrived": item_retrieved
+  "Item Collection": item_collection
+  "Job Type": job_type
+  "Circulation Stop": circulation_stop
+  "Stop Location": stop_location
+  "Job": job
+  "Retrieval Date": retrieval_date
+  "Page Count": page_count
+  "Requestor": requestor
+  "Details": details
+  "API Feed": api_feed
+  "Request ID/TN": request_id
+  "Item Title": item_title
+  "Item Call Number": item_call_number
+  "Retrieval Date Month": retrieval_date_month
+  "Retrieval Date Year": retrieval_date_year

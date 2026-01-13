@@ -1,0 +1,15 @@
+---
+load_sequence: 5
+
+target_model: "Caiasoft::CircStopList"
+target_adapter: "csv"
+
+column_mappings:
+  "stop_code": stop_code
+  "stop_name": stop_name
+  "stop_location": stop_location
+  "stop_status": stop_status
+  "delivery_pyr": delivery_pyr
+  "delivery_ert": delivery_ert
+  "delivery_rrr": delivery_rrr
+  "delivery_shp": delivery_shp
