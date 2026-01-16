@@ -12,6 +12,12 @@ class Tools::FileUploadImport < ApplicationRecord
   after_commit :queue_process
 
   UPLOADABLE_MODELS = [
+    Caiasoft::AccessionInfo,
+    Caiasoft::CircStopList,
+    Caiasoft::CircStopOut,
+    Caiasoft::CirculationMetric,
+    Caiasoft::DeaccessionInfo,
+    Caiasoft::RetrievalInfo,
     GateCount::CardSwipe,
     GeoData::CountryCode,
     Ipeds::Completion,

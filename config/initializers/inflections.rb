@@ -58,4 +58,28 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "Usage"
   inflect.uncountable "usage"
   inflect.uncountable "cr_leganto_usage"
+
+  # Caiasoft
+  inflect.uncountable "CaiasoftAccessionInfo"
+  inflect.uncountable "caiasoft_accession_info"
+  inflect.uncountable "accession_info"
+  inflect.uncountable "AccessionInfo"
+  inflect.uncountable "accessioninfo"
+  inflect.uncountable "caiasoft_circ_stop_list"
+  inflect.uncountable "circ_stop_list"
+  inflect.uncountable "CircStopList"
+  inflect.uncountable "circstoplist"
+  inflect.uncountable "caiasoft_circ_stop_out"
+  inflect.uncountable "circ_stop_out"
+  inflect.uncountable "CircStopOut"
+  inflect.uncountable "circstopout"
+  inflect.uncountable "caiasoft_deaccession_info"
+  inflect.uncountable "deaccession_info"
+  inflect.uncountable "DeaccessionInfo"
+  inflect.uncountable "deaccessioninfo"
+  inflect.uncountable "caiasoft_retrieval_info"
+  inflect.uncountable "retrieval_info"
+  inflect.uncountable "RetrievalInfo"
+  inflect.uncountable "retrievalinfo"
+
 end
