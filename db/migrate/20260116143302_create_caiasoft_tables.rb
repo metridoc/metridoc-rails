@@ -58,19 +58,6 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.timestamps
     end
     
-    create_table :caiasoft_circ_stop_list do |t|
-      t.string :stop_code
-      t.string :stop_name
-      t.string :stop_location
-      t.string :stop_status
-      t.string :delivery_pyr
-      t.string :delivery_ert
-      t.string :delivery_rrr
-      t.string :delivery_shp
-      
-      t.timestamps
-    end
-    
     create_table :caiasoft_accession_info do |t|
       t.string :barcode
       t.string :collection

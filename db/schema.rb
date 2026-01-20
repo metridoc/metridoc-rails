@@ -435,19 +435,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_16_143302) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "caiasoft_circ_stop_list", force: :cascade do |t|
-    t.string "stop_code"
-    t.string "stop_name"
-    t.string "stop_location"
-    t.string "stop_status"
-    t.string "delivery_pyr"
-    t.string "delivery_ert"
-    t.string "delivery_rrr"
-    t.string "delivery_shp"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "caiasoft_circ_stop_out", force: :cascade do |t|
     t.string "barcode"
     t.string "circulation_stop"
