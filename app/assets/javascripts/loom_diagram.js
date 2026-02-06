@@ -1,7 +1,3 @@
-// Define the number formatting
-const formatNumber = d3.format(",.0f");
-const formatPercent = d3.format(".1f");
-
 function loomLayout(layoutData) {
   // Constants needed for the Loom Layout
   let padding = 0.02; // The padding between arcs
@@ -9,10 +5,7 @@ function loomLayout(layoutData) {
   let heightInner = 20; // The height of the words
 
   // Nest the data on the outer variable
-  const outerData = d3
-    .nest()
-    .key((d) => d.outer)
-    .entries(layoutData);
+  const outerData = Array.from(d3.group(layoutData, (d) => d.outer));
   // The number of outer group entries
   const n = outerData.length;
 
@@ -27,16 +20,18 @@ function loomLayout(layoutData) {
   const effectiveTotal = total / (1 - totalPaddingFraction);
 
   // Sorted group of inner data
-  let innerGroups = d3
-    .nest()
-    .key((d) => d.inner)
-    .entries(layoutData) // Creates a nested object of inner name and values of other variables
-    .map((d) => [d.key, d3.sum(d.values, (e) => e.value)]) // Maps the inner name to the sum of values
+  let innerGroups = Array.from(
+    d3.rollup(
+      layoutData,
+      (v) => d3.sum(v, (d) => d.value),
+      (d) => d.inner,
+    ),
+  ) // Creates a nested object of inner name and values of other variables
     .sort((a, b) => b[1] - a[1]) // Sort in descending order
     .map((d, i, arr) => ({
       innerName: d[0],
       innerTotal: d[1],
-      innerTotalFormat: formatNumber(d[1]),
+      innerTotalFormat: d3.format(",.0f")(d[1]),
       subGroupIndex: i,
       total: total, // The total of all events
       x: 0, // Text located in the center of the image
@@ -54,8 +49,13 @@ function loomLayout(layoutData) {
   let rightTotal = 0;
 
   // Grouping of outer data
-  let outerGroups = outerData
-    .map((d) => [d.key, d3.sum(d.values, (e) => e.value)])
+  let outerGroups = Array.from(
+    d3.rollup(
+      layoutData,
+      (v) => d3.sum(v, (d) => d.value),
+      (d) => d.outer,
+    ),
+  )
     .sort((a, b) => b[1] - a[1])
     .map((d, i) => {
       // Calculate the starting and ending angle of the group
@@ -82,10 +82,10 @@ function loomLayout(layoutData) {
       return {
         outerName: d[0],
         groupTotal: d[1],
-        groupTotalFormat: formatNumber(d[1]),
+        groupTotalFormat: d3.format(",.0f")(d[1]),
         groupIndex: i,
         groupFraction: d[1] / total,
-        groupPercent: formatPercent((d[1] / total) * 100),
+        groupPercent: d3.format(".1f")((d[1] / total) * 100),
         groupStartAngle: startAngle,
         groupEndAngle: endAngle,
         total: total, // The total of all events
@@ -106,11 +106,13 @@ function loomLayout(layoutData) {
     outerData.subGroupFraction = d.value / outerData.groupTotal;
 
     // Prepare outer group formatting for display
-    outerData.subGroupTotal = formatNumber(d.value);
-    outerData.subGroupPercent = formatPercent(outerData.subGroupFraction * 100);
+    outerData.subGroupTotal = d3.format(",.0f")(d.value);
+    outerData.subGroupPercent = d3.format(".1f")(
+      outerData.subGroupFraction * 100,
+    );
 
     // Prepare inner group formatting for display
-    innerData.innerPercent = formatPercent(
+    innerData.innerPercent = d3.format(".1f")(
       (d.value / innerData.innerTotal) * 100,
     );
 
@@ -418,7 +420,7 @@ loomDiagram = function (data, uid) {
       subGroupTotal: d.outer.subGroupTotal,
       outerPercent: d.outer.subGroupPercent,
       innerPercent: d.inner.innerPercent,
-      totalPercent: formatPercent((d.outer.value / d.outer.total) * 100),
+      totalPercent: d3.format(".1f")((d.outer.value / d.outer.total) * 100),
     };
   });
 
@@ -500,7 +502,9 @@ loomDiagram = function (data, uid) {
         description
           .append("tspan")
           .attr("x", 0)
-          .text(formatPercent((data.innerTotal / total) * 100) + "% of Total")
+          .text(
+            d3.format(".1f")((data.innerTotal / total) * 100) + "% of Total",
+          )
           .attr("font-weight", 700)
           .style("visibility", "visible");
         description
@@ -723,24 +727,14 @@ loomDiagram = function (data, uid) {
           .append("tspan")
           .attr("x", 0)
           .attr("dy", "1.45" + "em")
-          .text(
-            data.innerPercent +
-              "% of " +
-              data.innerName +
-              " events",
-          )
+          .text(data.innerPercent + "% of " + data.innerName + " events")
           .attr("font-weight", 300)
           .style("visibility", "visible");
         description
           .append("tspan")
           .attr("x", 0)
           .attr("dy", "1.45" + "em")
-          .text(
-            data.outerPercent +
-              "% of " +
-              data.outerName +
-              " events",
-          )
+          .text(data.outerPercent + "% of " + data.outerName + " events")
           .attr("font-weight", 300)
           .style("visibility", "visible");
       } else {
