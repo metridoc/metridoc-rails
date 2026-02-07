@@ -44,22 +44,12 @@ gem 'scenic'
 # for Ruby/Rack applications.
 gem 'puma', '~> 6.4'
 
-# Rack provides a minimal, modular and adaptable interface for developing web
-# applications in Ruby. By wrapping HTTP requests and responses in the simplest
-# way possible, it unifies and distills the API for web servers, web frameworks,
-# and software in between (the so-called middleware) into a single method call.
-gem 'rack', '>=3.1.5'
-
 ###########
 # Mail
 ###########
 
 # A really Ruby Mail handler.
 gem 'mail'
-
-# HTTP client api for Ruby.
-# Required by mail to handle net-protocol errors
-gem 'net-http'
 
 ###########
 # Display
@@ -86,12 +76,6 @@ gem "sassc"
 
 # An elegant, structured (X)HTML/XML templating engine.
 gem 'haml'
-
-# Nokogiri makes it easy and painless to work with XML and HTML from Ruby.
-# It provides a sensible, easy-to-understand API for reading, writing,
-# modifying, and querying documents. It is fast and standards-compliant by
-# relying on native parsers like libxml2, libgumbo, or xerces.
-gem 'nokogiri', '>= 1.16.5'
 
 ##############
 # ActiveRecord
@@ -215,9 +199,6 @@ group :development, :test do
   # Capybara is an integration testing tool for rack based web applications.
   # It simulates how a user would interact with a website
   gem 'capybara', '~> 3.39', '>= 3.39.2'
-
-  # Dependancy of Selenium webdriver
-  gem 'rexml', ">= 3.2.7"
 
   # Selenium implements the W3C WebDriver protocol to automate popular browsers.
   # It aims to mimic the behaviour of a real user as it interacts with the
