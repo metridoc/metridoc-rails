@@ -41,6 +41,7 @@ class Tools::FileUploadImport < ApplicationRecord
   ]
 
   validates :target_model, presence: true
+  # Validation via active_storage_validations
   validates :uploaded_file, attached: true
 
   def process
