@@ -266,8 +266,6 @@ GEM
       net-imap
       net-pop
       net-smtp
-    makara (0.5.1)
-      activerecord (>= 5.2.0)
     marcel (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
@@ -544,7 +542,6 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 4.0)
   mail
-  makara (~> 0.5.1)
   mysql2
   net-sftp
   oauth2 (~> 2.0)

@@ -68,13 +68,6 @@ gem 'haml'
 # ActiveRecord
 ##############
 
-# Makara is generic primary/replica proxy. It handles the heavy lifting of
-# managing, choosing, blacklisting, and cycling through connections. It comes
-# with an ActiveRecord database adapter implementation.
-# Last updated 2021
-# Potentially replace with : https://github.com/Nasdaq/active_record_proxy_adapters
-gem 'makara', '~> 0.5.1'
-
 # A library for bulk inserting data using ActiveRecord.
 gem 'activerecord-import'
 
