@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_16_143302) do
+ActiveRecord::Schema[7.1].define(version: 2026_02_02_151322) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -2321,6 +2321,58 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_16_143302) do
     t.boolean "upload_record", default: true
     t.datetime "uploaded_at"
     t.string "filename"
+  end
+
+  create_table "ss_libwizard_etlms", force: :cascade do |t|
+    t.string "response_id"
+    t.datetime "submitted", precision: nil
+    t.string "consultation_or_instruction"
+    t.string "strategic_priority"
+    t.string "staff_pennkey"
+    t.string "additional_staff_pennkey"
+    t.date "event_date"
+    t.date "requested_event_date"
+    t.string "mode_of_consultation"
+    t.string "service_provided"
+    t.string "workshop_title"
+    t.string "career_advancement"
+    t.string "status"
+    t.boolean "workshop_agreement"
+    t.string "equipment_type"
+    t.string "equipment_used"
+    t.string "workshop_budget"
+    t.string "workshop_cost"
+    t.string "outcome"
+    t.integer "number_of_registrations"
+    t.integer "total_attendance"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "efficiency"
+    t.integer "effectiveness"
+    t.integer "communication"
+    t.integer "engagement"
+    t.integer "support"
+    t.string "patron_type"
+    t.boolean "first_visit"
+    t.string "referral"
+    t.boolean "is_staff"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "patron_name"
+    t.string "patron_email"
+    t.string "school_affiliation"
+    t.string "graduation_year"
+    t.string "academic_department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "patron_question"
+    t.text "session_description"
+    t.text "notes"
+    t.datetime "downloaded_at"
+    t.index ["response_id"], name: "index_ss_libwizard_etlms_on_response_id", unique: true
   end
 
   create_table "upenn_academic_calendars", force: :cascade do |t|

@@ -1,0 +1,78 @@
+---
+load_sequence: 2
+
+target_model: "Springshare::Libwizard::Etlm"
+target_adapter: "csv"
+
+export_file_name: "springshare_libwizard_etlm.csv"
+
+# Flag for the Springshare API
+source_adapter: "springshare"
+report_path: "https://upenn.libwizard.com/api/v1/public/submissions/171453"
+
+# API columns to MetriDoc column mapping
+column_mappings:
+  instanceId: response_id
+  created: submitted
+  5168086: consultation_or_instruction
+  5311422: strategic_priority
+  5168087: staff_pennkey
+  5179878: additional_staff_pennkey
+
+  5168089: event_date
+  5179404: requested_event_date
+
+  5168097: mode_of_consultation
+  5168100: service_provided
+  5179407: equipment_type
+  5181193: equipment_used
+  5181187: workshop_budget
+  5181189: workshop_cost
+  5168101: outcome
+
+  5168118: number_of_registrations
+  5168093: total_attendance
+  5168091: location
+  5168112: event_length
+  5168090: prep_time
+
+  5181198: efficiency
+  5181203: effectiveness
+  5181205: communication
+  5181208: engagement
+  5181213: support
+
+  5179925: workshop_title
+  5459053: career_advancement
+  5513161: status
+  5227519: workshop_agreement
+
+  5168098: patron_type
+  5179927: is_staff
+  5168109: undergraduate_student_type
+  5168110: graduate_student_type
+  5179614: patron_name
+  5179615: patron_email
+  5168088: school_affiliation
+  5459033: graduation_year
+
+  5459034: first_visit
+  5459052: referral
+
+  5168111: academic_department
+  5168096: faculty_sponsor
+  5168102: course_sponsor
+  5168094: course_name
+  5168095: course_number
+  5168104: patron_question
+  5168105: session_description
+  5168106: notes
+
+# Unique on the response id
+unique_keys: ["response_id"]
+upsert: true
+
+# Incremental filter column name
+incremental_filter_column: "submitted"
+# Timestamp of download for record
+download_timestamp: "downloaded_at"
