@@ -19,15 +19,9 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.string :retrieval_date_year
       
       t.timestamps
-    end
-    
-    create_table :caiasoft_retrieval_info do |t|
-      t.string :barcode
-      t.string :collection
-      t.datetime :retrieval_date
-      t.string :retrieval_type
-      
-      t.timestamps
+
+      t.index [:item_retrieved, :request_id, :job], unique: true, name: 'caiasoft_circulation_metrics_unique'
+
     end
     
     create_table :caiasoft_deaccession_info do |t|
@@ -47,15 +41,8 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.string :deaccession_date_year
       
       t.timestamps
-    end
-    
-    create_table :caiasoft_circ_stop_out do |t|
-      t.string :barcode
-      t.string :circulation_stop
-      t.datetime :retrieval_date
-      t.integer :days_outstanding
-      
-      t.timestamps
+
+      t.index [:barcode, :job], unique: true, name: 'caiasoft_deaccession_info_unique'
     end
     
     create_table :caiasoft_accession_info do |t|
@@ -75,6 +62,8 @@ class CreateCaiasoftTables < ActiveRecord::Migration[7.1]
       t.string :accession_date_year
       
       t.timestamps
+
+      t.index [:barcode, :accession_date, :accession_type], unique: true, name: 'caiasoft_accession_info_unique'
     end
   end
 end

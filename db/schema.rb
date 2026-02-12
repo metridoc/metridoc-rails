@@ -433,15 +433,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_151322) do
     t.string "accession_date_year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "caiasoft_circ_stop_out", force: :cascade do |t|
-    t.string "barcode"
-    t.string "circulation_stop"
-    t.datetime "retrieval_date"
-    t.integer "days_outstanding"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.index ["barcode", "accession_date", "accession_type"], name: "caiasoft_accession_info_unique", unique: true
   end
 
   create_table "caiasoft_circulation_metrics", force: :cascade do |t|
@@ -463,6 +455,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_151322) do
     t.string "retrieval_date_year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["item_retrieved", "request_id", "job"], name: "caiasoft_circulation_metrics_unique", unique: true
   end
 
   create_table "caiasoft_deaccession_info", force: :cascade do |t|
@@ -482,15 +475,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_151322) do
     t.string "deaccession_date_year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "caiasoft_retrieval_info", force: :cascade do |t|
-    t.string "barcode"
-    t.string "collection"
-    t.datetime "retrieval_date"
-    t.string "retrieval_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.index ["barcode", "job"], name: "caiasoft_deaccession_info_unique", unique: true
   end
 
   create_table "cr_ares_course_users", force: :cascade do |t|
