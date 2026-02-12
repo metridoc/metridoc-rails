@@ -72,6 +72,8 @@ en:
       alma_menu: "Alma Circulations"
     ares:
       ares_menu: "Ares"
+    caiasoft:
+      caiasoft_menu: "CaiaSoft Data"
     course_reserves:
         course_reserves_menu: "Course Reserves"
     borrowdirect:
@@ -145,6 +147,7 @@ en:
     user_role_sections:
       alma: "Alma Circulation"
       borrowdirect: "RSAT: BorrowDirect"
+      caiasoft: "CaiaSoft Data"
       coursereserves: "Course Reserves"
       ezborrow: "RSAT: PALCI"
       ezproxy: "EZProxy Logs"
@@ -217,6 +220,15 @@ en:
       security/user_role_section:
         one: "User Role Section"
         other: "User Role Sections"
+      caiasoft/accession_info:
+        one: "CaiaSoft Accession Info"
+        other: "CaiaSoft Accession Info"
+      caiasoft/circulation_metric:
+        one: "CaiaSoft Circulation Metric"
+        other: "CaiaSoft Circulation Metrics"
+      caiasoft/deaccession_info:
+        one: "CaiaSoft Deaccession Info"
+        other: "CaiaSoft Deaccession Info"
       consultation/interaction:
         one: "Consultation and Instruction Interaction"
         other: "Consultation and Instruction Interactions"

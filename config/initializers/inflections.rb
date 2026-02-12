@@ -58,4 +58,16 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "Usage"
   inflect.uncountable "usage"
   inflect.uncountable "cr_leganto_usage"
+
+  # Caiasoft
+  inflect.uncountable "CaiasoftAccessionInfo"
+  inflect.uncountable "caiasoft_accession_info"
+  inflect.uncountable "accession_info"
+  inflect.uncountable "AccessionInfo"
+  inflect.uncountable "accessioninfo"
+  inflect.uncountable "caiasoft_deaccession_info"
+  inflect.uncountable "deaccession_info"
+  inflect.uncountable "DeaccessionInfo"
+  inflect.uncountable "deaccessioninfo"
+
 end
