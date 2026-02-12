@@ -7,6 +7,7 @@ class Security::UserRole < ApplicationRecord
   MANAGED_SECTIONS = [  
     "Alma",
     "Borrowdirect",
+    "Caiasoft",
     "CourseReserves",
     "EzBorrow",
     "Ezproxy",
