@@ -13,11 +13,8 @@ class Tools::FileUploadImport < ApplicationRecord
 
   UPLOADABLE_MODELS = [
     Caiasoft::AccessionInfo,
-    Caiasoft::CircStopList,
-    Caiasoft::CircStopOut,
     Caiasoft::CirculationMetric,
     Caiasoft::DeaccessionInfo,
-    Caiasoft::RetrievalInfo,
     GateCount::CardSwipe,
     GeoData::CountryCode,
     Ipeds::Completion,
