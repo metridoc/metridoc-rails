@@ -1,774 +1,666 @@
-function loomLayout(layoutData) {
-  // Constants needed for the Loom Layout
-  let padding = 0.02; // The padding between arcs
-  let emptyPerc = 0.2; // The extra padding needed at the top and bottom.
-  let heightInner = 20; // The height of the words
-
-  // Nest the data on the outer variable
-  const outerData = Array.from(d3.group(layoutData, (d) => d.outer));
-  // The number of outer group entries
-  const n = outerData.length;
-
-  // The total count of events
-  const total = d3.sum(layoutData.map((d) => d.value));
-
-  // emptyPerc gives the fraction of the pie that is in empty wedges
-  // padding gives the spacing between groups
-  const totalPaddingFraction = emptyPerc + (padding * (n - 2)) / (2 * Math.PI);
-
-  // Calculate the effective total which includes all padding
-  const effectiveTotal = total / (1 - totalPaddingFraction);
-
-  // Sorted group of inner data
-  let innerGroups = Array.from(
-    d3.rollup(
-      layoutData,
-      (v) => d3.sum(v, (d) => d.value),
-      (d) => d.inner,
-    ),
-  ) // Creates a nested object of inner name and values of other variables
-    .sort((a, b) => b[1] - a[1]) // Sort in descending order
-    .map((d, i, arr) => ({
-      innerName: d[0],
-      innerTotal: d[1],
-      innerTotalFormat: d3.format(",.0f")(d[1]),
-      subGroupIndex: i,
-      total: total, // The total of all events
-      x: 0, // Text located in the center of the image
-      y: (-1 * arr.length * heightInner) / 2 + i * heightInner, // Text placement in y
-    })); // Map to the output object
-
-  // Define the left and right start angles
-  // Imagining 0 is the vertical center and everything is evenly split down the sides
-  let startAngleRight = (emptyPerc / 4) * (2 * Math.PI);
-  let startAngleLeft = -1 * startAngleRight;
-
-  // Define the total for the left and right sides
-  // Use a greedy algorithm to separate the set into left and right sides.
-  let leftTotal = 0;
-  let rightTotal = 0;
-
-  // Grouping of outer data
-  let outerGroups = Array.from(
-    d3.rollup(
-      layoutData,
-      (v) => d3.sum(v, (d) => d.value),
-      (d) => d.outer,
-    ),
-  )
-    .sort((a, b) => b[1] - a[1])
-    .map((d, i) => {
-      // Calculate the starting and ending angle of the group
-      let startAngle, endAngle;
-      if (leftTotal > rightTotal) {
-        startAngle = startAngleRight;
-        endAngle = startAngle + (d[1] / effectiveTotal) * (2 * Math.PI);
-        // Calculate the next starting angle on the RHS
-        startAngleRight = endAngle + padding;
-
-        // Increment the Right Total for greedy algorithm
-        rightTotal += d[1];
-      } else {
-        startAngle = startAngleLeft;
-        endAngle = startAngle - (d[1] / effectiveTotal) * (2 * Math.PI);
-        // Calculate the next starting angle on the LHS
-        startAngleLeft = endAngle - padding;
-
-        // Increment the Left Total for greedy algorithm
-        leftTotal += d[1];
-      }
-
-      // Return a object with information about the group
-      return {
-        outerName: d[0],
-        groupTotal: d[1],
-        groupTotalFormat: d3.format(",.0f")(d[1]),
-        groupIndex: i,
-        groupFraction: d[1] / total,
-        groupPercent: d3.format(".1f")((d[1] / total) * 100),
-        groupStartAngle: startAngle,
-        groupEndAngle: endAngle,
-        total: total, // The total of all events
-      };
-    });
-
-  // Map the input data to the loom structure
-  let stringLayout = layoutData.map(function (d) {
-    // Search outer groups and inner groups to find elements matching the data
-    let outerData = outerGroups.find((e) => e.outerName == d.outer);
-    let innerData = innerGroups.find((e) => e.innerName == d.inner);
-
-    // Get the inner group index
-    outerData.subGroupIndex = innerData.subGroupIndex;
-
-    // Get the value of the string and the fraction of the subGroup
-    outerData.value = d.value;
-    outerData.subGroupFraction = d.value / outerData.groupTotal;
-
-    // Prepare outer group formatting for display
-    outerData.subGroupTotal = d3.format(",.0f")(d.value);
-    outerData.subGroupPercent = d3.format(".1f")(
-      outerData.subGroupFraction * 100,
-    );
-
-    // Prepare inner group formatting for display
-    innerData.innerPercent = d3.format(".1f")(
-      (d.value / innerData.innerTotal) * 100,
-    );
-
-    // This calculation is to figure out the angles of the subgroups
-
-    // Get the list of previous subgroups used in the group
-    let largerSubGroups = innerGroups
-      .filter((e) => e.subGroupIndex < innerData.subGroupIndex)
-      .map((e) => e.innerName);
-
-    // Find the fraction of subGroups seen previously
-    let previousSubGroups = layoutData
-      .filter((e) => (e.outer == d.outer) & largerSubGroups.includes(e.inner))
-      .map((e) => e.value / outerData.groupTotal)
-      .reduce((acc, e) => acc + e, 0);
-
-    // Calculate the start and end angle of the subgroup
-    outerData.subGroupStartAngle =
-      outerData.groupStartAngle +
-      (outerData.groupEndAngle - outerData.groupStartAngle) * previousSubGroups;
-
-    outerData.subGroupEndAngle =
-      outerData.subGroupStartAngle +
-      (outerData.groupEndAngle - outerData.groupStartAngle) *
-        outerData.subGroupFraction;
-
-    return {
-      inner: Object.assign({}, innerData),
-      outer: Object.assign({}, outerData),
-    };
-  });
-
-  return {
-    outerGroups: outerGroups,
-    innerGroups: innerGroups,
-    strings: stringLayout,
-  };
-} // End Loom Layout Function
-
-loomDiagram = function (data, uid) {
+loomDiagram = function(data, uid) {
   ////////////////////////////////////////////////////////////
   //////////////////////// Set-up ////////////////////////////
   ////////////////////////////////////////////////////////////
   // Figure out the screen width
-  let screenWidth = window.innerWidth,
-    mobileScreen = screenWidth > 400 ? false : true;
-
-  ///////////////////////////////////////////////////////////
-  ////////////////////// Create SVG //////////////////////////
-  ////////////////////////////////////////////////////////////
+  var screenWidth = $(window).width(),
+      mobileScreen = (screenWidth > 400 ? false : true);
 
   // Calculate the margins around the svg
-  let margin = { left: 50, top: 10, right: 50, bottom: 10 },
-    width = Math.min(screenWidth, 1000) - margin.left - margin.right,
-    height =
-      (mobileScreen ? 300 : (Math.min(screenWidth, 1000) * 5) / 6) -
-      margin.top -
-      margin.bottom;
+  var margin = {left: 50, top: 10, right: 50, bottom: 10},
+      width = Math.min(screenWidth, 1000) - margin.left - margin.right,
+      height = Math.min(screenWidth, 1000) * 5/6 - margin.top - margin.bottom;
 
   // Create an svg to display
-  let svg = d3
-    .select("#" + uid)
-    .append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom);
+  var svg = d3.select("#" + uid).append("svg")
+      .attr("width", (width + margin.left + margin.right))
+      .attr("height", (height + margin.top + margin.bottom));
+
+  // Set default variables
+  var outerRadius = Math.min(width, height) / 2  - 100,
+      innerRadius = outerRadius * 0.95, // size of the ending arcs
+      pullOutSize = 75, // the number of pixels of separation
+      padding = 0.01, // padding between arcs
+      opacityDefault = 0.7, //default opacity of strings
+      opacityHigh = 1.0, // default opacity of the strings hovered over
+      opacityLow = 0.1; //hover opacity of those strings not hovered over
+
+  // Define the number formatting
+  var formatNumber = d3.format(",.0f");
+  var formatPercent = d3.format(".2f");
 
   ////////////////////////////////////////////////////////////
   /////////////////// Set-up Loom parameters /////////////////
   ////////////////////////////////////////////////////////////
 
-  // Set default variables
-  let outerRadius = Math.min(width, height) / 2 - (mobileScreen ? 80 : 100),
-    innerRadius = outerRadius * 0.95, // size of the ending arcs
-    pullOutSize = mobileScreen ? 20 : 80, // the number of pixels of separation
-    opacityDefault = 0.7, //default opacity of strings
-    opacityHigh = 1.0, // default opacity of the strings hovered over
-    opacityLow = 0.1; //hover opacity of those strings not hovered over
+  // Group by A and B categories
+  const groupA = loomGroupBy(data, "A", "value")
+  const groupB = loomGroupBy(data, "B", "value")
 
-  // Format the loom data for further use
-  let loom = loomLayout(data);
+  // Sort groupA in descending order
+  const sortedA = sortDesc(groupA);
+  // Sort groupB into two equal groups with each side descending
+  const sortedB = evenSort(sortDesc(groupB), groupB);
+  // Get the sorted B counts for the group sorting
+  const sortedBValues = sortedB.map(a => groupB[a])
+
+  // Calculate the total number of events
+  const totalEvents = Object.values(groupA).reduce(
+     (previous, current) => previous + current,
+     0
+  )
+
+  // Sort by the order of A
+  function sortByA(a, b) {return sortedA.indexOf(a) - sortedA.indexOf(b); }
+
+  // Sort by the order of B, but with the counts instead of the names
+  function sortByB(a, b) {
+    return sortedBValues.indexOf(a) - sortedBValues.indexOf(b);
+  }
+
+  // Find the width of the longest word on the inner set
+  var maxWordLength = Math.max(...sortedA.map(d => d.length));
+
+  //Scale to convert from string length to pixels
+  // Done by trial and error
+  var wordScale = d3.scaleLinear()
+      .domain([1, 10])
+      .range([5, 50]);
+
+  //Initiate the loom function with all the options
+  var loom = d3.loom()
+    .sortGroups(sortByB)
+    .sortSubgroups(sortByA)
+    .padAngle(0.05)
+    .heightInner(20)
+    .emptyPerc(0.2)
+    .widthInner(wordScale(maxWordLength))
+    .value(d => d.value)
+    .inner(d => d.A)
+    .outer(d => d.B);
+
+  //Initiate the inner string function that belongs to the loom
+  var string = d3.string()
+      .radius(innerRadius)
+      .pullout(pullOutSize);
+
+  //Initiate an arc drawing function that is also needed
+  var arc = d3.arc()
+      .innerRadius(innerRadius*1.01)
+      .outerRadius(outerRadius);
+
+
+  ////////////////////////////////////////////////////////////
+  ///////////////////// Read in data /////////////////////////
+  ////////////////////////////////////////////////////////////
+
+  //Create a group that already holds the data
+  var g = svg.append("g")
+      .attr("transform", "translate(" + (width/2 + margin.left) + "," + (height/2 + margin.top) + ")")
+      .datum(loom(data));
+
+  ////////////////////////////////////////////////////////////
+  /////////////// Setup Description Text /////////////////////
+  ////////////////////////////////////////////////////////////
+
+
+  // Put the total number of events above the loom diagram
+  svg.append("text")
+    .attr("class", "total")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height / 8 + margin.top)
+    .attr("text-anchor", "middle")
+    .style("textAlign", "center")
+    .text("Total Interactions:")
+    .style("font-size", "30px")
+    .append("tspan")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height / 8 + margin.top)
+    .attr("dy", "1.1em")
+    .attr("text-anchor", "middle")
+    .style("textAlign", "center")
+    .text(formatNumber(totalEvents));
+
+  let lineHeight = 1.1; // ems
+  let descriptionX = width / 2 + margin.left
+  let descriptionY = height * 3 / 4 + margin.top
+  svg.append("text")
+    .attr("class", "description")
+    .attr("text-anchor", "middle")
+    .style("textAlign", "center")
+    .style("font-size", "15px")
+    .attr("x", descriptionX)
+    .attr("y", descriptionY)
+    .text("A descriptive tooltip")
+    .style("visibility", "hidden");
 
   ////////////////////////////////////////////////////////////
   ///////////////////////// Colors ///////////////////////////
   ////////////////////////////////////////////////////////////
 
-  // Colors depend on outer list of labels
-  let colors = d3.quantize(d3.interpolateRainbow, loom.outerGroups.length + 1);
-
-  ////////////////////////////////////////////////////////////
-  ///////////////// Connect data to SVG //////////////////////
-  ////////////////////////////////////////////////////////////
-
-  // Build the svg and connect to the data
-  let g = svg
-    .append("g")
-    .attr(
-      "transform",
-      "translate(" +
-        (width / 2 + margin.left) +
-        "," +
-        (height / 2 + margin.top) +
-        ")",
-    )
-    .datum(loom);
+  // Method to create n + 1 colors in a rainbow
+  // d3.interpolateRainbow(float) - function takes a float 0-1 and returns a color
+  // d3.quantize(interpolator, n) - function that returns an array of n samples from interpolator
+  colors = d3.quantize(d3.interpolateRainbow, Object.keys(groupB).length+1);
+  var color = d3.scaleOrdinal()
+    .domain(Object.keys(groupB))
+    .range(colors)
 
   ////////////////////////////////////////////////////////////
   ////////////////////// Draw outer arcs /////////////////////
   ////////////////////////////////////////////////////////////
 
-  //Initiate an arc drawing function that is also needed
-  let arc = d3
-    .arc()
-    .innerRadius(innerRadius)
-    .outerRadius(outerRadius)
-    .startAngle((d) => d.groupStartAngle)
-    .endAngle((d) => d.groupEndAngle);
+  var arcGroup = g.append("g").attr("class", "arc-outer-wrapper");
 
-  let arcGroup = g.append("g").attr("class", "arc-outer-wrapper");
-
-  //Create a group per outer arc, which will contain the arc path + the outer name & number of value text
-  let arcs = arcGroup
-    .selectAll(".arc-wrapper")
-    .data((s) => s.outerGroups)
-    .enter()
-    .append("g")
+  //Create a group per outer arc, which will contain the arc path + the location name & number of words text
+  var arcs = arcGroup.selectAll(".arc-wrapper")
+    .data(function(s) { return s.groups; })
+    .enter().append("g")
     .attr("class", "arc-wrapper")
-    .each(function (d) {
-      // Define the color for the outer group
-      d.color = colors[d.groupIndex];
-      // Define the average angle of the arc in degrees
-      d.angle = (((d.groupStartAngle + d.groupEndAngle) / 2) * 180) / Math.PI;
-      // Add a definition for the pull out size to each object
-      d.pullOutSize = pullOutSize * (d.angle > 0 ? 1 : -1);
-    })
     .on("mouseover", fadeArc(opacityLow))
-    .on("mouseout", fadeArc(opacityDefault));
+    .on("mouseout", fadeArc(opacityDefault))
+    .each(function(d) {
+      d.pullOutSize = (pullOutSize * ( d.startAngle > Math.PI + 1e-2 ? -1 : 1));
+    });
 
   //Create the actual arc paths
-  let outerArcs = arcs
-    .append("path")
+  var outerArcs = arcs.append("path")
     .attr("class", "arc")
-    .style("fill", (d) => d.color)
+    .style("fill", function(d) { return color(d.outername); })
     .style("stroke", "black")
     .attr("d", arc)
-    .attr("transform", function (d) {
-      //Pull the two slices apart
-      return "translate(" + d.pullOutSize + "," + 0 + ")";
+    .attr("transform", function(d, i) {
+      return "translate(" + d.pullOutSize + ',' + 0 + ")"; //Pull the two slices apart
     });
 
   ////////////////////////////////////////////////////////////
   //////////////////// Draw outer labels /////////////////////
   ////////////////////////////////////////////////////////////
 
-  let outerLabels = arcs
-    .append("g")
-    .attr("class", "outer-labels")
-    .attr("text-anchor", function (d) {
-      // Define which end of the text to anchor at
-      // depending on the left or right hand side
-      return d.angle < 0 ? "end" : "start";
-    })
-    .attr("transform", function (d, i) {
-      return (
-        // Pull out text in X
-        "translate(" +
-        d.pullOutSize +
-        ", 0)rotate(" +
-        // Rotate text to appropriate location
-        // 90 offset needed since chord zero is vertical and svg zero is horizontal
-        (d.angle - 90) +
-        ")" +
-        // Move the text outside the circle of arcs
-        "translate(" +
-        1.05 * outerRadius +
-        ", 0)" +
-        // Flip the text depending on left or right hand side
-        (d.angle < 0 ? "rotate(180)" : "")
-      );
-    });
+      //The text needs to be rotated with the offset in the clockwise direction
+  var outerLabels = arcs.append("g")
+      .each(function(d) { d.angle = ((d.startAngle + d.endAngle) / 2); })
+      .attr("class", "outer-labels")
+      .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+      .attr("transform", function(d,i) {
+        var c = arc.centroid(d);
+        return "translate(" + (c[0] + d.pullOutSize) + "," + c[1] + ")"
+          + "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+          + "translate(" + 26 + ",0)"
+          + (d.angle > Math.PI ? "rotate(180)" : "")
+      })
 
-  // Add the Outer Label Name
-  outerLabels
-    .append("text")
+  //The outer name
+  outerLabels.append("text")
     .attr("class", "outer-label")
-    .attr("dy", "-.5em")
-    .text((d) => d.outerName);
-
-  // Add the Outer Value
-  outerLabels
-    .append("text")
-    .attr("class", "outer-label-value")
-    .attr("dy", ".5em")
-    .text((d) => d.groupTotalFormat + " events");
-
-  ////////////////////////////////////////////////////////////
-  //////////////////// Draw inner labels /////////////////////
-  ////////////////////////////////////////////////////////////
-
-  let innerLabelGroup = g.append("g").attr("class", "inner-label-wrapper");
-
-  //Place the inner text labels in the middle of the stretched Chord
-  let innerLabels = innerLabelGroup
-    .selectAll("text")
-    .data((s) => s.innerGroups)
-    .enter()
-    .append("text")
-    .attr("class", "inner-label")
-    .attr("text-anchor", "middle")
-    .attr("x", (d) => d.x)
-    .attr("y", (d) => d.y)
     .attr("dy", ".35em")
-    .text((d) => d.innerName)
-    .on("mouseover", fadeInnerLabel(opacityLow))
-    .on("mouseout", fadeInnerLabel(opacityHigh));
+    .text(function(d,i){ return d.outername; });
+
+  //The value below it
+  outerLabels.append("text")
+    .attr("class", "outer-label-value")
+    .attr("dy", "1.5em")
+    .text(function(d,i){ return formatNumber(d.value) + " events"; });
 
   ////////////////////////////////////////////////////////////
   //////////////////// Draw inner strings ////////////////////
   ////////////////////////////////////////////////////////////
 
-  // 8px is the average width of a 16px character
-  const innerNameWidth =
-    (8 * Math.max(...loom.innerGroups.map((d) => d.innerName.length))) / 2;
+  var stringGroup = g.append("g").attr("class", "string-wrapper");
 
-  let stringPaths = loom.strings.map(function (d) {
-    // Adjustment for the difference in orientation between svg and loom data
-    const adjustedStartAngle =
-      (d.outer.subGroupStartAngle < 0
-        ? d.outer.subGroupEndAngle
-        : d.outer.subGroupStartAngle) -
-      Math.PI / 2;
-    const adjustedEndAngle =
-      (d.outer.subGroupStartAngle < 0
-        ? d.outer.subGroupStartAngle
-        : d.outer.subGroupEndAngle) -
-      Math.PI / 2;
-
-    // The central position of the arc
-    const arcCenterX = (d.outer.subGroupStartAngle < 0 ? -1 : 1) * pullOutSize;
-    const arcCenterY = 0;
-
-    // The x,y starting position of the arc
-    const arcStartX = innerRadius * Math.cos(adjustedStartAngle) + arcCenterX;
-    const arcStartY = innerRadius * Math.sin(adjustedStartAngle) + arcCenterY;
-    // The x,y ending position of the arc
-    const arcEndX = innerRadius * Math.cos(adjustedEndAngle) + arcCenterX;
-    const arcEndY = innerRadius * Math.sin(adjustedEndAngle) + arcCenterY;
-
-    // Define the location of the inner words
-    // with the offset for word length.
-    const innerX =
-      d.inner.x + (d.outer.subGroupStartAngle < 0 ? -1 : 1) * innerNameWidth;
-    const innerY = d.inner.y;
-    // Define the control points of the bezier curves
-    // For the first Bezier Curve ("A")
-    const controlAX1 = d3.interpolateNumber(arcEndX, arcCenterX)(0.5);
-    const controlAY1 = d3.interpolateNumber(arcEndY, arcCenterY)(0.5);
-    const controlAX2 = arcCenterX;
-    const controlAY2 = innerY;
-
-    // For the second Bezier Curve ("B")
-    const controlBX1 = arcCenterX;
-    const controlBY1 = innerY;
-    const controlBX2 = d3.interpolateNumber(arcStartX, arcCenterX)(0.5);
-    const controlBY2 = d3.interpolateNumber(arcStartY, arcCenterY)(0.5);
-
-    // Create a path
-    path = d3.path();
-    // Move to the arc starting point
-    path.moveTo(arcStartX, arcStartY);
-    // Create the arc for the subgroup
-    path.arc(
-      arcCenterX,
-      arcCenterY,
-      innerRadius,
-      adjustedStartAngle,
-      adjustedEndAngle,
-    );
-    // Create a bezier curve from the arc to the inner words.
-    path.bezierCurveTo(
-      controlAX1,
-      controlAY1,
-      controlAX2,
-      controlAY2,
-      innerX,
-      innerY,
-    );
-    // Create a bezier curve from the inner words back to the arc.
-    path.bezierCurveTo(
-      controlBX1,
-      controlBY1,
-      controlBX2,
-      controlBY2,
-      arcStartX,
-      arcStartY,
-    );
-    path.closePath();
-
-    // Return a string object
-    return {
-      path: path,
-      color: colors[d.outer.groupIndex],
-      innerName: d.inner.innerName,
-      outerName: d.outer.outerName,
-      innerIndex: d.outer.subGroupIndex,
-      subGroupTotal: d.outer.subGroupTotal,
-      outerPercent: d.outer.subGroupPercent,
-      innerPercent: d.inner.innerPercent,
-      totalPercent: d3.format(".1f")((d.outer.value / d.outer.total) * 100),
-    };
-  });
-
-  // Build the strings connecting the middle to the sides
-  let stringGroup = g.append("g").attr("class", "string-wrapper");
-
-  stringGroup
-    .selectAll("path")
-    .data(stringPaths)
-    .enter()
-    .append("path")
-    .attr("class", "string")
-    .style("fill", (d) => d3.rgb(d.color).brighter(0.2))
-    .style("stroke", "black")
-    .attr("d", (d) => d.path)
-    .attr("opacity", opacityDefault)
-    .on("mouseover", fadeString(opacityLow))
-    .on("mouseout", fadeString(opacityDefault));
+  //Draw the paths of the inner strings
+  var strings = stringGroup.selectAll("path")
+      .data(function(strings) { return strings; })
+      .enter()
+      .append("path")
+      .attr("class", "string")
+      .style("fill", function(d) {
+        return d3.rgb( color(d.outer.outername) ).brighter(0.2);
+      })
+      .style("opacity", opacityDefault)
+      .style("stroke","black")
+      .attr("d", string)
+      .on("mouseover", fadeString(opacityLow))
+      .on("mouseout", fadeString(opacityDefault));
 
   ////////////////////////////////////////////////////////////
-  //////////////////////// Title text ////////////////////////
+  //////////////////// Draw inner labels /////////////////////
   ////////////////////////////////////////////////////////////
 
-  let total = d3.sum(loom.outerGroups.map((d) => d.groupTotal));
+  var innerLabelGroup = g.append("g").attr("class","inner-label-wrapper");
 
-  // Put the total number of events above the chord diagram
-  g.append("text")
-    .attr("class", "total")
-    .attr("x", 0)
-    .attr("y", -outerRadius)
-    .attr("text-anchor", "middle")
-    .style("textAlign", "center")
-    .text("Total Events:")
-    .style("font-size", "30px")
-    .append("tspan")
-    .attr("x", 0)
-    .attr("y", -outerRadius)
-    .attr("dy", "1.1em")
-    .attr("text-anchor", "middle")
-    .style("textAlign", "center")
-    .text(d3.format(",.0f")(total));
+  //Place the inner text labels in the middle
+  var innerLabels = innerLabelGroup.selectAll("text")
+      .data(function(s) { return s.innergroups; })
+      .enter().append("text")
+      .attr("class", "inner-label")
+      .style("font-size", "20px")
+      .attr("x", function(d,i) { return d.x; })
+      .attr("y", function(d,i) { return d.y; })
+      .attr("text-anchor", "middle")
+      .style("textAlign", "center")
+      .attr("dy", ".35em")
+      .text(function(d,i) { return d.name; })
+      .on("mouseover", fadeInnerLabel(opacityLow))
+      .on("mouseout", fadeInnerLabel(opacityDefault));
 
-  g.append("text")
-    .attr("class", "description")
-    .attr("text-anchor", "middle")
-    .style("font-size", "12px")
-    .attr("x", 0)
-    .attr("y", (outerRadius * 2) / 3)
-    .style("textAlign", "center")
-    .text("")
-    .style("visibility", "hidden");
 
-  ////////////////////////////////////////////////////////////
-  //////////////// Interactive Behavior //////////////////////
-  ////////////////////////////////////////////////////////////
 
-  // Function to apply a heavy opacity weight to text and arcs
-  function opacityWeight(opacity) {
-    return opacity > 0.5 ? opacityHigh : opacity;
+////////////////////////////////////////////////////////////
+///////////////////// Utility Func /////////////////////////
+////////////////////////////////////////////////////////////
+
+// Function to apply a heavy opacity weight to text and arcs
+function opacityWeight(opacity) {
+  return opacity > 0.5 ? opacityHigh : opacity;
+}
+
+// Count the number of events in each major grouping.
+// Find total if required.
+function countEvents(selection, inner, total) {
+  // Get the number of events for each major arc
+  let eventCounts = selection
+      ._groups[0]
+      .reduce(function(acc, s) {
+        if (inner) {
+          name = s.__data__.inner.name;
+        }
+        else {
+          name = s.__data__.outer.outername;
+        }
+        value = s.__data__.outer.value;
+        acc[name] = (acc[name] ? acc[name] : 0) + value;
+        return acc;
+      }, {});
+
+  // Sum over all arcs if requested
+  if (total) {
+    return Object.values(eventCounts)
+      .reduce(function (acc, s) {
+        acc = acc + s;
+        return acc;
+      }, 0);
   }
 
-  // Returns an event handler for fading a inner label group
-  function fadeInnerLabel(opacity) {
-    return function (mouseEvent, data) {
-      let innerName = data.innerName;
+  return eventCounts;
+} // countEvents
 
-      // Fade out non selected text
-      svg
-        .selectAll(".inner-label")
-        .filter((d) => d.innerName !== innerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacityWeight(opacity));
+// Filter the counts to display on the plot
+function filterCounts(selection) {
+  // Get the number of events for each major arc
+  let eventCounts = countEvents(selection, false, false);
 
-      // Create description of selection
-      let description = svg
-        .selectAll(".description")
-        .attr("text-anchor", "middle");
-      if (opacity < 0.5) {
-        description
-          .append("tspan")
-          .attr("x", 0)
-          .text(
-            d3.format(".1f")((data.innerTotal / total) * 100) + "% of Total",
-          )
-          .attr("font-weight", 700)
-          .style("visibility", "visible");
-        description
-          .append("tspan")
-          .attr("x", 0)
-          .attr("dy", "1.45" + "em")
-          .text(data.innerTotalFormat + " events")
-          .attr("font-weight", 300)
-          .style("visibility", "visible");
-      } else {
-        description.text("").style("visibility", "hidden");
-      }
+  // Get a list of the outer labels
+  outerLabels = Object.keys(eventCounts);
 
-      // Fade out non selected strings
-      svg
-        .selectAll(".string")
-        .filter((d) => d.innerName !== innerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacity > 0.5 ? opacityDefault : opacityLow);
+  // Make all unselected labels 0 events
+  svg.selectAll(".outer-labels")
+    .filter(d => !outerLabels.includes(d.outername))
+    .selectAll(".outer-label-value")
+    .text(function(d){ return "0 events"; });
 
-      // Find all selected strings
-      let selectedStrings = svg
-        .selectAll(".string")
-        .filter((d) => d.innerName == innerName);
+  // Adjust selected label counters
+  svg.selectAll(".outer-labels")
+    .filter(d => outerLabels.includes(d.outername))
+    .selectAll(".outer-label-value")
+    .text(function(d){
+      return formatNumber(eventCounts[d.outername]) + " events";
+    });
+} // filterCounts
 
-      // Fade in the selected strings
-      selectedStrings
-        .transition("fadeOnArc")
-        .style("opacity", opacity > 0.5 ? opacityDefault : opacityHigh);
+// Returns an event handler for fading a inner label group
+function fadeInnerLabel(opacity) {
+  return function(mouseEvent, i) {
 
-      // Define the lists of outer and inner names
-      let outerNames = selectedStrings.data().map((d) => d.outerName);
-      let innerNames = selectedStrings.data().map((d) => d.innerName);
+    // Get the targeted inner element
+    inner = mouseEvent.target.__data__
 
-      // Fade out non selected arcs
-      svg
-        .selectAll(".arc-wrapper")
-        .filter((d) => !outerNames.includes(d.outerName))
-        .transition("fadeOnArc")
-        .style("opacity", opacityWeight(opacity));
+    let innername = inner.name;
 
-      // Change the value of the outer labels
-      if (opacity < 0.5) {
-        // Mouse In
-        // Set all non-selected arc values to 0
-        svg
-          .selectAll(".outer-labels")
-          .filter((d) => !outerNames.includes(d.outerName))
-          .selectAll(".outer-label-value")
-          .text((_) => "0 events");
+    // Fade out non selected text
+    svg.selectAll(".inner-label")
+      .filter(d => d.name !== innername)
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
 
-        // Set all selected arc values to selected data
-        svg
-          .selectAll(".outer-labels")
-          .filter((d) => outerNames.includes(d.outerName))
-          .selectAll(".outer-label-value")
-          .text(function (d) {
-            return (
-              selectedStrings.data().find((e) => e.outerName == d.outerName)
-                .subGroupTotal + " events"
-            );
-          });
-      } else {
-        // Mouse Out
-        // Set all arc values back to default
-        svg
-          .selectAll(".outer-label-value")
-          .text((d) => d.groupTotalFormat + " events");
-      }
-    };
-  } // fadeInnerLabel
+    // Fade out non selected strings
+    svg.selectAll(".string")
+      .filter(function(d) {
+        return d.inner.name !== innername;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacity);
 
-  // Returns an event handler for fading a given outer string group
-  function fadeArc(opacity) {
-    return function (mouseEvent, data) {
-      let outerName = data.outerName;
-
-      // Find all selected strings
-      let selectedStrings = svg
-        .selectAll(".string")
-        .filter((d) => d.outerName == outerName)
-        .sort((a, b) => a.innerIndex - b.innerIndex);
-
-      // Define the lists of outer and inner names
-      let outerNames = selectedStrings.data().map((d) => d.outerName);
-      let innerNames = selectedStrings.data().map((d) => d.innerName);
-
-      // Fade selected strings
-      selectedStrings
-        .transition("fadeOnArc")
-        .style("opacity", opacity > 0.5 ? opacityDefault : opacityHigh);
-
-      // Fade non-selected strings
-      svg
-        .selectAll(".string")
-        .filter((d) => d.outerName !== outerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacity > 0.5 ? opacityDefault : opacityLow);
-
-      // Fade non-selected arcs
-      svg
-        .selectAll(".arc-wrapper")
-        .filter((d) => d.outerName !== outerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacityWeight(opacity));
-
-      // Fade non-selected inner labels
-      svg
-        .selectAll(".inner-label")
-        .filter((d) => !innerNames.includes(d.innerName))
-        .transition("fadeOnArc")
-        .style("opacity", opacityWeight(opacity));
-
-      // Create description of selection
-      let description = svg
-        .selectAll(".description")
-        .attr("text-anchor", "middle");
-
-      if (opacity < 0.5) {
-        description
-          .append("tspan")
-          .attr("x", 0)
-          .text(data.groupPercent + "% of Total events")
-          .attr("font-weight", 700)
-          .style("visibility", "visible");
-        selectedStrings.data().forEach((d) =>
-          description
-            .append("tspan")
-            .attr("x", 0)
-            .attr("dy", "1.45" + "em")
-            .text(
-              d.innerName +
-                ": " +
-                d.subGroupTotal +
-                " (" +
-                d.outerPercent +
-                "%)",
-            )
-            .attr("font-weight", 300)
-            .style("visibility", "visible"),
-        );
-      } else {
-        description.text("").style("visibility", "hidden");
-      }
-      // Change the value of the outer labels
-      if (opacity < 0.5) {
-        // Mouse In
-        // Set all non-selected arc values to 0
-        svg
-          .selectAll(".outer-labels")
-          .filter((d) => d.outerName !== outerName)
-          .selectAll(".outer-label-value")
-          .text((_) => "0 events");
-
-        // Set all selected arc values to selected data
-        svg
-          .selectAll(".outer-labels")
-          .filter((d) => outerName == d.outerName)
-          .selectAll(".outer-label-value")
-          .text((d) => d.groupTotalFormat + " events");
-      } else {
-        // Mouse Out
-        // Set all arc values back to default
-        svg
-          .selectAll(".outer-label-value")
-          .text((d) => d.groupTotalFormat + " events");
-      }
-    };
-  } // fadeArc
-
-  // Returns an event handler for fading a given outer string group
-  function fadeString(opacity) {
-    return function (mouseEvent, data) {
-      let outerName = data.outerName;
-      let innerName = data.innerName;
-
-      // Fade non-selected inner label
-      svg
-        .selectAll(".inner-label")
-        .filter((d) => d.innerName !== innerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacityWeight(opacity));
-
-      // Fade non-selected arcs
-      svg
-        .selectAll(".arc-wrapper")
-        .filter((d) => d.outerName !== outerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacityWeight(opacity));
-
-      // Fade out non selected strings
-      svg
-        .selectAll(".string")
-        .filter((d) => d.outerName !== outerName || d.innerName !== innerName)
-        .transition("fadeOnArc")
-        .style("opacity", opacity > 0.5 ? opacity : opacityLow);
-
-      let selectedStrings = svg
-        .selectAll(".string")
-        .filter((d) => d.outerName == outerName && d.innerName == innerName);
-
-      // Fade selected string
-      selectedStrings
+    // Find all selected strings
+    let selectedStrings = svg.selectAll(".string")
+        .filter(function(d) {
+          return d.inner.name == innername;
+        })
         .transition("fadeOnArc")
         .style("opacity", opacity > 0.5 ? opacity : opacityHigh);
 
-      // Create description of selection
-      let description = svg
-        .selectAll(".description")
-        .attr("text-anchor", "middle");
+    // Filter the counters on the outer arcs
+    if (opacity > 0.5) {
+      filterCounts(svg.selectAll(".string").filter(d => d));
+    }
+    else {
+      filterCounts(selectedStrings);
+    }
+    // List of selected outer labels connected by selected strings
+    let selectedOuterLabels = selectedStrings
+        ._groups[0]
+        .map(s => s.__data__.outer.outername);
 
-      if (opacity < 0.5) {
-        description
+    // Fade out non selected text
+    svg.selectAll(".outer-labels")
+      .filter(d => !selectedOuterLabels.includes(d.outername))
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Fade out non selected arc
+    svg.selectAll(".arc")
+      .filter(function(d) {
+        return !selectedOuterLabels.includes(d.outername);
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Only add description text if a selection is made.
+    if (opacity < 0.5) {
+      // Calculate the total number of events
+      let totalEvents = countEvents(
+        svg.selectAll(".string").filter(d => d),
+        false, true
+      );
+
+      // Calculate the selected events
+      let selectedEvents = countEvents(selectedStrings, false, true);
+
+      svg.selectAll(".description")
+        .attr("x", descriptionX)
+        .attr("y", descriptionY)
+        .attr("text-anchor", "middle")
+        .style("textAlign", "center")
+        .text(formatPercent(selectedEvents / totalEvents * 100 ) + "% of Total")
+        .attr("font-weight", 700)
+        .style("visibility", "visible")
+        .append("tspan")
+        .attr("x", descriptionX)
+        .attr("y", descriptionY)
+        .attr("dy", "1.45" + "em")
+        .attr("text-anchor", "middle")
+        .style("textAlign", "center")
+        .text(formatNumber(selectedEvents) + " events")
+        .attr("font-weight", 300);
+    }
+    else {
+      svg.selectAll(".description")
+        .text("")
+        .style("visibility", "hidden");
+    }
+  };
+} // fadeInnerLabel
+
+// Returns an event handler for fading a given string group
+function fadeArc(opacity) {
+  return function(mouseEvent, i) {
+    // Get the targeted arc
+    arc = mouseEvent.target.__data__
+    // Get the name of the arc
+    let outername = arc.outername;
+
+    // Fade out non selected arc
+    svg.selectAll(".arc")
+      .filter(function(d) {
+        return d.outername !== outername;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Fade out non selected strings
+    svg.selectAll(".string")
+      .filter(function(d) {
+        return d.outer.outername !== outername;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacity);
+
+    // Fade out outer labels
+    svg.selectAll(".outer-labels")
+      .filter(function(d) {
+        return d.outername !== outername;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Find all selected strings
+    let selectedStrings = svg.selectAll(".string")
+        .filter(function(d) {
+          return d.outer.outername == outername;
+        })
+        .transition("fadeOnArc")
+        .style("opacity", opacity > 0.5 ? opacity : opacityHigh);
+
+    // List of selected inner labels connected by selected strings
+    let selectedInnerLabels = selectedStrings
+        ._groups[0]
+        .map(s => s.__data__.inner.name);
+
+    // Fade out non selected text
+    svg.selectAll(".inner-label")
+      .filter(d => !selectedInnerLabels.includes(d.name))
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Only add description text if a selection is made.
+    if (opacity < 0.5) {
+      // Calculate the total number of events
+      let totalEvents = countEvents(
+        svg.selectAll(".string").filter(d => d),
+        false,
+        true
+      );
+
+      // Calculate the selected events
+      let selectedEvents = countEvents(selectedStrings, false, true);
+      let groupedEvents = countEvents(selectedStrings, true, false);
+
+      // Set the order of the text rows
+      // Either in Inner String order:
+      let orderA = sortedA.filter(t => Object.keys(groupedEvents).includes(t));
+      // Or in Greatest to Least order
+      // let orderA = Object.keys(groupedEvents).sort(function(a,b) {
+      //   return groupedEvents[b] - groupedEvents[a];
+      // });
+
+      // The first line of the description box
+      svg.selectAll(".description")
+        .attr("font-weight", 700)
+        .attr("x", descriptionX)
+        .attr("y", descriptionY)
+        .text(formatPercent(selectedEvents / totalEvents * 100 ) + "% of Total")
+        .style("visibility", "visible");
+
+      // Add a breakdown of the events for the inner list
+      orderA.forEach( function (t,i) {
+        svg.selectAll(".description")
           .append("tspan")
-          .attr("x", 0)
-          .text(data.totalPercent + "% of Total events")
-          .attr("font-weight", 700)
-          .style("visibility", "visible");
-        description
-          .append("tspan")
-          .attr("x", 0)
-          .attr("dy", "1.45" + "em")
-          .text(data.innerPercent + "% of " + data.innerName + " events")
+          .attr("x", descriptionX)
+          .attr("y", descriptionY)
+          .attr("dy", (i + 1) * 1.2 + "em")
           .attr("font-weight", 300)
-          .style("visibility", "visible");
-        description
-          .append("tspan")
-          .attr("x", 0)
-          .attr("dy", "1.45" + "em")
-          .text(data.outerPercent + "% of " + data.outerName + " events")
-          .attr("font-weight", 300)
-          .style("visibility", "visible");
-      } else {
-        description.text("").style("visibility", "hidden");
-      }
+          .text(
+            t + ": " + formatNumber(groupedEvents[t]) + " (" + formatPercent(groupedEvents[t] / selectedEvents * 100 ) + "%)");
+      });
 
-      // Change the value of the outer labels
-      if (opacity < 0.5) {
-        // Mouse In
-        // Set all non-selected arc values to 0
-        svg
-          .selectAll(".outer-labels")
-          .filter((d) => d.outerName !== outerName)
-          .selectAll(".outer-label-value")
-          .text((_) => "0 events");
+    }
+    else {
+      svg.selectAll(".description")
+        .attr("font-weight", 300)
+        .text("")
+        .style("visibility", "hidden");
+    }
+  };
 
-        // Set all selected arc values to selected data
-        svg
-          .selectAll(".outer-labels")
-          .filter((d) => outerName == d.outerName)
-          .selectAll(".outer-label-value")
-          .text(function (d) {
-            return (
-              selectedStrings.data().find((e) => e.outerName == d.outerName)
-                .subGroupTotal + " events"
-            );
-          });
-      } else {
-        // Mouse Out
-        // Set all arc values back to default
-        svg
-          .selectAll(".outer-label-value")
-          .text((d) => d.groupTotalFormat + " events");
+}//fadeArc
+
+// Returns an event handler for fading a given string group
+function fadeString(opacity) {
+  return function(mouseEvent, i) {
+    // Get the targeted string
+    string = mouseEvent.target.__data__
+
+    // Get the inner and outer names of the string
+    let outername = string.outer.outername;
+    let innername = string.inner.name;
+
+    // Fade out non selected arc
+    svg.selectAll(".arc")
+      .filter(function(d) {
+        return d.outername !== outername;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Fade out non selected strings
+    svg.selectAll(".string")
+      .filter(function(d) {
+        return d !== string;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacity);
+
+    // Fade out outer labels
+    svg.selectAll(".outer-labels")
+      .filter(function(d) {
+        return d.outername !== outername;
+      })
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Find the selected string
+    var selectedString = svg.selectAll(".string")
+        .filter(function(d) {
+          return d == string;
+        })
+        .transition("fadeOnArc")
+        .style("opacity", opacity > 0.5 ? opacity : opacityHigh);
+
+    // Fade out non selected text
+    svg.selectAll(".inner-label")
+      .filter(d => d.name !== innername)
+      .transition("fadeOnArc")
+      .style("opacity", opacityWeight(opacity));
+
+    // Adjust counts for outer ring
+    if (opacity > 0.5) {
+      filterCounts(
+        svg.selectAll(".string")
+          .filter(d => d)
+      );
+    }
+    else {
+      filterCounts(selectedString);
+    }
+
+    // Add description text
+    // Number of events, % of total
+    // % of outer group
+    // % of inner group
+
+    // Only add description text if a selection is made.
+    if (opacity < 0.5) {
+      // Calculate the total number of events
+      let totalEvents = countEvents(
+        svg.selectAll(".string").filter(d => d),
+        false,
+        true
+      );
+
+      // Calculate the selected events
+      let selectedEvents = countEvents(selectedString, false, true);
+      let outerEvents = countEvents(
+        svg.selectAll(".string").filter(d => d.outer.outername == outername),
+        false,
+        true
+      );
+      let innerEvents = countEvents(
+        svg.selectAll(".string").filter(d => d.inner.name == innername),
+        true,
+        true
+      );
+
+      // The first line of the description box
+      svg.selectAll(".description")
+        .attr("font-weight", 700)
+        .attr("x", descriptionX)
+        .attr("y", descriptionY)
+        .text(formatPercent(selectedEvents / totalEvents * 100 ) + "% of Total")
+        .style("visibility", "visible");
+
+
+      svg.selectAll(".description")
+        .append("tspan")
+        .attr("x", descriptionX)
+        .attr("y", descriptionY)
+        .attr("dy", 1.2 + "em")
+        .attr("font-weight", 300)
+        .text(formatPercent(selectedEvents / outerEvents * 100 ) + "% of " + outername + " events.");
+
+      svg.selectAll(".description")
+        .append("tspan")
+        .attr("x", descriptionX)
+        .attr("y", descriptionY)
+        .attr("dy", 2.3 + "em")
+        .attr("font-weight", 300)
+        .text(formatPercent(selectedEvents / innerEvents * 100 ) + "% of " + innername + " events.");
+
+    }
+    else {
+      svg.selectAll(".description")
+        .attr("font-weight", 300)
+        .text("")
+        .style("visibility", "hidden");
+    }
+
+  };
+}//fadeString
+
+  // Define a group by function
+  // Adapted from learnwithparam.com
+  // Accepts the array and key and a key to sum over
+  function loomGroupBy(array, key, sumKey) {
+    // Return the end result
+    return array.reduce((result, currentValue) => {
+      // If a value is already present for key, add to it. Else insert the current value as a seed.
+      result[currentValue[key]] = (result[currentValue[key]] || 0) + currentValue[sumKey]
+      // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
+      return result;
+    }, {}); // empty object is the initial value for result object
+  };
+
+  // Should sort descending?
+  function sortDesc(map) {
+    return Object.keys(map).sort( (a, b) => {
+      return map[b] - map[a]
+    });
+  };
+
+  // greedy algorithm to take an array, split into two equal-ish parts and sort it
+  function evenSort(array, map) {
+    let arrayA = [], sumA = 0, arrayB = [], sumB = 0;
+    // Loop through the array
+    array.forEach(function(v) {
+      if (sumA <= sumB) {
+        arrayA.push(v);
+        sumA += map[v];
       }
-    };
-  } // fadeString
-};
+      else {
+        arrayB.push(v);
+        sumB += map[v];
+      }
+    }); // end of loop through array
+    return arrayA.concat(arrayB.reverse());
+  };// end of evenSort
+
+} // End of loomDiagram
