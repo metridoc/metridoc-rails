@@ -223,21 +223,12 @@ en:
       caiasoft/accession_info:
         one: "CaiaSoft Accession Info"
         other: "CaiaSoft Accession Info"
-      caiasoft/circ_stop_list:
-        one: "CaiaSoft Circ Stop List"
-        other: "CaiaSoft Circ Stop List"
-      caiasoft/circ_stop_out:
-        one: "CaiaSoft Circ Stop Out"
-        other: "CaiaSoft Circ Stop Out"
       caiasoft/circulation_metric:
         one: "CaiaSoft Circulation Metric"
         other: "CaiaSoft Circulation Metrics"
       caiasoft/deaccession_info:
         one: "CaiaSoft Deaccession Info"
         other: "CaiaSoft Deaccession Info"
-      caiasoft/retrieval_info:
-        one: "CaiaSoft Retrieval Info"
-        other: "CaiaSoft Retrieval Info"
       consultation/interaction:
         one: "Consultation and Instruction Interaction"
         other: "Consultation and Instruction Interactions"
