@@ -3,7 +3,7 @@
 ARG IMAGE_NAME=ruby
 
 # Image tag
-ARG IMAGE_TAG=3.2.2-bookworm
+ARG IMAGE_TAG=3.4.8-bookworm
 
 # Rails env
 ARG RAILS_ENV=development
@@ -12,7 +12,7 @@ ARG RAILS_ENV=development
 FROM ${IMAGE_NAME}:${IMAGE_TAG} AS base
 
 ARG RUBY_MAJOR
-ENV RUBY_MAJOR=3.2.0
+ENV RUBY_MAJOR=3.4
 
 ARG BUNDLE_HOME=vendor/bundle
 ENV BUNDLE_HOME=${BUNDLE_HOME}
