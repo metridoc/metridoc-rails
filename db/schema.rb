@@ -416,6 +416,68 @@ ActiveRecord::Schema[7.1].define(version: 2026_02_02_151322) do
     t.index ["request_number"], name: "index_borrowdirect_ship_dates_on_request_number"
   end
 
+  create_table "caiasoft_accession_info", force: :cascade do |t|
+    t.string "barcode"
+    t.string "collection"
+    t.string "material"
+    t.string "title"
+    t.string "volume"
+    t.string "call_number"
+    t.string "item_id"
+    t.string "bib_id"
+    t.string "pid"
+    t.datetime "accession_date"
+    t.string "accession_type"
+    t.string "fiscal_year"
+    t.string "accession_date_month"
+    t.string "accession_date_year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barcode", "accession_date", "accession_type"], name: "caiasoft_accession_info_unique", unique: true
+  end
+
+  create_table "caiasoft_circulation_metrics", force: :cascade do |t|
+    t.string "item_retrieved"
+    t.string "item_collection"
+    t.string "job_type"
+    t.string "circulation_stop"
+    t.string "stop_location"
+    t.string "job"
+    t.datetime "retrieval_date"
+    t.integer "page_count"
+    t.string "requestor"
+    t.string "details"
+    t.string "api_feed"
+    t.string "request_id"
+    t.string "item_title"
+    t.string "item_call_number"
+    t.string "retrieval_date_month"
+    t.string "retrieval_date_year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_retrieved", "request_id", "job"], name: "caiasoft_circulation_metrics_unique", unique: true
+  end
+
+  create_table "caiasoft_deaccession_info", force: :cascade do |t|
+    t.string "barcode"
+    t.string "collection"
+    t.string "requestor"
+    t.string "request_id"
+    t.string "item_id"
+    t.string "bib_id"
+    t.string "pid"
+    t.string "job"
+    t.datetime "deaccession_date"
+    t.string "deaccession_type"
+    t.string "status_update"
+    t.string "fiscal_year"
+    t.string "deaccession_date_month"
+    t.string "deaccession_date_year"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["barcode", "job"], name: "caiasoft_deaccession_info_unique", unique: true
+  end
+
   create_table "cr_ares_course_users", force: :cascade do |t|
     t.integer "course_id"
     t.string "user_type"
