@@ -30,7 +30,6 @@ gem 'mysql2'
 # with rails infrastructure.
 gem 'scenic'
 
-
 #############
 # Puma Server
 #############
