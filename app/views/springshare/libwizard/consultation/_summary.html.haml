@@ -14,8 +14,8 @@
 - instructions_hash = events["Instruction"]
 
 -# Define the log axes
-- logy = {scales: {y: {type: 'logarithmic'}}}
-- logx = {scales: {x: {type: 'logarithmic'}}}
+- logy = {scales: {yAxes: [{id: 'y-axis', type: 'logarithmic'}]}}
+- logx = {scales: {xAxes: [{id: 'x-axis', type: 'logarithmic'}]}}
 
 - consultation_community_school = chord_data_mapper("Consultation", nil, "research_community", "school_affiliation")
 - instruction_community_school = chord_data_mapper("Instruction", nil, "research_community", "school_affiliation")
