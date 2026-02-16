@@ -455,6 +455,16 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
+    sqlite3 (2.9.0-aarch64-linux-gnu)
+    sqlite3 (2.9.0-aarch64-linux-musl)
+    sqlite3 (2.9.0-arm-linux-gnu)
+    sqlite3 (2.9.0-arm-linux-musl)
+    sqlite3 (2.9.0-arm64-darwin)
+    sqlite3 (2.9.0-x86-linux-gnu)
+    sqlite3 (2.9.0-x86-linux-musl)
+    sqlite3 (2.9.0-x86_64-darwin)
+    sqlite3 (2.9.0-x86_64-linux-gnu)
+    sqlite3 (2.9.0-x86_64-linux-musl)
     stringio (3.2.0)
     temple (0.10.4)
     terminal-table (4.0.0)
@@ -553,6 +563,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.1.0)
   sprockets-rails
+  sqlite3
   tiny_tds
   turbo-rails
   tzinfo-data
@@ -560,4 +571,4 @@ DEPENDENCIES
   web-console (>= 4.2.0)
 
 BUNDLED WITH
-   4.0.6
+  4.0.6

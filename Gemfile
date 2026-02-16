@@ -11,6 +11,14 @@ gem 'rails', '>= 7.2'
 # Databases
 ###########
 
+# Use sqlite3 as the database for Active Record
+# Ruby library to interface with the SQLite3 database engine
+# (http://www.sqlite.org). Precompiled binaries are available for common
+# platforms for recent versions of Ruby.
+# Needed to avoid errors on build?
+gem 'sqlite3'
+
+
 # Pg is the Ruby interface to the PostgreSQL RDBMS.
 # It works with PostgreSQL 9.3 and later.
 gem 'pg'
