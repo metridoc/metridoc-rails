@@ -18,9 +18,11 @@ default: &default
     tcp_keepalives_count: 100
 
 development:
+  host: primary-db
   <<: *default
 
 test:
+  host: primary-db
   <<: *default
 
 production:

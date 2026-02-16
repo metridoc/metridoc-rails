@@ -1,6 +1,12 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
+  # Check if the environment is not dev or testing
+  # Assign writing and reading roles to db and replica for production
+  unless Rails.env.local?
+    connects_to database: { writing: :primary, reading: :primary_replica }
+  end
+
   # `ransackable_associations` by default returns the names
   # of all associations as an array of strings.
   # For overriding with a whitelist array of strings.

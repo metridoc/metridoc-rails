@@ -163,12 +163,6 @@ gem 'oauth2', '~> 2.0'
 # Last updated 2013
 gem 'chronic'
 
-# Daemons provides an easy way to wrap existing ruby scripts (for example a
-# self-written server) to be run as a daemon and to be controlled by simple
-# start/stop/restart commands
-# Last updated 2021
-gem 'daemons'
-
 # Autoload dotenv in Rails.
 # Last updated 2022
 gem 'dotenv-rails'
@@ -184,11 +178,6 @@ gem 'aws-sdk-dynamodb'
 gem 'terser'
 
 group :development, :test do
-  # The readline library provides a pure Ruby implementation of the GNU
-  # readline C library, as well as the Readline extension that ships as
-  # part of the standard library.
-  # Last updated 2017
-  gem 'rb-readline'
 
   # Pry is a runtime developer console and IRB alternative with powerful
   # introspection capabilities.
@@ -224,6 +213,10 @@ group :development, :test do
   # application's HTML. It's primarily intended for web application testing,
   # but any web-based task can automated.
   gem 'selenium-webdriver'
+
+  # Minitest 6+ is only compatible with railties 8.0.4+
+  # Have to cap minitest for rails 7 compatibility
+  gem 'minitest', '~> 5.27'
 end
 
 group :development do
