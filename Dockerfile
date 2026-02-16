@@ -48,8 +48,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /tmp/freetds
 
 # Download and install FreeTDS
-RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.4.10.tar.gz | tar --strip-components=1 -zxf - && \
-    ./configure --prefix=/usr/local --with-tdsver=7.3 && \
+RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.5.10.tar.gz | tar --strip-components=1 -zxf - && \
+    ./configure --prefix=/usr/local --with-tdsver=7.4 && \
     make && make install
  
 WORKDIR ${PROJECT_ROOT}
