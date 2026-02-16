@@ -206,7 +206,13 @@ module ConsultationHelper
       ]
     }
 
-    output = value_map.map { |k, v| { "A": k[0], "B": k[1], "value": v } }.to_json().html_safe
+    if pennkey
+      # For chord diagrams
+      output = value_map.map { |k, v| { "A": k[0], "B": k[1], "value": v } }.to_json().html_safe
+    else
+      # For Loom diagrams
+      output = value_map.map { |k, v| { "inner": k[0], "outer": k[1], "value": v } }.to_json().html_safe
+    end
 
     return output
   end
