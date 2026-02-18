@@ -17,6 +17,16 @@ test:
   host: primary-db
   <<: *default
 
+staging:
+  primary:
+    host: primary-db
+    <<: *default
+
+  primary_replica:
+    host: replica-db
+    replica: true
+    <<: *default
+
 production:
   primary:
     host: primary-db
