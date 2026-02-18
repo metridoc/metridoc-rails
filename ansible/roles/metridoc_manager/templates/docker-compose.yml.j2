@@ -137,11 +137,12 @@ services:
       - shibboleth
     secrets:
       - postgres_database_password
-      - source: metridoc_rails_secrets_config
-        target: /home/app/config/secrets.yml
+      - source: rails_master_key
+        target: /home/app/config/credentials/{{ rails_env }}.key
         uid: "{{ rails_app_user_uid }}"
         gid: "{{ rails_app_user_gid }}"
         mode: 0440
+
     volumes:
       - ezpaarse_output:/tmp/upenn_ezproxy
       - gate_count:/tmp/gate_count
@@ -184,11 +185,12 @@ services:
       - database
     secrets:
       - postgres_database_password
-      - source: metridoc_rails_secrets_config
-        target: /home/app/config/secrets.yml
+      - source: rails_master_key
+        target: /home/app/config/credentials/{{ rails_env }}.key
         uid: "{{ rails_app_user_uid }}"
         gid: "{{ rails_app_user_gid }}"
         mode: 0440
+
     volumes:
       - metridoc_tmp_data:/home/app/tmp
       {% if is_development %}
@@ -208,11 +210,9 @@ secrets:
   postgres_database_password:
     name: metridoc_postgres_database_password_{{ metridoc_secrets_version }}
     external: true
-  {% for config_secret in metridoc_config_secrets.results %}
-  {{ config_secret.item.name }}:
-    name: "{{ config_secret.secret_name }}"
+  rails_master_key:
+    name: "{{ 'metridoc_rails_master_key_v' ~ metridoc_vault_values.metadata.version }}"
     external: true
-  {% endfor %}
 
 volumes:
   ezpaarse_output:

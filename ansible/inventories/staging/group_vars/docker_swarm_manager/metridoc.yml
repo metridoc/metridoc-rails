@@ -5,7 +5,7 @@ mailer_host: "{{ metridoc_vault_values.secret.mailer_host }}"
 metridoc_image_tag: "{{ image_tag }}"
 nfs_metridoc_tmp_address: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_address }}'
 nfs_metridoc_tmp_device: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_device }}'
-rails_secret_key_base: "{{ metridoc_vault_values.secret.rails_secret_key_base }}"
+rails_master_key: '{{ metridoc_vault_values.secret.rails_master_key }}'
 rails_env: production
 saml_email_attribute: "{{ metridoc_vault_values.secret.saml_email_attribute }}"
 saml_first_name_attribute: "{{ metridoc_vault_values.secret.saml_first_name_attribute }}"

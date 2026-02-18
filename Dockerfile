@@ -95,8 +95,7 @@ FROM base AS development
 ARG RAILS_ENV=development
 ENV RAILS_ENV=${RAILS_ENV}
 
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:precompile
-
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
 
 # Production Stage -----------------------------------
 FROM base AS production
@@ -104,7 +103,7 @@ FROM base AS production
 ARG RAILS_ENV=production
 ENV RAILS_ENV=${RAILS_ENV}
 
-# Set Rails env
 ENV RAILS_LOG_TO_STDOUT=true
 ENV RAILS_SERVE_STATIC_FILES=true
-RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rake assets:precompile
+
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
