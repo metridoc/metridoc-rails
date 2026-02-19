@@ -220,7 +220,7 @@ volumes:
     name: metridoc_ezpaarse_output
   gate_count:
   metridoc_tmp_data:
-    {% if not is_development %}
+    {% if rails_env == "production" %}
     name: metridoc_tmp_data
     driver: local
     driver_opts:
