@@ -17,6 +17,7 @@ services:
       MAILER_DOMAIN: "{{ mailer_domain }}"
       MAILER_HOST: "{{ mailer_host }}"
       RAILS_ENV: "{{ rails_env }}"
+      RAILS_LOG_LEVEL: "{{ rails_log_level }}"
 
       SAML_EMAIL_ATTRIBUTE: "{{ saml_email_attribute }}"
       SAML_FIRST_NAME_ATTRIBUTE: "{{ saml_first_name_attribute }}"
@@ -165,6 +166,7 @@ services:
       MAILER_DOMAIN: "{{ mailer_domain }}"
       MAILER_HOST: "{{ mailer_host }}"
       RAILS_ENV: "{{ rails_env }}"
+      RAILS_LOG_LEVEL: "{{ rails_log_level }}"
     healthcheck:
       test:
         [

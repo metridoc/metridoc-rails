@@ -7,6 +7,7 @@ nfs_metridoc_tmp_address: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_addr
 nfs_metridoc_tmp_device: '{{ metridoc_vault_values.secret.nfs_metridoc_tmp_device }}'
 rails_master_key: '{{ metridoc_vault_values.secret.rails_master_key }}'
 rails_env: staging
+rails_log_level: "debug"
 saml_email_attribute: "{{ metridoc_vault_values.secret.saml_email_attribute }}"
 saml_first_name_attribute: "{{ metridoc_vault_values.secret.saml_first_name_attribute }}"
 saml_last_name_attribute: "{{ metridoc_vault_values.secret.saml_last_name_attribute }}"
