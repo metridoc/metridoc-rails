@@ -11,6 +11,6 @@ ActionMailer::Base.smtp_settings = {
   :domain => ENV['MAILER_DOMAIN'],
   :address => ENV['MAILER_HOST'],
   :port => 25,
-  :authentication => :plain,
+  # :authentication => :plain,
   :enable_starttls_auto => true
 }
