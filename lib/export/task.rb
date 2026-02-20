@@ -60,21 +60,6 @@ module Export
     def log_job_execution_step
       return @log_job_execution_step if @log_job_execution_step.present?
 
-      # Access the environment configuration
-      environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-
-      dbconfig = Psych.safe_load(
-        ERB.new(
-          File.read(
-            File.join(@main_driver.root_path, 'config', 'database.yml')
-          )
-        ).result,
-        aliases: true
-      )
-
-      # Connect to the database
-      Log::JobExecutionStep.establish_connection dbconfig[environment]
-
       # Create a Log::JobExecutionStep Entry
       @log_job_execution_step = Log::JobExecutionStep.create!(
         job_execution_id: @main_driver.log_job_execution.id,

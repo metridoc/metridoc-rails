@@ -161,21 +161,6 @@ module Export
     def log_job_execution
       return @log_job_execution if @log_job_execution.present?
 
-      # Access the environment configuration
-      environment = ENV['RACK_ENV'] || ENV['RAILS_ENV'] || 'development'
-
-      dbconfig = Psych.safe_load(
-        ERB.new(
-          File.read(
-            File.join(root_path, 'config', 'database.yml')
-          )
-        ).result,
-        aliases: true
-      )
-
-      # Connect to the database
-      Log::JobExecution.establish_connection dbconfig[environment]
-
       # Create a Log::JobExecution entry
       @log_job_execution = Log::JobExecution.create!(
         source_name: config_folder,
