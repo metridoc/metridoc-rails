@@ -99,25 +99,14 @@ module Export
     end
 
     # Connect and retrieve the information from the api endpoint
-    def connect(report_path = "")
-      response = nil
-
+    def connect(token = "")
       # Open a connection to the url
-      URI.open(url(report_path)) do |f|
-        # Query the status of the API Call
-        status = f.status[0]
-
-        # Only allow successful API Calls
-        if status != "200"
-          raise "Bad Status: " + status
-        end
-
-        # Read the document into the response
-        response = f.read
-      end
+      uri = URI.parse(url(token))
+      response = Net::HTTP.get_response(uri)
+      body = response.is_a?(Net::HTTPSuccess) ? response.body : nil
 
       # Parse the result with Nokogiri
-      @document = Nokogiri::XML(response)
+      @document = Nokogiri::XML(body)
 
       # Remove namespaces before parsing
       @document.remove_namespaces!
