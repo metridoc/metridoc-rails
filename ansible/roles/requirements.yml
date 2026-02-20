@@ -1,4 +1,7 @@
 ---
+collections:
+  - name: community.docker
+
 roles:
   - name: shibboleth_sp
     src: https://github.com/upenn-libraries/ansible_shibboleth_sp.git

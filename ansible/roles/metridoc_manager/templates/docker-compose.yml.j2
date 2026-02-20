@@ -17,6 +17,7 @@ services:
       MAILER_DOMAIN: "{{ mailer_domain }}"
       MAILER_HOST: "{{ mailer_host }}"
       RAILS_ENV: "{{ rails_env }}"
+      RAILS_LOG_LEVEL: "{{ rails_log_level }}"
 
       SAML_EMAIL_ATTRIBUTE: "{{ saml_email_attribute }}"
       SAML_FIRST_NAME_ATTRIBUTE: "{{ saml_first_name_attribute }}"
@@ -137,11 +138,12 @@ services:
       - shibboleth
     secrets:
       - postgres_database_password
-      - source: metridoc_rails_secrets_config
-        target: /home/app/config/secrets.yml
+      - source: rails_master_key
+        target: /home/app/config/credentials/{{ rails_env }}.key
         uid: "{{ rails_app_user_uid }}"
         gid: "{{ rails_app_user_gid }}"
         mode: 0440
+
     volumes:
       - ezpaarse_output:/tmp/upenn_ezproxy
       - gate_count:/tmp/gate_count
@@ -164,6 +166,7 @@ services:
       MAILER_DOMAIN: "{{ mailer_domain }}"
       MAILER_HOST: "{{ mailer_host }}"
       RAILS_ENV: "{{ rails_env }}"
+      RAILS_LOG_LEVEL: "{{ rails_log_level }}"
     healthcheck:
       test:
         [
@@ -184,11 +187,12 @@ services:
       - database
     secrets:
       - postgres_database_password
-      - source: metridoc_rails_secrets_config
-        target: /home/app/config/secrets.yml
+      - source: rails_master_key
+        target: /home/app/config/credentials/{{ rails_env }}.key
         uid: "{{ rails_app_user_uid }}"
         gid: "{{ rails_app_user_gid }}"
         mode: 0440
+
     volumes:
       - metridoc_tmp_data:/home/app/tmp
       {% if is_development %}
@@ -208,11 +212,9 @@ secrets:
   postgres_database_password:
     name: metridoc_postgres_database_password_{{ metridoc_secrets_version }}
     external: true
-  {% for config_secret in metridoc_config_secrets.results %}
-  {{ config_secret.item.name }}:
-    name: "{{ config_secret.secret_name }}"
+  rails_master_key:
+    name: "{{ 'metridoc_rails_master_key_v' ~ metridoc_vault_values.metadata.version }}"
     external: true
-  {% endfor %}
 
 volumes:
   ezpaarse_output:
@@ -220,7 +222,7 @@ volumes:
     name: metridoc_ezpaarse_output
   gate_count:
   metridoc_tmp_data:
-    {% if "production" in groups %}
+    {% if rails_env == "production" %}
     name: metridoc_tmp_data
     driver: local
     driver_opts:

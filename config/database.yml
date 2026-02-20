@@ -1,27 +1,38 @@
 default: &default
-  adapter: postgresql_makara
+  pool: 8
+  adapter: postgresql
   database: postgres
   username: postgres
   password: <%= DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD']) %>
-  pool: 8
-  makara:
-    sticky: false
-    connections:
-      - role: master
-        host: primary-db
-        disable_blacklist: true
-      - role: slave
-        host: replica-db
   variables:
     tcp_keepalives_idle: 60
     tcp_keepalives_interval: 60
     tcp_keepalives_count: 100
 
 development:
+  host: primary-db
   <<: *default
 
 test:
+  host: primary-db
   <<: *default
 
+staging:
+  primary:
+    host: primary-db
+    <<: *default
+
+  primary_replica:
+    host: replica-db
+    replica: true
+    <<: *default
+
 production:
-  <<: *default
+  primary:
+    host: primary-db
+    <<: *default
+
+  primary_replica:
+    host: replica-db
+    replica: true
+    <<: *default

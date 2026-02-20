@@ -3,7 +3,7 @@
 ARG IMAGE_NAME=ruby
 
 # Image tag
-ARG IMAGE_TAG=3.2.2-bookworm
+ARG IMAGE_TAG=3.4.8-bookworm
 
 # Rails env
 ARG RAILS_ENV=development
@@ -12,7 +12,7 @@ ARG RAILS_ENV=development
 FROM ${IMAGE_NAME}:${IMAGE_TAG} AS base
 
 ARG RUBY_MAJOR
-ENV RUBY_MAJOR=3.2.0
+ENV RUBY_MAJOR=3.4.0
 
 ARG BUNDLE_HOME=vendor/bundle
 ENV BUNDLE_HOME=${BUNDLE_HOME}
@@ -48,8 +48,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /tmp/freetds
 
 # Download and install FreeTDS
-RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.4.10.tar.gz | tar --strip-components=1 -zxf - && \
-    ./configure --prefix=/usr/local --with-tdsver=7.3 && \
+RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.5.10.tar.gz | tar --strip-components=1 -zxf - && \
+    ./configure --prefix=/usr/local --with-tdsver=7.4 && \
     make && make install
  
 WORKDIR ${PROJECT_ROOT}
@@ -95,8 +95,7 @@ FROM base AS development
 ARG RAILS_ENV=development
 ENV RAILS_ENV=${RAILS_ENV}
 
-RUN SECRET_KEY_BASE=x bundle exec rake assets:precompile
-
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile
 
 # Production Stage -----------------------------------
 FROM base AS production
@@ -104,7 +103,7 @@ FROM base AS production
 ARG RAILS_ENV=production
 ENV RAILS_ENV=${RAILS_ENV}
 
-# Set Rails env
 ENV RAILS_LOG_TO_STDOUT=true
 ENV RAILS_SERVE_STATIC_FILES=true
-RUN SECRET_KEY_BASE=x bundle exec rake assets:precompile
+
+RUN SECRET_KEY_BASE_DUMMY=1 bundle exec rails assets:precompile

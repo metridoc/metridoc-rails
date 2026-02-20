@@ -16,9 +16,12 @@ $am-theme-accent: #FFC857;
 $am-theme-backdrop: #FBF9F6;
 $am-theme-divider: #412234;
 
-@import "active_admin/mixins";
+@use "active_admin/mixins";
+@use "active_admin_sidebar";
+
+// If this is switched to use, no css is rendered
 @import "active_material/src/stylesheets/active_material";
-@import "active_admin_sidebar";
 
 
+// If this is switched to use, font sizes are all over the place
 @import "metridoc";
