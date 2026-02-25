@@ -11,20 +11,16 @@ gem 'rails', '>= 7.2'
 # Databases
 ###########
 
-# Use sqlite3 as the database for Active Record
-# Ruby library to interface with the SQLite3 database engine
-# (http://www.sqlite.org). Precompiled binaries are available for common
-# platforms for recent versions of Ruby.
-# Needed to avoid errors on build?
-gem 'sqlite3'
-
-
 # Pg is the Ruby interface to the PostgreSQL RDBMS.
 # It works with PostgreSQL 9.3 and later.
 gem 'pg'
 
 # A simple, fast Mysql library for Ruby, binding to libmysql
 gem 'mysql2'
+
+# TinyTDS - A modern, simple and fast FreeTDS library for Ruby using DB-Library.
+# Developed for the ActiveRecord SQL Server adapter.
+gem 'tiny_tds'
 
 # The SQL Server adapter for ActiveRecord using SQL Server 2012 or higher.
 # Needed for connections to ILLIAD databases
@@ -186,16 +182,6 @@ group :development do
   # Makes spring watch files using the listen gem.
   # Last updated in 2022
   gem 'spring-watcher-listen', '~> 2.1.0'
-
-  #tiny_tds and activerecord-sqlserver-adapter gems are needed by only
-  # import_helper.rb, which is not really part of the app, it is more for
-  # diagnosing/troubleshooting sql server sources
-
-  # TinyTDS - A modern, simple and fast FreeTDS library for Ruby using DB-Library.
-  # Developed for the ActiveRecord SQL Server adapter.
-  gem 'tiny_tds'
-
-  # ActiveRecord SQL Server Adapter. SQL Server 2012 and upward.
 
   # Quick way to inspect your Rails database, see content of tables, filter,
   # export them to CSV, Excel, EXPLAIN SQL and run SQL queries.
