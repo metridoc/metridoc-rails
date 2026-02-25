@@ -95,6 +95,7 @@ build_and_push_prod_image:
         DOCKER_BUILD_PLATFORM: "linux/amd64"
   variables:
     DOCKER_ADDITIONAL_CACHE_TARGETS: "base development production"
+    DOCKER_BUILD_ARGS: "--build-arg RAILS_ENV=production"
     DOCKER_TARGET: "production"
   tags:
     - ${RUNNER}
