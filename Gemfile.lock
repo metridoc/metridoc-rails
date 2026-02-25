@@ -533,7 +533,7 @@ DEPENDENCIES
   active_storage_validations
   activeadmin
   activerecord-import
-  activerecord-sqlserver-adapter (~> 7.1)
+  activerecord-sqlserver-adapter (~> 7.2)
   aws-sdk-dynamodb
   chartkick
   chronic

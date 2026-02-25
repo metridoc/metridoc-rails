@@ -26,6 +26,11 @@ gem 'pg'
 # A simple, fast Mysql library for Ruby, binding to libmysql
 gem 'mysql2'
 
+# The SQL Server adapter for ActiveRecord using SQL Server 2012 or higher.
+# Needed for connections to ILLIAD databases
+# Versioning paired with Rails
+gem 'activerecord-sqlserver-adapter', '~> 7.2'
+
 # The Scenic Gem provides easy ways to create PostgreSQL views to interact
 # with rails infrastructure.
 gem 'scenic'
@@ -191,7 +196,6 @@ group :development do
   gem 'tiny_tds'
 
   # ActiveRecord SQL Server Adapter. SQL Server 2012 and upward.
-  gem 'activerecord-sqlserver-adapter', '~> 7.1'
 
   # Quick way to inspect your Rails database, see content of tables, filter,
   # export them to CSV, Excel, EXPLAIN SQL and run SQL queries.
