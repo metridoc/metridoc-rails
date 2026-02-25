@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_16_152119) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_25_210052) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -22,8 +22,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_16_152119) do
     t.bigint "resource_id"
     t.string "author_type"
     t.bigint "author_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
@@ -1489,6 +1489,16 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_16_152119) do
     t.float "latitude"
     t.integer "dfrcgid"
     t.integer "dfrcuscg"
+    t.string "ueis"
+    t.integer "c00_carnegie"
+    t.integer "c21_basic"
+    t.integer "carnegieic"
+    t.integer "carnegiesaec"
+    t.integer "carnegiersch"
+    t.integer "carnegiesize"
+    t.integer "carnegiealf"
+    t.integer "carnegieapm"
+    t.integer "carnegiegpm"
     t.index ["unitid"], name: "ipeds_directories_unique_id", unique: true
   end
 
