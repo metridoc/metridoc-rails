@@ -96,18 +96,19 @@
   %h4 Steps for producing the file for the Completions Schema Table:
   %ul
     %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
-    %li Go to: Survey Data > Complete Data Files
+    %li Go to: Use The Data > Download IPEDS Data > Complete Data Files
     %li
       Download dictionary for completions dataset that includes "Awards/degrees
       conferred by program (6-digit CIP code), award level, race/ethnicity,
       and gender"
     %li In the varlist tab, delete the varnumber column
+    %li Alter the column headings to ensure consistency between different versions: VarName -> varname and FieldWidth -> fieldwidth
     %li Delete any blank rows at the end of the file and save as a csv
 
   %h4 Steps for producing the files for the Completions Data Table:
   %ul
     %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
-    %li Go to: Survey Data > Complete Data Files
+    %li Go to: Use The Data > Download IPEDS Data > Complete Data Files
     %li
       For each year of data download the data file for completions dataset
       that includes "Awards/degrees conferred by program (6-digit CIP code),
@@ -137,17 +138,18 @@
   %h4 Steps for producing the file for the Programs Schema Table:
   %ul
     %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
-    %li Go to: Survey Data > Complete Data Files
+    %li Go to: Use The Data > Download IPEDS Data > Complete Data Files
     %li
       Download dictionary for completions dataset that includes "Number of
       programs offered and number of programs offered via distance education,
       by award level"
+    %li Alter the column headings to ensure consistency between different versions: VarName -> varname and FieldWidth -> fieldwidth
     %li Delete any blank rows at the end of the file and save as a csv
 
   %h4 Steps for producing the files for the Programs Data Table:
   %ul
     %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
-    %li Go to: Survey Data > Complete Data Files
+    %li Go to: Use The Data > Download IPEDS Data > Complete Data Files
     %li
       For each year of data download the data file for completions dataset
       that includes "Number of programs offered and number of programs offered
@@ -185,15 +187,16 @@
   %h4 Steps for producing the file for the Directory Schema Table:
   %ul
     %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
-    %li Go to: Survey Data > Complete Data Files
+    %li Go to: Use The Data > Download IPEDS Data > Complete Data Files
     %li Download the most recent dictionary for directory dataset
     %li In the varlist tab, delete the varnumber column
+    %li Alter the column headings to ensure consistency between different versions: VarName -> varname and FieldWidth -> fieldwidth
     %li Delete any blank rows at the end of the file and save as a csv
 
   %h4 Steps for producing the files for the Directory Data Table:
   %ul
     %li Go to: #{link_to "IPEDS Data", "https://nces.ed.gov/ipeds/use-the-data"}
-    %li Go to: Survey Data > Complete Data Files
+    %li Go to: Use The Data > Download IPEDS Data > Complete Data Files
     %li Download the most recent directory dataset
     %li Save file as xlsx
 
