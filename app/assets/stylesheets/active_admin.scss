@@ -18,10 +18,10 @@ $am-theme-divider: #412234;
 
 @use "active_admin/mixins";
 @use "active_admin_sidebar";
+@use "metridoc";
 
 // If this is switched to use, no css is rendered
 @import "active_material/src/stylesheets/active_material";
 
 
-// If this is switched to use, font sizes are all over the place
-@import "metridoc";
+
