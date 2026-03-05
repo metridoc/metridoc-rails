@@ -8,10 +8,7 @@ require 'active_record/railtie'
 require 'active_storage/engine'
 require 'action_controller/railtie'
 require 'action_mailer/railtie'
-# require 'action_mailbox/engine' # We don't use?
-# require 'action_text/engine' # We don't use
 require 'action_view/railtie'
-# require 'action_cable/engine' # We don't use this
 require 'rails/test_unit/railtie'
 
 
