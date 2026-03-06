@@ -62,7 +62,6 @@ gem 'jbuilder', '~> 2.5'
 # Integrate Dart Sass with the asset pipeline in Rails.
 gem "dartsass-rails"
 
-
 gem "sprockets-rails"
 # This gem combines the speed of libsass, the Sass C implementation,
 # with the ease of use of the original Ruby Sass library.
