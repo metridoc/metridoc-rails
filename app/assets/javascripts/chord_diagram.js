@@ -2,400 +2,600 @@
 // data = [{A: From Category, B: To Category, value: strength}, ...]
 // The uid must be the name of the div that the svg will be inserted into
 // It needs to be unique to ensure that the gradient colors aren't screwed up.
-chordDiagram = function(data, uid) {
+
+function chordLayout(layoutData) {
+  // Constants needed for the Layout
+  let padding = 0.02; // The padding between arcs
+  let emptyPerc = 0.2; // The extra padding needed at the top and bottom.
+
+  // Calculate the total of all events
+  const total = d3.sum(layoutData, (d) => d.value);
+
+  function processGroups(inputData, left = False) {
+    // Organize the data in name value pairs in descending order
+    const groups = Array.from(
+      d3.rollup(
+        inputData,
+        (v) => d3.sum(v, (d) => d.value),
+        (d) => (left ? d.left : d.right),
+      ),
+    ) // Creates a nested object of inner name and values of other variables
+      .sort((a, b) => b[1] - a[1])
+      .map((d) => ({ name: d[0], value: d[1] }));
+
+    // The number of groupings
+    const n = groups.length;
+
+    // Calculate the percent of the half pie that will be padding
+    // emptyPerc gives the padding between the left and right sides in percent
+    // padding is the angular gap between groups in radians
+    // Half of the circle is pi
+    const totalPaddingFraction = emptyPerc + (padding * (n - 1)) / Math.PI;
+
+    // Calculate the effective total which includes all padding
+    const effectiveTotal = total / (1 - totalPaddingFraction);
+
+    // calculate the start angle
+    let startAngle = (emptyPerc / 4) * 2 * Math.PI;
+
+    // Return a object with information about the group
+    let processedData = groups.map((d, i) => {
+      groupAngle = (d.value / effectiveTotal) * Math.PI;
+      endAngle = startAngle + groupAngle;
+
+      output = {
+        groupName: d.name,
+        groupValue: d.value,
+        groupValueFormat: d3.format(",.0f")(d.value),
+        groupIndex: i,
+        groupAngle: groupAngle,
+        groupStartAngle: startAngle * (left ? -1 : 1),
+        groupEndAngle: endAngle * (left ? -1 : 1),
+        group: left ? "left" : "right",
+        groupTotal: total, // The total of all events
+      };
+
+      // Increment the starting angle
+      startAngle = endAngle + padding;
+
+      return output;
+    }); // End processedData
+
+    return processedData;
+  } // End processGroups
+
+  const leftGroups = processGroups(layoutData, true);
+  const rightGroups = processGroups(layoutData, false);
+
+  // Map the input data to the loom structure
+  let chord = layoutData.map(function (d) {
+    // Search left groups and right groups to find elements matching the data
+    let leftData = leftGroups.find((e) => e.groupName == d.left);
+    let rightData = rightGroups.find((e) => e.groupName == d.right);
+
+    let output = {
+      left: Object.assign({}, leftData),
+      right: Object.assign({}, rightData),
+    };
+
+    output.value = d.value;
+    output.valueFormat = d3.format(",.0f")(d.value);
+
+    // Calculate the missing left hand subgroup facts
+    output.left.subgroupFraction = d.value / leftData.groupValue;
+
+    // Calculate the angle subtended by the subgroup
+    output.left.subgroupAngle =
+      (leftData.groupEndAngle - leftData.groupStartAngle) *
+      output.left.subgroupFraction;
+
+    // Sort in order of the right hand index
+    let previousRightGroups = rightGroups
+      .filter((e) => e.groupIndex < rightData.groupIndex)
+      .map((e) => e.groupName);
+
+    let previousLeftSum = d3.sum(
+      layoutData.filter(
+        (e) => e.left == d.left && previousRightGroups.includes(e.right),
+      ),
+      (e) => e.value,
+    );
+
+    // Calculate the starting angle of the left side
+    output.left.subgroupStartAngle =
+      output.left.groupStartAngle -
+      (previousLeftSum / output.left.groupValue) * output.left.groupAngle;
+
+    output.left.subgroupEndAngle =
+      output.left.subgroupStartAngle + output.left.subgroupAngle;
+
+    // Sort in order of the left hand index
+    let previousLeftGroups = leftGroups
+      .filter((e) => e.groupIndex < leftData.groupIndex)
+      .map((e) => e.groupName);
+
+    let previousRightSum = d3.sum(
+      layoutData.filter(
+        (e) => e.right == d.right && previousLeftGroups.includes(e.left),
+      ),
+      (e) => e.value,
+    );
+
+    // Calculate the missing right hand subgroup facts
+    output.right.subgroupFraction = d.value / rightData.groupValue;
+
+    // Calculate the angle subtended by the subgroup
+    output.right.subgroupAngle =
+      (rightData.groupEndAngle - rightData.groupStartAngle) *
+      output.right.subgroupFraction;
+
+    // Calculate the starting angle of the right side
+    output.right.subgroupStartAngle =
+      output.right.groupStartAngle +
+      (previousRightSum / output.right.groupValue) * output.right.groupAngle;
+
+    output.right.subgroupEndAngle =
+      output.right.subgroupStartAngle + output.right.subgroupAngle;
+
+    return output;
+  });
+
+  return {
+    groups: leftGroups.concat(rightGroups),
+    leftGroups: leftGroups,
+    rightGroups: rightGroups,
+    chords: chord,
+  };
+} // End Chord Layout Function
+
+chordDiagram = function (data, uid) {
   ////////////////////////////////////////////////////////////
   //////////////////////// Set-up ////////////////////////////
   ////////////////////////////////////////////////////////////
   // Figure out the screen width
   var screenWidth = $(window).width(),
-      mobileScreen = (screenWidth > 400 ? false : true);
+    mobileScreen = screenWidth > 400 ? false : true;
+
+  ///////////////////////////////////////////////////////////
+  ////////////////////// Create SVG //////////////////////////
+  ////////////////////////////////////////////////////////////
 
   // Calculate the margins around the svg
-  var margin = {left: 50, top: 10, right: 50, bottom: 10},
-      width = Math.min(screenWidth, 1000) - margin.left - margin.right,
-      height = (mobileScreen ? 300 : Math.min(screenWidth, 1000) * 5/6) - margin.top - margin.bottom;
+  let margin = { left: 50, top: 10, right: 50, bottom: 10 },
+    width = Math.min(screenWidth, 1000) - margin.left - margin.right,
+    height =
+      (mobileScreen ? 300 : (Math.min(screenWidth, 1000) * 5) / 6) -
+      margin.top -
+      margin.bottom;
 
   // Create an svg to display
-  var svg = d3.select("#" + uid).append("svg")
-      .attr("width", (width + margin.left + margin.right))
-      .attr("height", (height + margin.top + margin.bottom));
+  let svg = d3
+    .select("#" + uid)
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom);
 
-  // g is the svg object we will build
-  var wrapper = svg.append("g").attr("class", "chordWrapper")
-      .attr("transform", "translate(" + (width / 2 + margin.left) + "," + (height / 2 + margin.top) + ")");;
+  ////////////////////////////////////////////////////////////
+  /////////////////// Set-up Chord parameters ////////////////
+  ////////////////////////////////////////////////////////////
 
   // Set default variables
-  var outerRadius = Math.min(width, height) / 2  - (mobileScreen ? 80 : 100),
-      innerRadius = outerRadius * 0.95, // size of the ending arcs
-      pullOutSize = (mobileScreen? 20 : 50), // the number of pixels of separation
-      padding = 0.02, // padding between chords
-      opacityDefault = 0.7, //default opacity of chords
-      opacityHigh = 1.0, // default opacity of the chord hovered over
-      opacityLow = 0.1; //hover opacity of those chords not hovered over
+  let outerRadius = Math.min(width, height) / 2 - (mobileScreen ? 80 : 100),
+    innerRadius = outerRadius * 0.95,
+    pullOutSize = mobileScreen ? 20 : 50, // the number of pixels of separation
+    opacityDefault = 0.7, //default opacity of chords
+    opacityHigh = 1.0, // default opacity of the chord hovered over
+    opacityLow = 0.1; //hover opacity of those chords not hovered over
 
-  // Define the number formatting
-  var formatNumber = d3.format(",.0f");
-  var formatPercent = d3.format(".2f");
+  // Format the loom data for further use
+  let chord = chordLayout(data);
 
   ////////////////////////////////////////////////////////////
-  ////////////////////////// Data ////////////////////////////
+  ///////////////////////// Colors ///////////////////////////
   ////////////////////////////////////////////////////////////
 
-  // Group by the A Categories and add up the values
-  var values_a = data.reduce((obj, {A, B, value}) => {
-    if (!obj[A]) obj[A] = 0;
-    obj[A] += value;
-    return obj;
-  }, {});
-
-  // Get list of names of A Categories in reverse sort order
-  var names_a = Object.entries(values_a).sort((a,b) => a[1] - b[1]).map((a) => a[0]);
-
-  // Group by the B Categories and add up the values
-  var values_b = data.reduce((obj, {A, B, value}) => {
-    if (!obj[B]) obj[B] = 0;
-    obj[B] += value;
-    return obj;
-  }, {});
-
-
-  // Get list of names of B Categories in sort order
-  var names_b = Object.entries(values_b).sort((a,b) => b[1] - a[1]).map((a) => a[0]);
-
-  // Find the division of the halves
-  var split = names_b.length;
-
-  // Make the list of labels with empty strings to fill the stretched chord
-  var names = names_b.concat([""], names_a, [""]);
-
-  // Method to create n + 1 colors in a rainbow
-  // d3.interpolateRainbow(float) - function takes a float 0-1 and returns a color
-  // d3.quantize(interpolator, n) - function that returns an array of n samples from interpolator
-  var colors = d3.quantize(d3.interpolateRainbow, names.length-1)
-
-  // Calculate the total number of events to put in the chord
-  var total = data.reduce((obj, {A, B, value}) => {
-    obj += value;
-    return obj;
-  }, 0);
-  var double_total = total * 2;
-
-  // Calcuate the fraction of empty events to insert for a 40% gap
-  var emptyPerc = 0.4;
-  var emptyStroke = Math.round(double_total * emptyPerc);
-
-  // Create an empty 2D array
-  var matrix = Array.from(Array(names.length), _ => Array(names.length).fill(0));
-
-  // Fill array with data
-  data.forEach( function(obj) {
-    a_index = names.indexOf(obj["A"], split);
-    b_index = names.indexOf(obj["B"], 0);
-
-    matrix[a_index][b_index] = obj["value"];
-    matrix[b_index][a_index] = obj["value"];
-  });
-
-  // Add empty stroke to array
-  matrix[split][names.length - 1] = emptyStroke;
-  matrix[names.length - 1][split] = emptyStroke;
+  // Colors depend on left list of labels
+  let colors = d3.quantize(d3.interpolateRainbow, chord.groups.length + 1);
 
   ////////////////////////////////////////////////////////////
-  ////////////////////// Calculations ////////////////////////
+  ///////////////////// Read in data /////////////////////////
   ////////////////////////////////////////////////////////////
 
-  //Calculate how far the Chord Diagram needs to be rotated clockwise to make the dummy
-  //invisible chord center vertically
-  var offset = Math.PI / 4 - (names_b.length - names_a.length) / 2 * padding;
+  // Build the svg and connect to the data
+  let g = svg
+    .append("g")
+    .attr(
+      "transform",
+      "translate(" +
+        (width / 2 + margin.left) +
+        "," +
+        (height / 2 + margin.top) +
+        ")",
+    )
+    .datum(chord);
 
-  //Custom sort function of the chords to keep them in the original order
-  var chord = customChordLayout() //d3.layout.chord()//Custom sort function of the chords to keep them in the original order
-      .padding(padding)
-      .sortChords(d3.descending) //which chord should be shown on top when chords cross. Now the biggest chord is at the bottom
-      .matrix(matrix);
+  ////////////////////////////////////////////////////////////
+  ////////////////////// Draw arcs ///////////////////////
+  ////////////////////////////////////////////////////////////
 
-  var arc = d3.arc()
-      .innerRadius(innerRadius)
-      .outerRadius(outerRadius)
-      .startAngle(startAngle) //startAngle and endAngle now include the offset in degrees
-      .endAngle(endAngle);
+  //Initiate an arc drawing function that is also needed
+  let arc = d3
+    .arc()
+    .innerRadius(innerRadius)
+    .outerRadius(outerRadius)
+    .startAngle((d) => d.groupStartAngle)
+    .endAngle((d) => d.groupEndAngle);
 
-  // Creates a mathematical description of the path of the new stretched out chord
-  var path = stretchedChord()
-      .radius(innerRadius)
-      .startAngle(startAngle)
-      .endAngle(endAngle)
-      .pullOutSize(pullOutSize); // Separation between the two halves
+  let arcGroup = g.append("g").attr("class", "arc-outer-wrapper");
+
+  //Create a group per arc, which will contain the arc path + the left name & number of value text
+  let arcs = arcGroup
+    .selectAll(".arc-wrapper")
+    .data((s) => s.groups)
+    .enter()
+    .append("g")
+    .attr("class", "arc-wrapper")
+    .each(function (d) {
+      // Define the color for the group
+      let idx =
+        d.groupIndex + (d.group == "left" ? 0 : chord.leftGroups.length);
+      d.color = colors[idx];
+      // Define the average angle of the arc in degrees
+      d.angle = (((d.groupStartAngle + d.groupEndAngle) / 2) * 180) / Math.PI;
+      // Add a definition for the pull out size to each object
+      d.pullOutSize = pullOutSize * (d.angle > 0 ? 1 : -1);
+    })
+    .on("mouseover", fadeArc(opacityLow))
+    .on("mouseout", fadeArc(opacityDefault));
+
+  //Create the actual arc paths
+  let arcPaths = arcs
+    .append("path")
+    .attr("class", "arc")
+    .style("fill", (d) => d.color)
+    .style("stroke", "black")
+    .attr("d", arc)
+    .attr("transform", (d) => "translate(" + d.pullOutSize + "," + 0 + ")");
+
+  ////////////////////////////////////////////////////////////
+  //////////////////// Draw left labels /////////////////////
+  ////////////////////////////////////////////////////////////
+
+  let arcLabels = arcs
+    .append("g")
+    .attr("class", "arc-labels")
+    .attr("text-anchor", function (d) {
+      // Define which end of the text to anchor at
+      // depending on the left or right hand side
+      return d.angle < 0 ? "end" : "start";
+    })
+    .attr("transform", function (d) {
+      return (
+        // Pull out text in X
+        "translate(" +
+        50 * (d.angle < 0 ? -1 : 1) +
+        ", 0)rotate(" +
+        // Rotate text to appropriate location
+        // 90 offset needed since chord zero is vertical and svg zero is horizontal
+        (d.angle - 90) +
+        ")" +
+        // Move the text outside the circle of arcs
+        "translate(" +
+        1.05 * outerRadius +
+        ", 0)" +
+        // Flip the text depending on left or right hand side
+        (d.angle < 0 ? "rotate(180)" : "")
+      );
+    });
+  // Add the left Label Name
+  arcLabels
+    .append("text")
+    .attr("class", "arc-label")
+    .attr("dy", "-.5em")
+    .text((d) => d.groupName);
+
+  // Add the arc Value
+  arcLabels
+    .append("text")
+    .attr("class", "arc-label-value")
+    .attr("dy", ".5em")
+    .text((d) => d.groupValueFormat + " events");
 
   ////////////////////////////////////////////////////////////
   /////////////// Create the gradient fills //////////////////
   ////////////////////////////////////////////////////////////
 
   //Function to create the id for each chord gradient
-  function getGradID(d){
-    return uid + "-" + "linkGrad-" + d.source.index + "-" + d.target.index;
+  function getGradID(d) {
+    return (
+      uid + "-" + "linkGrad-" + d.left.groupIndex + "-" + d.right.groupIndex
+    );
   }
 
   //Create the gradients definitions for each chord
-  var grads = svg.append("defs").selectAll("linearGradient")
-      .data(chord.chords())
-      .enter().append("linearGradient")
-      .attr("id", function(d) { return getGradID(d); })
-      .attr("gradientUnits", "userSpaceOnUse")
-      .attr("x1", function(d,i) {
-        // Find the midpoint angle of the arc (with offset)
-        // A 90 turn is needed as well
-        var avg_angle = (startAngle(d.source) + endAngle(d.source)) / 2 - Math.PI / 2;
-        // Find the x location on the circle
-        var x = innerRadius * Math.cos(avg_angle);
-        // Depending on the sign of x will direct which direction to do the pull out
-        var sign = (x >= 0 ? 1 : -1);
-        // Return the x value modified by half of the pullout size
-        return x + sign * pullOutSize/2;
-      })
-      .attr("y1", function(d,i) {
-        var avg_angle = (startAngle(d.source) + endAngle(d.source)) / 2 - Math.PI / 2;
-        return innerRadius * Math.sin(avg_angle);
-      })
-      .attr("x2", function(d,i) {
-        var avg_angle = (startAngle(d.target) + endAngle(d.target)) / 2 - Math.PI / 2;
-        var x = innerRadius * Math.cos(avg_angle);
-        var sign = (x >= 0 ? 1 : -1);
-        return x + sign * pullOutSize/2;
-      })
-      .attr("y2", function(d,i) {
-        var avg_angle = (startAngle(d.target) + endAngle(d.target)) / 2 - Math.PI / 2;
-        return innerRadius * Math.sin(avg_angle);
-      })
-
-  // Note: to reverse the gradient, flip the source and target
+  var gradients = svg
+    .append("defs")
+    .selectAll("linearGradient")
+    .data(chord.chords)
+    .enter()
+    .append("linearGradient")
+    .attr("id", (d) => getGradID(d))
+    .attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", function (d) {
+      // Find the midpoint angle of the arc (with offset)
+      // A 90 turn is needed as well
+      var avg_angle =
+        (d.left.subgroupStartAngle + d.left.subgroupEndAngle) / 2 - Math.PI / 2;
+      // Return the x value modified by half of the pullout size
+      return innerRadius * Math.cos(avg_angle) - pullOutSize;
+    })
+    .attr("y1", function (d) {
+      var avg_angle =
+        (d.left.subgroupStartAngle + d.left.subgroupEndAngle) / 2 - Math.PI / 2;
+      return innerRadius * Math.sin(avg_angle);
+    })
+    .attr("x2", function (d) {
+      var avg_angle =
+        (d.right.subgroupStartAngle + d.right.subgroupEndAngle) / 2 -
+        Math.PI / 2;
+      return innerRadius * Math.cos(avg_angle) + pullOutSize;
+    })
+    .attr("y2", function (d) {
+      var avg_angle =
+        (d.right.subgroupStartAngle + d.right.subgroupEndAngle) / 2 -
+        Math.PI / 2;
+      return innerRadius * Math.sin(avg_angle);
+    });
 
   //Set the starting color (at 0%)
-  grads.append("stop")
+  gradients
+    .append("stop")
     .attr("offset", "0%")
-    .attr("stop-color", function(d) {
-      return colors[d.source.index];
-    });
+    .attr("stop-color", (d) => colors[d.left.groupIndex]);
 
   //Set the ending color (at 100%)
-  grads.append("stop")
+  gradients
+    .append("stop")
     .attr("offset", "100%")
-    .attr("stop-color", function(d) {
-      return colors[d.target.index];
+    .attr("stop-color", function (d) {
+      return colors[chord.leftGroups.length + d.right.groupIndex];
     });
 
   ////////////////////////////////////////////////////////////
-  //////////////////// Draw outer Arcs ///////////////////////
+  ////////////////////// Draw chords /////////////////////////
   ////////////////////////////////////////////////////////////
 
-  var g = wrapper.selectAll("g.group")
-      .data(chord.groups)
-      .enter().append("g")
-      .attr("class", "group")
-      .on("mouseover", fade(opacityLow, true)) // setting mouse over arc options
-      .on("mouseout", fade(opacityDefault, false));
+  let chordPaths = chord.chords.map(function (d) {
+    // Adjustment for the difference in orientation between svg and loom data
+    const leftStartAngle = d.left.subgroupEndAngle - Math.PI / 2;
+    const leftEndAngle = d.left.subgroupStartAngle - Math.PI / 2;
 
-  g.append("path")
-    .style("stroke", function(d,i) {
-      return (names[i] === "" ? "none" : "black");
-    }) // outline of the arcs
-    .style("fill", function(d,i) {
-      return (names[i] === "" ? "none" : colors[i]);
-    }) // colors of the arcs
-    .style("pointer-events", function(d,i) {
-      return (names[i] === "" ? "none" : "auto");
-    })
-    .attr("d", arc)
-    .attr("transform", function(d, i) { //Pull the two slices apart
-      d.pullOutSize = pullOutSize * (i > split ? -1 : 1);
-      return "translate(" + d.pullOutSize + ',' + 0 + ")";
-    });
+    // Adjustment for the difference in orientation between svg and loom data
+    const rightStartAngle = d.right.subgroupStartAngle - Math.PI / 2;
+    const rightEndAngle = d.right.subgroupEndAngle - Math.PI / 2;
 
-  ////////////////////////////////////////////////////////////
-  ////////////////////// Append Names ////////////////////////
-  ////////////////////////////////////////////////////////////
+    // The central position of the arc
+    const leftCenterX = -1 * pullOutSize;
+    const leftCenterY = 0;
 
-  //The text also needs to be displaced in the horizontal directions
-  //And also rotated with the offset in the clockwise direction
-  g.append("text")
-    .each(function(d) { d.angle = ((d.startAngle + d.endAngle) / 2) + offset;})
-    .attr("dy", ".35em")
-    .attr("class", "titles")
-    .attr("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
-    .attr("transform", function(d,i) {
-      var c = arc.centroid(d);
-      return "translate(" + (c[0] + d.pullOutSize) + "," + c[1] + ")"
-        + "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
-        + "translate(" + 50 + ",0)"
-        + (d.angle > Math.PI ? "rotate(180)" : "")
-    })
-    .text(function(d,i) { return names[i]; });
+    const rightCenterX = pullOutSize;
+    const rightCenterY = 0;
 
-  ////////////////////////////////////////////////////////////
-  //////////////////// Draw inner chords /////////////////////
-  ////////////////////////////////////////////////////////////
+    // The x,y starting position of the left arc
+    const leftArcStartX = innerRadius * Math.cos(leftStartAngle) + leftCenterX;
+    const leftArcStartY = innerRadius * Math.sin(leftStartAngle) + leftCenterY;
 
-  var chords = wrapper.selectAll("path.chord")
-      .data(chord.chords)
-      .enter().append("path")
-      .attr("class", "chord")
-      .style("stroke", "black")
-      .style("fill", function(d){
-        return "url(#" + getGradID(d) + ")" }) // Defining fill color here
-      .style("opacity", function(d) {
-        return (names[d.source.index] === "" ? 0 : opacityDefault);
-      }) //Make the dummy strokes have a zero opacity (invisible)
-      .style("pointer-events", function(d,i) {
-        return (names[d.source.index] === "" ? "none" : "auto");
-      }) //Remove pointer events from dummy strokes
-      .attr("d", path)
-      .on("mouseover", fadeChord(opacityLow, true))
-      .on("mouseout", fadeChord(opacityDefault, false));
+    // The x,y ending position of the right arc
+    const rightArcStartX =
+      innerRadius * Math.cos(rightStartAngle) + rightCenterX;
+    const rightArcStartY =
+      innerRadius * Math.sin(rightStartAngle) + rightCenterY;
 
-  ////////////////////////////////////////////////////////////
-  ///////////////////////// Tooltip //////////////////////////
-  ////////////////////////////////////////////////////////////
+    // Create a path
+    path = d3.path();
+    // Move to the arc starting point
+    path.moveTo(leftArcStartX, leftArcStartY);
+    // Create the arc for the left subgroups
+    path.arc(
+      leftCenterX,
+      leftCenterY,
+      innerRadius,
+      leftStartAngle,
+      leftEndAngle,
+    );
 
-  //Arcs
-  g.append("title")
-    .text(function(d, i) {return Math.round(d.value) + " events in " + names[i];});
+    path.quadraticCurveTo(0, 0, rightArcStartX, rightArcStartY);
 
-  //Chords
-  chords.append("title")
-    .text(function(d) {
-      return [Math.round(d.source.value), " events from ", names[d.target.index], " to ", names[d.source.index]].join("");
-    });
+    // Create the arc for the right subgroups
+    path.arc(
+      rightCenterX,
+      rightCenterY,
+      innerRadius,
+      rightStartAngle,
+      rightEndAngle,
+    );
+
+    path.quadraticCurveTo(0, 0, leftArcStartX, leftArcStartY);
+
+    path.closePath();
+
+    // Return a chord object
+    return {
+      path: path,
+      color: "url(#" + getGradID(d) + ")",
+      rightName: d.right.groupName,
+      leftName: d.left.groupName,
+      leftIndex: d.left.groupIndex,
+      rightIndex: d.right.groupIndex,
+      value: d.value,
+      fraction: d.value / d.left.groupTotal,
+      percent: d3.format(".1f")((d.value / d.left.groupTotal) * 100),
+    };
+  });
+
+  // Build the chords connecting the middle to the sides
+  let chordGroup = g.append("g").attr("class", "chord-wrapper");
+
+  chordGroup
+    .selectAll("path")
+    .data(chordPaths)
+    .enter()
+    .append("path")
+    .attr("class", "chord")
+    .style("fill", (d) => d.color)
+    .style("stroke", "black")
+    .attr("d", (d) => d.path)
+    .style("opacity", opacityDefault)
+    .attr("left", (d) => d.leftIndex)
+    .attr("right", (d) => d.rightIndex)
+    .on("mouseover", fadeChord(opacityLow))
+    .on("mouseout", fadeChord(opacityDefault));
 
   ////////////////////////////////////////////////////////////
   //////////////////////// Title text ////////////////////////
   ////////////////////////////////////////////////////////////
 
+  let total = chord.leftGroups[0].groupTotal;
+
   // Put the total number of events above the chord diagram
-  svg.append("text")
+  g.append("text")
     .attr("class", "total")
-    .attr("x", width / 2 + margin.left)
-    .attr("y", height / 8 + margin.top )
+    .attr("x", 0)
+    .attr("y", -outerRadius)
     .attr("text-anchor", "middle")
     .style("textAlign", "center")
-    .text("Total Interactions:")
+    .text("Total Events:")
     .style("font-size", "30px")
     .append("tspan")
-    .attr("x", width / 2 + margin.left)
-    .attr("y",  height / 8 + margin.top )
+    .attr("x", 0)
+    .attr("y", -outerRadius)
     .attr("dy", "1.1em")
     .attr("text-anchor", "middle")
     .style("textAlign", "center")
-    .text(formatNumber(total));
+    .text(d3.format(",.0f")(total));
 
-  let lineHeight = 1.1; // ems
-  svg.append("text")
+  g.append("text")
     .attr("class", "description")
     .attr("text-anchor", "middle")
-    .style("font-size", "30px")
-    .attr("x", width / 2 + margin.left)
-    .attr("y", height / 4 + margin.top)
+    .style("font-size", "24px")
+    .attr("x", 0)
+    .attr("y", (outerRadius * 2) / 3)
     .style("textAlign", "center")
-    .text("A descriptive tooltip")
+    .text("")
     .style("visibility", "hidden");
 
-
   ////////////////////////////////////////////////////////////
-  ////////////////// Extra Functions /////////////////////////
+  //////////////// Interactive Behavior //////////////////////
   ////////////////////////////////////////////////////////////
 
-  //Include the offset in the start and end angle to rotate the Chord diagram clockwise
-  function startAngle(d) { return d.startAngle + offset; }
-  function endAngle(d) { return d.endAngle + offset; }
+  // Function to handle fading
+  function fade(selectedChords, opacity) {
+    // Fade the selected Chords
+    selectedChords
+      .transition("fadeOnArc")
+      .style("opacity", opacity < 0.5 ? opacityHigh : opacityDefault);
 
-  // Returns an event handler for fading a given chord group
-  function fade(opacity, mouseover) {
-    return function(event, arc) {
-      // Darken selected chords
-      let selectedChords = svg.selectAll("path.chord")
-        .filter(function(d) {
-          return d.source.index == arc.index || d.target.index == arc.index;
-        })
-        .transition("fadeOnArc")
-        .style("opacity", (mouseover ? opacityHigh : opacityDefault))
+    // Filter on the chord color, which is unique
+    let selectedChordColors = selectedChords.data().map((d) => d.color);
 
-      // Fade non-selected chords
-      svg.selectAll("path.chord")
-        .filter(function(d) {
-          return d.source.index !== arc.index && d.target.index !== arc.index && names[d.source.index] !== "";
-        })
-        .transition("fadeOnArc")
-        .style("opacity", opacity);
+    // Fade all non selected chords
+    svg
+      .selectAll(".chord")
+      .filter((d) => !selectedChordColors.includes(d.color))
+      .transition("fadeOnArc")
+      .style("opacity", opacity < 0.5 ? opacityLow : opacityDefault);
 
-      // Find the indices of all source and target arcs for the selected chords
-      let targetArcs = selectedChords
-        ._groups[0]
-        .map(c => c.__data__.target.index)
-      let sourceArcs = selectedChords
-        ._groups[0]
-        .map(c => c.__data__.source.index)
-      // List of all connected arcs indices (non-unique)
-      let selectedArcs = targetArcs.concat(sourceArcs)
+    // Collect the selected arcs
+    let selectedArcNames = selectedChords
+      .data()
+      .reduce((acc, d) => [...acc, d.leftName, d.rightName], []);
 
-      // Decrease the opacity for other arcs
-      svg.selectAll("g.group")
-        .filter(function(d) {return !selectedArcs.includes(d.index); })
-        .transition("fadeOnArc")
-        .style("opacity", (mouseover ? opacityLow : opacityHigh));
+    // Selected arcs
+    svg
+      .selectAll(".arc-wrapper")
+      .filter((d) => selectedArcNames.includes(d.groupName))
+      .transition("fadeOnArc")
+      .style("opacity", opacity < 0.5 ? opacityHigh : opacityHigh);
 
-      // Fade the description text
-      fadeDescription(arc.value, mouseover)
+    // Not Selected arcs
+    svg
+      .selectAll(".arc-wrapper")
+      .filter((d) => !selectedArcNames.includes(d.groupName))
+      .transition("fadeOnArc")
+      .style("opacity", opacity < 0.5 ? opacityLow : opacityHigh);
 
-    };
-  }//fade
+    // Update text in labels
+    let leftNameValues = Array.from(
+      d3.rollup(
+        selectedChords.data(),
+        (v) => d3.format(",.0f")(d3.sum(v, (d) => d.value)),
+        (d) => d.leftName,
+      ),
+    );
 
-  // Returns an event handler for fading a given chord group
-  function fadeChord(opacity, mouseover) {
-    return function(event, chord) {
-      // Decrease the opacity for all other chords
-      svg.selectAll("path.chord")
-        .filter(function(d) { return d !== chord && names[d.source.index] !== ""; })
-        .transition("fadeOnArc")
-        .style("opacity", opacity);
+    let rightNameValues = Array.from(
+      d3.rollup(
+        selectedChords.data(),
+        (v) => d3.format(",.0f")(d3.sum(v, (d) => d.value)),
+        (d) => d.rightName,
+      ),
+    );
 
-      // Decrease the opacity for all other arcs
-      svg.selectAll("g.group")
-        .filter(function(d) {return d.index !== chord.source.index && d.index !== chord.target.index; })
-        .transition("fadeOnArc")
-        .style("opacity", (mouseover ? opacityLow : opacityHigh));
+    let nameValues = Object.fromEntries(leftNameValues.concat(rightNameValues));
 
-      // Show hovered over chord with specialized opacity
-      // Exclude the empty chord
-      d3.select(this)
-        .filter(d => names[d.source.index] !== "")
-        .transition("fadeOnArc")
-        .style("opacity", (mouseover ? opacityHigh : opacityDefault));
+    svg
+      .selectAll(".arc-labels")
+      .selectAll(".arc-label-value")
+      .text(
+        (d) =>
+          (opacity < 0.5 ? nameValues[d.groupName] || 0 : d.groupValueFormat) +
+          " events",
+      );
 
-      // Fade the description text
-      fadeDescription(chord.source.value, mouseover)
-    };
-  }//fadeChord
-
-  function fadeDescription(value, mouseover) {
-    // Only add description text if a selection is made.
-    if (mouseover) {
-      // Add the text for the highlighted events
-      svg.selectAll(".description")
-        .text(formatPercent(value / total * 100 ) + "% of Total")
-        .attr("font-weight", 700)
-        .style("visibility", "visible")
+    // Create description of selection
+    let description = svg
+      .selectAll(".description")
+      .attr("text-anchor", "middle");
+    if (opacity < 0.5) {
+      let totalFraction = selectedChords
+        .data()
+        .reduce((acc, d) => acc + d.fraction, 0);
+      description
         .append("tspan")
-        .attr("x", width / 2 + margin.left)
-        .attr("y", height / 4 + margin.top)
-        .attr("dy", "1.45" + "em")
-        .text(formatNumber(value) + " events")
-        .attr("font-weight", 300);
+        .attr("x", 0)
+        .text(d3.format(".1f")(totalFraction * 100) + "% of Total")
+        .attr("font-weight", 700)
+        .style("visibility", "visible");
+    } else {
+      description.text("").style("visibility", "hidden");
     }
-    else {
-      svg.selectAll(".description")
-        .text("")
-        .style("visibility", "hidden");
-    }
-  } // fadeDescription
+  } // End fade
 
+  // Returns an event handler for fading on an arc
+  function fadeArc(opacity) {
+    return function (mouseEvent, data) {
+      // Find all selected chords
+      let selectedChords = svg
+        .selectAll(".chord")
+        .filter((d) =>
+          data.group == "right"
+            ? data.groupIndex == d.rightIndex
+            : data.groupIndex == d.leftIndex,
+        );
 
-} // chordDiagram
+      fade(selectedChords, opacity);
+    };
+  } // fadeArc
+
+  // Returns an event handler for fading on an chord
+  function fadeChord(opacity) {
+    return function (mouseEvent, data) {
+      // Find all selected chords
+      let selectedChords = svg
+        .selectAll(".chord")
+        .filter((d) => data.color == d.color);
+
+      fade(selectedChords, opacity);
+    };
+  }
+};
