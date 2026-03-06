@@ -1,4 +1,4 @@
-//=require active_admin/base
+//= require active_admin/base
 
 // Utility to manage the file upload tool
 //= require file_upload_imports
