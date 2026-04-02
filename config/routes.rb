@@ -12,6 +12,14 @@ Rails.application.routes.draw do
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
 
+  namespace :keyserver do
+    root 'analysis#index'
+    get 'stale',         to: 'analysis#stale'
+    get 'locations',     to: 'analysis#locations'
+    get 'by_school',     to: 'analysis#by_school'
+    get 'by_user_group', to: 'analysis#by_user_group'
+  end
+
   root 'pages#home'
 
   get 'shib', to: 'single_sign_on#shib'

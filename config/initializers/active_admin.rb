@@ -366,7 +366,7 @@ ActiveAdmin.setup do |config|
 
       # Keyserver
       menu.add label: I18n.t("active_admin.keyserver.keyserver_menu"),
-        url: :admin_keyserver_path,
+        url: :keyserver_root_path,
         if: proc{ authorized?(:read, "Keyserver") },
         parent: I18n.t("active_admin.library_data")
 

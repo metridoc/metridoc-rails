@@ -1,0 +1,57 @@
+<h1>Keyserver Software Usage Profile</h1>
+<p>Managed products with at least one checkout on a non-staff computer.
+   Activity status is relative to the most recent event date in the dataset.</p>
+
+<%# Status summary and nav -%>
+<div class="ks-subnav">
+  <strong>Status:</strong>
+  <% [["All", nil], ["Active", "Active"], ["Stale", "Stale"], ["Dormant", "Dormant"]].each do |label, val| %>
+    <%
+      count = val ? @status_counts[val].to_i : @status_counts.values.sum
+      active_filter = params[:status] == val || (val.nil? && params[:status].blank?)
+      href = val ? keyserver_root_path(status: val) : keyserver_root_path
+    %>
+    <%= link_to "#{label} (#{count})", href, class: active_filter ? "ks-current" : nil %>
+  <% end %>
+  <span class="ks-nav-sep">|</span>
+  <%= link_to "Stale &amp; Dormant".html_safe, keyserver_stale_path %>
+  <span class="ks-nav-sep">|</span>
+  <%= link_to "Locations", keyserver_locations_path %>
+  <span class="ks-nav-sep">|</span>
+  <%= link_to "By School", keyserver_by_school_path %>
+  <span class="ks-nav-sep">|</span>
+  <%= link_to "By User Group", keyserver_by_user_group_path %>
+</div>
+
+<% if @profiles.empty? %>
+  <p>No data available. Run <code>rake import -- --config_folder keyserver</code> to load data.</p>
+<% else %>
+  <table class="statistics_summary">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Checkouts</th>
+        <th>Distinct Users</th>
+        <th>Sessions / User</th>
+        <th>First Checkout</th>
+        <th>Last Checkout</th>
+        <th>Days Since Checkout</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @profiles.each do |p| %>
+        <tr>
+          <td><%= p.product %></td>
+          <td><%= number_with_delimiter(p.checkouts) %></td>
+          <td><%= number_with_delimiter(p.distinct_users) %></td>
+          <td><%= p.sessions_per_user %></td>
+          <td><%= p.first_checkout&.to_date %></td>
+          <td><%= p.last_checkout&.to_date %></td>
+          <td><%= p.days_since_checkout %></td>
+          <td><span class="ks-status <%= p.status&.downcase %>"><%= p.status %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

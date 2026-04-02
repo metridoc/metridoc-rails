@@ -1,0 +1,33 @@
+---
+# Keyserver event table import
+#
+# Source: events.xlsx exported from Keyserver (one row per event).
+# The workbook is expected to have a single sheet, or the relevant sheet
+# should be named "Events". Adjust sheet_name if the workbook differs.
+#
+# Column mapping documents the expected xlsx header → model attribute
+# correspondence. Because Roo normalises headers to snake_case via
+# Util.column_to_attribute, any header whose snake_case form already
+# matches the attribute name needs no explicit entry — the mapping below
+# is provided for documentation and future column-name drift detection.
+#
+# Columns intentionally excluded: idnt, agid (internal Keyserver identifiers
+# with no analytical value).
+
+load_sequence:        1
+target_model:         'Keyserver::Event'
+target_adapter:       'xlsx'
+file_name:            'events.xlsx'
+truncate_before_load: 'yes'
+
+# sheet_name: 'Events'   # uncomment if the workbook has multiple sheets
+
+column_mappings:
+  Computer Name: computer_name
+  Occurred At:   occurred_at
+  Application:   application
+  Version:       version
+  Event Type:    event_type
+  Product:       product
+  User Name:     user_name
+  Address:       address

@@ -1,0 +1,29 @@
+---
+# Keyserver session table import
+#
+# Source: sessions.xlsx exported from Keyserver (one row per session).
+# Adjust sheet_name if the workbook uses multiple sheets.
+#
+# duration is stored as integer seconds. If Keyserver exports it as
+# an already-numeric column, Roo will pass it through as Integer directly.
+# If it arrives as a formatted string (e.g. "3600"), Util.valid_integer?
+# handles the conversion.
+#
+# Columns intentionally excluded: idnt, agid.
+
+load_sequence:        2
+target_model:         'Keyserver::Session'
+target_adapter:       'xlsx'
+file_name:            'sessions.xlsx'
+truncate_before_load: 'yes'
+
+# sheet_name: 'Sessions'   # uncomment if the workbook has multiple sheets
+
+column_mappings:
+  Computer Name: computer_name
+  User Name:     user_name
+  Logon:         logon
+  Logoff:        logoff
+  Duration:      duration
+  Address:       address
+  Location:      location
