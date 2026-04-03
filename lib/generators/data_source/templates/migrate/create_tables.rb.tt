@@ -1,0 +1,14 @@
+class Create<%= class_name.delete(':') %>Tables < ActiveRecord::Migration[7.2]
+  def change
+<%- table_names.each do |table| -%>
+    create_table :<%= table_prefix %><%= table.pluralize %>, force: :cascade do |t|
+      # TODO: add columns, e.g.:
+      #   t.string   :example_column
+      #   t.datetime :occurred_at
+      #   t.integer  :count
+      t.timestamps
+    end
+
+<%- end -%>
+  end
+end

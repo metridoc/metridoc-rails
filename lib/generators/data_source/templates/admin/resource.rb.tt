@@ -1,0 +1,15 @@
+ActiveAdmin.register <%= class_name %>::<%= @current_table.camelize %>,
+  as: "<%= @current_table.humanize %>",
+  namespace: :<%= file_name %> do
+
+  menu false
+
+  breadcrumb do
+    [link_to('<%= display_name %>', :<%= file_name %>_root)]
+  end
+
+  actions :all, except: [:new, :edit, :update, :destroy]
+
+  preserve_default_filters!
+
+end

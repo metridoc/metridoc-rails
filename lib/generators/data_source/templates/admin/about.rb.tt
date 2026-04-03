@@ -1,0 +1,12 @@
+ActiveAdmin.register_page "About",
+  namespace: :<%= file_name %> do
+
+  menu false
+
+  content title: "<%= display_name %>" do
+    resource_collection = ActiveAdmin.application.namespaces[:<%= file_name %>].resources
+    resources = resource_collection.select { |r| r.respond_to?(:resource_class) }
+    resources = resources.sort_by { |r| r.resource_name.human }
+    render partial: 'index', locals: { resources: resources }
+  end
+end

@@ -1,0 +1,14 @@
+---
+institution_code: 'UPENN'
+<% if file_based? -%>
+import_folder: '/tmp/<%= file_name %>/'
+<% else -%>
+host:          '<%%= ENV["<%= file_name.upcase %>_HOST"] %>'
+port:          '<%%= ENV["<%= file_name.upcase %>_PORT"] %>'
+database:      '<%%= ENV["<%= file_name.upcase %>_DB"] %>'
+username:      '<%%= ENV["<%= file_name.upcase %>_UID"] %>'
+password:      '<%%= ENV["<%= file_name.upcase %>_PWD"] %>'
+pool:          5
+timeout:       120000
+export_folder: '/tmp/<%= file_name %>/'
+<% end -%>

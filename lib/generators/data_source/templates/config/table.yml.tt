@@ -1,0 +1,24 @@
+---
+load_sequence:        <%= @current_sequence %>
+<% if file_based? -%>
+target_model:         '<%= class_name %>::<%= @current_table.camelize %>'
+target_adapter:       '<%= db_adapter %>'
+file_name:            '<%= @current_table.pluralize %>.<%= db_adapter %>'
+truncate_before_load: 'yes'
+<% else -%>
+source_adapter:        <%= db_adapter %>
+source_table:          '<%= @current_table.pluralize %>'
+target_model:          '<%= class_name %>::<%= @current_table.camelize %>'
+target_adapter:        'csv'
+export_file_name:      '<%= file_name %>_<%= @current_table.pluralize %>.csv'
+truncate_before_load:  'yes'
+incremental_filter_column: ''  # TODO: set if using incremental loads
+unique_keys:           []      # TODO: set if using upsert
+upsert:                false
+<% end -%>
+
+column_mappings:
+  # TODO: add "Source Column Name": target_attribute mappings
+  # e.g.
+  #   Occurred At: occurred_at
+  #   User Name:   user_name
