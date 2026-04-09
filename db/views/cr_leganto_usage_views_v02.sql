@@ -10,6 +10,7 @@ SELECT
   lu.course_id,
   lu.reading_list_id,
   lu.citation_id,
+  lu.title,
   lu.user_role,
   lu.files_downloaded,
   lu.file_views,
