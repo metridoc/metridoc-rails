@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_25_210052) do
+ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -2624,9 +2624,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_25_210052) do
       lu.file_views,
       lu.full_text_views,
       lu.total_views,
-      lc.processing_department
-     FROM (cr_leganto_usage lu
+      lc.processing_department,
+      lci.title
+     FROM ((cr_leganto_usage lu
        LEFT JOIN cr_leganto_courses lc ON ((lu.course_id = lc.course_id)))
+       LEFT JOIN cr_leganto_citations lci ON ((lu.citation_id = lci.citation_id)))
     WHERE ((lu.total_views <> 0) AND (lc.course_id <> '7988545480003681'::bigint));
   SQL
   create_view "ss_libchat_combined_views", sql_definition: <<-SQL
