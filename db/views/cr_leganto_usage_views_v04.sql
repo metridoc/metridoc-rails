@@ -10,6 +10,7 @@ SELECT
   lu.course_id,
   lu.reading_list_id,
   lu.citation_id,
+  lci.title,
   lu.user_role,
   lu.files_downloaded,
   lu.file_views,
@@ -19,5 +20,7 @@ SELECT
 FROM cr_leganto_usage lu
 LEFT JOIN cr_leganto_courses lc
   ON lu.course_id = lc.course_id
+LEFT JOIN cr_leganto_citations lci
+  ON lu.citation_id = lci.citation_id
 WHERE lu.total_views <> 0
 AND lc.course_id <> '7988545480003681'
