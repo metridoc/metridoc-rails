@@ -19,11 +19,17 @@
     begin with the prefix "cr_leganto_".
 
   %h3 Data Tables
+  %h4 Calculated Views
   %ul
-    - resources.each do |resource|
-      %li= link_to resource.resource_name.human, "/course_reserves/#{resource.resource_name.param_key.pluralize}"
+    %li= link_to "Usage Views - Summary Table combining Course Information and Daily Usage", "/course_reserves/leganto_usage_views"
 
-  * The Usage View table is a calculated table combining Course Information with total daily usage of citations.
+  %h4 Source Tables
+  %ul
+    %li= link_to "Citations - Bibliographic information for each reserved item", "/course_reserves/leganto_citations"
+    %li= link_to "Course - Course Details from Banner imported from Leganto", "/course_reserves/leganto_courses"
+    %li= link_to "Course Citations - A map of course to reading List and Citation", "/course_reserves/leganto_course_citations"
+    %li= link_to "Reading Lists - A collection of citations for a course", "/course_reserves/leganto_reading_lists"
+    %li= link_to "Usage - Usage for a citation in a single day", "/course_reserves/leganto_usages"
 
   %h3 Dashboards 
   %ul 
@@ -172,7 +178,7 @@
         %li Registered: A user registered for the course.
     %li Citation Views: The total number of times users access the full view of a citation.
     %li Files Downloaded: The total number of times any file of any citation was downloaded.
-    %li File Views: The total number of times users viewed the vile in the Leganto PDF viewer.
+    %li File Views: The total number of times users viewed the file in the Leganto PDF viewer.
     %li 
       Full Text Views: The total number of times any full text link on a citation was clicked 
       (either from the brief view or the full citation view).
