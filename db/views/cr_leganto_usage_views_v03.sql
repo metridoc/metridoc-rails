@@ -10,13 +10,23 @@ SELECT
   lu.course_id,
   lu.reading_list_id,
   lu.citation_id,
+  COALESCE(
+    NULLIF(
+      COALESCE(
+        NULLIF(lci.title, ''),
+        lci.book_chapter_title
+      ), ''
+    ),
+    lci.journal_title
+  )
+    AS title,
+  lci.author,
   lu.user_role,
   lu.files_downloaded,
   lu.file_views,
   lu.full_text_views,
   lu.total_views,
-  lc.processing_department,
-  lci.title
+  lc.processing_department
 FROM cr_leganto_usage lu
 LEFT JOIN cr_leganto_courses lc
   ON lu.course_id = lc.course_id
