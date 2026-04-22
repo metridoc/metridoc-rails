@@ -1,0 +1,38 @@
+<%
+  rows     = Keyserver::SoftwareUsageBySchool.order(:product, :school)
+  products = rows.map(&:product).uniq.sort
+  schools  = rows.map(&:school).uniq.sort_by { |s| s.nil? ? "" : s }
+  pivot    = rows.each_with_object({}) do |row, h|
+               h[row.product] ||= {}
+               h[row.product][row.school] = row.checkouts
+             end
+%>
+
+<p>Checkout counts on non-staff computers, broken down by Alma school affiliation.
+   <em>Unresolved</em> denotes users whose login is not a PennKey.
+   <%= link_to "&larr; Usage profile".html_safe, keyserver_software_usage_path %></p>
+
+<% if products.empty? %>
+  <p>No data available.</p>
+<% else %>
+  <table class="statistics_summary">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <% schools.each do |school| %>
+          <th><%= school.present? ? school : "Unresolved" %></th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% products.each do |product| %>
+        <tr>
+          <td><%= product %></td>
+          <% schools.each do |school| %>
+            <td><%= number_with_delimiter(pivot.dig(product, school)) %></td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

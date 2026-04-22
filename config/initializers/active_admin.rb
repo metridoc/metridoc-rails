@@ -519,9 +519,9 @@ ActiveAdmin.setup do |config|
 
   # List of namespaces that need menus
   namespaces = [
-    :admin, :borrowdirect, :caiasoft, :course_reserves, 
+    :admin, :borrowdirect, :caiasoft, :course_reserves,
     :ezborrow, :ezproxy, :gate_count, :google_analytics,
-    :illiad, :ipeds, :library_staff, :springshare, 
+    :illiad, :ipeds, :keyserver, :library_staff, :springshare,
     :stream_deck, :upenn
   ]
 

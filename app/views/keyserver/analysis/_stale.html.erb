@@ -1,8 +1,9 @@
-<h1>Stale &amp; Dormant Products</h1>
-<p>Products with no checkout in 90+ days, sorted by most dormant first.
-   <%= link_to "&larr; All products".html_safe, keyserver_root_path %></p>
+<% profiles = Keyserver::SoftwareUsageProfile.non_active.order(days_since_checkout: :desc) %>
 
-<% if @profiles.empty? %>
+<p>Products with no checkout in 90+ days, sorted by most dormant first.
+   <%= link_to "&larr; All products".html_safe, keyserver_software_usage_path %></p>
+
+<% if profiles.empty? %>
   <p>No stale or dormant products found.</p>
 <% else %>
   <table class="statistics_summary">
@@ -17,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @profiles.each do |p| %>
+      <% profiles.each do |p| %>
         <tr>
           <td><%= p.product %></td>
           <td><span class="ks-status <%= p.status&.downcase %>"><%= p.status %></span></td>

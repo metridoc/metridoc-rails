@@ -1,8 +1,13 @@
-<h1>Location Usage</h1>
-<p>Session counts by location during business hours (8 AM – 10:59 PM).
-   <%= link_to "&larr; Usage profile".html_safe, keyserver_root_path %></p>
+<%
+  by_hour    = Keyserver::LocationByHour.order(:location, :hour_of_day).group_by(&:location)
+  by_dow     = Keyserver::LocationByDow.order(:location, :day_of_week).group_by(&:location)
+  locations  = by_hour.keys | by_dow.keys
+%>
 
-<% if @locations.empty? %>
+<p>Session counts by location during business hours (8 AM – 10:59 PM).
+   <%= link_to "&larr; Usage profile".html_safe, keyserver_software_usage_path %></p>
+
+<% if locations.empty? %>
   <p>No location data available.</p>
 <% else %>
 
@@ -10,8 +15,8 @@
   <%
     hour_pivot = {}
     all_hours  = []
-    @locations.each do |loc|
-      (@by_hour[loc] || []).each do |row|
+    locations.each do |loc|
+      (by_hour[loc] || []).each do |row|
         h = row.hour_of_day
         all_hours << h
         hour_pivot[h] ||= {}
@@ -21,20 +26,19 @@
     all_hours = all_hours.uniq.sort
   %>
 
-  <%# ── Hour-of-day heatmap ──────────────────────────────────────────── %>
   <h2>Sessions by Hour of Day</h2>
   <table class="statistics_summary">
     <thead>
       <tr>
         <th>Hour</th>
-        <% @locations.each do |loc| %><th><%= loc %></th><% end %>
+        <% locations.each do |loc| %><th><%= loc %></th><% end %>
       </tr>
     </thead>
     <tbody>
       <% all_hours.each do |hour| %>
         <tr>
           <td><%= "%02d:00" % hour %></td>
-          <% @locations.each do |loc| %>
+          <% locations.each do |loc| %>
             <td><%= number_with_delimiter(hour_pivot.dig(hour, loc)) %></td>
           <% end %>
         </tr>
@@ -47,8 +51,8 @@
     day_order = %w[Monday Tuesday Wednesday Thursday Friday Saturday Sunday]
     dow_pivot = {}
     all_days  = []
-    @locations.each do |loc|
-      (@by_dow[loc] || []).each do |row|
+    locations.each do |loc|
+      (by_dow[loc] || []).each do |row|
         d = row.day_name
         all_days << d
         dow_pivot[d] ||= {}
@@ -58,20 +62,19 @@
     all_days = day_order & all_days.uniq
   %>
 
-  <%# ── Day-of-week heatmap ─────────────────────────────────────────── %>
   <h2>Sessions by Day of Week</h2>
   <table class="statistics_summary">
     <thead>
       <tr>
         <th>Day</th>
-        <% @locations.each do |loc| %><th><%= loc %></th><% end %>
+        <% locations.each do |loc| %><th><%= loc %></th><% end %>
       </tr>
     </thead>
     <tbody>
       <% all_days.each do |day| %>
         <tr>
           <td><%= day %></td>
-          <% @locations.each do |loc| %>
+          <% locations.each do |loc| %>
             <td><%= number_with_delimiter(dow_pivot.dig(day, loc)) %></td>
           <% end %>
         </tr>

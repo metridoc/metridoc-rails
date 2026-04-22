@@ -1,15 +1,23 @@
-<h1>Keyserver Software Usage Profile</h1>
+<%
+  profiles = Keyserver::SoftwareUsageProfile.order(checkouts: :desc)
+  profiles = profiles.where(status: params[:status]) if params[:status].present?
+  status_counts = Keyserver::SoftwareUsageProfile
+                    .group(:status)
+                    .count
+                    .sort_by { |s, _| Keyserver::SoftwareUsageProfile::STATUS_ORDER.fetch(s, 99) }
+                    .to_h
+%>
+
 <p>Managed products with at least one checkout on a non-staff computer.
    Activity status is relative to the most recent event date in the dataset.</p>
 
-<%# Status summary and nav -%>
 <div class="ks-subnav">
   <strong>Status:</strong>
   <% [["All", nil], ["Active", "Active"], ["Stale", "Stale"], ["Dormant", "Dormant"]].each do |label, val| %>
     <%
-      count = val ? @status_counts[val].to_i : @status_counts.values.sum
+      count = val ? status_counts[val].to_i : status_counts.values.sum
       active_filter = params[:status] == val || (val.nil? && params[:status].blank?)
-      href = val ? keyserver_root_path(status: val) : keyserver_root_path
+      href = val ? keyserver_software_usage_path(status: val) : keyserver_software_usage_path
     %>
     <%= link_to "#{label} (#{count})", href, class: active_filter ? "ks-current" : nil %>
   <% end %>
@@ -23,7 +31,7 @@
   <%= link_to "By User Group", keyserver_by_user_group_path %>
 </div>
 
-<% if @profiles.empty? %>
+<% if profiles.empty? %>
   <p>No data available. Run <code>rake import -- --config_folder keyserver</code> to load data.</p>
 <% else %>
   <table class="statistics_summary">
@@ -40,7 +48,7 @@
       </tr>
     </thead>
     <tbody>
-      <% @profiles.each do |p| %>
+      <% profiles.each do |p| %>
         <tr>
           <td><%= p.product %></td>
           <td><%= number_with_delimiter(p.checkouts) %></td>
