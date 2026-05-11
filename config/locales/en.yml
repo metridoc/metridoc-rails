@@ -96,6 +96,8 @@ en:
       columns_heading: "Example data visualizations"
       left_column_heading: "Card swipe by frequency"
       right_column_heading: "Card swipe transactions, %{date_range}"
+    mee_scan:
+      mee_scan_menu: "MeeScan Data"
     google_analytics:
       google_analytics_menu: "Google Analytics"
     keyserver:
@@ -159,6 +161,7 @@ en:
       keyserver: "Key Server"
       libraryprofile: "Participating Libraries"
       librarystaff: "Library Staff Census"
+      meescan: "MeeScan Data"
       log: "Log"
       report: "Reports"
       security: "Security"
@@ -331,6 +334,9 @@ en:
       springshare/libwizard/candi_legacy:
         one: "Consultation and Instruction: Legacy"
         other: "Consultation and Instruction: Legacy"
+      mee_scan/session:
+        one: "MeeScan Session"
+        other: "MeeScan Sessions"
     attributes:
       borrowdirect/reshare/borrowing_turnaround:
         request_id: "Request Id"

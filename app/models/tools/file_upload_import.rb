@@ -16,6 +16,7 @@ class Tools::FileUploadImport < ApplicationRecord
     Caiasoft::CirculationMetric,
     Caiasoft::DeaccessionInfo,
     GateCount::CardSwipe,
+    MeeScan::Session,
     GeoData::CountryCode,
     Ipeds::Completion,
     Ipeds::Directory,
