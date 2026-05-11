@@ -10,16 +10,8 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require active_admin/base
-
-//= require Chart.bundle
-//= require chartkick
 
 //= require rails-ujs
 //= require turbo
 
 //= require_tree .
-
-//= require d3
-//= require d3_chord/d3.layout.chord.sort
-//= require d3_chord/d3.stretched.chord
