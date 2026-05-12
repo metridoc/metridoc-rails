@@ -25,6 +25,8 @@ class Tools::FileUploadImport < ApplicationRecord
     Ipeds::ProgramSchema,
     Ipeds::StemCipcode,
     Ipeds::Cipcode,
+    Keyserver::Event,
+    Keyserver::Session,
     LibraryStaff::Census,
     Springshare::Libanswers::Queue,
     Springshare::Libanswers::Ticket,
@@ -130,6 +132,14 @@ class Tools::FileUploadImport < ApplicationRecord
 
     success = true
     Tools::FileUploadImport.transaction do
+
+      # Truncate the table before import if the model requests it.
+      # Running inside the transaction means a failed import rolls the
+      # delete back, leaving the existing data intact.
+      if target_class.respond_to?(:truncate_before_import)
+        log "Truncating #{target_model_name} before import."
+        target_class.truncate_before_import
+      end
 
       records = []
       # Loop through each row of the spreadsheet

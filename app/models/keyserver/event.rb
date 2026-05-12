@@ -36,4 +36,16 @@ class Keyserver::Event < Keyserver::Base
   scope :checkouts,     -> { where(event_type: CHECKOUT_EVENTS) }
   scope :non_infra,     -> { where.not(event_type: INFRA_EVENTS) }
   scope :with_product,  -> { where.not(product: [nil, ""]) }
+
+  # Called by Tools::FileUploadImport inside its transaction before inserting
+  # rows. Clears the table so a re-upload replaces data rather than appending.
+  def self.truncate_before_import
+    delete_all
+  end
+
+  # Called by Tools::FileUploadImport after a successful upload. Seeds any
+  # new user_name values into the alias map so views never expose raw names.
+  def self.update_after_import
+    Keyserver::UserNameMap.seed
+  end
 end

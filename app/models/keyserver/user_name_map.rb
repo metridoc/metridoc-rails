@@ -24,4 +24,31 @@ class Keyserver::UserNameMap < Keyserver::Base
            class_name:  'Keyserver::Session',
            foreign_key: :user_name,
            primary_key: :original
+
+  # Assign stable opaque aliases to any user_name values in keyserver_events
+  # and keyserver_sessions that do not yet have an entry in this table.
+  #
+  # Safe to call repeatedly — only ever adds new rows, never modifies existing
+  # aliases.  Returns the number of new aliases created.
+  def self.seed
+    event_names   = Keyserver::Event.where.not(user_name: [nil, ""])
+                                    .distinct.pluck(:user_name)
+    session_names = Keyserver::Session.where.not(user_name: [nil, ""])
+                                      .distinct.pluck(:user_name)
+
+    all_names = (event_names + session_names).uniq.select(&:present?)
+    existing  = pluck(:original).to_set
+    new_names = all_names.reject { |n| existing.include?(n) }
+    return 0 if new_names.empty?
+
+    last_alias  = order(:user_alias).pluck(:user_alias).last
+    next_number = last_alias ? last_alias.sub(/\Auser_0*/, "").to_i + 1 : 1
+
+    new_names.each do |name|
+      create!(original: name, user_alias: "user_#{next_number.to_s.rjust(4, '0')}")
+      next_number += 1
+    end
+
+    new_names.size
+  end
 end
