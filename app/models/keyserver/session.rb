@@ -5,12 +5,6 @@ class Keyserver::Session < Keyserver::Base
   # Sessions with location = 'Staff' or NULL/blank are excluded from patron
   # analysis — see Keyserver::NonStaffComputer for the classification logic.
 
-  belongs_to :user_name_map,
-             class_name:  'Keyserver::UserNameMap',
-             foreign_key: :user_name,
-             primary_key: :original,
-             optional:    true
-
   scope :with_location,  -> { where.not(location: [nil, ""]) }
   scope :patron_hours,   -> { where("EXTRACT(HOUR FROM logon) BETWEEN 8 AND 22") }
 
@@ -20,9 +14,4 @@ class Keyserver::Session < Keyserver::Base
     delete_all
   end
 
-  # Called by Tools::FileUploadImport after a successful upload. Seeds any
-  # new user_name values into the alias map so views never expose raw names.
-  def self.update_after_import
-    Keyserver::UserNameMap.seed
-  end
 end

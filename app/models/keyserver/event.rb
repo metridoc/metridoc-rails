@@ -3,14 +3,6 @@ class Keyserver::Event < Keyserver::Base
   #
   # user_name is the raw identifier as Keyserver recorded it — some values
   # are PennKeys and can be joined to Alma demographics; others are not.
-  # Never display user_name directly; use Keyserver::UserNameMap#user_alias
-  # for any individual-level display.
-
-  belongs_to :user_name_map,
-             class_name:  'Keyserver::UserNameMap',
-             foreign_key: :user_name,
-             primary_key: :original,
-             optional:    true
 
   # Checkout event types — the set that represents a user actually launching
   # or starting a managed product.
@@ -43,9 +35,4 @@ class Keyserver::Event < Keyserver::Base
     delete_all
   end
 
-  # Called by Tools::FileUploadImport after a successful upload. Seeds any
-  # new user_name values into the alias map so views never expose raw names.
-  def self.update_after_import
-    Keyserver::UserNameMap.seed
-  end
 end

@@ -1624,13 +1624,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.index ["user_name"], name: "index_keyserver_sessions_on_user_name"
   end
 
-  create_table "keyserver_user_name_maps", force: :cascade do |t|
-    t.string "original", null: false
-    t.string "user_alias", null: false
-    t.index ["original"], name: "index_keyserver_user_name_maps_on_original", unique: true
-    t.index ["user_alias"], name: "index_keyserver_user_name_maps_on_user_alias", unique: true
-  end
-
   create_table "library_profile_profiles", force: :cascade do |t|
     t.string "metridoc_code"
     t.string "oclc_symbol"
