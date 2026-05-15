@@ -507,8 +507,8 @@ module Import
           log "Imported #{result.ids.size} records."
           log_validation_errors(result.failed_instances)
           return result.failed_instances.size
-        rescue
-          log "Error on import. Query too large to display."
+        rescue => ex
+          log "Error on import: #{ex.class}: #{ex.message}"
           return save_records_individually(records)
         end
       end
