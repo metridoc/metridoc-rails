@@ -12,6 +12,7 @@ load_sequence:        2
 target_model:         'Keyserver::Session'
 target_adapter:       'csv'
 file_name:            'sessions.csv'
+unique_keys:          [computer_name, user_name, logon]
 
 column_mappings:
   Computer Name: computer_name
