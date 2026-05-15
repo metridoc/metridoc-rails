@@ -1,7 +1,7 @@
 ---
 # Keyserver data source configuration
 #
-# Production: drop events.xlsx and sessions.xlsx into import_folder, then run:
+# Production: drop events.csv and sessions.csv into import_folder, then run:
 #   rake import -- --config_folder keyserver
 #
 # The sheet_name key in each task file selects the correct worksheet when the

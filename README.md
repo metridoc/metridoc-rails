@@ -90,7 +90,7 @@ Data sources are configured under `config/data_sources/`. Each subfolder represe
 
 ### 5.3 XLSX:Keyserver
 
-Keyserver data is imported from two Excel workbooks exported from itam_db: `events.xlsx` and `sessions.xlsx`.
+Keyserver data is imported from two CSV files exported from itam_db: `events.csv` and `sessions.csv`.
 
 1. Place both files in `/tmp/keyserver/` on the app server.
 2. Run the import:
