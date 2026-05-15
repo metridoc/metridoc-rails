@@ -100,6 +100,17 @@ class Tools::FileUploadImport < ApplicationRecord
   # Get the header row and update the column names
   def get_headers
     headers = spreadsheet.first.map{|c| Util.column_to_attribute(c) }
+
+    # Apply model-defined column aliases before checking the schema.
+    # A model can define self.column_aliases returning a hash of
+    # { "source_header" => "table_column_name" } to handle source files
+    # whose header names don't match the table's column names after
+    # standard snake_case normalisation.
+    if target_class.respond_to?(:column_aliases)
+      aliases = target_class.column_aliases
+      headers.map! { |h| aliases.fetch(h, h) }
+    end
+
     headers.each do |column_name|
       if target_class.columns_hash[column_name].blank?
         headers[headers.index(column_name)] = column_name.split(/\_+/).first

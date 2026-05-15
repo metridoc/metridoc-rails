@@ -29,6 +29,20 @@ class Keyserver::Event < Keyserver::Base
   scope :non_infra,     -> { where.not(event_type: INFRA_EVENTS) }
   scope :with_product,  -> { where.not(product: [nil, ""]) }
 
+  # Maps abbreviated header names used in Keyserver's raw xlsx export to the
+  # column names used in this table. Applied by Tools::FileUploadImport before
+  # schema matching so uploads can use the file as-is without renaming headers.
+  def self.column_aliases
+    {
+      'name'     => 'application',
+      'vers'     => 'version',
+      'event'    => 'event_type',
+      'when'     => 'occurred_at',
+      'user'     => 'user_name',
+      'computer' => 'computer_name'
+    }
+  end
+
   def self.on_conflict_update
     {
       conflict_target: [:computer_name, :occurred_at, :application, :event_type, :user_name],
