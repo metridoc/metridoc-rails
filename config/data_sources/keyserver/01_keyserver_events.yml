@@ -17,6 +17,7 @@ target_model:         'Keyserver::Event'
 target_adapter:       'csv'
 file_name:            'events.csv'
 unique_keys:          [computer_name, occurred_at, application, event_type, user_name]
+batch_size:           1000
 
 column_mappings:
   Computer Name: computer_name
