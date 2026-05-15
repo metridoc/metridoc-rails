@@ -8,10 +8,11 @@ class Keyserver::Session < Keyserver::Base
   scope :with_location,  -> { where.not(location: [nil, ""]) }
   scope :patron_hours,   -> { where("EXTRACT(HOUR FROM logon) BETWEEN 8 AND 22") }
 
-  # Called by Tools::FileUploadImport inside its transaction before inserting
-  # rows. Clears the table so a re-upload replaces data rather than appending.
-  def self.truncate_before_import
-    delete_all
+  def self.on_conflict_update
+    {
+      conflict_target: [:computer_name, :user_name, :logon],
+      columns: []
+    }
   end
 
 end

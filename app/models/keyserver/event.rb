@@ -29,10 +29,11 @@ class Keyserver::Event < Keyserver::Base
   scope :non_infra,     -> { where.not(event_type: INFRA_EVENTS) }
   scope :with_product,  -> { where.not(product: [nil, ""]) }
 
-  # Called by Tools::FileUploadImport inside its transaction before inserting
-  # rows. Clears the table so a re-upload replaces data rather than appending.
-  def self.truncate_before_import
-    delete_all
+  def self.on_conflict_update
+    {
+      conflict_target: [:computer_name, :occurred_at, :application, :event_type, :user_name],
+      columns: []
+    }
   end
 
 end

@@ -16,7 +16,6 @@ load_sequence:        1
 target_model:         'Keyserver::Event'
 target_adapter:       'csv'
 file_name:            'events.csv'
-truncate_before_load: 'yes'
 
 column_mappings:
   Computer Name: computer_name
