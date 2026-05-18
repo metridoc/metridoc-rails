@@ -8,7 +8,6 @@
     target: "development"
     args:
       RAILS_ENV: "{{ rails_env }}"
-      RAILS_MASTER_KEY: "{{ rails_master_key }}"
   when: is_development | default(false, true)
 
 - name: Create docker secrets

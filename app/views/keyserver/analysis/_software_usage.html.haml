@@ -1,0 +1,57 @@
+- profiles = Keyserver::SoftwareUsageProfile.order(checkouts: :desc)
+- profiles = profiles.where(status: params[:status]) if params[:status].present?
+- status_counts = Keyserver::SoftwareUsageProfile
+                    .group(:status)
+                    .count
+                    .sort_by { |s, _| Keyserver::SoftwareUsageProfile::STATUS_ORDER.fetch(s, 99) }
+                    .to_h
+
+%p
+  Managed products with at least one checkout on a non-staff computer.
+  Activity status is relative to the most recent event date in the dataset.
+
+.ks-subnav
+  %strong Status:
+  - [["All", nil], ["Active", "Active"], ["Stale", "Stale"], ["Dormant", "Dormant"]].each do |label, val|
+    - count         = val ? status_counts[val].to_i : status_counts.values.sum
+    - active_filter = params[:status] == val || (val.nil? && params[:status].blank?)
+    - href          = val ? keyserver_software_usage_path(status: val) : keyserver_software_usage_path
+    = link_to "#{label} (#{count})", href, class: active_filter ? "ks-current" : nil
+  %span.ks-nav-sep |
+  = link_to "Stale & Dormant", keyserver_stale_path
+  %span.ks-nav-sep |
+  = link_to "Locations", keyserver_locations_path
+  %span.ks-nav-sep |
+  = link_to "By School", keyserver_by_school_path
+  %span.ks-nav-sep |
+  = link_to "By User Group", keyserver_by_user_group_path
+
+- if profiles.empty?
+  %p
+    No data available. Run
+    %code rake import -- --config_folder keyserver
+    to load data.
+- else
+  %table.statistics_summary
+    %thead
+      %tr
+        %th Product
+        %th Checkouts
+        %th Distinct Users
+        %th Sessions / User
+        %th First Checkout
+        %th Last Checkout
+        %th Days Since Checkout
+        %th Status
+    %tbody
+      - profiles.each do |p|
+        %tr
+          %td= p.product
+          %td= number_with_delimiter(p.checkouts)
+          %td= number_with_delimiter(p.distinct_users)
+          %td= p.sessions_per_user
+          %td= p.first_checkout&.to_date
+          %td= p.last_checkout&.to_date
+          %td= p.days_since_checkout
+          %td
+            %span{class: "ks-status #{p.status&.downcase}"}= p.status

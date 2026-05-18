@@ -1,0 +1,52 @@
+%section
+  %h2 Introduction
+  %p
+    Keyserver tracks software usage on Penn Libraries public computers.
+    Events and sessions are captured from Keyserver and loaded into Metridoc.
+  %ul
+    %li
+      The
+      %strong Software Usage
+      page lists all managed products with checkout activity on non-staff computers,
+      including status (Active / Stale / Dormant) based on days since the last checkout.
+    %li
+      The
+      %strong Stale &amp; Dormant
+      page surfaces products with no checkout in 90+ days, sorted by most dormant first.
+    %li
+      The
+      %strong Locations
+      page shows session heatmaps by hour of day and day of week, broken down by library location.
+    %li
+      The
+      %strong By School
+      page shows checkout counts per product per Alma school affiliation.
+    %li
+      The
+      %strong By User Group
+      page shows checkout counts per product per Alma user group (e.g. undergraduate, graduate, faculty).
+
+%hr
+
+%section
+  %h2 Dashboards
+  %ul
+    %li= link_to "Software Usage Profile", keyserver_software_usage_path
+    %li= link_to "Stale & Dormant Products", keyserver_stale_path
+    %li= link_to "Location Usage", keyserver_locations_path
+    %li= link_to "By School", keyserver_by_school_path
+    %li= link_to "By User Group", keyserver_by_user_group_path
+
+%hr
+
+%section
+  %h2 Data Import
+  %p
+    To load data, export
+    %code events.csv
+    and
+    %code sessions.csv
+    from Keyserver into
+    %code /tmp/keyserver/
+    then run:
+  %pre rake import -- --config_folder keyserver
