@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_15_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1603,6 +1603,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.string "address"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["computer_name", "occurred_at", "application", "event_type", "user_name"], name: "index_keyserver_events_natural_key", unique: true
     t.index ["computer_name", "occurred_at"], name: "index_keyserver_events_on_computer_name_and_occurred_at"
     t.index ["computer_name"], name: "index_keyserver_events_on_computer_name"
     t.index ["occurred_at"], name: "index_keyserver_events_on_occurred_at"
@@ -1620,6 +1621,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["computer_name", "logon", "logoff"], name: "index_keyserver_sessions_on_computer_name_and_logon_and_logoff"
+    t.index ["computer_name", "user_name", "logon"], name: "index_keyserver_sessions_natural_key", unique: true
     t.index ["location", "logon"], name: "index_keyserver_sessions_on_location_and_logon"
     t.index ["user_name"], name: "index_keyserver_sessions_on_user_name"
   end
