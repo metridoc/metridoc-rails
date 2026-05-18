@@ -1,10 +1,7 @@
 - profiles = Keyserver::SoftwareUsageProfile.order(checkouts: :desc)
 - profiles = profiles.where(status: params[:status]) if params[:status].present?
-- status_counts = Keyserver::SoftwareUsageProfile
-                    .group(:status)
-                    .count
-                    .sort_by { |s, _| Keyserver::SoftwareUsageProfile::STATUS_ORDER.fetch(s, 99) }
-                    .to_h
+- status_counts = Keyserver::SoftwareUsageProfile.group(:status).count
+- status_counts = status_counts.sort_by { |s, _| Keyserver::SoftwareUsageProfile::STATUS_ORDER.fetch(s, 99) }.to_h
 
 %p
   Managed products with at least one checkout on a non-staff computer.

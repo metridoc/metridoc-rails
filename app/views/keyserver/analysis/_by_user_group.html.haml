@@ -1,10 +1,10 @@
 - rows        = Keyserver::SoftwareUsageByUserGroup.order(:product, :user_group)
 - products    = rows.map(&:product).uniq.sort
 - user_groups = rows.map(&:user_group).uniq.sort_by { |g| g.nil? ? "" : g }
-- pivot       = rows.each_with_object({}) do |row, h|
-  - h[row.product] ||= {}
-  - h[row.product][row.user_group] = row.checkouts
-- end
+- pivot = {}
+- rows.each do |row|
+  - pivot[row.product] ||= {}
+  - pivot[row.product][row.user_group] = row.checkouts
 
 %p
   Checkout counts on non-staff computers, broken down by Alma user group

@@ -1,10 +1,10 @@
 - rows     = Keyserver::SoftwareUsageBySchool.order(:product, :school)
 - products = rows.map(&:product).uniq.sort
 - schools  = rows.map(&:school).uniq.sort_by { |s| s.nil? ? "" : s }
-- pivot    = rows.each_with_object({}) do |row, h|
-  - h[row.product] ||= {}
-  - h[row.product][row.school] = row.checkouts
-- end
+- pivot = {}
+- rows.each do |row|
+  - pivot[row.product] ||= {}
+  - pivot[row.product][row.school] = row.checkouts
 
 %p
   Checkout counts on non-staff computers, broken down by Alma school affiliation.
