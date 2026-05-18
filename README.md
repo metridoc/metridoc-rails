@@ -88,16 +88,16 @@ time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postg
 
 Data sources are configured under `config/data_sources/`. Each subfolder represents one data source and contains YAML files that define target models, column mappings, and import options.
 
-### 5.3 XLSX:Keyserver
+### 5.3 Keyserver
 
-Keyserver data is imported from two CSV files exported from itam_db: `events.csv` and `sessions.csv`.
+Keyserver data is imported from two CSV files exported from Keyserver: `events.csv` and `sessions.csv`.
 
 1. Place both files in `/tmp/keyserver/` on the app server.
 2. Run the import:
 
         rake import -- --config_folder keyserver
 
-The import truncates and reloads `keyserver_events` and `keyserver_sessions` on each run, so a full re-upload replaces existing data.
+The import is incremental — duplicate rows (matched on a natural key) are silently ignored, so re-uploading a file or uploading overlapping date ranges is safe. New rows are appended to the existing data.
 
 ### 5.4 MySql:borrowdirect
 

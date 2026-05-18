@@ -1,0 +1,21 @@
+!!! 5
+%html
+  %head
+    %title MetriDoc — Keyserver
+    = stylesheet_link_tag 'active_admin', media: 'all', 'data-turbo-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbo-track': 'reload'
+    = csrf_meta_tags
+    = favicon_link_tag(asset_path('favicon.ico'))
+  %body.index.active_admin
+    #header.header
+      %h1.site_title#site_title
+        = image_tag('logo.png', alt: 'MetriDoc', id: 'site_title_image')
+      %ul.header-item.tabs#tabs
+        %li
+          %a{href: "/"} Home
+        %li.current
+          %a{href: "/keyserver"} Keyserver
+    #active_admin_content.without_sidebar
+      #main_content_wrapper
+        #main_content
+          = yield
