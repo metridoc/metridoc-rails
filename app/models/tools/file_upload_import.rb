@@ -181,6 +181,11 @@ class Tools::FileUploadImport < ApplicationRecord
 
           next if target_class.columns_hash[column_name].blank?
 
+          # Allow models to transform raw spreadsheet values before type validation.
+          if target_class.respond_to?(:transform_import_value)
+            val = target_class.transform_import_value(column_name, val)
+          end
+
           # Check for valid integer for integer columns, requires a string input
           if target_class.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
             log "Invalid integer [#{val}] in column: #{column_name} row: #{row.join(",")}"
@@ -301,7 +306,17 @@ class Tools::FileUploadImport < ApplicationRecord
   def import_records(target_class, records)
     begin
       if target_class.respond_to?(:on_conflict_update)
-        target_class.import records, on_duplicate_key_update: target_class.on_conflict_update
+        opts = target_class.on_conflict_update
+        if Array(opts[:columns]).empty?
+          # columns: [] is intended as DO NOTHING, but activerecord-import mutates
+          # the array by adding updated_at during timestamp processing, turning it
+          # into DO UPDATE — which causes PG::CardinalityViolation when the batch
+          # contains duplicate conflict-target values. Use on_duplicate_key_ignore
+          # with the explicit conflict target instead; it bypasses that code path.
+          target_class.import records, on_duplicate_key_ignore: { conflict_target: opts[:conflict_target] }
+        else
+          target_class.import records, on_duplicate_key_update: opts
+        end
       else
         target_class.import records
       end

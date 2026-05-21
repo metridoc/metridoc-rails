@@ -24,4 +24,24 @@ class Keyserver::Session < Keyserver::Base
     }
   end
 
+  # Excel exports duration in two ways depending on session length:
+  #   < 24 h  — Roo returns the raw Excel time fraction (e.g. 0.008206 ≈ 709 s)
+  #   >= 24 h — Roo returns a DateTime anchored at the Excel epoch (Dec 30, 1899)
+  #             e.g. "1900-01-01T06:36:49+00:00" means 2 days + 6:36:49
+  # The database stores duration in microseconds (matching the rake import path).
+  def self.transform_import_value(column_name, val)
+    if column_name == 'duration'
+      if val.match?(/\A\d+\.\d+\z/)
+        (val.to_f * 86_400 * 1_000_000).round.to_s
+      elsif val.match?(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
+        dt = DateTime.parse(val)
+        ((dt - DateTime.new(1899, 12, 30)) * 86_400 * 1_000_000).to_i.to_s
+      else
+        val
+      end
+    else
+      val
+    end
+  end
+
 end
