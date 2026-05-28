@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_15_000000) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_28_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -2619,7 +2619,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_15_000000) do
       to_char(keyserver_sessions.logon, 'Dy'::text) AS day_name,
       count(*) AS sessions
      FROM keyserver_sessions
-    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL) AND ((date_part('hour'::text, keyserver_sessions.logon) >= (8)::double precision) AND (date_part('hour'::text, keyserver_sessions.logon) <= (22)::double precision)))
+    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL))
     GROUP BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer), (to_char(keyserver_sessions.logon, 'Dy'::text))
     ORDER BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer);
   SQL
@@ -2629,7 +2629,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_15_000000) do
       (date_part('hour'::text, keyserver_sessions.logon))::integer AS hour_of_day,
       count(*) AS sessions
      FROM keyserver_sessions
-    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL) AND ((date_part('hour'::text, keyserver_sessions.logon) >= (8)::double precision) AND (date_part('hour'::text, keyserver_sessions.logon) <= (22)::double precision)))
+    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL))
     GROUP BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer)
     ORDER BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer);
   SQL

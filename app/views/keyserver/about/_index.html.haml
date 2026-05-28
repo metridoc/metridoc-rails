@@ -29,6 +29,21 @@
 %hr
 
 %section
+  %h2 Resources
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Keyserver data
+    begin with the prefix "keyserver_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/keyserver/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+
+%section
   %h2 Dashboards
   %ul
     %li= link_to "Software Usage Profile", keyserver_software_usage_path
@@ -41,8 +56,37 @@
 
 %section
   %h2 Data Import
+
+  %h3 File Upload
   %p
-    To load data, export
+    Events and sessions data can be loaded directly through the
+    = link_to "File Upload Tool", admin_tools_file_upload_imports_path
+  %ol
+    %li
+      Export
+      %code events.csv
+      and/or
+      %code sessions.csv
+      from Keyserver.
+    %li
+      In the File Upload Tool, select the target table (
+      %strong Keyserver Event
+      or
+      %strong Keyserver Session
+      ) and upload the file.
+    %li
+      The tool accepts the raw Keyserver CSV export as-is — abbreviated column headers (e.g.
+      %code name
+      ,
+      %code user
+      ,
+      %code event
+      ) are mapped to database columns automatically.
+    %li Duplicate records are handled on the backend; re-uploading a file that has already been imported is safe.
+
+  %h3 Rake Import
+  %p
+    To load data via the command line, export
     %code events.csv
     and
     %code sessions.csv

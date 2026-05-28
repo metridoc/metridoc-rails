@@ -3,7 +3,7 @@
 - locations = by_hour.keys | by_dow.keys
 
 %p
-  Session counts by location during business hours (8 AM – 10:59 PM).
+  Session counts by location, all hours.
   = link_to "← Usage profile", keyserver_software_usage_path
 
 - if locations.empty?
@@ -33,7 +33,7 @@
           - locations.each do |loc|
             %td= number_with_delimiter(hour_pivot.dig(hour, loc))
 
-  - day_order = %w[Monday Tuesday Wednesday Thursday Friday Saturday Sunday]
+  - day_order = %w[Mon Tue Wed Thu Fri Sat Sun]
   - dow_pivot = {}
   - all_days  = []
   - locations.each do |loc|
