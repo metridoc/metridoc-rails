@@ -7,6 +7,7 @@ active_admin_form_for [:admin, resource], remote: true do |f|
         li "For Excel files, only the first sheet will be imported."
         li "For CSV files, only UTF-8 encoding is recognized."
       }
+      li "Files larger than 1 MB may be rejected by the server before the upload completes. If an upload fails silently, split the file into smaller parts (each keeping the header row) and upload them one at a time."
       li "Press Cancel to return to the list without saving."
     }
 
