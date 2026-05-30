@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
+ActiveRecord::Schema[7.2].define(version: 2026_05_28_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -22,8 +22,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.bigint "resource_id"
     t.string "author_type"
     t.bigint "author_id"
-    t.datetime "created_at", precision: nil, null: false
-    t.datetime "updated_at", precision: nil, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
@@ -1577,20 +1577,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.index ["cip_code_2020"], name: "iped_stem_cipcodes_unique_id", unique: true
   end
 
-  create_table "keyserver_computers", force: :cascade do |t|
-    t.string "computer_id"
-    t.string "computer_name"
-    t.string "computer_platform"
-    t.string "computer_protocol"
-    t.string "computer_domain"
-    t.string "computer_description"
-    t.string "computer_division_id"
-  end
-
-  create_table "keyserver_cpu_type_terms", force: :cascade do |t|
-    t.string "term_id"
-    t.string "term_value"
-    t.string "term_abbreviation"
+  create_table "keyserver_app_name_overrides", force: :cascade do |t|
+    t.string "raw_name", null: false
+    t.string "canonical", null: false
+    t.index ["raw_name"], name: "index_keyserver_app_name_overrides_on_raw_name", unique: true
   end
 
   create_table "keyserver_divisions", force: :cascade do |t|
@@ -1602,48 +1592,38 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.string "division_flags"
   end
 
-  create_table "keyserver_event_terms", force: :cascade do |t|
-    t.string "term_id"
-    t.string "term_value"
-    t.string "term_abbreviation"
+  create_table "keyserver_events", force: :cascade do |t|
+    t.string "computer_name"
+    t.datetime "occurred_at"
+    t.string "application"
+    t.string "version"
+    t.string "event_type"
+    t.string "product"
+    t.string "user_name"
+    t.string "address"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["computer_name", "occurred_at", "application", "event_type", "user_name"], name: "index_keyserver_events_natural_key", unique: true
+    t.index ["computer_name", "occurred_at"], name: "index_keyserver_events_on_computer_name_and_occurred_at"
+    t.index ["computer_name"], name: "index_keyserver_events_on_computer_name"
+    t.index ["occurred_at"], name: "index_keyserver_events_on_occurred_at"
+    t.index ["user_name"], name: "index_keyserver_events_on_user_name"
   end
 
-  create_table "keyserver_platform_terms", force: :cascade do |t|
-    t.string "term_id"
-    t.string "term_value"
-    t.string "term_abbreviation"
-  end
-
-  create_table "keyserver_programs", force: :cascade do |t|
-    t.string "program_id"
-    t.string "program_variant"
-    t.string "program_variant_name"
-    t.string "program_variant_version"
-    t.string "program_platform"
-    t.string "program_publisher"
-    t.string "program_status"
-  end
-
-  create_table "keyserver_reason_terms", force: :cascade do |t|
-    t.string "term_id"
-    t.string "term_value"
-    t.string "term_abbreviation"
-  end
-
-  create_table "keyserver_status_terms", force: :cascade do |t|
-    t.string "term_id"
-    t.string "term_value"
-    t.string "term_abbreviation"
-  end
-
-  create_table "keyserver_usages", force: :cascade do |t|
-    t.string "usage_id"
-    t.string "usage_event"
-    t.string "usage_user_group"
-    t.string "usage_division"
-    t.datetime "usage_when", precision: nil
-    t.string "usage_time"
-    t.datetime "usage_other_time", precision: nil
+  create_table "keyserver_sessions", force: :cascade do |t|
+    t.string "computer_name"
+    t.string "user_name"
+    t.datetime "logon"
+    t.datetime "logoff"
+    t.bigint "duration"
+    t.string "address"
+    t.string "location"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["computer_name", "logon", "logoff"], name: "index_keyserver_sessions_on_computer_name_and_logon_and_logoff"
+    t.index ["computer_name", "user_name", "logon"], name: "index_keyserver_sessions_natural_key", unique: true
+    t.index ["location", "logon"], name: "index_keyserver_sessions_on_location_and_logon"
+    t.index ["user_name"], name: "index_keyserver_sessions_on_user_name"
   end
 
   create_table "library_profile_profiles", force: :cascade do |t|
@@ -2631,6 +2611,112 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
        LEFT JOIN cr_leganto_courses lc ON ((lu.course_id = lc.course_id)))
        LEFT JOIN cr_leganto_citations lci ON ((lu.citation_id = lci.citation_id)))
     WHERE ((lu.total_views <> 0) AND (lc.course_id <> '7988545480003681'::bigint));
+  SQL
+  create_view "keyserver_location_by_dows", sql_definition: <<-SQL
+      SELECT row_number() OVER (ORDER BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer)) AS id,
+      keyserver_sessions.location,
+      (date_part('dow'::text, keyserver_sessions.logon))::integer AS day_of_week,
+      to_char(keyserver_sessions.logon, 'Dy'::text) AS day_name,
+      count(*) AS sessions
+     FROM keyserver_sessions
+    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL))
+    GROUP BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer), (to_char(keyserver_sessions.logon, 'Dy'::text))
+    ORDER BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer);
+  SQL
+  create_view "keyserver_location_by_hours", sql_definition: <<-SQL
+      SELECT row_number() OVER (ORDER BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer)) AS id,
+      keyserver_sessions.location,
+      (date_part('hour'::text, keyserver_sessions.logon))::integer AS hour_of_day,
+      count(*) AS sessions
+     FROM keyserver_sessions
+    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL))
+    GROUP BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer)
+    ORDER BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer);
+  SQL
+  create_view "keyserver_non_staff_computers", sql_definition: <<-SQL
+      SELECT keyserver_sessions.computer_name
+     FROM keyserver_sessions
+    WHERE ((keyserver_sessions.computer_name IS NOT NULL) AND ((keyserver_sessions.computer_name)::text <> ''::text) AND ((keyserver_sessions.computer_name)::text <> 'Computer Not Found'::text))
+    GROUP BY keyserver_sessions.computer_name
+   HAVING ((count(*) FILTER (WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND ((keyserver_sessions.location)::text <> 'Staff'::text))) > 0) AND (count(*) FILTER (WHERE ((keyserver_sessions.location)::text = 'Staff'::text)) = 0));
+  SQL
+  create_view "keyserver_software_usage_by_schools", sql_definition: <<-SQL
+      WITH non_staff_computers AS (
+           SELECT keyserver_sessions.computer_name
+             FROM keyserver_sessions
+            WHERE ((keyserver_sessions.computer_name IS NOT NULL) AND ((keyserver_sessions.computer_name)::text <> ''::text) AND ((keyserver_sessions.computer_name)::text <> 'Computer Not Found'::text))
+            GROUP BY keyserver_sessions.computer_name
+           HAVING ((count(*) FILTER (WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND ((keyserver_sessions.location)::text <> 'Staff'::text))) > 0) AND (count(*) FILTER (WHERE ((keyserver_sessions.location)::text = 'Staff'::text)) = 0))
+          )
+   SELECT row_number() OVER (ORDER BY e.product, d.school) AS id,
+      e.product,
+      d.school,
+      count(*) AS checkouts,
+      count(DISTINCT e.user_name) AS distinct_users
+     FROM ((keyserver_events e
+       JOIN non_staff_computers ns ON (((e.computer_name)::text = (ns.computer_name)::text)))
+       LEFT JOIN upenn_alma_demographics d ON (((e.user_name)::text = (d.pennkey)::text)))
+    WHERE ((e.product IS NOT NULL) AND ((e.product)::text <> ''::text) AND ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[])))
+    GROUP BY e.product, d.school
+    ORDER BY e.product, d.school;
+  SQL
+  create_view "keyserver_software_usage_by_user_groups", sql_definition: <<-SQL
+      WITH non_staff_computers AS (
+           SELECT keyserver_sessions.computer_name
+             FROM keyserver_sessions
+            WHERE ((keyserver_sessions.computer_name IS NOT NULL) AND ((keyserver_sessions.computer_name)::text <> ''::text) AND ((keyserver_sessions.computer_name)::text <> 'Computer Not Found'::text))
+            GROUP BY keyserver_sessions.computer_name
+           HAVING ((count(*) FILTER (WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND ((keyserver_sessions.location)::text <> 'Staff'::text))) > 0) AND (count(*) FILTER (WHERE ((keyserver_sessions.location)::text = 'Staff'::text)) = 0))
+          )
+   SELECT row_number() OVER (ORDER BY e.product, d.user_group) AS id,
+      e.product,
+      d.user_group,
+      count(*) AS checkouts,
+      count(DISTINCT e.user_name) AS distinct_users
+     FROM ((keyserver_events e
+       JOIN non_staff_computers ns ON (((e.computer_name)::text = (ns.computer_name)::text)))
+       LEFT JOIN upenn_alma_demographics d ON (((e.user_name)::text = (d.pennkey)::text)))
+    WHERE ((e.product IS NOT NULL) AND ((e.product)::text <> ''::text) AND ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[])))
+    GROUP BY e.product, d.user_group
+    ORDER BY e.product, d.user_group;
+  SQL
+  create_view "keyserver_software_usage_profiles", sql_definition: <<-SQL
+      WITH non_staff_computers AS (
+           SELECT keyserver_sessions.computer_name
+             FROM keyserver_sessions
+            WHERE ((keyserver_sessions.computer_name IS NOT NULL) AND ((keyserver_sessions.computer_name)::text <> ''::text) AND ((keyserver_sessions.computer_name)::text <> 'Computer Not Found'::text))
+            GROUP BY keyserver_sessions.computer_name
+           HAVING ((count(*) FILTER (WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND ((keyserver_sessions.location)::text <> 'Staff'::text))) > 0) AND (count(*) FILTER (WHERE ((keyserver_sessions.location)::text = 'Staff'::text)) = 0))
+          ), dataset_ceiling AS (
+           SELECT max(keyserver_events.occurred_at) AS ceiling_date
+             FROM keyserver_events
+          ), usage AS (
+           SELECT e.product,
+              count(*) FILTER (WHERE ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[]))) AS checkouts,
+              count(DISTINCT e.user_name) FILTER (WHERE ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[]))) AS distinct_users,
+              min(e.occurred_at) FILTER (WHERE ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[]))) AS first_checkout,
+              max(e.occurred_at) FILTER (WHERE ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[]))) AS last_checkout
+             FROM (keyserver_events e
+               JOIN non_staff_computers ns USING (computer_name))
+            WHERE ((e.product IS NOT NULL) AND ((e.product)::text <> ''::text) AND ((e.event_type)::text <> ALL ((ARRAY['obtain'::character varying, 'return'::character varying, 'logon'::character varying, 'logoff'::character varying, 'block'::character varying, 'info'::character varying, 'up'::character varying, 'down'::character varying, 'shadow info'::character varying, 'shadow up'::character varying, 'shadow down'::character varying, 'audited'::character varying, 'issued'::character varying, 'revoked'::character varying, 'deny unkeyed'::character varying, 'session idle start'::character varying, 'session idle stop'::character varying])::text[])))
+            GROUP BY e.product
+           HAVING (count(*) FILTER (WHERE ((e.event_type)::text = ANY ((ARRAY['launch'::character varying, 'logged launch'::character varying, 'launch offline'::character varying, 'logged launch offline'::character varying, 'license start'::character varying, 'product usage start'::character varying])::text[]))) > 0)
+          )
+   SELECT u.product,
+      u.checkouts,
+      u.distinct_users,
+      round(((u.checkouts)::numeric / (NULLIF(u.distinct_users, 0))::numeric), 1) AS sessions_per_user,
+      u.first_checkout,
+      u.last_checkout,
+      ((dc.ceiling_date)::date - (u.last_checkout)::date) AS days_since_checkout,
+          CASE
+              WHEN (((dc.ceiling_date)::date - (u.last_checkout)::date) <= 90) THEN 'Active'::text
+              WHEN (((dc.ceiling_date)::date - (u.last_checkout)::date) <= 365) THEN 'Stale'::text
+              ELSE 'Dormant'::text
+          END AS status
+     FROM (usage u
+       CROSS JOIN dataset_ceiling dc)
+    ORDER BY u.checkouts DESC;
   SQL
   create_view "ss_libchat_combined_views", sql_definition: <<-SQL
       SELECT c.id AS chat_id,

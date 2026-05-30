@@ -235,6 +235,12 @@ en:
       tools/file_upload_import:
         one: "File Upload Import"
         other: "File Upload Imports"
+      keyserver/event:
+        one: "Keyserver Event"
+        other: "Keyserver Events"
+      keyserver/session:
+        one: "Keyserver Session"
+        other: "Keyserver Sessions"
       keyserver/usage:
         one: "Keyserver Usage"
         other: "Keyserver Usages"

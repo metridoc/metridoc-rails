@@ -353,7 +353,7 @@ ActiveAdmin.setup do |config|
 
       # Keyserver
       menu.add label: I18n.t("active_admin.keyserver.keyserver_menu"),
-        url: :admin_keyserver_path,
+        url: :keyserver_root_path,
         if: proc{ authorized?(:read, "Keyserver") },
         parent: I18n.t("active_admin.library_data")
 
@@ -506,9 +506,9 @@ ActiveAdmin.setup do |config|
 
   # List of namespaces that need menus
   namespaces = [
-    :admin, :borrowdirect, :caiasoft, :course_reserves, 
+    :admin, :borrowdirect, :caiasoft, :course_reserves,
     :ezborrow, :ezproxy, :gate_count, :google_analytics,
-    :illiad, :ipeds, :library_staff, :springshare, 
+    :illiad, :ipeds, :keyserver, :library_staff, :springshare,
     :stream_deck, :upenn
   ]
 

@@ -105,7 +105,7 @@ Vagrant.configure("2") do |config|
         # end
 
         # Add volumes for development
-        config.vm.synced_folder "../", "/metridoc"
+        config.vm.synced_folder "../", "/metridoc", mount_options: ["nonempty"]
 
         cfg.vm.provision :ansible_local do |ansible|
           ansible.config_file = "/metridoc/ansible/ansible.cfg"
