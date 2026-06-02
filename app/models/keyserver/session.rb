@@ -10,6 +10,10 @@ class Keyserver::Session < Keyserver::Base
 
   # Maps abbreviated header names used in Keyserver's raw CSV export to the
   # column names used in this table.
+  def self.superadmin_columns
+    ['user_name']
+  end
+
   def self.column_aliases
     {
       'name' => 'computer_name',

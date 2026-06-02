@@ -10,6 +10,11 @@ namespace: :keyserver do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
+  preserve_default_filters!
+  Keyserver::Event.superadmin_columns.each do |c|
+    remove_filter c.to_sym
+  end
+
   controller do
     def scoped_collection
       Keyserver::Event
@@ -32,7 +37,7 @@ namespace: :keyserver do
     column :version
     column :event_type
     column :product
-    column :user_name
+    column :user_name if current_admin_user.super_admin?
     column :address
     column :division, sortable: 'keyserver_sessions.location'
   end

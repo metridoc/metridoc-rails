@@ -10,5 +10,18 @@ namespace: :keyserver do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
-  index title: "Sessions"
+  preserve_default_filters!
+  Keyserver::Session.superadmin_columns.each do |c|
+    remove_filter c.to_sym
+  end
+
+  index title: "Sessions" do
+    column :computer_name
+    column :user_name if current_admin_user.super_admin?
+    column :logon
+    column :logoff
+    column :duration
+    column :address
+    column :location
+  end
 end
