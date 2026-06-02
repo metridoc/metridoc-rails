@@ -204,8 +204,8 @@ module GatecountHelper
     # Loop through each library
     data.each do |k, v|
       # Find the maximum and minimum fiscal years of the data
-      min_fiscal_year = (Date::parse(v[:swipes].keys.min) + 6.months).year
-      max_fiscal_year = (Date::parse(v[:swipes].keys.max) + 6.months).year
+      min_fiscal_year = (v[:swipes].keys.min + 6.months).year
+      max_fiscal_year = (v[:swipes].keys.max + 6.months).year
 
       # Define the fiscal year range
       fiscal_year_range = (min_fiscal_year..max_fiscal_year).to_a
@@ -217,8 +217,8 @@ module GatecountHelper
       counts = v[:swipes].map do |dt, cnt|
         [
           [
-            (Date.parse(dt) + 6.months).year, 
-            Date.parse(dt).strftime("%b")
+            (dt + 6.months).year, 
+            dt.strftime("%b")
           ],
           cnt
         ]
