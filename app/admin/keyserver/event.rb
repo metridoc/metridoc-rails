@@ -34,6 +34,6 @@ namespace: :keyserver do
     column :product
     column :user_name
     column :address
-    column :division
+    column :division, sortable: 'keyserver_sessions.location'
   end
 end
