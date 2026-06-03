@@ -18,7 +18,7 @@ namespace: :keyserver do
   controller do
     def scoped_collection
       Keyserver::Event
-        .select('keyserver_events.*, keyserver_sessions.location AS division')
+        .select('keyserver_events.*, keyserver_sessions.location AS location')
         .joins(
           'LEFT JOIN keyserver_sessions
              ON  keyserver_sessions.computer_name = keyserver_events.computer_name
@@ -39,6 +39,6 @@ namespace: :keyserver do
     column :product
     column :user_name if current_admin_user.super_admin?
     column :address
-    column :division, sortable: 'keyserver_sessions.location'
+    column :location, sortable: 'keyserver_sessions.location'
   end
 end
