@@ -16,7 +16,7 @@ namespace: :keyserver do
   end
 
   index title: "Sessions" do
-    column :computer_name
+    column :computer_name if current_admin_user.super_admin?
     column :user_name if current_admin_user.super_admin?
     column :logon
     column :logoff

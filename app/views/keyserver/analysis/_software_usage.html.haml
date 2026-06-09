@@ -4,7 +4,7 @@
 - status_counts = status_counts.sort_by { |s, _| Keyserver::SoftwareUsageProfile::STATUS_ORDER.fetch(s, 99) }.to_h
 
 %p
-  Managed products with at least one checkout on a non-staff computer.
+  Managed products with at least one checkout (software launch event) on a non-staff computer.
   Activity status is relative to the most recent event date in the dataset.
 
 .ks-subnav
