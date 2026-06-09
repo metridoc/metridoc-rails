@@ -31,7 +31,7 @@ namespace: :keyserver do
   end
 
   index title: "Events" do
-    column :computer_name
+    column :computer_name if current_admin_user.super_admin?
     column :occurred_at
     column :application
     column :version

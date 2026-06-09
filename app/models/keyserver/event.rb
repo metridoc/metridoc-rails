@@ -33,7 +33,7 @@ class Keyserver::Event < Keyserver::Base
   # column names used in this table. Applied by Tools::FileUploadImport before
   # schema matching so uploads can use the file as-is without renaming headers.
   def self.superadmin_columns
-    ['user_name']
+    ['computer_name', 'user_name']
   end
 
   def self.column_aliases
