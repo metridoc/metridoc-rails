@@ -208,7 +208,7 @@ module ConsultationHelper
 
     if pennkey
       # For chord diagrams
-      output = value_map.map { |k, v| { "A": k[0], "B": k[1], "value": v } }.to_json().html_safe
+      output = value_map.map { |k, v| { "left": k[0], "right": k[1], "value": v } }.to_json().html_safe
     else
       # For Loom diagrams
       output = value_map.map { |k, v| { "inner": k[0], "outer": k[1], "value": v } }.to_json().html_safe

@@ -10,7 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema[7.2].define(version: 2026_04_14_155655) do
+=======
+ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
+>>>>>>> main
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -2604,7 +2608,12 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_155655) do
       lu.course_id,
       lu.reading_list_id,
       lu.citation_id,
+<<<<<<< HEAD
       lci.title,
+=======
+      COALESCE(NULLIF(COALESCE(NULLIF((lci.title)::text, ''::text), (lci.book_chapter_title)::text), ''::text), (lci.journal_title)::text) AS title,
+      lci.author,
+>>>>>>> main
       lu.user_role,
       lu.files_downloaded,
       lu.file_views,
