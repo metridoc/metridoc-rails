@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema[7.2].define(version: 2026_04_14_155655) do
-=======
-ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
->>>>>>> main
+ActiveRecord::Schema[7.2].define(version: 2026_05_28_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1607,6 +1603,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.string "address"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["computer_name", "occurred_at", "application", "event_type", "user_name"], name: "index_keyserver_events_natural_key", unique: true
     t.index ["computer_name", "occurred_at"], name: "index_keyserver_events_on_computer_name_and_occurred_at"
     t.index ["computer_name"], name: "index_keyserver_events_on_computer_name"
     t.index ["occurred_at"], name: "index_keyserver_events_on_occurred_at"
@@ -1624,15 +1621,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.index ["computer_name", "logon", "logoff"], name: "index_keyserver_sessions_on_computer_name_and_logon_and_logoff"
+    t.index ["computer_name", "user_name", "logon"], name: "index_keyserver_sessions_natural_key", unique: true
     t.index ["location", "logon"], name: "index_keyserver_sessions_on_location_and_logon"
     t.index ["user_name"], name: "index_keyserver_sessions_on_user_name"
-  end
-
-  create_table "keyserver_user_name_maps", force: :cascade do |t|
-    t.string "original", null: false
-    t.string "user_alias", null: false
-    t.index ["original"], name: "index_keyserver_user_name_maps_on_original", unique: true
-    t.index ["user_alias"], name: "index_keyserver_user_name_maps_on_user_alias", unique: true
   end
 
   create_table "library_profile_profiles", force: :cascade do |t|
@@ -1711,6 +1702,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
     t.datetime "status_set_at", precision: nil, null: false
     t.string "status", null: false
     t.text "log_text"
+  end
+
+  create_table "meescan_sessions", force: :cascade do |t|
+    t.integer "year"
+    t.string "month"
+    t.string "fiscal_year"
+    t.string "name"
+    t.integer "item_count"
+    t.string "item_return"
+    t.string "language_code"
+    t.string "device_model"
+    t.string "device_os"
+    t.string "device_os_version"
+    t.string "app_version"
+    t.string "kiosk_id"
+    t.float "receipt_sent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at", "name", "item_count", "kiosk_id"], name: "meescan_sessions_unique", unique: true
   end
 
   create_table "report_queries", force: :cascade do |t|
@@ -2608,12 +2618,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
       lu.course_id,
       lu.reading_list_id,
       lu.citation_id,
-<<<<<<< HEAD
-      lci.title,
-=======
       COALESCE(NULLIF(COALESCE(NULLIF((lci.title)::text, ''::text), (lci.book_chapter_title)::text), ''::text), (lci.journal_title)::text) AS title,
       lci.author,
->>>>>>> main
       lu.user_role,
       lu.files_downloaded,
       lu.file_views,
@@ -2632,7 +2638,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
       to_char(keyserver_sessions.logon, 'Dy'::text) AS day_name,
       count(*) AS sessions
      FROM keyserver_sessions
-    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL) AND ((date_part('hour'::text, keyserver_sessions.logon) >= (8)::double precision) AND (date_part('hour'::text, keyserver_sessions.logon) <= (22)::double precision)))
+    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL))
     GROUP BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer), (to_char(keyserver_sessions.logon, 'Dy'::text))
     ORDER BY keyserver_sessions.location, ((date_part('dow'::text, keyserver_sessions.logon))::integer);
   SQL
@@ -2642,7 +2648,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_04_14_210929) do
       (date_part('hour'::text, keyserver_sessions.logon))::integer AS hour_of_day,
       count(*) AS sessions
      FROM keyserver_sessions
-    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL) AND ((date_part('hour'::text, keyserver_sessions.logon) >= (8)::double precision) AND (date_part('hour'::text, keyserver_sessions.logon) <= (22)::double precision)))
+    WHERE ((keyserver_sessions.location IS NOT NULL) AND ((keyserver_sessions.location)::text <> ''::text) AND (keyserver_sessions.logon IS NOT NULL))
     GROUP BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer)
     ORDER BY keyserver_sessions.location, ((date_part('hour'::text, keyserver_sessions.logon))::integer);
   SQL
