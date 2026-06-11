@@ -1704,6 +1704,25 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_28_100000) do
     t.text "log_text"
   end
 
+  create_table "meescan_sessions", force: :cascade do |t|
+    t.integer "year"
+    t.string "month"
+    t.string "fiscal_year"
+    t.string "name"
+    t.integer "item_count"
+    t.string "item_return"
+    t.string "language_code"
+    t.string "device_model"
+    t.string "device_os"
+    t.string "device_os_version"
+    t.string "app_version"
+    t.string "kiosk_id"
+    t.float "receipt_sent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at", "name", "item_count", "kiosk_id"], name: "meescan_sessions_unique", unique: true
+  end
+
   create_table "report_queries", force: :cascade do |t|
     t.bigint "report_template_id"
     t.integer "owner_id", null: false

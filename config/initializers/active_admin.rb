@@ -357,6 +357,12 @@ ActiveAdmin.setup do |config|
         if: proc{ authorized?(:read, "Keyserver") },
         parent: I18n.t("active_admin.library_data")
 
+      # MeeScan
+      menu.add label: I18n.t("active_admin.mee_scan.mee_scan_menu"),
+        url: :mee_scan_root_path,
+        if: proc { authorized?(:read, "MeeScan") },
+        parent: I18n.t("active_admin.library_data")
+
       # Google Analytics
       menu.add label: I18n.t("active_admin.google_analytics.google_analytics_menu"),
         url: :google_analytics_root_path,
@@ -508,8 +514,8 @@ ActiveAdmin.setup do |config|
   namespaces = [
     :admin, :borrowdirect, :caiasoft, :course_reserves,
     :ezborrow, :ezproxy, :gate_count, :google_analytics,
-    :illiad, :ipeds, :keyserver, :library_staff, :springshare,
-    :stream_deck, :upenn
+    :illiad, :ipeds, :keyserver, :library_staff, :mee_scan,
+    :springshare, :stream_deck, :upenn
   ]
 
   # Configure the menu for all namespaces
