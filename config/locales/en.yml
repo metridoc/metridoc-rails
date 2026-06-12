@@ -344,6 +344,8 @@ en:
         one: "MeeScan Session"
         other: "MeeScan Sessions"
     attributes:
+      mee_scan/session:
+        created_at: "Created at"
       borrowdirect/reshare/borrowing_turnaround:
         request_id: "Request Id"
       borrowdirect/reshare/lending_turnaround:
