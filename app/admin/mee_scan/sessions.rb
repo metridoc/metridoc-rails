@@ -21,14 +21,18 @@ ActiveAdmin.register MeeScan::Session,
 
   index do
     column :created_at
+    column :year
+    column :month
     column :fiscal_year
     column :name
     column :item_count
     column :item_return
-    column :kiosk_id
+    column :language_code
+    column :device_model
     column :device_os
     column :device_os_version
     column :app_version
+    column :kiosk_id
     column :receipt_sent
   end
 
