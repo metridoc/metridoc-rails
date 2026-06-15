@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_05_28_100000) do
+ActiveRecord::Schema[7.2].define(version: 2026_06_15_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1720,6 +1720,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_05_28_100000) do
     t.float "receipt_sent"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "day_of_week"
+    t.integer "hour_of_day"
     t.index ["created_at", "name", "item_count", "kiosk_id"], name: "meescan_sessions_unique", unique: true
   end
 

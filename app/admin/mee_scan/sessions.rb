@@ -24,6 +24,8 @@ ActiveAdmin.register MeeScan::Session,
     column :year
     column :month
     column :fiscal_year
+    column :day_of_week
+    column :hour_of_day
     column :name
     column :item_count
     column :item_return
