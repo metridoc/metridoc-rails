@@ -1,4 +1,0 @@
-load_sequence:         5.1
-target_model:          "Keyserver::ReasonTerm"
-truncate_before_load:  "yes"
-file_name:             "TermReason.csv"

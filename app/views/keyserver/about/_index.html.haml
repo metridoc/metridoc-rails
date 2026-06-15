@@ -1,0 +1,108 @@
+
+%section
+  %h2 Introduction
+  %p
+    Keyserver tracks software usage on Penn Libraries public computers.
+    Events and sessions are captured from Keyserver and loaded into Metridoc.
+    A "checkout" is a software launch event — a patron opening or starting a managed application.
+  %ul
+    %li
+      The
+      %strong Software Usage
+      page lists all managed products with checkout activity on non-staff computers,
+      including status (Active / Stale / Dormant) based on days since the last checkout.
+    %li
+      The
+      %strong Stale &amp; Dormant
+      page surfaces products with no checkout in 90+ days, sorted by most dormant first.
+    %li
+      The
+      %strong Locations
+      page shows session heatmaps by hour of day and day of week, broken down by library location.
+    %li
+      The
+      %strong By School
+      page shows checkout counts per product per Alma school affiliation.
+    %li
+      The
+      %strong By User Group
+      page shows checkout counts per product per Alma user group (e.g. undergraduate, graduate, faculty).
+
+%hr
+
+%section
+  %h2 Note Regarding Privacy
+  %p
+    This data represents activity on the Libraries' public computers; activity on Library Staff
+    machines is removed from ingest into MetriDoc. Usernames on public computers are used to
+    map to demographic categories and for no other purpose. The data is intended to evaluate
+    the products being used, the times and locations of their use, and the demographic
+    categories of the user.
+
+%hr
+%section
+  %h2 Resources
+  %h3 Database Access
+  %p{:style => "padding: 0px 0px 0px 30px;"}
+    For those who are connecting directly to the PostgreSQL database or who are
+    using the report exporting tool, the tables for Keyserver data
+    begin with the prefix "keyserver_".
+
+  %h3 Data Tables
+  %ul
+    - resources.each do |resource|
+      %li= link_to resource.resource_name.human, "/keyserver/#{resource.resource_name.param_key.pluralize}"
+
+%hr
+
+%section
+  %h2 Dashboards
+  %ul
+    %li= link_to "Software Usage Profile", keyserver_software_usage_path
+    %li= link_to "Stale & Dormant Products", keyserver_stale_path
+    %li= link_to "Location Usage", keyserver_locations_path
+    %li= link_to "By School", keyserver_by_school_path
+    %li= link_to "By User Group", keyserver_by_user_group_path
+
+%hr
+
+%section
+  %h2 Data Import
+
+  %h3 File Upload
+  %p
+    Events and sessions data can be loaded directly through the
+    = link_to "File Upload Tool", admin_tools_file_upload_imports_path
+  %ol
+    %li
+      Export
+      %code events.csv
+      and/or
+      %code sessions.csv
+      from Keyserver.
+    %li
+      In the File Upload Tool, select the target table (
+      %strong Keyserver Event
+      or
+      %strong Keyserver Session
+      ) and upload the file.
+    %li
+      The tool accepts the raw Keyserver CSV export as-is — abbreviated column headers (e.g.
+      %code name
+      ,
+      %code user
+      ,
+      %code event
+      ) are mapped to database columns automatically.
+    %li Duplicate records are handled on the backend; re-uploading a file that has already been imported is safe.
+
+  %h3 Rake Import
+  %p
+    To load data via the command line, export
+    %code events.csv
+    and
+    %code sessions.csv
+    from Keyserver into
+    %code /tmp/keyserver/
+    then run:
+  %pre rake import -- --config_folder keyserver

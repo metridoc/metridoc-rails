@@ -1,0 +1,59 @@
+- by_hour   = Keyserver::LocationByHour.order(:location, :hour_of_day).group_by(&:location)
+- by_dow    = Keyserver::LocationByDow.order(:location, :day_of_week).group_by(&:location)
+- locations = by_hour.keys | by_dow.keys
+
+%p
+  Session counts by location, all hours.
+  = link_to "← Usage profile", keyserver_software_usage_path
+
+- if locations.empty?
+  %p No location data available.
+- else
+  - hour_pivot = {}
+  - all_hours  = []
+  - locations.each do |loc|
+    - (by_hour[loc] || []).each do |row|
+      - h = row.hour_of_day
+      - all_hours << h
+      - hour_pivot[h] ||= {}
+      - hour_pivot[h][loc] = row.sessions
+  - all_hours = all_hours.uniq.sort
+
+  %h2 Sessions by Hour of Day
+  %table.statistics_summary
+    %thead
+      %tr
+        %th Hour
+        - locations.each do |loc|
+          %th= loc
+    %tbody
+      - all_hours.each do |hour|
+        %tr
+          %td= "%02d:00" % hour
+          - locations.each do |loc|
+            %td= number_with_delimiter(hour_pivot.dig(hour, loc))
+
+  - day_order = %w[Mon Tue Wed Thu Fri Sat Sun]
+  - dow_pivot = {}
+  - all_days  = []
+  - locations.each do |loc|
+    - (by_dow[loc] || []).each do |row|
+      - d = row.day_name
+      - all_days << d
+      - dow_pivot[d] ||= {}
+      - dow_pivot[d][loc] = row.sessions
+  - all_days = day_order & all_days.uniq
+
+  %h2 Sessions by Day of Week
+  %table.statistics_summary
+    %thead
+      %tr
+        %th Day
+        - locations.each do |loc|
+          %th= loc
+    %tbody
+      - all_days.each do |day|
+        %tr
+          %td= day
+          - locations.each do |loc|
+            %td= number_with_delimiter(dow_pivot.dig(day, loc))

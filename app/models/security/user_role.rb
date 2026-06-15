@@ -18,6 +18,7 @@ class Security::UserRole < ApplicationRecord
     "Keyserver",
     "LibraryProfile",
     "LibraryStaff",
+    "MeeScan",
     "Log",
     "Report",
     "Security",

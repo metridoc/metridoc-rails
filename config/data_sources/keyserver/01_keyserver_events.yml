@@ -1,0 +1,30 @@
+---
+# Keyserver event table import
+#
+# Source: events.csv exported from Keyserver (one row per event).
+#
+# Column mapping documents the expected CSV header → model attribute
+# correspondence. Because Util.column_to_attribute normalises headers to
+# snake_case, any header whose snake_case form already matches the attribute
+# name needs no explicit entry — the mapping below is provided for
+# documentation and future column-name drift detection.
+#
+# Columns intentionally excluded: idnt, agid (internal Keyserver identifiers
+# with no analytical value).
+
+load_sequence:        1
+target_model:         'Keyserver::Event'
+target_adapter:       'csv'
+file_name:            'events.csv'
+unique_keys:          [computer_name, occurred_at, application, event_type, user_name]
+batch_size:           1000
+
+column_mappings:
+  Computer Name: computer_name
+  Occurred At:   occurred_at
+  Application:   application
+  Version:       version
+  Event Type:    event_type
+  Product:       product
+  User Name:     user_name
+  Address:       address

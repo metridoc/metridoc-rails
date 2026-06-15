@@ -1,0 +1,28 @@
+- profiles = Keyserver::SoftwareUsageProfile.non_active.order(days_since_checkout: :desc)
+
+%p
+  Products with no checkout (software launch event) in 90+ days, sorted by most dormant first.
+  = link_to "← All products", keyserver_software_usage_path
+
+- if profiles.empty?
+  %p No stale or dormant products found.
+- else
+  %table.statistics_summary
+    %thead
+      %tr
+        %th Product
+        %th Status
+        %th Last Checkout
+        %th Days Since Checkout
+        %th Total Checkouts
+        %th Distinct Users
+    %tbody
+      - profiles.each do |p|
+        %tr
+          %td= p.product
+          %td
+            %span{class: "ks-status #{p.status&.downcase}"}= p.status
+          %td= p.last_checkout&.to_date
+          %td= p.days_since_checkout
+          %td= number_with_delimiter(p.checkouts)
+          %td= number_with_delimiter(p.distinct_users)
