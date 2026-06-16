@@ -1,7 +1,7 @@
 - profiles = Keyserver::SoftwareUsageProfile.non_active.order(days_since_checkout: :desc)
 
 %p
-  Products with no checkout (software launch event) in 90+ days, sorted by most dormant first.
+  Products with no checkout in 90+ days, sorted by most dormant first.
   = link_to "← All products", keyserver_software_usage_path
 
 - if profiles.empty?

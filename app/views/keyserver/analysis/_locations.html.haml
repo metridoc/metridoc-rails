@@ -3,7 +3,7 @@
 - locations = by_hour.keys | by_dow.keys
 
 %p
-  Session counts by location, all hours.
+  Session counts by location during business hours (8 AM – 10:59 PM).
   = link_to "← Usage profile", keyserver_software_usage_path
 
 - if locations.empty?

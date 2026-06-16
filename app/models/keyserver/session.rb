@@ -5,22 +5,33 @@ class Keyserver::Session < Keyserver::Base
   # Sessions with location = 'Staff' or NULL/blank are excluded from patron
   # analysis — see Keyserver::NonStaffComputer for the classification logic.
 
+  # user_name is the raw identifier as Keyserver recorded it. It is treated as a
+  # super-admin-only column: the admin views display it only to super admins
+  # (see app/admin/keyserver/session.rb), following the superadmin_columns pattern.
+  def self.superadmin_columns = [:user_name]
+
+  # duration is the session length in whole seconds. It is not taken from the
+  # source file; instead it is derived from logon/logoff as records are built
+  # during import. The import constructs each row with Session.new(attributes),
+  # so this runs before the rows are bulk-inserted via activerecord-import.
+  after_initialize :derive_duration, if: :new_record?
+
   scope :with_location,  -> { where.not(location: [nil, ""]) }
   scope :patron_hours,   -> { where("EXTRACT(HOUR FROM logon) BETWEEN 8 AND 22") }
 
-  # Maps abbreviated header names used in Keyserver's raw CSV export to the
-  # column names used in this table.
-  def self.superadmin_columns
-    ['computer_name', 'user_name']
+  # Columns the importers must never read from the source file. The rake import
+  # drops them via the YAML column_mappings; the File Upload tool, which maps
+  # columns by header automatically, honors this list instead. duration is
+  # listed here because it is derived from logon/logoff (see derive_duration) —
+  # importing the source value would let an Excel-duration cell (Roo reads it as
+  # a DateTime for multi-day sessions) or a time-formatted CSV string fail the
+  # integer validation and drop the row.
+  def self.import_derived_columns
+    %w[duration]
   end
 
-  def self.column_aliases
-    {
-      'name' => 'computer_name',
-      'user' => 'user_name'
-    }
-  end
-
+  # Re-uploading a file that overlaps existing data is safe: rows matching the
+  # natural key are left untouched rather than raising a uniqueness error.
   def self.on_conflict_update
     {
       conflict_target: [:computer_name, :user_name, :logon],
@@ -28,30 +39,11 @@ class Keyserver::Session < Keyserver::Base
     }
   end
 
-  # Excel exports duration in three forms depending on session length:
-  #   < 24 h           — Roo returns the raw Excel time fraction (e.g. 0.008206 ≈ 709 s)
-  #   >= 24 h with sub-second — Roo returns a DateTime anchored at the Excel epoch
-  #                     (Dec 30, 1899), e.g. "1900-01-01T06:36:49+00:00" = 2 d 6:36:49
-  #   exact whole days — Roo returns a Date, e.g. "1899-12-31" = exactly 1 day
-  # The database stores duration in microseconds (matching the rake import path).
-  def self.transform_import_value(column_name, val)
-    if column_name == 'duration'
-      if val.match?(/\A\d+\.\d+\z/)
-        (val.to_f * 86_400 * 1_000_000).round.to_s
-      elsif val.match?(/\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
-        dt = DateTime.parse(val)
-        ((dt - DateTime.new(1899, 12, 30)) * 86_400 * 1_000_000).to_i.to_s
-      elsif val.match?(/\A\d{4}-\d{2}-\d{2}\z/)
-        # Whole-number-of-days duration: Roo returns a Date (no time component)
-        # anchored at the same Excel epoch. e.g. "1899-12-31" = 1 day exactly.
-        d = Date.parse(val)
-        ((d - Date.new(1899, 12, 30)).to_i * 86_400 * 1_000_000).to_s
-      else
-        val
-      end
-    else
-      val
-    end
-  end
+  private
 
+  def derive_duration
+    return unless logon.present? && logoff.present?
+
+    self.duration = (logoff.to_time - logon.to_time).round
+  end
 end

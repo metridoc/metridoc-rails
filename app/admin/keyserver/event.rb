@@ -10,35 +10,31 @@ namespace: :keyserver do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
+  # Don't expose super-admin-only columns (user_name) through the filter sidebar.
   preserve_default_filters!
   Keyserver::Event.superadmin_columns.each do |c|
     remove_filter c.to_sym
   end
 
-  controller do
-    def scoped_collection
-      Keyserver::Event
-        .select('keyserver_events.*, keyserver_sessions.location AS location')
-        .joins(
-          'LEFT JOIN keyserver_sessions
-             ON  keyserver_sessions.computer_name = keyserver_events.computer_name
-             AND keyserver_sessions.user_name     = keyserver_events.user_name
-             AND keyserver_events.occurred_at    >= keyserver_sessions.logon
-             AND (keyserver_sessions.logoff IS NULL
-                  OR keyserver_events.occurred_at <= keyserver_sessions.logoff)'
-        )
+  index title: "Events" do
+    id_column
+    # Show each column, hiding super-admin-only columns from non-super-admins.
+    self.resource_class.column_names.each do |c|
+      next if c == "id"
+      next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
+
+      column c.to_sym
     end
+    actions
   end
 
-  index title: "Events" do
-    column :computer_name if current_admin_user.super_admin?
-    column :occurred_at
-    column :application
-    column :version
-    column :event_type
-    column :product
-    column :user_name if current_admin_user.super_admin?
-    column :address
-    column :location, sortable: 'keyserver_sessions.location'
+  show do
+    attributes_table do
+      self.resource_class.column_names.each do |c|
+        next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
+
+        row c.to_sym
+      end
+    end
   end
 end
