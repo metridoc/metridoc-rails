@@ -1,0 +1,29 @@
+- rows     = Keyserver::SoftwareUsageBySchool.order(:product, :school)
+- products = rows.map(&:product).uniq.sort
+- schools  = rows.map(&:school).uniq.sort_by { |s| s.nil? ? "" : s }
+- pivot = {}
+- rows.each do |row|
+  - pivot[row.product] ||= {}
+  - pivot[row.product][row.school] = row.checkouts
+
+%p
+  Checkout counts on non-staff computers, broken down by Alma school affiliation.
+  %em Unresolved
+  denotes users whose login is not a PennKey.
+  = link_to "← Usage profile", keyserver_software_usage_path
+
+- if products.empty?
+  %p No data available.
+- else
+  %table.statistics_summary
+    %thead
+      %tr
+        %th Product
+        - schools.each do |school|
+          %th= school.present? ? school : "Unresolved"
+    %tbody
+      - products.each do |product|
+        %tr
+          %td= product
+          - schools.each do |school|
+            %td= number_with_delimiter(pivot.dig(product, school))

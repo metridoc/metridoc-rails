@@ -3,14 +3,10 @@ class Keyserver::Event < Keyserver::Base
   #
   # user_name is the raw identifier as Keyserver recorded it — some values
   # are PennKeys and can be joined to Alma demographics; others are not.
-  # Never display user_name directly; use Keyserver::UserNameMap#user_alias
-  # for any individual-level display.
-
-  belongs_to :user_name_map,
-             class_name:  'Keyserver::UserNameMap',
-             foreign_key: :user_name,
-             primary_key: :original,
-             optional:    true
+  # It is treated as a super-admin-only column: the admin views display it only
+  # to super admins (see app/admin/keyserver/event.rb), following the
+  # superadmin_columns pattern.
+  def self.superadmin_columns = [:user_name]
 
   # Checkout event types — the set that represents a user actually launching
   # or starting a managed product.
@@ -36,4 +32,13 @@ class Keyserver::Event < Keyserver::Base
   scope :checkouts,     -> { where(event_type: CHECKOUT_EVENTS) }
   scope :non_infra,     -> { where.not(event_type: INFRA_EVENTS) }
   scope :with_product,  -> { where.not(product: [nil, ""]) }
+
+  # Re-uploading a file that overlaps existing data is safe: rows matching the
+  # natural key are left untouched rather than raising a uniqueness error.
+  def self.on_conflict_update
+    {
+      conflict_target: [:computer_name, :occurred_at, :application, :event_type, :user_name],
+      columns: []
+    }
+  end
 end

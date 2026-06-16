@@ -16,6 +16,8 @@ class Tools::FileUploadImport < ApplicationRecord
     Caiasoft::CirculationMetric,
     Caiasoft::DeaccessionInfo,
     GateCount::CardSwipe,
+    Keyserver::Event,
+    Keyserver::Session,
     MeeScan::Session,
     GeoData::CountryCode,
     Ipeds::Completion,
@@ -124,6 +126,14 @@ class Tools::FileUploadImport < ApplicationRecord
       log "!!WARNING!!: These columns are not processed: [#{unmatched_columns.join(", ")}]"
     end
 
+    # Columns the model derives on import (e.g. Keyserver::Session#duration) must
+    # not be read from the file — the model computes them. Skipping them here
+    # also avoids failing validation on source values that aren't the stored type.
+    derived_columns = target_class.respond_to?(:import_derived_columns) ? target_class.import_derived_columns : []
+    if (present_derived = headers & derived_columns).present?
+      log "These columns are derived by #{target_model_name} and ignored from the file: [#{present_derived.join(", ")}]"
+    end
+
     n_errors = 0
     n_inserted = 0
 
@@ -160,6 +170,9 @@ class Tools::FileUploadImport < ApplicationRecord
           val = row[i].to_s
 
           next if target_class.columns_hash[column_name].blank?
+
+          # Skip columns the model derives on import; the source value is ignored.
+          next if derived_columns.include?(column_name)
 
           # Check for valid integer for integer columns, requires a string input
           if target_class.columns_hash[column_name].type == :integer && !Util.valid_integer?(val)
