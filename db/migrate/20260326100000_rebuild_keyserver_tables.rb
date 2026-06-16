@@ -46,18 +46,6 @@ class RebuildKeyserverTables < ActiveRecord::Migration[7.0]
     add_index :keyserver_sessions, [:location, :logon]
     add_index :keyserver_sessions, :user_name
 
-    # ── keyserver_user_name_maps ───────────────────────────────────────────────
-    # original  — the raw username as it appears in events/sessions
-    # user_alias — stable opaque alias assigned by rake keyserver:seed_user_names
-    #              (named user_alias to avoid collision with SQL reserved word)
-    create_table :keyserver_user_name_maps do |t|
-      t.string :original,   null: false
-      t.string :user_alias, null: false
-    end
-
-    add_index :keyserver_user_name_maps, :original,   unique: true
-    add_index :keyserver_user_name_maps, :user_alias, unique: true
-
     # ── keyserver_app_name_overrides ───────────────────────────────────────────
     # raw_name  — the application string exactly as Keyserver records it
     # canonical — the preferred display name to use instead
@@ -99,7 +87,6 @@ class RebuildKeyserverTables < ActiveRecord::Migration[7.0]
     execute "DROP FUNCTION IF EXISTS normalize_app_name(TEXT);"
 
     drop_table :keyserver_app_name_overrides, if_exists: true
-    drop_table :keyserver_user_name_maps,     if_exists: true
     drop_table :keyserver_sessions,           if_exists: true
     drop_table :keyserver_events,             if_exists: true
   end

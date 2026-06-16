@@ -1,8 +1,7 @@
 ---
 # Keyserver session table import
 #
-# Source: sessions.xlsx exported from Keyserver (one row per session).
-# Adjust sheet_name if the workbook uses multiple sheets.
+# Source: sessions.csv exported from Keyserver (one row per session).
 #
 # duration is NOT imported from the source workbook. Keyserver exports it as
 # an Excel duration cell, which Roo reads inconsistently — sub-day sessions
@@ -15,11 +14,9 @@
 
 load_sequence:        2
 target_model:         'Keyserver::Session'
-target_adapter:       'xlsx'
-file_name:            'sessions.xlsx'
-truncate_before_load: 'yes'
-
-# sheet_name: 'Sessions'   # uncomment if the workbook has multiple sheets
+target_adapter:       'csv'
+file_name:            'sessions.csv'
+unique_keys:          [computer_name, user_name, logon]
 
 column_mappings:
   Computer Name: computer_name

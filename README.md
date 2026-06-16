@@ -86,26 +86,18 @@ time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postg
 
 ### 5.2 Importing data
 
-There are two data source types planned at the moment, import:csv and import:mysql.
-When importing CSV data, you will need the (full or relative) path to a folder containing all CSVs to be imported.
+Data sources are configured under `config/data_sources/`. Each subfolder represents one data source and contains YAML files that define target models, column mappings, and import options.
 
-### 5.3 CSV:Keyserver
+### 5.3 Keyserver
 
-First, generate a migration from the CSV files:
-(NOTE it would be preferable for this rake task to create the migration file itself,
-but I couldn't find the Rails code to reuse, and didn't want to reinvent it)
+Keyserver data is imported from two CSV files exported from Keyserver: `events.csv` and `sessions.csv`.
 
-    rake generate migration create_keyserver_tables
-    rake import:csv:generate_migration_params[/path/to/csv/files] > db/migrate/TIMESTAMP_create_keyserver_tables.rb
-    rake db:migrate
+1. Place both files in `/tmp/keyserver/` on the app server.
+2. Run the import:
 
-After schema is loaded, do the necessary data converting to fix encoding of Programs.csv and changing 'No Asset Information' to nil in Computers.csv:
+        rake import -- --config_folder keyserver
 
-    rake import:csv:convert[/path/to/csv/files]
-
-After data conversions, invoke the importer task:
-
-    rake import:csv:keyserver[/path/to/csv/files]
+The import is incremental — duplicate rows (matched on a natural key) are silently ignored, so re-uploading a file or uploading overlapping date ranges is safe. New rows are appended to the existing data.
 
 ### 5.4 MySql:borrowdirect
 

@@ -1,12 +1,9 @@
 ---
 # Keyserver data source configuration
 #
-# Production: drop events.xlsx and sessions.xlsx into import_folder, then run:
+# Production: drop events.csv and sessions.csv into import_folder, then run:
 #   rake import -- --config_folder keyserver
-#   rake keyserver:seed_user_names
 #
-# The sheet_name key in each task file selects the correct worksheet when the
-# workbook contains multiple sheets; omit it to default to the first sheet.
 
 institution_code: 'UPENN'
 import_folder:    '/tmp/keyserver'
