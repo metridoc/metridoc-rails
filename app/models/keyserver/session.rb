@@ -5,10 +5,11 @@ class Keyserver::Session < Keyserver::Base
   # Sessions with location = 'Staff' or NULL/blank are excluded from patron
   # analysis — see Keyserver::NonStaffComputer for the classification logic.
 
-  # user_name is the raw identifier as Keyserver recorded it. It is treated as a
-  # super-admin-only column: the admin views display it only to super admins
-  # (see app/admin/keyserver/session.rb), following the superadmin_columns pattern.
-  def self.superadmin_columns = [:user_name]
+  # user_name and computer_name are raw identifiers as Keyserver recorded them.
+  # They are treated as super-admin-only columns: the admin views display them
+  # only to super admins (see app/admin/keyserver/session.rb), following the
+  # superadmin_columns pattern.
+  def self.superadmin_columns = [:user_name, :computer_name]
 
   # duration is the session length in whole seconds. It is not taken from the
   # source file; instead it is derived from logon/logoff as records are built

@@ -1,12 +1,12 @@
 class Keyserver::Event < Keyserver::Base
   # Represents a single Keyserver event record (one row per software event).
   #
-  # user_name is the raw identifier as Keyserver recorded it — some values
-  # are PennKeys and can be joined to Alma demographics; others are not.
-  # It is treated as a super-admin-only column: the admin views display it only
-  # to super admins (see app/admin/keyserver/event.rb), following the
-  # superadmin_columns pattern.
-  def self.superadmin_columns = [:user_name]
+  # user_name and computer_name are raw identifiers as Keyserver recorded them
+  # — some user_name values are PennKeys and can be joined to Alma demographics;
+  # others are not. They are treated as super-admin-only columns: the admin views
+  # display them only to super admins (see app/admin/keyserver/event.rb),
+  # following the superadmin_columns pattern.
+  def self.superadmin_columns = [:user_name, :computer_name]
 
   # Checkout event types — the set that represents a user actually launching
   # or starting a managed product.
