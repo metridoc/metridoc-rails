@@ -10,12 +10,21 @@ default: &default
     tcp_keepalives_count: 100
 
 development:
-  host: primary-db
   <<: *default
+  host: "<%= ENV['LOCAL_METRIDOC_DATABASE'].present? ? 'localhost' : 'primary-db' %>"
+  adapter: postgresql
+  database: "<%= ENV['LOCAL_METRIDOC_DATABASE'].presence || 'postgres' %>"
+  username: "<%= ENV['LOCAL_METRIDOC_USERNAME'].presence || 'postgres' %>"
+  password: "<%= ENV['LOCAL_METRIDOC_PASSWORD'].presence || DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD']) %>"
 
 test:
-  host: primary-db
   <<: *default
+  host: "<%= ENV['LOCAL_TEST_METRIDOC_DATABASE'].present? ? 'localhost' : 'primary-db' %>"
+  adapter: postgresql
+  database: "<%= ENV['LOCAL_TEST_METRIDOC_DATABASE'].presence || 'postgres' %>"
+  username: "<%= ENV['LOCAL_TEST_METRIDOC_USERNAME'].presence || 'postgres' %>"
+  password: "<%= ENV['LOCAL_TEST_METRIDOC_PASSWORD'].presence || DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD']) %>"
+
 
 staging:
   primary:
