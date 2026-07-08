@@ -13,17 +13,17 @@ development:
   <<: *default
   host: "<%= ENV['LOCAL_METRIDOC_DATABASE'].present? ? 'localhost' : 'primary-db' %>"
   adapter: postgresql
-  database: "<%= ENV['LOCAL_METRIDOC_DATABASE'].presence || 'postgres' %>"
-  username: "<%= ENV['LOCAL_METRIDOC_USERNAME'].presence || 'postgres' %>"
-  password: "<%= ENV['LOCAL_METRIDOC_PASSWORD'].presence || DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD']) %>"
+  database: "<%= ENV.fetch('LOCAL_METRIDOC_DATABASE', 'postgres') %>"
+  username: "<%= ENV.fetch('LOCAL_METRIDOC_USERNAME', 'postgres') %>"
+  password: "<%= ENV.fetch('LOCAL_METRIDOC_PASSWORD', DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD'])) %>"
 
 test:
   <<: *default
   host: "<%= ENV['LOCAL_TEST_METRIDOC_DATABASE'].present? ? 'localhost' : 'primary-db' %>"
   adapter: postgresql
-  database: "<%= ENV['LOCAL_TEST_METRIDOC_DATABASE'].presence || 'postgres' %>"
-  username: "<%= ENV['LOCAL_TEST_METRIDOC_USERNAME'].presence || 'postgres' %>"
-  password: "<%= ENV['LOCAL_TEST_METRIDOC_PASSWORD'].presence || DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD']) %>"
+  database: "<%= ENV.fetch('LOCAL_TEST_METRIDOC_DATABASE', 'postgres') %>"
+  username: "<%= ENV.fetch('LOCAL_TEST_METRIDOC_USERNAME', 'postgres') %>"
+  password: "<%= ENV.fetch('LOCAL_TEST_METRIDOC_PASSWORD', DockerSecrets.lookup(:postgres_database_password, ENV['DATABASE_PASSWORD'])) %>"
 
 
 staging:
