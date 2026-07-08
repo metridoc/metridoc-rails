@@ -3,6 +3,22 @@
 
 require 'rbconfig'
 
+def unprovisioned?
+  Dir.glob(
+    File.join(File.dirname(__FILE__), ".vagrant", "machines", "**", "action_provision")
+  ).empty?
+end
+
+# Automatically clear encrypted credentials on the host machine before booting
+if unprovisioned?
+  Dir.glob(File.expand_path("../config/credentials/*.key", __dir__)).each do |file|
+    if File.exist?(file)
+      File.delete(file)
+      puts "==> Host Machine: Cleaned up active credentials file: #{File.basename(file)}"
+    end
+  end
+end
+
 # Class to grab the users token locally or from hashicorp vault v2 endpoint using ldap
 class Token
   def to_s
