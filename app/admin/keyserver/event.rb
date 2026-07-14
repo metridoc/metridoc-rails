@@ -10,6 +10,7 @@ namespace: :keyserver do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
+  # Don't expose super-admin-only columns (user_name) through the filter sidebar.
   preserve_default_filters!
   Keyserver::Event.superadmin_columns.each do |c|
     remove_filter c.to_sym
@@ -24,6 +25,7 @@ namespace: :keyserver do
              AND keyserver_computers.section        = 'Public Computing'"
         )
     end
+    actions
   end
 
   index title: "Events" do

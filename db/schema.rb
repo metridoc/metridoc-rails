@@ -22,11 +22,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
     t.bigint "resource_id"
     t.string "author_type"
     t.bigint "author_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -121,9 +121,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
     t.string "dewey_group3"
     t.string "first_name"
     t.string "last_name"
-    t.string "preferred_email"
     t.string "penn_id_number"
-    t.string "user_id"
     t.string "user_group"
     t.string "school"
     t.string "statistical_category_1"
@@ -132,6 +130,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
     t.string "statistical_category_4"
     t.string "statistical_category_5"
     t.date "item_creation"
+    t.string "pseudonym"
     t.index ["bibliographic_material_type"], name: "alma_circulations_bibliographic_material_type"
     t.index ["bibliographic_resource_type"], name: "alma_circulations_bibliographic_resource_type"
     t.index ["item_loan_id"], name: "alma_circulations_item_loan_id", unique: true
@@ -141,6 +140,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
     t.index ["location_name"], name: "alma_circulations_location_name"
     t.index ["physical_item_material_type"], name: "alma_circulations_physical_item_material_type"
     t.index ["process_status"], name: "alma_circulations_process_status"
+    t.index ["pseudonym"], name: "index_alma_circulations_on_pseudonym"
     t.index ["school"], name: "alma_circulations_school"
     t.index ["user_group"], name: "alma_circulations_user_group"
   end
