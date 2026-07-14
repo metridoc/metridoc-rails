@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1626,7 +1626,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
     t.string "user_name"
     t.datetime "logon"
     t.datetime "logoff"
-    t.integer "duration"
+    t.bigint "duration"
     t.string "address"
     t.string "location"
     t.datetime "created_at"
