@@ -25,7 +25,6 @@ namespace: :keyserver do
              AND keyserver_computers.section        = 'Public Computing'"
         )
     end
-    actions
   end
 
   index title: "Events" do
