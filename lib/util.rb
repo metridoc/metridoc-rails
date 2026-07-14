@@ -32,7 +32,9 @@ module Util
     end
 
     def column_to_attribute(column)
-      column.underscore.gsub(/\(.+\)/, '').gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase
+      # CSV represents an unquoted, zero-length field as nil rather than "" -
+      # a blank/unnamed header column (e.g. a raw index column) hits this.
+      column.to_s.underscore.gsub(/\(.+\)/, '').gsub(/[^\dA-Za-z]+/, ' ').strip.gsub(/[\s\_]+/, '_').downcase
     end
 
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_06_15_120000) do
+ActiveRecord::Schema[7.2].define(version: 2026_07_14_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -1583,6 +1583,15 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_15_120000) do
     t.index ["raw_name"], name: "index_keyserver_app_name_overrides_on_raw_name", unique: true
   end
 
+  create_table "keyserver_computers", force: :cascade do |t|
+    t.string "computer_name", null: false
+    t.string "location"
+    t.string "section"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.index ["computer_name"], name: "index_keyserver_computers_on_computer_name", unique: true
+  end
+
   create_table "keyserver_divisions", force: :cascade do |t|
     t.string "division_id"
     t.string "division_server_id"
@@ -1603,9 +1612,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_15_120000) do
     t.string "address"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string "location"
     t.index ["computer_name", "occurred_at", "application", "event_type", "user_name"], name: "index_keyserver_events_natural_key", unique: true
     t.index ["computer_name", "occurred_at"], name: "index_keyserver_events_on_computer_name_and_occurred_at"
     t.index ["computer_name"], name: "index_keyserver_events_on_computer_name"
+    t.index ["location"], name: "index_keyserver_events_on_location"
     t.index ["occurred_at"], name: "index_keyserver_events_on_occurred_at"
     t.index ["user_name"], name: "index_keyserver_events_on_user_name"
   end
@@ -1615,7 +1626,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_06_15_120000) do
     t.string "user_name"
     t.datetime "logon"
     t.datetime "logoff"
-    t.bigint "duration"
+    t.integer "duration"
     t.string "address"
     t.string "location"
     t.datetime "created_at"
