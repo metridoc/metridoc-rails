@@ -28,6 +28,7 @@ class Tools::FileUploadImport < ApplicationRecord
     Ipeds::ProgramSchema,
     Ipeds::StemCipcode,
     Ipeds::Cipcode,
+    Keyserver::Computer,
     Keyserver::Event,
     Keyserver::Session,
     LibraryStaff::Census,
