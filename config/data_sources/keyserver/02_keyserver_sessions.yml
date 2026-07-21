@@ -3,14 +3,15 @@
 #
 # Source: sessions.csv exported from Keyserver (one row per session).
 #
-# duration is NOT imported from the source workbook. Keyserver exports it as
-# an Excel duration cell, which Roo reads inconsistently — sub-day sessions
-# arrive as Integer seconds but multi-day sessions arrive as an Excel-epoch
-# DateTime that the integer importer rejects, silently dropping those rows.
-# Since duration is exactly (logoff - logon), Keyserver::Session derives it in
-# whole seconds on import instead. See Keyserver::Session#derive_duration.
+# duration is stored in microseconds (bigint); Keyserver::Session#transform_import_value
+# normalizes it from whichever of the three Excel/CSV encodings Roo produces
+# (see that method for details). This CSV rake path imports the raw column
+# directly and does not run transform_import_value — it relies on
+# Util.valid_integer? for validation, so a raw Excel-epoch DateTime string for
+# a multi-day session can still fail validation and drop the row here (a
+# pre-existing gap in this import path, not introduced by this file).
 #
-# Columns intentionally excluded: idnt, agid, Duration (derived).
+# Columns intentionally excluded: idnt, agid.
 
 load_sequence:        2
 target_model:         'Keyserver::Session'
@@ -23,5 +24,6 @@ column_mappings:
   User Name:     user_name
   Logon:         logon
   Logoff:        logoff
+  Duration:      duration
   Address:       address
   Location:      location

@@ -8,6 +8,20 @@ class Keyserver::Event < Keyserver::Base
   # following the superadmin_columns pattern.
   def self.superadmin_columns = [:user_name, :computer_name]
 
+  # Maps abbreviated header names used in Keyserver's raw CSV export to the
+  # column names used in this table. Applied by Tools::FileUploadImport before
+  # schema matching so uploads can use the file as-is without renaming headers.
+  def self.column_aliases
+    {
+      'name'     => 'application',
+      'vers'     => 'version',
+      'event'    => 'event_type',
+      'when'     => 'occurred_at',
+      'user'     => 'user_name',
+      'computer' => 'computer_name'
+    }
+  end
+
   # Checkout event types — the set that represents a user actually launching
   # or starting a managed product.
   CHECKOUT_EVENTS = %w[
