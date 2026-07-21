@@ -19,7 +19,7 @@ namespace: :keyserver do
   index title: "Sessions" do
     id_column
     # Show each column, hiding super-admin-only columns from non-super-admins.
-    # duration is rendered in human-readable form rather than raw seconds.
+    # duration is rendered in human-readable form rather than raw microseconds.
     self.resource_class.column_names.each do |c|
       next if c == "id"
       next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
