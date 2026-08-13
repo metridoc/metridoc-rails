@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_12_234514) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -24,9 +24,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.bigint "author_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -119,9 +119,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.string "dewey_group1"
     t.string "dewey_group2"
     t.string "dewey_group3"
-    t.string "first_name"
-    t.string "last_name"
-    t.string "penn_id_number"
     t.string "user_group"
     t.string "school"
     t.string "statistical_category_1"
@@ -130,7 +127,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.string "statistical_category_4"
     t.string "statistical_category_5"
     t.date "item_creation"
-    t.string "pseudonym"
+    t.string "penn_id_number"
+    t.string "first_name"
+    t.string "last_name"
     t.index ["bibliographic_material_type"], name: "alma_circulations_bibliographic_material_type"
     t.index ["bibliographic_resource_type"], name: "alma_circulations_bibliographic_resource_type"
     t.index ["item_loan_id"], name: "alma_circulations_item_loan_id", unique: true
@@ -138,9 +137,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.index ["library_name"], name: "alma_circulations_library_name"
     t.index ["loan_status"], name: "alma_circulations_loan_status"
     t.index ["location_name"], name: "alma_circulations_location_name"
+    t.index ["penn_id_number"], name: "index_alma_circulations_on_penn_id_number"
     t.index ["physical_item_material_type"], name: "alma_circulations_physical_item_material_type"
     t.index ["process_status"], name: "alma_circulations_process_status"
-    t.index ["pseudonym"], name: "index_alma_circulations_on_pseudonym"
     t.index ["school"], name: "alma_circulations_school"
     t.index ["user_group"], name: "alma_circulations_user_group"
   end
@@ -2281,6 +2280,49 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.index ["outcome"], name: "index_ss_libwizard_candi_legacies_on_outcome"
     t.index ["patron_question"], name: "index_ss_libwizard_candi_legacies_on_patron_question"
     t.index ["staff_pennkey"], name: "index_ss_libwizard_candi_legacies_on_staff_pennkey"
+  end
+
+  create_table "ss_libwizard_candi_legacies_new", force: :cascade do |t|
+    t.datetime "submitted", precision: nil
+    t.string "consultation_or_instruction"
+    t.string "staff_pennkey"
+    t.string "staff_expertise"
+    t.date "event_date"
+    t.string "mode_of_consultation"
+    t.string "session_type"
+    t.string "service_provided"
+    t.string "rtg"
+    t.string "outcome"
+    t.string "research_community"
+    t.integer "total_attendance"
+    t.integer "number_of_registrations"
+    t.string "location"
+    t.integer "event_length"
+    t.integer "prep_time"
+    t.integer "number_of_interactions"
+    t.string "patron_type"
+    t.string "patron_name"
+    t.integer "graduation_year"
+    t.string "undergraduate_student_type"
+    t.string "graduate_student_type"
+    t.string "mba_type"
+    t.string "campus"
+    t.string "school_affiliation"
+    t.string "department"
+    t.string "faculty_sponsor"
+    t.string "course_sponsor"
+    t.string "course_name"
+    t.string "course_number"
+    t.string "referral_method"
+    t.string "patron_question"
+    t.text "session_description"
+    t.text "notes"
+    t.boolean "upload_record", default: true
+    t.boolean "returning_user"
+    t.string "additional_staff_pennkey"
+    t.index ["outcome"], name: "index_ss_libwizard_candi_legacies_new_on_outcome"
+    t.index ["patron_question"], name: "index_ss_libwizard_candi_legacies_new_on_patron_question"
+    t.index ["staff_pennkey"], name: "index_ss_libwizard_candi_legacies_new_on_staff_pennkey"
   end
 
   create_table "ss_libwizard_candi_manuals", force: :cascade do |t|
