@@ -86,18 +86,38 @@ time gunzip -c ~/metridoc_development_2018-12-25_10-52-18.sql.gz | sudo -u postg
 
 ### 5.2 Importing data
 
-Data sources are configured under `config/data_sources/`. Each subfolder represents one data source and contains YAML files that define target models, column mappings, and import options.
+There are two independent ways to load data into a model, and they don't behave identically - which one applies depends on how you're loading data.
+
+**Rake pipeline** (`rake import -- --config_folder <name>`, see `lib/import/task.rb`): driven by YAML files under `config/data_sources/<name>/`, each one naming a `target_model`, a `file_name` to read from the configured `import_folder` on the app server, and options like `unique_keys`/`upsert`. Column headers are matched to model columns purely by normalizing to snake_case (`Util.column_to_attribute`) and looking for an exact match against the table's columns - **it does not consult a model's `column_aliases`**. A `column_mappings` block in the YAML is documentation only; it isn't actually read for CSV imports. This means source files for the rake pipeline must already use headers that normalize straight to the real column names (e.g. `Computer Name` → `computer_name`).
+
+**Admin file upload** (`Tools::FileUploadImport`, under Tools in the admin UI): lets someone upload a single CSV/XLS/XLSX through the browser for any model listed in `Tools::FileUploadImport::UPLOADABLE_MODELS`. It processes as a background job, with per-row results logged and visible on the upload's admin page. Unlike the rake pipeline, it *does* apply a model's `self.column_aliases` (if defined) after normalizing headers - so this is the path to use for a source file with non-standard/abbreviated headers (e.g. Keyserver's raw exports use `Name` where the column is `computer_name`; see `Keyserver::Computer.column_aliases`), without needing to rewrite the file first.
+
+In short: if a model defines `column_aliases` to handle a particular file format, that only helps you on the admin upload path. Feeding the same raw file to the rake pipeline will silently skip any column that doesn't already match a real column name.
+
+Data sources for the rake pipeline are configured under `config/data_sources/`. Each subfolder represents one data source and contains YAML files that define target models, column mappings, and import options.
 
 ### 5.3 Keyserver
 
-Keyserver data is imported from two CSV files exported from Keyserver: `events.csv` and `sessions.csv`.
+Keyserver data is imported from three CSV files: `events.csv` and `sessions.csv` exported from Keyserver, and `keyserver_computers.csv` (computer → location/section lookup, headers `Computer Name`, `Location`, `Section`).
 
-1. Place both files in `/tmp/keyserver/` on the app server.
-2. Run the import:
+1. Place the files in `/tmp/keyserver/` on the app server.
+2. `events.csv` needs a `location` column, which isn't part of Keyserver's own export - it's joined in from `sessions.csv` by `computer_name`:
+
+        rake keyserver:add_event_locations
+
+   This rewrites `events.csv` in place by default (pass `events_path`/`sessions_path`/`output_path` args to override). `keyserver_events.location` is populated straight from this file at import time - there's no query-time join for it anymore.
+
+3. If re-importing `keyserver_computers.csv`, deduplicate it first (Keyserver can export the same computer name multiple times under different underlying records):
+
+        rake keyserver:dedupe_computers
+
+4. Run the import:
 
         rake import -- --config_folder keyserver
 
-The import is incremental — duplicate rows (matched on a natural key) are silently ignored, so re-uploading a file or uploading overlapping date ranges is safe. New rows are appended to the existing data.
+For `events.csv`/`sessions.csv`, the import is incremental — duplicate rows (matched on a natural key) are silently ignored, so re-uploading a file or uploading overlapping date ranges is safe. New rows are appended to the existing data.
+
+`keyserver_computers.csv` is a lookup table rather than a log, so it behaves differently: re-running the import with a `computer_name` already on file *updates* its `location`/`section` instead of skipping it.
 
 ### 5.4 MySql:borrowdirect
 

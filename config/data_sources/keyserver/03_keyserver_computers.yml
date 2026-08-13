@@ -1,0 +1,30 @@
+---
+# Keyserver computer table import
+#
+# Source: keyserver_computers.csv (one row per computer).
+#
+# Maps each computer to its physical location and section (e.g. "Public
+# Computing"), used to scope the keyserver_events admin view to public
+# computing terminals. computer_name is unique per computer, so re-running
+# the import refreshes location/section for computers already on file
+# instead of skipping them as duplicates.
+#
+# NOTE: unlike the manual admin file-upload path for this model, this
+# pipeline does not apply Keyserver::Computer.column_aliases - headers must
+# already match the target columns once normalised to snake_case (see
+# Util.column_to_attribute). "Name"/"Division" from a raw Keyserver export
+# will NOT be picked up here; the file must use "Computer Name"/"Location"
+# as shown below.
+
+load_sequence:        3
+target_model:         'Keyserver::Computer'
+target_adapter:       'csv'
+file_name:            'keyserver_computers.csv'
+unique_keys:          [computer_name]
+upsert:                yes
+batch_size:            1000
+
+column_mappings:
+  Computer Name: computer_name
+  Location:      location
+  Section:       section

@@ -16,25 +16,26 @@ namespace: :keyserver do
     remove_filter c.to_sym
   end
 
-  index title: "Events" do
-    id_column
-    # Show each column, hiding super-admin-only columns from non-super-admins.
-    self.resource_class.column_names.each do |c|
-      next if c == "id"
-      next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
-
-      column c.to_sym
+  controller do
+    def scoped_collection
+      Keyserver::Event
+        .joins(
+          "INNER JOIN keyserver_computers
+             ON  keyserver_computers.computer_name = keyserver_events.computer_name
+             AND keyserver_computers.section        = 'Public Computing'"
+        )
     end
-    actions
   end
 
-  show do
-    attributes_table do
-      self.resource_class.column_names.each do |c|
-        next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
-
-        row c.to_sym
-      end
-    end
+  index title: "Events" do
+    column :computer_name if current_admin_user.super_admin?
+    column :occurred_at
+    column :application
+    column :version
+    column :event_type
+    column :product
+    column :user_name if current_admin_user.super_admin?
+    column :address
+    column :location
   end
 end

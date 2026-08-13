@@ -11,6 +11,11 @@
 #
 # Columns intentionally excluded: idnt, agid (internal Keyserver identifiers
 # with no analytical value).
+#
+# location is not part of Keyserver's own export - it's joined in from the
+# sessions file (matched by computer_name) via `rake keyserver:add_event_locations`,
+# which must run against events.csv/sessions.csv before this step. See
+# lib/tasks/keyserver.rake.
 
 load_sequence:        1
 target_model:         'Keyserver::Event'
@@ -28,3 +33,4 @@ column_mappings:
   Product:       product
   User Name:     user_name
   Address:       address
+  location:      location
