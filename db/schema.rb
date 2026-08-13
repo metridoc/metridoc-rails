@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
+ActiveRecord::Schema[7.2].define(version: 2026_08_12_234514) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgstattuple"
   enable_extension "plpgsql"
@@ -24,9 +24,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.bigint "author_id"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id"
+    t.index ["author_type", "author_id"], name: "index_active_admin_comments_on_author"
     t.index ["namespace"], name: "index_active_admin_comments_on_namespace"
-    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id"
+    t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -119,9 +119,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.string "dewey_group1"
     t.string "dewey_group2"
     t.string "dewey_group3"
-    t.string "first_name"
-    t.string "last_name"
-    t.string "penn_id_number"
     t.string "user_group"
     t.string "school"
     t.string "statistical_category_1"
@@ -130,7 +127,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.string "statistical_category_4"
     t.string "statistical_category_5"
     t.date "item_creation"
-    t.string "pseudonym"
+    t.string "penn_id_number"
+    t.string "first_name"
+    t.string "last_name"
     t.index ["bibliographic_material_type"], name: "alma_circulations_bibliographic_material_type"
     t.index ["bibliographic_resource_type"], name: "alma_circulations_bibliographic_resource_type"
     t.index ["item_loan_id"], name: "alma_circulations_item_loan_id", unique: true
@@ -138,9 +137,9 @@ ActiveRecord::Schema[7.2].define(version: 2026_07_14_140000) do
     t.index ["library_name"], name: "alma_circulations_library_name"
     t.index ["loan_status"], name: "alma_circulations_loan_status"
     t.index ["location_name"], name: "alma_circulations_location_name"
+    t.index ["penn_id_number"], name: "index_alma_circulations_on_penn_id_number"
     t.index ["physical_item_material_type"], name: "alma_circulations_physical_item_material_type"
     t.index ["process_status"], name: "alma_circulations_process_status"
-    t.index ["pseudonym"], name: "index_alma_circulations_on_pseudonym"
     t.index ["school"], name: "alma_circulations_school"
     t.index ["user_group"], name: "alma_circulations_user_group"
   end
