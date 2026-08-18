@@ -38,7 +38,7 @@ gem 'scenic'
 # Use Puma as the app server
 # Puma is a simple, fast, threaded, and highly parallel HTTP 1.1 server
 # for Ruby/Rack applications.
-gem 'puma', '~> 7'
+gem 'puma'
 
 ###########
 # Mail
@@ -90,7 +90,7 @@ gem 'delayed_job_active_record'
 
 # Flexible authentication solution for Rails with Warden
 # Dependency of ActiveAdmin
-gem 'devise', '~> 4.9', '>= 4.9.4'
+gem 'devise', '~> 5.0'
 
 # The administration framework for Ruby on Rails.
 gem 'activeadmin'
