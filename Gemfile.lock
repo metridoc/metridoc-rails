@@ -51,7 +51,7 @@ GEM
       activeadmin (>= 3.0, < 4.0)
     active_median (1.0.0)
       activesupport (>= 7.2)
-    active_storage_validations (4.0.0)
+    active_storage_validations (4.1.0)
       activejob (>= 7.0.1)
       activemodel (>= 7.0.1)
       activestorage (>= 7.0.1)
@@ -273,7 +273,10 @@ GEM
     marcel (1.2.1)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.27.0)
+    minitest (6.0.6)
+      drb (~> 2.0)
+      prism (~> 1.5)
+    minitest-mock (5.27.0)
     multi_xml (0.9.1)
       bigdecimal (>= 3.1, < 5)
     mysql2 (0.5.7)
@@ -492,11 +495,10 @@ GEM
     version_gem (1.1.15)
     warden (1.2.9)
       rack (>= 2.0.9)
-    web-console (4.2.1)
-      actionview (>= 6.0.0)
-      activemodel (>= 6.0.0)
+    web-console (4.3.0)
+      actionview (>= 8.0.0)
       bindex (>= 0.4.0)
-      railties (>= 6.0.0)
+      railties (>= 8.0.0)
     websocket (1.2.11)
     websocket-driver (0.8.2)
       base64
@@ -542,6 +544,7 @@ DEPENDENCIES
   listen (>= 3.0.5, < 4.0)
   mail
   minitest
+  minitest-mock
   mysql2
   net-sftp
   oauth2 (~> 2.0)

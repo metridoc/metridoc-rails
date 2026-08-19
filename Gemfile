@@ -158,9 +158,10 @@ group :development, :test do
   # but any web-based task can automated.
   gem 'selenium-webdriver'
 
-  # Minitest 6+ is only compatible with railties 8.0.4+
-  # Have to cap minitest for rails 7 compatibility
+  # A fast unit testing framework
   gem 'minitest'
+  # A simple and clean mock/stub system.
+  gem 'minitest-mock'
 end
 
 group :development do
