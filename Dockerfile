@@ -57,7 +57,7 @@ WORKDIR ${PROJECT_ROOT}
 COPY Gemfile* ./
 
 RUN bundle config set --local deployment 'true' && \
-    bundle config path set --local path ${PROJECT_ROOT}/${BUNDLE_HOME} && \
+    bundle config set --local path ${PROJECT_ROOT}/${BUNDLE_HOME} && \
     set -eux; \
     if [ "${RAILS_ENV}" = "development" ]; then \
     bundle config set with "development:test:assets"; \
