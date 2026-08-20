@@ -6,6 +6,7 @@ include:
       valid_principals: "${VALID_PRINCIPALS}"
       vault_auth_role: "${VAULT_AUTH_ROLE}"
       vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
+      image_tag: "${CI_COMMIT_SHORT_SHA}-development"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/deploy/deploy@~latest
     inputs:
       deploy_environment: "production"
@@ -14,6 +15,7 @@ include:
       valid_principals: "${VALID_PRINCIPALS}"
       vault_auth_role: "${VAULT_AUTH_ROLE}"
       vault_ssh_client_role: "${VAULT_SSH_CLIENT_ROLE}"
+      image_tag: "${CI_COMMIT_SHORT_SHA}-production"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/docker/stage_build@~latest
     inputs:
       stage: "build_base"
