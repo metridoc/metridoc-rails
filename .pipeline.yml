@@ -26,6 +26,8 @@ include:
       docker_target: "development"
       job_suffix: "_development"
       docker_additional_cache_targets: "base development"
+      needs_build:
+        - "amend_manifest_base"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/docker/stage_build@~latest
     inputs:
       stage: "build_production"
@@ -33,6 +35,8 @@ include:
       docker_target: "production"
       job_suffix: "_production"
       docker_build_args: "--build-arg RAILS_ENV=production"
+      needs_build: 
+        - "amend_manifest_development"
   - component: $CI_SERVER_FQDN/devops/gitlab/components/sast/trivy@~latest
     inputs:
       docker_tag_to_scan: "${CI_COMMIT_SHA}"
@@ -55,14 +59,13 @@ stages:
   - finalize
   - deploy
 
-
 # Deploy staging
 deploy_staging:
   rules:
     - if: $CI_COMMIT_REF_NAME == "staging"
   tags:
     - deploy 
-    
+
 # Deploy production
 deploy_production:
   rules:
