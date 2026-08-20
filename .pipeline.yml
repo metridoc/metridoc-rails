@@ -20,6 +20,9 @@ include:
       docker_target: "base"
       job_suffix: "_base"
       docker_additional_cache_targets: "base"
+      matrix:
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: "linux/amd64"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/docker/stage_build@~latest
     inputs:
       stage: "build_development"
@@ -28,6 +31,9 @@ include:
       docker_additional_cache_targets: "base development"
       needs_build:
         - "amend_manifest_base"
+      matrix:
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: "linux/amd64"
   - component: gitlab.library.upenn.edu/devops/gitlab/components/docker/stage_build@~latest
     inputs:
       stage: "build_production"
@@ -37,6 +43,9 @@ include:
       docker_build_args: "--build-arg RAILS_ENV=production"
       needs_build: 
         - "amend_manifest_development"
+      matrix:
+      - RUNNER: build
+        DOCKER_BUILD_PLATFORM: "linux/amd64"
   - component: $CI_SERVER_FQDN/devops/gitlab/components/sast/trivy@~latest
     inputs:
       docker_tag_to_scan: "${CI_COMMIT_SHA}"
