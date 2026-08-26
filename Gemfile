@@ -5,7 +5,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 # Ruby on Rails is a full-stack web framework optimized for programmer happiness
 # and sustainable productivity. It encourages beautiful code by favoring
 # convention over configuration.
-gem 'rails', '>= 7.2.3.2'
+gem 'rails', '>= 8.0'
 
 ###########
 # Databases
@@ -25,7 +25,7 @@ gem 'tiny_tds'
 # The SQL Server adapter for ActiveRecord using SQL Server 2012 or higher.
 # Needed for connections to ILLIAD databases
 # Versioning paired with Rails
-gem 'activerecord-sqlserver-adapter', '~> 7.2'
+gem 'activerecord-sqlserver-adapter'
 
 # The Scenic Gem provides easy ways to create PostgreSQL views to interact
 # with rails infrastructure.
@@ -38,7 +38,7 @@ gem 'scenic'
 # Use Puma as the app server
 # Puma is a simple, fast, threaded, and highly parallel HTTP 1.1 server
 # for Ruby/Rack applications.
-gem 'puma', '~> 7'
+gem 'puma'
 
 ###########
 # Mail
@@ -90,7 +90,7 @@ gem 'delayed_job_active_record'
 
 # Flexible authentication solution for Rails with Warden
 # Dependency of ActiveAdmin
-gem 'devise', '~> 4.9', '>= 4.9.4'
+gem 'devise', '~> 5.0'
 
 # The administration framework for Ruby on Rails.
 gem 'activeadmin'
@@ -158,29 +158,21 @@ group :development, :test do
   # but any web-based task can automated.
   gem 'selenium-webdriver'
 
-  # Minitest 6+ is only compatible with railties 8.0.4+
-  # Have to cap minitest for rails 7 compatibility
-  gem 'minitest', '~> 5.27'
+  # A fast unit testing framework
+  gem 'minitest'
+  # A simple and clean mock/stub system.
+  gem 'minitest-mock'
 end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %>
   # anywhere in the code.
   # A debugging tool for your Ruby on Rails applications.
-  gem 'web-console', '>= 4.2.0'
+  gem 'web-console'
 
   # The Listen gem listens to file modifications and notifies you about the
   # changes. Works everywhere!
   gem 'listen', '>= 3.0.5', '< 4.0'
-
-  # Spring speeds up development by keeping your application running in the
-  # background. Read more: https://github.com/rails/spring
-  # Preloads your application so things like console, rake and tests run faster
-  gem 'spring'
-
-  # Makes spring watch files using the listen gem.
-  # Last updated in 2022
-  gem 'spring-watcher-listen', '~> 2.1.0'
 
   # Quick way to inspect your Rails database, see content of tables, filter,
   # export them to CSV, Excel, EXPLAIN SQL and run SQL queries.
