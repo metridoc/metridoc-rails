@@ -7,6 +7,7 @@ module Export
     require 'export/springshare/task.rb'
     require 'export/database/task.rb'
     require 'export/sftp/task.rb'
+    require 'export/keyserver/task.rb'
 
     # Setup the export options
     def initialize(options = {})
@@ -39,24 +40,22 @@ module Export
       @test_mode ||= @options[:test_mode].upcase.strip == "TRUE" rescue false
     end
 
+    TASK_REGISTRY = {
+      "sftp"        => Sftp::Task,
+      "postgres"    => Database::Task,
+      "mssql"       => Database::Task,
+      "alma"        => Alma::Task,
+      "aws"         => Dynamodb::Task,
+      "springshare" => Springshare::Task,
+      "keyserver"   => Keyserver::Task,
+    }.freeze
+
     # Select the task class depending on the specified source adapter
     def task(source_adapter, task_file)
-      case source_adapter
-      when "sftp"
-        Sftp::Task.new(self, task_file)
-      when "postgres"
-        Database::Task.new(self, task_file)
-      when "mssql"
-        Database::Task.new(self, task_file)
-      when "alma"
-        Alma::Task.new(self, task_file)
-      when "aws"
-        Dynamodb::Task.new(self, task_file)
-      when "springshare"
-        Springshare::Task.new(self, task_file)
-      else
-        nil
-      end
+      task_class = TASK_REGISTRY[source_adapter]
+      
+      # Return instance if class is found, otherwise return nil
+      task_class ? task_class.new(self, task_file) : nil
     end
 
     # Make a list of task files to run
