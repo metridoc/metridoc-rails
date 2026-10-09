@@ -502,7 +502,10 @@ module Import
 
           # Report how many rows were filtered out
           log "Filtered #{n_filtered} rows due to unmatched reference values." if n_filtered > 0
-
+          
+          # Trigger any post-import actions.
+          class_name.update_after_import if class_name.respond_to?(:update_after_import)
+          
           if n_errors >= max_errors
             log "Too many errors #{n_errors}."
             success = false
