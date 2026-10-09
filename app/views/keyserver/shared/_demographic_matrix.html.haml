@@ -1,0 +1,57 @@
+-# app/views/keyserver/shared/_demographic_matrix.html.haml
+
+%section
+  %h2 Demographic Usage
+  Consider these scenarios: 
+  %ul
+    %li 
+      %strong{ style: "font-weight: 700 !important;" } Power Users
+      are  revealed by a high number of uses and a low number of unique patrons.
+      This is a small, highly dedicated core audience.
+    %li
+      %strong{ style: "font-weight: 700 !important;" } Low Retention
+      is revealed by a low number of uses and a high number of unique patrons.
+      This highlights a group that tries the service but doesn't return.
+    %li 
+      %strong{ style: "font-weight: 700 !important;" } Maximum Impact
+      is revealed by a high number of uses and a high number of unique patrons.
+      This shows the most successful, broadly adopted segment.
+
+  %h3 Absolute Usage
+  - total_users = @raw_demo_matrix.values.sum { |nested_hash| nested_hash.values.sum { |info| info[:value] } }
+  - if total_users == 0
+    %p No data available for this time period
+  - else
+    %table{style: "width: 100%; margin: 0 auto;"}
+      %thead
+        %tr
+          %th Patron Type / Affiliation
+          - @user_groups.each do |user_group|
+            %th{style: "width: 100px;"}= user_group
+      %tbody
+        - @affiliations.each do |school| 
+          %tr
+            %td.row-header
+              %strong= school
+            - @user_groups.each do |user_group|
+              = shaded_cell_tag(@raw_demo_matrix.dig(user_group, school))
+    %br
+  %br
+  %h3 Unique Patron Usage
+  - if total_users == 0
+    %p No data available for this time period
+  - else
+    %table{style: "width: 100%; margin: 0 auto;"}
+      %thead
+        %tr
+          %th Patron Type / Affiliation
+          - @user_groups.each do |user_group|
+            %th{style: "width: 100px;"}= user_group
+      %tbody
+        - @affiliations.each do |school| 
+          %tr
+            %td.row-header
+              %strong= school
+            - @user_groups.each do |user_group|
+              = shaded_cell_tag(@distinct_demo_matrix.dig(user_group, school))
+    %br

@@ -1,31 +1,11 @@
+-# app/views/keyserver/about/_index.html.haml
+
 %section
   %h2 Introduction
   %p
-    Keyserver tracks software usage on Penn Libraries public computers.
-    Events and sessions are captured from Keyserver's raw tables and loaded into Metridoc.
-    Individual usernames are visible only to super admins.
-  %ul
-    %li
-      The
-      %strong Software Usage
-      page lists all managed products with checkout activity on non-staff computers,
-      including status (Active / Stale / Dormant) based on days since the last checkout.
-    %li
-      The
-      %strong Stale &amp; Dormant
-      page surfaces products with no checkout in 90+ days, sorted by most dormant first.
-    %li
-      The
-      %strong Locations
-      page shows session heatmaps by hour of day and day of week, broken down by library location.
-    %li
-      The
-      %strong By School
-      page shows checkout counts per product per Alma school affiliation.
-    %li
-      The
-      %strong By User Group
-      page shows checkout counts per product per Alma user group (e.g. undergraduate, graduate, faculty).
+    The Sassafras Keyserver Platform manages computing resources and liscensing.
+    The Penn Libraries uses the platform to track software usage on public computers.
+    Events and sessions are captured from Keyserver's raw tables and loaded into MetriDoc with obfuscated PII.
 
 %hr
 
@@ -47,52 +27,34 @@
 %section
   %h2 Dashboards
   %ul
-    %li= link_to "Software Usage Profile", keyserver_software_usage_path
-    %li= link_to "Stale & Dormant Products", keyserver_stale_path
-    %li= link_to "Location Usage", keyserver_locations_path
-    %li= link_to "By School", keyserver_by_school_path
-    %li= link_to "By User Group", keyserver_by_user_group_path
+    %li
+      = link_to "User Profiles", keyserver_user_profile_path 
+      \- Searchable dashboard to answer questions about what specific types of users are doing on Penn Libraries' computers.
+    %li
+      = link_to "Computer Activity", keyserver_computer_activity_path
+      \- Searchable dashboard to answer questions about the activity at different computer locations.
+    %li
+      = link_to "Program Activity", keyserver_program_activity_path
+      \- Search by Division and Affiliation to find the most used programs.
+      %ul
+        %li
+          = link_to "Search by Program", keyserver_program_search_path
+          \- Search by Program to evaluate who is using the program and where.
+    %li
+      = link_to "Product Activity", keyserver_product_activity_path
+      \- Search by Division and Affiliation to find the most used products.
+
+      %ul
+        %li
+          = link_to "Search by Product", keyserver_product_search_path
+          \- Search by Product to evaluate who is using the product and where.
 
 %hr
 
 %section
   %h2 Data Import
 
-  %h3 File Upload
-  %p
-    Events and sessions data can be loaded directly through the
-    = link_to "File Upload Tool", admin_tools_file_upload_imports_path
-  %ol
-    %li
-      Export the events or sessions data from Keyserver as
-      %code .xlsx
-      or
-      %code .csv
-      \.
-    %li
-      In the File Upload Tool, select the target table (
-      %strong Keyserver Event
-      or
-      %strong Keyserver Session
-      ) and upload the file.
-    %li
-      Abbreviated column headers (e.g.
-      %code name
-      ,
-      %code user
-      ,
-      %code event
-      ) are mapped to database columns automatically.
-    %li Session length is derived from logon/logoff on import, so any Duration column in the file is ignored.
-    %li Duplicate records are handled on the backend; re-uploading a file that has already been imported is safe.
-
-  %h3 Rake Import
-  %p
-    To load data via the command line, export
-    %code events.xlsx
-    and
-    %code sessions.xlsx
-    from itam_db into
-    %code /tmp/keyserver/
-    then run:
-  %pre rake import -- --config_folder keyserver
+  Computer and Product data is pulled directly from Sassafras's Keyserver database.
+  The Usage tables are run by the Keyserver Report Generator on an automated basis.
+  The Report table provides a reference for the Keyserver Reports available from the platform and tracks which reports have been downloaded.
+  The data import is run automatically on a schedule through a Jenkins automation server.

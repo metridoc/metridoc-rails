@@ -1,0 +1,51 @@
+-# app/views/keyserver/analysis/_product_search.html.haml
+:css
+  .data_summary th:not(:first-child) {
+    max-width: 50px; 
+    text-align: center !important;
+  }
+  .data_summary td:not(:first-child) {
+    text-align: right !important;
+  }
+
+Search by product to see the most commonly used locations and programs and who is using them.
+%br
+%br
+%hr
+%br
+
+= render partial: "keyserver/shared/filter_form",
+  locals: { filters: {product: true}  }
+%br
+%hr
+%section
+  %h2 Product Summary
+  %table{style: "margin: 0 auto;"}
+    %tbody
+      %tr
+        %td Product 
+        %td{ style: "text-align: right;" }= params[:product_name].presence || 'All Products'
+      %tr
+        %td Number of Sessions 
+        %td{ style: "text-align: right;" }= format_big_number(@number_of_uses)
+      %tr
+        %td Number of Unique Users 
+        %td{ style: "text-align: right;" }= format_big_number(@number_of_users)
+      %tr
+        %td Last Recorded Usage 
+        %td{ style: "text-align: right;" }= @most_recent_date || 'None'
+
+%section
+  = keyserver_ranked_table(title: "Popular Spaces",
+    data: @sessions,
+    row_header: "Division")
+
+  = keyserver_ranked_table(title: "Popular Products",
+    data: @product_usage,
+    row_header: "Product")
+
+  = keyserver_ranked_table(title: "Popular Programs",
+    data: @program_usage,
+    row_header: "Program")
+
+= render partial: "keyserver/shared/demographic_matrix"

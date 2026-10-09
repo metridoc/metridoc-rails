@@ -1,0 +1,51 @@
+-# app/views/keyserver/shared/_filter_form.html.haml
+-# locals: { filters }
+
+= form_with url: request.path, method: :get, local: true do |form|
+  %table{style: "background-color:#DADADA; margin: 0 auto;"}
+    %tr
+      %td= form.label :start_date, "Start Date:"
+      %td= form.date_field :start_date, value: @start_date, min: @min_date, max: @max_date
+      %td{rowspan: keyserver_visible_rows(filters),
+          style: "vertical-align: middle;"}
+        .actions
+          = form.submit "Filter"
+    %tr
+      %td= form.label :end_date, "End Date:"
+      %td= form.date_field :end_date, value: @end_date, min: @min_date, max: @max_date
+    - if filters[:division]
+      %tr
+        %td= form.label :division, "Division:"
+        %td= form.select :division, @divisions, { include_blank: "All", selected: params[:division] }
+    - if filters[:user_group]
+      %tr
+        %td= form.label :user_group, "User Type:"
+        %td= form.select :user_group, @user_groups, { include_blank: "All", selected: params[:user_group] }
+    - if filters[:affiliation]
+      %tr
+        %td= form.label :school, "Affiliation:"
+        %td= form.select :school, @affiliations, { include_blank: "All", selected: params[:school] }
+    - if filters[:product]
+      %tr
+        %td= form.label :product_name, "Product:"
+        %td
+          = form.text_field :product_name,
+            value: params[:product_name],
+            list: "product_list",
+            placeholder: "Search products...",
+            autocomplete: "off"
+          %datalist#product_list
+            - @products.each do |product|
+              %option{value: product}
+    - if filters[:program]
+      %tr
+        %td= form.label :program_name, "Program:"
+        %td
+          = form.text_field :program_name,
+            value: params[:program_name],
+            list: "program_list",
+            placeholder: "Search programs...",
+            autocomplete: "off"
+          %datalist#program_list
+            - @programs.each do |program|
+              %option{value: program}
