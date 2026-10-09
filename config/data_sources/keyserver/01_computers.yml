@@ -1,0 +1,24 @@
+---
+load_sequence:        1
+
+target_model:         'Keyserver::Computer'
+target_adapter:       'csv'
+export_file_name:     'keyserver_computers.csv'
+
+source_adapter:       'keyserver'
+report_path:          '/api/v2/computer/items'
+
+unique_keys:          [ident]
+upsert:               true
+
+column_mappings:
+  ident:    ident
+  Name:     computer_name
+  Section:  section
+  Division: division
+  OSFamily: os_family
+  Domain:   domain
+
+parameters:
+  filter: "(Division != 'Staff Loaners') && (Division != 'Staff') && (Division != NULL) && (Division != '')"
+  fields: "Name,Section,Division,OSFamily,Domain"

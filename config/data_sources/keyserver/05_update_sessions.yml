@@ -1,0 +1,66 @@
+load_sequence:         5
+target_adapter:        'native_sql'
+target_model:          "Keyserver::Session"
+truncate_before_load:  "no"
+sql: |
+  UPDATE keyserver_sessions
+  SET duration = end_time - start_time
+  WHERE duration IS NULL;
+
+
+  WITH division_lookup AS (
+    SELECT
+      computer_name,
+      division,
+      COUNT(*) OVER (PARTITION BY division) AS computers_per_division
+    FROM keyserver_computers
+  )
+  UPDATE keyserver_sessions ks
+  SET 
+    division = division_lookup.division,
+    computers_per_division = division_lookup.computers_per_division
+  FROM division_lookup
+  WHERE ks.division IS NULL
+  AND ks.computer_name = division_lookup.computer_name;
+
+  UPDATE keyserver_sessions ks
+  SET 
+    user_group = d.user_group,
+    school = d.school
+  FROM upenn_alma_demographics d
+  WHERE LOWER(ks.user_name) = LOWER(d.pennkey)
+  AND ks.user_group IS NULL;
+
+  UPDATE keyserver_sessions ks
+  SET 
+    user_group = 'Unknown',
+    school = 'Unknown'
+  WHERE LOWER(user_name) IN ('lib-lookupuser-svc', 'lib-prtrelease-svc', 'lib-scan-svc', 'lib-pennguest-svc')
+  AND ks.user_group IS NULL;
+
+  UPDATE keyserver_sessions ks
+  SET 
+    user_group = 'Alumni',
+    school = 'Unknown'
+  WHERE LOWER(user_name) IN ('lib-pennalum-svc')
+  AND ks.user_group IS NULL;
+
+  WITH name_uniqueness AS (
+    SELECT
+      LOWER(first_name || ' ' || last_name)      AS full_name,
+      COUNT(*)                                   AS occurrences,
+      MAX(user_group)                            AS user_group,
+      MAX(school)                                AS school
+    FROM upenn_alma_demographics
+    WHERE LOWER(first_name || ' ' || last_name) IN (
+      SELECT LOWER(user_name) FROM keyserver_sessions
+      WHERE user_name LIKE '% %' AND user_group IS NULL
+    )
+    GROUP BY 1
+  )
+  UPDATE keyserver_sessions ks
+  SET 
+    user_group = CASE WHEN nu.occurrences = 1 THEN nu.user_group ELSE 'Ambiguous' END,
+    school = CASE WHEN nu.occurrences = 1 THEN nu.school ELSE 'Ambiguous' END
+  FROM name_uniqueness nu
+  WHERE LOWER(ks.user_name) = LOWER(nu.full_name);

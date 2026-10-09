@@ -1,0 +1,59 @@
+load_sequence:         7
+target_adapter:        'native_sql'
+target_model:          "Keyserver::ProductUsage"
+truncate_before_load:  "no"
+
+sql: |
+  UPDATE keyserver_product_usage ks
+  SET division = kc.division
+  FROM keyserver_computers kc
+  WHERE ks.division IS NULL
+  AND ks.computer_name = kc.computer_name;
+
+  UPDATE keyserver_product_usage kpu
+  SET install_count = kp.install_count
+  FROM keyserver_products kp 
+  WHERE kpu.install_count IS NULL
+  AND kpu.product_name = kp.product_name;
+
+  UPDATE keyserver_product_usage kpu
+  SET 
+    user_group = d.user_group,
+    school = d.school
+  FROM upenn_alma_demographics d
+  WHERE LOWER(kpu.user_name) = LOWER(d.pennkey)
+  AND kpu.user_group IS NULL;
+
+  UPDATE keyserver_product_usage
+  SET 
+    user_group = 'Unknown',
+    school = 'Unknown'
+  WHERE LOWER(user_name) IN ('lib-lookupuser-svc', 'lib-prtrelease-svc', 'lib-scan-svc', 'lib-pennguest-svc')
+  AND user_group IS NULL;
+
+  UPDATE keyserver_product_usage
+  SET 
+    user_group = 'Alumni',
+    school = 'Unknown'
+  WHERE LOWER(user_name) IN ('lib-pennalum-svc')
+  AND user_group IS NULL;
+
+  WITH name_uniqueness AS (
+    SELECT
+      LOWER(first_name || ' ' || last_name)      AS full_name,
+      COUNT(*)                                   AS occurrences,
+      MAX(user_group)                            AS user_group,
+      MAX(school)                                AS school
+    FROM upenn_alma_demographics
+    WHERE LOWER(first_name || ' ' || last_name) IN (
+      SELECT LOWER(user_name) FROM keyserver_product_usage
+      WHERE user_name LIKE '% %' AND user_group IS NULL
+    )
+    GROUP BY 1
+  )
+  UPDATE keyserver_product_usage kpu
+  SET 
+    user_group = CASE WHEN nu.occurrences = 1 THEN nu.user_group ELSE 'Ambiguous' END,
+    school = CASE WHEN nu.occurrences = 1 THEN nu.school ELSE 'Ambiguous' END
+  FROM name_uniqueness nu
+  WHERE LOWER(kpu.user_name) = LOWER(nu.full_name);
