@@ -76,6 +76,32 @@ module ApplicationHelper
     return output
   end
 
+  # Format the number of seconds into a number of hours to 2 decimal places
+  def format_into_hours(input)
+    output = "---"
+    if input and input != 0 and not input.to_f.nan?
+      output = ActiveSupport::NumberHelper.number_to_delimited(
+        ActiveSupport::NumberHelper.number_to_rounded(
+          input / 3600, precision: 2
+        )
+      )
+    end
+    return output
+  end
+
+  # Format the number of seconds into a number of minutes to 2 decimal places
+  def format_into_minutes(input)
+    output = "---"
+    if input and input != 0 and not input.to_f.nan?
+      output = ActiveSupport::NumberHelper.number_to_delimited(
+        ActiveSupport::NumberHelper.number_to_rounded(
+          input / 60, precision: 2
+        )
+      )
+    end
+    return output
+  end
+
   # Method to check for a key and format the number appropriately
   # This will be used for currencies
   def format_currency(input)

@@ -10,40 +10,60 @@ namespace: :keyserver do
 
   actions :all, :except => [:new, :edit, :update, :destroy]
 
-  # Don't expose super-admin-only columns (user_name) through the filter sidebar.
   preserve_default_filters!
   Keyserver::Session.superadmin_columns.each do |c|
     remove_filter c.to_sym
   end
 
-  index title: "Sessions" do
+  # Set the title on the index page
+  index title: "Sessions", download_links: [:csv] do
+
     id_column
-    # Show each column, hiding super-admin-only columns from non-super-admins.
-    # duration is rendered in human-readable form rather than raw microseconds.
+    # Loop through the columns and hide it if not super admin
     self.resource_class.column_names.each do |c|
       next if c == "id"
-      next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
+      next if (
+        self.resource_class.superadmin_columns.include?(c) && 
+        !current_admin_user.super_admin?
+      )
 
-      if c == "duration"
-        column(:duration) { |session| humanized_duration(session.duration) }
-      else
-        column c.to_sym
+      next column c.to_sym unless c == "duration"
+
+      column :duration do |session|
+        ActiveSupport::Duration.build(session.duration).iso8601
       end
+
     end
+
     actions
   end
 
-  show do
+  show title: :id do
     attributes_table do
+      # Loop through the columns and hide it if not super admin
       self.resource_class.column_names.each do |c|
-        next if self.resource_class.superadmin_columns.map(&:to_s).include?(c) && !current_admin_user.super_admin?
 
-        if c == "duration"
-          row(:duration) { |session| humanized_duration(session.duration) }
-        else
-          row c.to_sym
-        end
+        next if (
+          self.resource_class.superadmin_columns.include?(c) && 
+          !current_admin_user.super_admin?
+        )
+
+        row c.to_sym
       end
     end
   end
+
+  csv do
+
+    # Loop through the columns and hide it if not super admin
+    self.resource_class.column_names.each do |c|
+      next if (
+        self.resource_class.superadmin_columns.include?(c) &&
+        !current_admin_user.super_admin?
+      )
+      column c.to_sym
+    end
+    
+  end
+
 end

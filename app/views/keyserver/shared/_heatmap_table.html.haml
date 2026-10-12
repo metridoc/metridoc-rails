@@ -1,0 +1,21 @@
+-# app/views/keyserver/shared/_heatmap_table.html.haml
+-# locals: { title, blank_message, data, hours, days }
+
+- total = data.values.sum { |nested_hash| nested_hash.values.sum { |info| info[:value] } }
+
+%h2= title
+- if total == 0
+  %p= blank_message
+- else 
+  %table.data_summary
+    %thead
+      %tr
+        %th
+        - hours.each do |hour|
+          %th{style: "width: 40px;"}= hour
+    %tbody
+      - days.each_with_index.map do |day_name, idx|
+        %tr
+          %td{style: "height: 40px;"}= day_name
+          - hours.map do |hour|
+            = shaded_cell_tag(data.dig(idx, hour))

@@ -1,9 +1,5 @@
 ---
 # Keyserver data source configuration
-#
-# Production: drop events.csv and sessions.csv into import_folder, then run:
-#   rake import -- --config_folder keyserver
-#
-
-institution_code: 'UPENN'
-import_folder:    '/tmp/keyserver'
+export_folder: '/tmp/keyserver'
+keyreporter_url: 'https://keyserver.library.upenn.edu'
+access_token: <%= Rails.application.credentials.keyserver.access_token %>

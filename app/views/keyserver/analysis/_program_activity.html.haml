@@ -1,0 +1,43 @@
+-# app/views/keyserver/analysis/_program_activity.html.haml
+:css
+  .data_summary th:not(:first-child) {
+    max-width: 50px; 
+    text-align: center !important;
+  }
+  .data_summary td:not(:first-child) {
+    text-align: right !important;
+  }
+
+
+Filter by Division, User Group, and/or Affiliation to understand which programs are being used.
+%br
+%br
+%hr
+%br
+
+= render partial: "keyserver/shared/filter_form",
+  locals: { filters: {division: true, user_group: true, affiliation: true }  }
+%br
+%hr
+%section
+  %h2 Program Activity
+
+  %table.data_summary
+    %thead
+      %tr
+        %th Program Name
+        %th Unique Users
+        %th Program Sessions
+        %th Average Duration (minutes)
+        %th Computers Used
+        %th Most Recent Use
+
+    %tbody
+      - @records.each do |record|
+        %tr
+          %td= record.program_name
+          %td= format_big_number(record.unique_users)
+          %td= format_big_number(record.sessions)
+          %td= format_into_minutes(record.avg_duration)
+          %td= format_big_number(record.computers_used)
+          %td= record.most_recent_use&.to_date
