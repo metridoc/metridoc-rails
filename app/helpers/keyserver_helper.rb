@@ -30,7 +30,7 @@ module KeyserverHelper
   end
 
   def keyserver_visible_rows(*flags)
-    2 + flags.count(true)  # 2 fixed rows (start/end date) + any optional rows
+    2 + flags.count  # 2 fixed rows (start/end date) + any optional rows
   end
 
   private
