@@ -1,0 +1,12 @@
+load_sequence:         10
+target_adapter:        'ruby_command'
+
+commands:
+  - |
+    Scenic.database.refresh_materialized_view(
+      :keyserver_concurrent_sessions, concurrently: true
+    )
+  - |
+    Scenic.database.refresh_materialized_view(
+      :keyserver_occupancies, concurrently: true
+    )

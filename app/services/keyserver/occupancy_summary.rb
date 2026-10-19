@@ -9,8 +9,10 @@ module Keyserver
     end
 
     def call
-      grouped = @scope.group_by do |o|
-        [o.day_of_week.to_i, o.hour_of_day.to_i]
+      grouped = @scope.group_by do |record|
+        utc_time = Time.parse("#{record.date} #{record.hour_of_day.to_i}:00:00 UTC")
+        eastern_time = utc_time.in_time_zone('America/New_York')
+        [eastern_time.wday, eastern_time.hour]
       end
 
       n_computers = build_n_computer_matrix(grouped)
