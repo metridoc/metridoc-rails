@@ -81,6 +81,8 @@ module Import
           return_value = execute_native_query
         elsif target_adapter == "console_command"
           return_value = execute_console_command
+        elsif target_adapter == "ruby_command"
+          return_value = execute_ruby_command
         else
           raise "Unsupported target_adapter type >> #{target_adapter}"
         end
@@ -276,6 +278,20 @@ module Import
         end
 
         return true
+      end
+
+      def execute_ruby_command
+        commands.each do |cmd|
+          log "Executing: #{cmd}"
+          begin
+            eval(cmd)
+          rescue StandardError => e
+            log "Command #{cmd} Failed: #{e.class}: #{e.message}"
+            return false
+          end
+        end
+
+        true
       end
 
       def execute_native_query
