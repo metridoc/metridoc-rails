@@ -1,5 +1,18 @@
 -# app/views/keyserver/about/_index.html.haml
 
+:css
+  table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 5px;
+  }
+
+  table {
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 50%;
+  }
+
 %section
   %h2 Introduction
   %p
@@ -54,9 +67,436 @@
 %hr
 
 %section
-  %h2 Data Import
+  %h2 Security
+  %p
+    Data access will be role-based, with personally identifying fields (PennKey, first/last name) restricted to superadmin roles and the underlying Postgres table available by request only.
 
-  Computer and Product data is pulled directly from Sassafras's Keyserver database.
-  The Usage tables are run by the Keyserver Report Generator on an automated basis.
-  The Report table provides a reference for the Keyserver Reports available from the platform and tracks which reports have been downloaded.
-  The data import is run automatically on a schedule through a Jenkins automation server.
+%hr
+
+%section
+  %h2 Demographic matching
+  %p
+    Each usage records a user associated with it.
+    To get the user type and affiliation of the user, a series of attempted searches on the upenn_alma_demographics table is done in the following order:
+  %ol
+    %li Direct match on PennKey.  Most Windows computers record the username as the PennKey.
+    %li
+      Match on any of the following get assigned to “Unknown” (case insensitive)
+      %ul
+        %li LIB-LOOKUPUSER-SVC
+        %li LIB-PRTRELEASE-SVC
+        %li LIB-SCAN-SVC
+        %li LIB-PENNGUEST-SVC
+    %li Match on LIB-PENNALUM-SVC is assigned to the user_group “Alumni” and an “Unknown” school (case insensitive)
+    %li
+      Attempt a search by first and last name.
+      %ol
+        %li First create a lookup table of the number of matches for each “first_name last_name” in the demographics table.
+        %li Only update the user_group and school if there is a unique match for the first and last name.
+        %li Assign user_group and school to “Ambiguous” if more than one demographic record matches the first and last name.
+  %p
+    Although not perfect, this method should allow most users to be identified.  Particularly for current students and faculty.
+    It may be difficult to retrospectively identify users depending on their status at the University.
+
+%hr
+
+%section
+  %h2 Computers
+  %p
+    The computers table is a subset of the computer data from Sassafras's Keyserver database. 
+    All Computers in the "Staff" and "Staff Loaners" divisions are ignored.
+    The table contains the following fields:
+
+  %table
+    %thead
+      %tr
+        %th Column Name
+        %th Data Type
+        %th Constraints
+        %th Description
+    %tbody
+      %tr
+        %td ident
+        %td string
+        %td Primary key, unique
+        %td Identifier for computer
+      %tr
+        %td computer_name
+        %td string
+        %td Foreign key to usage
+        %td Like identifier, but removes the first letter
+      %tr
+        %td section
+        %td string
+        %td
+        %td Organizational structure on KeyServer
+      %tr
+        %td division
+        %td string
+        %td
+        %td Location of computer
+      %tr
+        %td os_family
+        %td string
+        %td
+        %td OS version
+      %tr
+        %td domain
+        %td string
+        %td
+        %td Log in protocol for computer.
+
+  %h2 Products
+  %p
+    A product is a defined software title, suite, or cloud-based resource the Penn Libraries holds a licensing right to use or track.
+    The products table is a subset of the product data from Sassafras's Keyserver database.
+    Some products are unnecessary to observe.  For example, Node.js runs in the background on many computers which is not of interest when evaluating public computer usage.  These can be extracted by category: 
+  %ul
+    %li Print (Management) - Utilities dealing with communicating to printers. 
+    %li Operating System - The product associated with the base OS. 
+    %li Software Development (Compiler/Runtime) - Products like Node.js 
+    %li Utility (Security) - Antivirus and VPN software 
+    %li Utility (CD/DVD) 
+    %li Utility (File Management) - SD card formatting 
+    %li Utility (OS Optimization) - hard drive cleaning utilities 
+    %li Utility (Device Driver) 
+    %li Utility (Software Management) - IBM Endpoint Manager, MiKTeX console 
+    %li Utility (Keyboard/Menu Changes) - Keyboard shortcut tools 
+    %li Utility (Administration) - Team Viewer 
+    %li Utility (Screen Recording) - Camtasia, Snagit 
+    %li Utility (Remote Access) - Remote desktops 
+    %li Utility (Compression) - zip file utilities 
+
+  %p
+    In addition to the categories listed above, the specific products of “KeyVerify” and “Remote Desktop Connection” can also be ignored.
+    Finally, we ensure the product has a non-zero number of installations.
+    The table contains the following fields:
+
+  %table
+    %thead
+      %tr
+        %th Column Name
+        %th Data Type
+        %th Constraints
+        %th Description
+    %tbody
+      %tr
+        %td ident
+        %td string
+        %td Primary key, unique
+        %td Identifier for product
+      %tr
+        %td product_name
+        %td string
+        %td Foreign key to usage
+        %td Name of Product
+      %tr
+        %td install_count
+        %td int
+        %td
+        %td Number of installations
+      %tr
+        %td category
+        %td string
+        %td
+        %td General category of product
+
+  %h2 Reports
+  %p
+    The computer, product, and program usage are extracted to a report on an automated schedule in the Keyserver Report interface.
+    The report table will track which reports have been downloaded and be used as a filter for selecting reports that still need to be downloaded.
+    The table contains the following fields:
+
+  %table
+    %thead
+      %tr
+        %th Column Name
+        %th Data Type
+        %th Constraints
+        %th Description
+    %tbody
+      %tr
+        %td ident
+        %td string
+        %td Primary Key, Unique
+        %td KeyServer defined unique key
+      %tr
+        %td name
+        %td string
+        %td
+        %td Report Name
+      %tr
+        %td module_id
+        %td int
+        %td
+        %td Report Module type
+      %tr
+        %td module_name
+        %td string
+        %td
+        %td The human readable module type
+      %tr
+        %td author
+        %td string
+        %td
+        %td Author of report
+      %tr
+        %td created
+        %td datetime
+        %td
+        %td Date of report creation
+      %tr
+        %td start
+        %td datetime
+        %td
+        %td Start time of report processing
+      %tr
+        %td range
+        %td string
+        %td
+        %td Time range (eg. tw for trailing week)
+      %tr
+        %td size
+        %td int
+        %td
+        %td Size of report file
+      %tr
+        %td runtime
+        %td numeric
+        %td
+        %td Total runtime to create report.
+      %tr
+        %td downloaded
+        %td datetime
+        %td
+        %td The date the report was downloaded
+  %h2 Computer Sessions
+  %p
+    The sessions table is extracted from the "Session Dump" module.
+    These start with the "login" event type.
+    All sessions are filtered to only record computers listed in the Computer table.
+    The table contains the following fields:
+
+  %table
+    %thead
+      %tr
+        %th Column Name
+        %th Data Type
+        %th Constraints
+        %th Description
+    %tbody
+      %tr
+        %td computer_name
+        %td string
+        %td Unique Primary Key
+        %td Computer Name
+      %tr
+        %td division
+        %td string
+        %td Extracted from Computers
+        %td Location of the computer
+      %tr
+        %td start_time
+        %td datetime
+        %td
+        %td Start of the session
+      %tr
+        %td end_time
+        %td datetime
+        %td
+        %td End of the session
+      %tr
+        %td duration
+        %td interval
+        %td Calculated from end_time - start_time
+        %td Number of seconds of the session
+      %tr
+        %td user_name
+        %td string
+        %td Foreign Key to demographics
+        %td Logged in user
+      %tr
+        %td user_group
+        %td string
+        %td Extracted from demographics
+        %td The type of user
+      %tr
+        %td school
+        %td string
+        %td Extracted from demographics
+        %td The affiliation of the user
+      %tr
+        %td computers_per_division
+        %td integer
+        %td Extracted from Computers
+        %td The number of computers in the division at the time of table upload
+  %h2 Product Usage
+  %p
+    Product usage comes from KeyServer's "product start" events.
+    Product counts are lower than program counts because several programs from the same product can run at once.
+  %p
+    On upload, events are filtered to the computers and products of interest.
+    Events with a duration or foreground time of 0 are dropped.
+    For the week ending August 6, 2026, this left 863 of 8,421 product events (10%).
+  %p
+    More product events than program events pass the filter.
+    Several short program uses are combined into one product foreground time, so more of them clear the zero-time filter.
+    Program events have more detail, but product events give a better picture of availability.
+  %p
+    Some events have a foreground time but a duration of 0.
+    This happens when a program is used and closed while the computer is off the network, so no end time is recorded and the duration can't be calculated.
+  %p
+    %strong Note:
+    KeyReporter can't apply these filters, so its downloads include every event in the time frame.
+
+  %p 
+    This table includes the following fields:
+
+  %table
+    %thead
+      %tr
+        %th Column Name
+        %th Data Type
+        %th Constraints
+        %th Description
+    %tbody
+      %tr
+        %td ident
+        %td int
+        %td Primary Key, Unique with start_time
+        %td KeyServer defined unique key
+      %tr
+        %td program_name
+        %td string
+        %td
+        %td The program used.
+      %tr
+        %td product_name
+        %td string
+        %td Foreign Key to Products
+        %td The product used.
+      %tr
+        %td computer_name
+        %td string
+        %td Foreign Key to Computers
+        %td The computer used
+      %tr
+        %td division
+        %td string
+        %td Extracted from Computers
+        %td Location of the computer
+      %tr
+        %td start_time
+        %td datetime
+        %td
+        %td Start of the event
+      %tr
+        %td duration
+        %td int
+        %td
+        %td The length of the usage
+      %tr
+        %td foreground
+        %td int
+        %td
+        %td The length of active usage
+      %tr
+        %td install_count
+        %td integer
+        %td
+        %td The number of installations of this product
+      %tr
+        %td user_name
+        %td string
+        %td Foreign Key to demographics
+        %td Identifier for user
+      %tr
+        %td user_group
+        %td string
+        %td Extracted from demographics
+        %td The type of user
+      %tr
+        %td school
+        %td string
+        %td Extracted from demographics
+        %td The affiliation of user
+  
+  %h2 Program Usage
+
+  %p
+    The start of a program session is a “launch” event in KeyServer.
+    There were 9,989 program sessions recorded in the trailing week of August 6, 2026.
+    The events were additionally filtered out by requiring a non-null “Foreground” larger than 1 second.  
+    This indicates interaction with the program.  
+    This filtered the events to 7.5% (752 events) of the original sample.
+
+  %p
+    %strong Note:
+    KeyReporter can't apply these filters, so its downloads include every event in the time frame.
+
+  %p 
+    This table includes the following fields:
+
+  %table
+    %thead
+      %tr
+        %th Column Name
+        %th Data Type
+        %th Constraints
+        %th Description
+    %tbody
+      %tr
+        %td ident
+        %td int
+        %td Primary Key, Unique with start_time
+        %td KeyServer defined unique key
+      %tr
+        %td program_name
+        %td string
+        %td
+        %td The program used.
+      %tr
+        %td product_name
+        %td string
+        %td Foreign Key to Products
+        %td The product used.
+      %tr
+        %td computer_name
+        %td string
+        %td Foreign Key to Computers
+        %td The computer used
+      %tr
+        %td division
+        %td string
+        %td Extracted from Computers
+        %td The location of the computer
+      %tr
+        %td start_time
+        %td datetime
+        %td
+        %td Start of the event
+      %tr
+        %td duration
+        %td int
+        %td
+        %td The length of the usage
+      %tr
+        %td foreground
+        %td int
+        %td
+        %td The length of active usage
+      %tr
+        %td user_name
+        %td string
+        %td Foreign Key to demographics
+        %td Identifier for user
+      %tr
+        %td user_group
+        %td string
+        %td Extracted from demographics
+        %td The type of user
+      %tr
+        %td school
+        %td string
+        %td Extracted from demographics
+        %td The affiliation of user
