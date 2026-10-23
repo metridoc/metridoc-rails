@@ -1,0 +1,28 @@
+---
+load_sequence:        3
+
+target_model:         'Keyserver::Report'
+target_adapter:       'csv'
+export_file_name:     'keyserver_reports.csv'
+
+source_adapter: 'keyserver'
+report_path: '/api/v2/report/items'
+
+unique_keys:          [ident]
+upsert: true
+
+column_mappings:
+  ident: ident
+  name: name
+  moduleid: module_id
+  modulename: module_name
+  author: author
+  created: created 
+  range: range
+  start: start
+  size: size
+  runtime: runtime
+
+parameters:
+  query: "folder='MetriDocExports'"
+  fields: "name,moduleid,modulename,author,created,range,start,size,runtime,folder"

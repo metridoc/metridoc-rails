@@ -81,6 +81,8 @@ module Import
           return_value = execute_native_query
         elsif target_adapter == "console_command"
           return_value = execute_console_command
+        elsif target_adapter == "ruby_command"
+          return_value = execute_ruby_command
         else
           raise "Unsupported target_adapter type >> #{target_adapter}"
         end
@@ -132,6 +134,85 @@ module Import
       # Query the existance of a checksum index
       def has_checksum_index?
         task_config.has_key?('checksum_index')
+      end
+
+      # ---------------------------------------------------------------
+      # Reference Filters
+      # Allows the task config to declare that certain column values
+      # must exist in a foreign model before a row is accepted.
+      # ---------------------------------------------------------------
+      def reference_filters
+        task_config["reference_filters"] || []
+      end
+
+      def has_reference_filters?
+        reference_filters.any?
+      end
+
+      # Called once before the import loop — builds a Set per filter
+      # for O(1) lookups instead of per-row DB queries.
+      def build_filter_sets
+        @filter_sets = reference_filters.map do |filter|
+          model            = filter["model"].constantize
+          lookup_col       = filter["lookup_column"] || filter["column"]
+          case_insensitive = filter["case_insensitive"] == true
+
+          values = model.pluck(lookup_col).compact
+          values = values.map(&:downcase) if case_insensitive
+
+          log "Reference filter on '#{filter["column"]}': #{values.size} valid values loaded from #{filter["model"]}."
+
+          {
+            column:           filter["column"],
+            values:           values.to_set,
+            case_insensitive: case_insensitive
+          }
+        end
+      end
+
+      # Returns true if every declared filter is satisfied by the attributes hash.
+      def passes_reference_filters?(attributes)
+        @filter_sets.all? do |filter|
+          val = attributes[filter[:column]]
+          val = val&.downcase if filter[:case_insensitive]
+          filter[:values].include?(val)
+        end
+      end
+
+      # ---------------------------------------------------------------
+      # Value Filters
+      # Allows the task config to declare simple per-column predicates
+      # that must be satisfied before a row is accepted.
+      # Supported operators: not_nil, not_blank, greater_than,
+      #                      less_than, equals, not_equals
+      # ---------------------------------------------------------------
+
+      def value_filters
+        task_config["value_filters"] || []
+      end
+
+      def has_value_filters?
+        value_filters.any?
+      end
+
+      def passes_value_filters?(attributes)
+        value_filters.all? do |filter|
+          col = filter["column"]
+          val = attributes[col]
+
+          # Cast to numeric for comparison operators if the column is numeric
+          numeric_val = val.to_s.match?(/\A-?\d+(\.\d+)?\z/) ? val.to_r : nil
+
+          results = []
+          results << !val.nil?                               if filter["not_nil"]
+          results << val.to_s.strip.present?                 if filter["not_blank"]
+          results << (numeric_val && numeric_val > filter["greater_than"].to_r) if filter.key?("greater_than")
+          results << (numeric_val && numeric_val < filter["less_than"].to_r)    if filter.key?("less_than")
+          results << (val.to_s == filter["equals"].to_s)     if filter.key?("equals")
+          results << (val.to_s != filter["not_equals"].to_s) if filter.key?("not_equals")
+
+          results.all?
+        end
       end
 
       def has_legacy_flag?
@@ -199,6 +280,20 @@ module Import
         return true
       end
 
+      def execute_ruby_command
+        commands.each do |cmd|
+          log "Executing: #{cmd}"
+          begin
+            eval(cmd)
+          rescue StandardError => e
+            log "Command #{cmd} Failed: #{e.class}: #{e.message}"
+            return false
+          end
+        end
+
+        true
+      end
+
       def execute_native_query
         truncate if truncate_before_load?
 
@@ -244,8 +339,27 @@ module Import
       end
 
       def import_csv
+
+        # Guard: log and safely return if the file does not exist
+        unless File.exist?(csv_file_path)
+          log "!!ERROR!!: Import file '#{import_file_name}' does not exist at path '#{csv_file_path}'. Skipping import."
+          return false
+        end
+
+        # Guard: log and safely return if the file is empty
+        if File.zero?(csv_file_path)
+          log "!!WARNING!!: Import file '#{import_file_name}' is empty. Skipping import."
+          return true
+        end
+
         # Get the header from the csv file
         headers = get_headers
+
+        # Guard: file has only a header row, no data rows
+        if File.foreach(csv_file_path).count <= 1
+          log "!!WARNING!!: Import file '#{import_file_name}' contains no data rows. Skipping import."
+          return true
+        end
 
         # Query the class for any ignored columns
         # If there are ignored columns, the upload must proceed in a different way
@@ -265,6 +379,10 @@ module Import
         success = true
         ActiveRecord::Base.transaction do
           truncate if truncate_before_load?
+
+          # Build a list of filters to be applied
+          build_filter_sets if has_reference_filters?
+          n_filtered = 0
 
           records = []
 
@@ -338,6 +456,13 @@ module Import
 
               next if row_error
 
+              # Skip rows that reference unknown references.
+              if (has_reference_filters? && !passes_reference_filters?(attributes)) ||
+                (has_value_filters?     && !passes_value_filters?(attributes))                
+                n_filtered += 1
+                next
+              end
+
               # Add an institution identifier to the attributes list if necessary
               attributes.merge!(institution_id: institution_id) if has_institution_id?
 
@@ -391,6 +516,12 @@ module Import
             records = []
           end
 
+          # Report how many rows were filtered out
+          log "Filtered #{n_filtered} rows due to unmatched reference values." if n_filtered > 0
+          
+          # Trigger any post-import actions.
+          class_name.update_after_import if class_name.respond_to?(:update_after_import)
+          
           if n_errors >= max_errors
             log "Too many errors #{n_errors}."
             success = false
@@ -491,24 +622,28 @@ module Import
 
       def import_records(records)
         begin
-          # Handle unique keys with specified duplicate behavior
-          result =
-            if unique_keys.present? and upsert
-              class_name.import records, on_duplicate_key_update: {
-                conflict_target: unique_keys,
-                columns: :all
-              }
-            elsif unique_keys.present?
-              class_name.import records, on_duplicate_key_ignore: true
-            else
-              class_name.import records
-            end
-
+          result = nil
+          ActiveRecord::Base.transaction(requires_new: true) do
+            # Handle unique keys with specified duplicate behavior
+            result =
+              if unique_keys.present? && upsert
+                class_name.import records, on_duplicate_key_update: {
+                  conflict_target: unique_keys,
+                  columns: :all
+                }
+              elsif unique_keys.present?
+                class_name.import records, on_duplicate_key_ignore: true
+              else
+                class_name.import records
+              end
+          end
           log "Imported #{result.ids.size} records."
           log_validation_errors(result.failed_instances)
           return result.failed_instances.size
         rescue => ex
           log "Error on import: #{ex.class}: #{ex.message}"
+          log ex.backtrace.first(5).join("\n")
+          log "Falling back to individual record saves..."
           return save_records_individually(records)
         end
       end

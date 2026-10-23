@@ -1,0 +1,22 @@
+---
+load_sequence: 4
+
+target_model: 'Keyserver::Session'
+target_adapter: 'csv'
+export_file_name: 'keyserver_sessions.csv'
+
+source_adapter: 'keyserver'
+report_path: "/api/v2/report/items/%{report_id}/rows"
+report_name: "Sessions"
+
+unique_keys: [computer_name, start_time, username]
+
+column_mappings:
+  name: computer_name
+  logon: start_time
+  logoff: end_time
+  user: user_name
+
+parameters:
+  fields: "name,logon,logoff,user"
+  

@@ -1,0 +1,29 @@
+-# app/views/keyserver/analysis/_user_profile.html.haml
+
+Select a User Type and/or Affiliation to see which locations, products, and programs are most frequently used by that user profile.
+%br
+%br
+%hr
+%br
+= render partial: "keyserver/shared/filter_form",
+  locals: { filters: { user_group: true, affiliation: true }  }
+%br
+%hr
+%section
+  = keyserver_ranked_table(title: "Popular Spaces",
+    data: @sessions,
+    row_header: "Division")
+  
+  %br
+  %hr
+
+  = keyserver_ranked_table(title: "Popular Products",
+    data: @product_usage,
+    row_header: "Product")
+
+  %br
+  %hr
+
+  = keyserver_ranked_table(title: "Popular Programs",
+    data: @program_usage,
+    row_header: "Program")

@@ -1,0 +1,43 @@
+---
+load_sequence:        6
+
+target_model:         'Keyserver::ProductUsage'
+target_adapter:       'csv'
+export_file_name:     'keyserver_product_usage.csv'
+
+source_adapter: 'keyserver'
+report_path: "/api/v2/report/items/%{report_id}/rows"
+report_name: "ProductUsage"
+
+unique_keys: [ident, start_time]
+upsert:               true
+
+
+column_mappings:
+  ident: ident
+  Name: program_name
+  Product: product_name
+  Computer: computer_name
+  When: start_time
+  Duration: duration
+  Foreground: foreground
+  User: user_name
+
+parameters:
+  fields: "Name,Product,When,User,Computer,Duration,Foreground"
+
+reference_filters:
+  - column: computer_name
+    model: Keyserver::Computer
+    lookup_column: computer_name
+  - column: product_name
+    model: Keyserver::Product
+    lookup_column: product_name
+
+value_filters:
+  - column: foreground
+    not_nil: true
+    greater_than: 0
+  - column: duration
+    not_nil: true
+    greater_than: 0

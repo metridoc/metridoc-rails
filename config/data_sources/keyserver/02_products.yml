@@ -1,0 +1,31 @@
+---
+load_sequence:        2
+
+target_model:         'Keyserver::Product'
+target_adapter:       'csv'
+export_file_name:     'keyserver_products.csv'
+
+source_adapter:       'keyserver'
+report_path:          '/api/v2/product/items'
+
+unique_keys:          [ident]
+upsert:               true
+
+column_mappings:
+  ident:    ident
+  Name:     product_name
+  InstallCount: install_count
+  Category: category
+
+parameters:
+  query: >-
+    (InstallCount > 0) && (Name != 'KeyVerify') && (Name != 'Remote Desktop Connection') &&
+    (Category != 'Print (Management)') && (Category != 'Operating System') &&
+    (Category != 'Software Development (Compiler/Runtime)') &&
+    (Category != 'Utility (Security)') && (Category != 'Utility (CD/DVD)') &&
+    (Category != 'Utility (File Management)') && (Category != 'Utility (OS Optimization)') &&
+    (Category != 'Utility (Device Driver)') && (Category != 'Utility (Software Management)') &&
+    (Category != 'Utility (Keyboard/Menu Changes)') && (Category != 'Utility (Administration)') &&
+    (Category != 'Utility (Screen Recording)') && (Category != 'Utility (Remote Access)') && 
+    (Category != 'Utility (Compression)')
+  fields: "Name,InstallCount,Category"

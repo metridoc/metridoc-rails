@@ -1,0 +1,93 @@
+-# app/views/keyserver/analysis/_computer_activity.html.haml
+
+:css
+  .data_summary th:not(:first-child) {
+    max-width: 50px; 
+    text-align: center !important;
+  }
+  .data_summary td:not(:first-child) {
+    text-align: right !important;
+  }
+
+Select a Division to see which products and programs are most frequently used and which users use them.
+%br
+%br
+%hr
+%br
+
+= render partial: "keyserver/shared/filter_form",
+  locals: {filters: {division: true}}
+%br
+%hr
+%section
+  %h2 Computer Activity
+  *The number of computers available is calculated from the current snapshot of the computers table.
+  This number is prone to change as computers are added or removed from the system.
+  %table.data_summary
+    %thead
+      %tr
+        %th Division
+        %th Unique Users
+        %th Sessions
+        %th Average Duration (hours)
+        %th Computers Used
+        %th Maximum Concurrent Usage
+        %th Computers Available*
+
+    %tbody
+      - @division_records.each do |record|
+        %tr
+          %td= record.division
+          %td= format_big_number(record.unique_users)
+          %td= format_big_number(record.sessions)
+          %td= format_into_hours(record.avg_duration)
+          %td= format_big_number(record.computers_used)
+          %td= maximum_occupancy_count(@peak_usage, record.division)
+          %td= available_computer_count(@available_computers, record.division)
+%br
+%hr
+
+%section
+  = keyserver_ranked_table(title: "Popular Products",
+    data: @product_usage,
+    row_header: "Product")
+
+  %br
+  %hr
+
+  = keyserver_ranked_table(title: "Popular Programs",
+    data: @program_usage,
+    row_header: "Program")
+
+  %br
+  %hr
+
+= render partial: "keyserver/shared/demographic_matrix"
+
+%br
+%hr
+%section
+  =keyserver_heatmap_table(title: "Average Number of Sessions per Hour", 
+    data: @avg_fleet_sessions, hours: @hours, days: @days)
+  %ul 
+    %li How busy is this time slot for all managed computers?
+    %li 
+      %strong{ style: "font-weight: 700 !important;" } Fleet-Wide Demand
+      Tracks overall traffic and peak usage hours across the entire system.
+  
+  =keyserver_heatmap_table(title: "Average Number of Sessions per Hour and Computer", 
+    data: @avg_sessions_per_computer, hours: @hours, days: @days)
+  %ul 
+    %li How many sessions does the average computer handle?
+    %li 
+      %strong{ style: "font-weight: 700 !important;" } Hardware Efficiency
+      Measures the individual workload and turnover rate of a single machine.
+  
+  =keyserver_heatmap_table(title: "Average Occupancy per Hour", 
+    data: @avg_occupancy_per_computer, hours: @hours, days: @days)
+  %ul 
+    %li What fraction of capacity is in use at a time?
+    %li 
+      %strong{ style: "font-weight: 700 !important;" } Resource Utilization
+      Measures the current usage as a percentage of available resources.
+  

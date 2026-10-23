@@ -70,4 +70,12 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.uncountable "DeaccessionInfo"
   inflect.uncountable "deaccessioninfo"
 
+  # KeyServer
+  inflect.uncountable "ProductUsage"
+  inflect.uncountable "keyserver_product_usage"
+  inflect.uncountable "product_usage"
+  inflect.uncountable "ProgramUsage"
+  inflect.uncountable "keyserver_program_usage"
+  inflect.uncountable "program_usage"
+
 end
