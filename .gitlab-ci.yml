@@ -1,35 +1,93 @@
 ---
+variables:
+  FF_SCRIPT_SECTIONS: "true"
+  GIT_CLONE_PATH: "${CI_BUILDS_DIR}/${CI_JOB_ID}/${CI_PIPELINE_ID}/${CI_PROJECT_NAME}"
+
 include:
-  - template: Jobs/Secret-Detection.gitlab-ci.yml
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/sast/secret_scan@~latest
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/docker/stage_build@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      docker_target: "base"
+      job_suffix: "_base"
+      matrix:
+        - RUNNER: build
+          DOCKER_BUILD_PLATFORM: "linux/amd64"
+      needs_build:
+        - secret_detection
+      platforms: '["linux/amd64"]'
+      stage: "build_base"
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/docker/stage_build@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      docker_target: "development"
+      job_suffix: "_development"
+      matrix:
+        - RUNNER: build
+          DOCKER_BUILD_PLATFORM: "linux/amd64"
+      needs_build:
+        - amend_manifest_base
+      platforms: '["linux/amd64"]'
+      stage: "build_development"
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/docker/stage_build@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      docker_build_args: "--build-arg RAILS_ENV=production"
+      docker_target: "production"
+      job_suffix: "_production"
+      matrix:
+        - RUNNER: build
+          DOCKER_BUILD_PLATFORM: "linux/amd64"
+      needs_build:
+        - amend_manifest_development
+      platforms: '["linux/amd64"]'
+      stage: "build_production"
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/sast/trivy@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      docker_tag_to_scan: "${CI_COMMIT_SHA}-production"
+      needs:
+        - "amend_manifest_production"
+      stage: "test"
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/docker/stage_finalize@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      needs_copy:
+        - trivy_scan
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/deploy/deploy@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      deploy_environment: "staging"
+      deploy_environment_url: "https://metridoc-staging.library.upenn.edu"
+      image_tag: "${CI_COMMIT_SHORT_SHA}-development"
+      job_suffix: "staging"
+      valid_principals: ${VALID_PRINCIPALS}
+      vault_auth_role: ${VAULT_AUTH_ROLE}
+      vault_ssh_client_role: ${VAULT_SSH_CLIENT_ROLE}
+  - component: $CI_SERVER_FQDN/devops/gitlab/components/deploy/deploy@~latest
+    inputs:
+      ci_requirements_file: ".gitlab/ci-requirements.yml"
+      deploy_environment: "production"
+      deploy_environment_url: "https://metridoc.library.upenn.edu"
+      image_tag: "${CI_COMMIT_SHORT_SHA}-production"
+      job_suffix: "production"
+      valid_principals: ${VALID_PRINCIPALS}
+      vault_auth_role: ${VAULT_AUTH_ROLE}
+      vault_ssh_client_role: ${VAULT_SSH_CLIENT_ROLE}
 
 stages:
   - secret_check
-  - main_pipeline
+  - build_base
+  - build_development
+  - build_production
+  - test
+  - finalize
+  - deploy
 
-secret_detection:
-  stage: secret_check
-  allow_failure: false
-  artifacts:
-    paths:
-      - .pipeline.yml
-    expire_in: 1 day
-  tags:
-    - build
+deploy_staging:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "staging"
 
-main:
-  stage: main_pipeline
-  needs:
-    - secret_detection
-  allow_failure: false
-  trigger:
-    include:
-      - artifact: .pipeline.yml
-        job: secret_detection
-    strategy: depend
+deploy_production:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      variables:
-        ENVIRONMENT_NAME: production
-    - if: $CI_COMMIT_BRANCH == "staging"
-      variables:
-        ENVIRONMENT_NAME: staging
