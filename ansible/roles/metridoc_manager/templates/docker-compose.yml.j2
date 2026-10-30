@@ -149,7 +149,7 @@ services:
       - gate_count:/tmp/gate_count
       - metridoc_tmp_data:/home/app/tmp
       {% if is_development %}
-      - /metridoc:/home/app
+      - /home/app:/home/app
       {% endif %}
 
   delayed_jobs:
@@ -196,7 +196,7 @@ services:
     volumes:
       - metridoc_tmp_data:/home/app/tmp
       {% if is_development %}
-      - /metridoc:/home/app
+      - /home/app:/home/app
       {% endif %}
     working_dir: /home/app
 

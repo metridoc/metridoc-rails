@@ -38,7 +38,7 @@ Staging nodes: metridoc-stg01 & metridoc-stg02
 
 ### 2.1 Local Infrastructure
 
-We use Vagrant to create a local virtual machine that the Metridoc Docker Swarm lives on. There is only one manager node and there is also an NGINX reverse proxy service responsible for directing traffic into the application.
+The local Metridoc Docker Swarm runs inside a Docker-in-Docker container started by [Task](https://taskfile.dev) from `.dev/`. There is only one manager node, and a development-only NGINX stack terminates TLS and directs traffic into the application.
 
 ![alt text](img/metridoc_local_infra.png "Local Development Infrastructure")
 
@@ -50,26 +50,17 @@ Metridoc depends on external data sources. API requests, queries, and data migra
 
 To get started:
 
-1. Install Vagrant
-2. If your machine is an ARM machine (Mac M1, M2, etc.) then download Parallels, otherwise download VirtualBox. A license will be required, contact Betsy Deming for assistance.
-3. `cd` to the vagrant directory in the project repo.
-4. Run `vagrant up --provision` to spin up the application.
-5. When prompted, enter your Active Directory Username and Password to unlock the HashiCorp vault information. Contact Andrew Kimball or Viet Nguyen for assitance. You can also create a VAULT_TOKEN environment variable through the Penn Libraries Vault in order to bypass entering the Username and Password. To fetch your vault token, you will need to log into vault.library.upenn.edu with your Active Directory Username and Password and copy the token in the drop down profile menu on the left sidebar.
-6. Congratulations! You can now start developing!
+1. Install [Docker](https://docs.docker.com/get-docker/) and [Task](https://taskfile.dev/installation/).
+2. Delete any `config/credentials/*.key` left from an earlier environment; the deploy mounts the key from Vault.
+3. `cd .dev` and run `task up`. It adds `metridoc-dev.library.upenn.edu` to `/etc/hosts`, starts the container, and runs the Ansible deploy inside it.
+4. When prompted, enter your Active Directory username and password to log in to HashiCorp Vault.
+5. Open https://metridoc-dev.library.upenn.edu and accept the self-signed certificate.
 
-To reload Vagrant (restart Vagrant machine and load new Vagrantfile config):
+Other tasks, all run from `.dev`:
 
-1. Run `vagrant reload --provision`
-
-To restart Vagrant from scratch:
-
-1. Run `vagrant destroy -f`
-2. Delete the .vagrant directory in the project repo.
-
-To access the Vagrant virtual machine:
-
-1. Run `vagrant ssh`
-2. From here, you can run docker commands as usual.
+- `task down` stops and removes the container; `task purge` also removes its volumes.
+- `task docker:context:use:app` points your Docker CLI at the swarm inside the container, so `docker service ls` and `docker exec` work as usual.
+- `task --list` shows the rest.
 
 ## 5. Developing
 

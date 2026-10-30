@@ -1,15 +1,13 @@
 ---
 collections:
-  - name: community.crypto
   - name: community.docker
 
 roles:
-  - name: atosatto.docker-swarm
-    src: https://gitlab.library.upenn.edu/devops/ansible/ansible-dockerswarm.git
+  - name: docker-swarm
+    src: https://gitlab.library.upenn.edu/devops/ansible/roles/docker-swarm.git
     scm: git
-    version: master
-  - name: nginxinc.nginx
-  - name: nginxinc.nginx_config
+    version: main
+
   - name: shibboleth_sp
     src: https://github.com/upenn-libraries/ansible_shibboleth_sp.git
     scm: git

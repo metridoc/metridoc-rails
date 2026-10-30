@@ -1,4 +1,4 @@
-docker_swarm_manager:
+docker_swarm_managers:
   hosts:
     swarm-01:
       ansible_host: metridoc-prod01.library.upenn.int
@@ -11,7 +11,7 @@ docker_swarm_manager:
         - "postgres-exporter"
         - "prometheus"
 
-docker_swarm_worker:
+docker_swarm_workers:
   hosts:
     swarm-02:
       ansible_host: metridoc-prod02.library.upenn.int

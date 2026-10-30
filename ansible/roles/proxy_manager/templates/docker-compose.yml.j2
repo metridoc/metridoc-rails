@@ -1,0 +1,24 @@
+version: "3.7"
+services:
+  nginx:
+    image: "{{ proxy_image_name }}:{{ proxy_image_tag }}"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    logging:
+      driver: json-file
+      options:
+        max-file: "3"
+        max-size: "10m"
+    networks:
+      - shibboleth
+    ports:
+      - "443:443"
+    volumes:
+      - "{{ proxy_dir }}/default.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ proxy_dir }}:/etc/nginx/proxy:ro"
+
+networks:
+  shibboleth:
+    external: true

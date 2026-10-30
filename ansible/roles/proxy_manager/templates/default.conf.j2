@@ -1,0 +1,20 @@
+server {
+    listen 443 ssl;
+    server_name {{ proxy_server_name }};
+
+    ssl_certificate /etc/nginx/proxy/proxy.crt;
+    ssl_certificate_key /etc/nginx/proxy/proxy.key;
+
+    location / {
+        proxy_pass {{ proxy_upstream }};
+        proxy_pass_request_headers on;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Server $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Ssl on;
+        proxy_set_header X-Forwarded-Port $server_port;
+    }
+}

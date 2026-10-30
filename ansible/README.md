@@ -94,7 +94,20 @@ ansible-playbook -i inventories/production jenkins.yml
   - `production.yml` - deploys containers for the Metridoc Rails application and python scripts.
   - `python_jobs.yml` - deploys a container to run python scripts
 - `local.yml` - deploy the `local` inventory locally. This is intended for developing the Metridoc application and supporting services locally. Does not deploy Jenkins, monitoring services, or the replica database. The `local.sh` script in the repository root can be used to run this playbook via Docker container and perform additional local configuration.
-- `vagrant.yml` - deploys the `vagrant` development playbook. This is intended for developing the Metridoc application and supporting services locally and is not meant to be manually [see Vagrant](../README.md#vagrant).
+
+`task up` in `.dev/` runs `site.yml` against the `development` inventory inside a local Docker-in-Docker container ([see Getting Started](../README.md#4-getting-started-with-local-development)).
+
+### Development proxy
+
+`proxy_manager` runs only in development. It stands in for the load balancer: an nginx stack that terminates TLS on port 443 with a self-signed certificate and forwards to the Shibboleth service on the `shibboleth` network.
+
+| Variable | Type | Default | Description |
+| --- | --- | --- | --- |
+| `proxy_dir` | str | `{{ config_dir }}/proxy` | Directory in the dind holding the certificate, key and server block. |
+| `proxy_image_name` | str | `nginx` | nginx image. |
+| `proxy_image_tag` | str | `1.29-alpine` | nginx image tag. |
+| `proxy_server_name` | str | `metridoc-dev.library.upenn.edu` | Server name and certificate CN. |
+| `proxy_upstream` | str | `http://shibboleth_shib:80` | Where nginx forwards requests. |
 
 ## Adding Credentials for New Data Sources
 
@@ -136,10 +149,10 @@ environment:
 #...
 ```
 
-4. Open the [Vault-encrypted production variables file](inventories/production/group_vars/docker_swarm_manager/vault.yml) with local Vault credentials:
+4. Open the [Vault-encrypted production variables file](inventories/production/group_vars/docker_swarm_managers/vault.yml) with local Vault credentials:
 
 ```#bash
-ansible-vault edit inventories/production/group_vars/docker_swarm_manager/vault.yml
+ansible-vault edit inventories/production/group_vars/docker_swarm_managers/vault.yml
 ```
 
 5. Add the secret variables corresponding to the earlier environment variables to the Vault-encrypted file:
@@ -157,7 +170,7 @@ vault_institution_service_mssql_uid: 'x'
 6. Save the file, commit it, and push it:
 
 ```#bash
-git add ansible/inventories/production/group_vars/docker_swarm_manager
+git add ansible/inventories/production/group_vars/docker_swarm_managers
 git commit
 git push
 ```

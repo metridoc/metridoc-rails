@@ -1,0 +1,16 @@
+version: "3"
+
+includes:
+  app:
+    taskfile: https://gitlab.library.upenn.edu/devops/taskfile/-/raw/main/DevEnvTasks.yml?ref_type=heads
+    flatten: true
+    vars:
+      PROJECT_NAME: "metridoc"
+      DOMAINS:
+        - metridoc-dev
+      DOCKER_NETWORK_SUBNET: 172.16.11.0/24
+      DOCKER_CONTAINER_IP: "172.16.11.10"
+      DOCKER_API_TLS_PORT: 3486
+      DOCKER_API_TLS_PORT_EXT: 3486
+      DOCKER_CONTAINER_NAME: "metridoc"
+      ANSIBLE_REQUIREMENTS_FILE: "requirements.dev.yml"

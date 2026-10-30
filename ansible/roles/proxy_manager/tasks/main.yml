@@ -1,0 +1,30 @@
+---
+- name: Create the proxy directory
+  ansible.builtin.file:
+    path: "{{ proxy_dir }}"
+    state: directory
+    mode: "0750"
+
+- name: Generate a self-signed certificate
+  ansible.builtin.command:
+    cmd: >-
+      openssl req -x509 -newkey rsa:4096 -sha256 -days 825 -nodes
+      -subj "/CN={{ proxy_server_name }}"
+      -addext "subjectAltName=DNS:{{ proxy_server_name }}"
+      -keyout {{ proxy_dir }}/proxy.key
+      -out {{ proxy_dir }}/proxy.crt
+    creates: "{{ proxy_dir }}/proxy.crt"
+
+- name: Write the nginx server block
+  ansible.builtin.template:
+    src: default.conf.j2
+    dest: "{{ proxy_dir }}/default.conf"
+    mode: "0644"
+
+- name: Deploy the proxy
+  community.docker.docker_stack:
+    name: "proxy"
+    compose:
+      - "{{ lookup('template', 'docker-compose.yml.j2') | from_yaml }}"
+    state: present
+  changed_when: false

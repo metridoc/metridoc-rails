@@ -1,0 +1,23 @@
+---
+docker_swarm_managers:
+  hosts:
+    metridoc:
+      ansible_host: 127.0.0.1
+      ansible_connection: local
+      swarm_labels:
+        - alertmanager-1
+        - alertmanager-2
+        - delayed-jobs
+        - ezpaarse
+        - jenkins
+        - metridoc
+        - postgres-exporter
+        - postgres-primary
+        - postgres-replica
+        - prometheus
+
+swarm:
+  children:
+    docker_swarm_managers:
+  vars:
+    ansible_docker_privileged: "true"

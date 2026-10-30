@@ -3,7 +3,7 @@
   community.docker.docker_image_build:
     name: "{{ metridoc_image_name }}"
     tag: "{{ metridoc_image_tag }}"
-    path: "/metridoc"
+    path: "/home/app"
     dockerfile: "Dockerfile"
     target: "development"
     args:

@@ -2,14 +2,13 @@
 config_dir: /opt/metridoc
 is_development: true
 
-skip_repo: false
-skip_containerd: false
-skip_engine: false
-skip_cli: false
-skip_swarm: false
-skip_group: false
-skip_docker_py: false
-skip_docker_compose: false
+skip_docker_config: true
+skip_docker_group: true
+skip_docker_install: true
+skip_docker_repo_setup: true
+skip_docker_user: true
+skip_firewall: true
+skip_install_deps: true
 
 metridoc_vault_values: "{{ lookup('community.hashi_vault.vault_kv2_get', 'metridoc/vagrant', engine_mount_point='kv-applications') }}"
 metridoc_secrets_version: "{{ metridoc_vault_values.metadata.version }}"

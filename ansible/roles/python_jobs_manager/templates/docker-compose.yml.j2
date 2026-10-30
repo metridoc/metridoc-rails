@@ -39,7 +39,7 @@ services:
     volumes:
       - gate_count:/gate_count
       {% if is_development %}
-      - /metridoc/ansible/roles/python_jobs_manager/files/src:/home/app
+      - /home/app/ansible/roles/python_jobs_manager/files/src:/home/app
       {% endif %}
     working_dir: /home/app
 

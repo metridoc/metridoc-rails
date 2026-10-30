@@ -1,5 +1,0 @@
-[development]
-swarm-01 ansible_host=127.0.0.1 ansible_connection=local
-
-[docker_swarm_manager]
-swarm-01 swarm_labels='["alertmanager-1" ,"alertmanager-2", "ezpaarse", "jenkins", "metridoc", "postgres-primary", "postgres-replica", "postgres-exporter", "prometheus", "delayed-jobs"]'

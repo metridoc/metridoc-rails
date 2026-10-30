@@ -1,0 +1,6 @@
+---
+proxy_dir: "{{ config_dir }}/proxy"
+proxy_image_name: "nginx"
+proxy_image_tag: "1.29-alpine"
+proxy_server_name: "metridoc-dev.library.upenn.edu"
+proxy_upstream: "http://shibboleth_shib:80"
