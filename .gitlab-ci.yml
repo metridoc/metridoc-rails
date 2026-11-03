@@ -1,8 +1,7 @@
 ---
 variables:
   FF_SCRIPT_SECTIONS: "true"
-  GIT_CLONE_PATH: "${CI_BUILDS_DIR}/${CI_JOB_ID}/${CI_PIPELINE_ID}/${CI_PROJECT_NAME}"
-
+ 
 include:
   - component: $CI_SERVER_FQDN/devops/gitlab/components/sast/secret_scan@~latest
   - component: $CI_SERVER_FQDN/devops/gitlab/components/docker/stage_build@~latest
