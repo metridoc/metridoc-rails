@@ -11,6 +11,19 @@ report_path: '/api/v2/report/items'
 unique_keys:          [ident]
 upsert: true
 
+# Exclude 'downloaded' so re-importing the report list
+# does not reset the downloaded timestamp
+upsert_columns:
+  - "name"
+  - "module_id"
+  - "module_name"
+  - "author"
+  - "created"
+  - "start"
+  - "range"
+  - "size"
+  - "runtime"
+
 column_mappings:
   ident: ident
   name: name

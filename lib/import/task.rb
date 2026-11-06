@@ -629,7 +629,8 @@ module Import
               if unique_keys.present? && upsert
                 class_name.import records, on_duplicate_key_update: {
                   conflict_target: unique_keys,
-                  columns: :all
+                  # Allow a list of updateable columns from the config file
+                  columns: task_config["upsert_columns"] || :all
                 }
               elsif unique_keys.present?
                 class_name.import records, on_duplicate_key_ignore: true
