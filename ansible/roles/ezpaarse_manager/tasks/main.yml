@@ -11,14 +11,26 @@
     - ezpaarse_mongodb_root_username
   no_log: true
 
+- name: Render ezpaarse config
+  ansible.builtin.template:
+    src: config.local.json.j2
+    dest: /root/.ezpaarse_config.local.json
+    mode: "0600"
+  no_log: true
+
 - name: Create docker config secret for ezpaarse
   community.docker.docker_secret:
     name: "metridoc_ezpaarse_config"
-    data: "{{ lookup('template', 'config.local.json.j2') | to_json }}"
+    data_src: /root/.ezpaarse_config.local.json
     rolling_versions: true
     state: present
   register: ezpaarse_config
   no_log: true
+
+- name: Remove rendered config
+  ansible.builtin.file:
+    path: /root/.ezpaarse_config.local.json
+    state: absent
 
 - name: Deploy ezpaarse
   community.docker.docker_stack:
