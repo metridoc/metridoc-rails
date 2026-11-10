@@ -2,7 +2,7 @@
 shibboleth:
   image:
     name: "gitlab.library.upenn.edu/devops/ansible/shibboleth_sp"
-    tag: "cf8c9ae8"
+    tag: "master"
   is_development: false
   swarm_node_constraint: "metridoc"
   templates:
