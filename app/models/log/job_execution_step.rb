@@ -20,17 +20,7 @@ class Log::JobExecutionStep < Log::Base
   private
   def set_defaults
     self.status_set_at = Time.now if status_changed?
-    # Loop through elements of the yaml and mask out secret information
-    step_yml.map {
-      |key, val| step_yml[key] = (
-        [
-          /password/i,
-          /auth/i,
-          /alma_apikey/i
-        ].any? {
-          |regex| key.match?(regex)
-        } ? "[FILTERED]" : val
-      )
-    }
+    # Mask out secret information (tokens, passwords, api keys, ...)
+    self.step_yml = filter_secrets(step_yml)
   end
 end
