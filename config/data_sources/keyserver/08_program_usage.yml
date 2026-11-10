@@ -38,3 +38,5 @@ value_filters:
   - column: foreground
     not_nil: true
     greater_than: 1
+
+sql_log_threshold: 100

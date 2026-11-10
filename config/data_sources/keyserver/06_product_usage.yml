@@ -41,3 +41,5 @@ value_filters:
   - column: duration
     not_nil: true
     greater_than: 0
+
+sql_log_threshold: 100
