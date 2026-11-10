@@ -575,16 +575,18 @@ module Import
           class_name.quoted_table_name, **options
         )
 
-        # Get the prepared set of values for sql insertion
-        values_sql = construct_values_sql(class_name, records)
+        result = silence_sql_logging(records.size) do
+          # Get the prepared set of values for sql insertion
+          values_sql = construct_values_sql(class_name, records)
 
-        # Insert records
-        result = connection.insert_many(
-          [insert_sql, post_sql_statements].flatten,
-          values_sql,
-          options,
-          "#{class_name} Create Many"
-        )
+          # Insert records
+          connection.insert_many(
+            [insert_sql, post_sql_statements].flatten,
+            values_sql,
+            options,
+            "#{class_name} Create Many"
+          )
+        end
 
         log "Imported #{result.ids.size} records."
         log_validation_errors(result.failed_instances)
@@ -622,21 +624,7 @@ module Import
 
       def import_records(records)
         begin
-          result = nil
-          ActiveRecord::Base.transaction(requires_new: true) do
-            # Handle unique keys with specified duplicate behavior
-            result =
-              if unique_keys.present? && upsert
-                class_name.import records, on_duplicate_key_update: {
-                  conflict_target: unique_keys,
-                  columns: :all
-                }
-              elsif unique_keys.present?
-                class_name.import records, on_duplicate_key_ignore: true
-              else
-                class_name.import records
-              end
-          end
+          result = silence_sql_logging(records.size) { bulk_import(records) }
           log "Imported #{result.ids.size} records."
           log_validation_errors(result.failed_instances)
           return result.failed_instances.size
@@ -644,7 +632,25 @@ module Import
           log "Error on import: #{ex.class}: #{ex.message}"
           log ex.backtrace.first(5).join("\n")
           log "Falling back to individual record saves..."
-          return save_records_individually(records)
+          return silence_sql_logging(records.size) { save_records_individually(records) }
+        end
+      end
+
+      # Bulk insert the records in a single transaction, applying the
+      # configured duplicate-key behavior. Returns the activerecord-import result.
+      def bulk_import(records)
+        ActiveRecord::Base.transaction(requires_new: true) do
+          if unique_keys.present? && upsert
+            class_name.import records, on_duplicate_key_update: {
+              conflict_target: unique_keys,
+              # Allow a list of updateable columns from the config file
+              columns: task_config["upsert_columns"] || :all
+            }
+          elsif unique_keys.present?
+            class_name.import records, on_duplicate_key_ignore: true
+          else
+            class_name.import records
+          end
         end
       end
 
@@ -718,6 +724,30 @@ module Import
       def log_validation_errors(records)
         records.each do |r|
           log "Failed saving #{r.inspect} error: #{r.errors.full_messages.join(", ")}"
+        end
+      end
+
+      # Batches larger than this many records have their SQL hidden from the
+      # debug log. Override per task with `sql_log_threshold` in the yml.
+      def sql_log_threshold
+        task_config["sql_log_threshold"] || 1000
+      end
+
+      # Bulk imports generate one huge INSERT per batch plus a nextval
+      # query per row; at debug level that floods the log. When the batch
+      # exceeds sql_log_threshold, raise the ActiveRecord log level to INFO
+      # for the duration of the block.
+      def silence_sql_logging(record_count, &block)
+        logger = ActiveRecord::Base.logger
+        return yield if logger.nil? || record_count <= sql_log_threshold
+        return logger.silence(Logger::INFO, &block) if logger.respond_to?(:silence)
+
+        previous_level = logger.level
+        logger.level = [previous_level, Logger::INFO].max
+        begin
+          yield
+        ensure
+          logger.level = previous_level
         end
       end
 
