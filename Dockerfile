@@ -1,15 +1,18 @@
 # Global Build Args ----------------------------------
-# Image name
-ARG IMAGE_NAME=ruby
+# Ruby Image
+ARG RUBY_NAME=ruby
+ARG RUBY_TAG=3.4.12-slim-trixie
 
-# Image tag
-ARG IMAGE_TAG=3.4.8-bookworm
+# Node Image
+ARG NODE_NAME=node
+ARG NODE_TAG=26-trixie-slim
 
 # Rails env
 ARG RAILS_ENV=development
 
 # Build Stage ----------------------------------------
-FROM ${IMAGE_NAME}:${IMAGE_TAG} AS base
+FROM ${NODE_NAME}:${NODE_TAG} AS node
+FROM ${RUBY_NAME}:${RUBY_TAG} AS base
 
 ARG RUBY_MAJOR
 ENV RUBY_MAJOR=3.4.0
@@ -30,27 +33,26 @@ ENV NLS_LANG=$LANG
 ENV PATH="${PROJECT_ROOT}/${BUNDLE_HOME}/ruby/${RUBY_MAJOR}/bin:${PATH}"
 
 COPY ./docker-entrypoint.sh /usr/local/bin/
-
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     build-essential \
-    libc6-dev \
+    default-libmysqlclient-dev \
+    libatomic1 \
     net-tools \
     gosu \
-    npm \
     postgresql-client \
     xsltproc && \
-    npm install -g yarn && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /tmp/freetds
+COPY --from=node /usr/local/bin/node /usr/local/bin/node
+COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 
-# Download and install FreeTDS
-RUN wget -qO- ftp://ftp.freetds.org/pub/freetds/stable/freetds-1.5.10.tar.gz | tar --strip-components=1 -zxf - && \
-    ./configure --prefix=/usr/local --with-tdsver=7.4 && \
-    make && make install
+RUN ln -sf ../lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -sf ../lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx && \
+    npm install -g yarn && \
+    node --version && npm --version && yarn --version
  
 WORKDIR ${PROJECT_ROOT}
 
@@ -70,7 +72,7 @@ RUN bundle config set --local deployment 'true' && \
 
 COPY . .
 
-RUN addgroup app && useradd -m -d ${PROJECT_ROOT} -s /bin/bash -g app app && \
+RUN groupadd app && useradd -m -d ${PROJECT_ROOT} -s /bin/bash -g app app && \
     mkdir -p ${PROJECT_ROOT}/tmp/pids && \
     mkdir -p ${PROJECT_ROOT}/app/assets/builds/
 
