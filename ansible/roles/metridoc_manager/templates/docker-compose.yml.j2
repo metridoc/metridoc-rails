@@ -171,7 +171,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "ps aux | grep -m 1 -c 'bundle exec rails jobs:work' || exit 1",
+          "grep -qa 'jobs:wor[k]' /proc/[0-9]*/cmdline 2>/dev/null || exit 1",
         ]
       interval: 30s
       timeout: 15s
