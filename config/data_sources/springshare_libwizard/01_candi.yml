@@ -17,6 +17,8 @@ column_mappings:
   5477743: consultation_or_instruction
   5477744: staff_pennkey
   5477776: additional_staff_pennkey
+  5756644: ai_related
+  5620503: internal_consult
   5477777: division
   5477778: department_csc
   5477779: department_ope
