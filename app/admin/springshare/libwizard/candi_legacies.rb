@@ -15,4 +15,5 @@ namespace: :springshare do
 
   # Set the title on the index page
   index title: "Consulation and Instruction - Legacy"
+  remove_filter :event_length
 end

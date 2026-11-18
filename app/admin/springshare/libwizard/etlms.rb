@@ -17,6 +17,7 @@ namespace: :springshare do
   Springshare::Libwizard::Etlm.superadmin_columns.each do |c|
     remove_filter c.to_sym
   end
+  remove_filter :event_length
 
   # Set the title on the index page
   index title: "ETLM Consulation and Instruction", download_links: [:csv] do
