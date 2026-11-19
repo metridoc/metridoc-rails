@@ -1,7 +1,7 @@
 # Global Build Args ----------------------------------
 # Ruby Image
 ARG RUBY_NAME=ruby
-ARG RUBY_TAG=3.4.12-slim-trixie
+ARG RUBY_TAG=3.4.13-slim-trixie
 
 # Node Image
 ARG NODE_NAME=node
